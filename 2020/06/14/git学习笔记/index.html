@@ -23,30 +23,35 @@
     var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="记录学习和生活">
-<meta property="og:type" content="website">
-<meta property="og:title" content="额呵呵的博客">
-<meta property="og:url" content="https://kenanking.github.io/index.html">
+  <meta name="description" content="这里记录了一些在学习过程中常用的git命令，在后续使用中方便自己查阅。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="git学习笔记">
+<meta property="og:url" content="https://kenanking.github.io/2020/06/14/git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
-<meta property="og:description" content="记录学习和生活">
+<meta property="og:description" content="这里记录了一些在学习过程中常用的git命令，在后续使用中方便自己查阅。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://kenanking.github.io/2020/06/14/git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/images/git01.png">
+<meta property="article:published_time" content="2020-06-14T06:53:39.000Z">
+<meta property="article:modified_time" content="2020-06-14T07:00:13.661Z">
 <meta property="article:author" content="汤焱">
+<meta property="article:tag" content="学习">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://kenanking.github.io/2020/06/14/git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/images/git01.png">
 
-<link rel="canonical" href="https://kenanking.github.io/">
+<link rel="canonical" href="https://kenanking.github.io/2020/06/14/git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>额呵呵的博客</title>
+  <title>git学习笔记 | 额呵呵的博客</title>
   
 
 
@@ -144,82 +149,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/06/14/Jupyter-Notebook%E7%9B%B8%E5%85%B3%E7%AC%94%E8%AE%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="汤焱">
-      <meta itemprop="description" content="记录学习和生活">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="额呵呵的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/14/Jupyter-Notebook%E7%9B%B8%E5%85%B3%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">Jupyter Notebook相关笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-06-14 14:56:34 / 修改时间：15:00:10" itemprop="dateCreated datePublished" datetime="2020-06-14T14:56:34+08:00">2020-06-14</time>
-            </span>
-
-          
-            <span id="/2020/06/14/Jupyter-Notebook%E7%9B%B8%E5%85%B3%E7%AC%94%E8%AE%B0/" class="post-meta-item leancloud_visitors" data-flag-title="Jupyter Notebook相关笔记" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-
-        </div>
-      </header>
 
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>这里记录了一些Jupyter Notebook的常见配置，便于后续查阅。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/14/Jupyter-Notebook%E7%9B%B8%E5%85%B3%E7%AC%94%E8%AE%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -235,10 +168,9 @@
       <meta itemprop="name" content="额呵呵的博客">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/14/git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">git学习笔记</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          git学习笔记
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -269,249 +201,111 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>这里记录了一些在学习过程中常用的git命令，在后续使用中方便自己查阅。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/14/git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
+        <p>这里记录了一些在学习过程中常用的git命令，在后续使用中方便自己查阅。 <a id="more"></a></p>
+<h3 id="git概述和安装">1. git概述和安装</h3>
+<p><br></p>
+<h3 id="配置user信息">2. 配置user信息</h3>
+<ul>
+<li><h5 id="配置user.name和user.email">配置user.name和user.email</h5></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ git config [--global | --<span class="built_in">local</span> | --system] user.name <span class="string">'your_name'</span></span><br><span class="line">$ git config [--global | --<span class="built_in">local</span> | --system] user.email <span class="string">'your_email@domain.com'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 缺省时等同于--local</span></span><br><span class="line"><span class="comment"># --local：只对某个仓库有效</span></span><br><span class="line"><span class="comment"># --global：对当前用户所有仓库有效</span></span><br><span class="line"><span class="comment"># --system：对系统所有登录的用户有效</span></span><br><span class="line"><span class="comment"># ps：比较常用的为：--global</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><h5 id="显示config的配置加--list">显示config的配置，加--list</h5></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git config [--global | --<span class="built_in">local</span> | --system] [user.name | user.email | ...] --list</span><br></pre></td></tr></table></figure>
+<ul>
+<li><h5 id="其他常用设置">其他常用设置</h5></li>
+</ul>
+<ol type="1">
+<li>设置代理（从GitHub下载项目时使用代理会更快）</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git config --global http.proxy 127.0.0.1:8080     <span class="comment">#端口根据实际情况修改</span></span><br><span class="line">$ git config --global https.proxy 127.0.0.1:8080</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h3 id="建立git仓库">3. 建立Git仓库</h3>
+<h5 id="把已有的项目代码纳入git管理">（1）把已有的项目代码纳入Git管理</h5>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> 项目代码所在的文件夹</span><br><span class="line">$ git init</span><br></pre></td></tr></table></figure>
+<h5 id="新建的项目直接用git管理">（2）新建的项目直接用Git管理</h5>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> 某个文件夹</span><br><span class="line">$ git init project_name     <span class="comment">#在当前路径下建立project_name文件夹</span></span><br><span class="line">$ <span class="built_in">cd</span> project_name</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h3 id="添加文件">4. 添加文件</h3>
+<blockquote>
+<p>git添加文件的模式： 工作目录 ==&gt;（git add） 暂存区 ==&gt;(git commit) 版本历史</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git add [文件] [文件夹]...</span><br><span class="line">$ git add -u    <span class="comment">#将工作目录下被删除的和被修改的文件添加到暂存区（只对于被git管理的文件）</span></span><br><span class="line">$ git add .  <span class="comment">#将工作目录下新增的和被修改的文件添加到暂存区</span></span><br><span class="line">$ git add -i    <span class="comment">#通过交互式的方式把文件加入暂存区，使用起来比较方便</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git commit -m<span class="string">'message'</span></span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h3 id="给文件重命名">5. 给文件重命名</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git mv [变更前文件名] [变更后文件名]</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h3 id="查看版本历史git-log">6. 查看版本历史(git log)</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">log</span> [命令1] [命令2]... </span><br><span class="line"><span class="comment"># 常用命令</span></span><br><span class="line"><span class="comment"># --all     查看所有分支的历史(默认查看当前分支)</span></span><br><span class="line"><span class="comment"># --oneline 查看单行的简洁历史</span></span><br><span class="line"><span class="comment"># --graph   查看图形化的版本历史</span></span><br><span class="line"><span class="comment"># -n4       查看最近四条历史</span></span><br><span class="line"></span><br><span class="line">$ git <span class="built_in">help</span> --web <span class="built_in">log</span>    <span class="comment">#跳转到git log的帮助文档网页</span></span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h3 id="仓库目录下.git文件夹">7. 仓库目录下.git文件夹</h3>
+<figure>
+<img src="images/git01.png" alt><figcaption>.git文件夹内容</figcaption>
+</figure>
+<ul>
+<li><p>HEAD文件内容为一个引用，指向当前工作的分支（执行切换分支操作时内容会变化）</p></li>
+<li><p>config文件存放了和local相关的配置信息</p></li>
+<li><p>refs文件夹 &gt; tags里面存放了标签，里面每一个文件内容为tag的哈希值 &gt; &gt; heads里面存放了分支，里面每一个文件内容为commit的哈希值</p></li>
+<li><p>objects文件夹存放git对象 &gt; git基本对象有commit对象，tree对象，blob对象 &gt; &gt;在git中，文件内容相同，blob唯一。</p></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git cat-file -t (哈希值) <span class="comment"># 查看 git 对象的类型</span></span><br><span class="line">$ git cat-file -p (哈希值) <span class="comment"># 查看 git 对象的内容</span></span><br><span class="line">$ git cat-file -s (哈希值) <span class="comment"># 查看 git 对象的大小</span></span><br></pre></td></tr></table></figure>
+<p><br></p>
+<h3 id="commit命令的相关使用">8. commit命令的相关使用</h3>
+<ul>
+<li><h5 id="修改最近提交的commit的message">修改最近提交的commit的message</h5></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git commit --amend</span><br></pre></td></tr></table></figure>
+<p>修改message保存后退出，完成修改</p>
+<ul>
+<li><h5 id="修改老旧commit的message">修改老旧commit的message</h5></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git rebase -i 要变的commit的父commit的哈希值</span><br></pre></td></tr></table></figure>
+<ul>
+<li><h5 id="合并多个commit">合并多个commit</h5></li>
+</ul>
+<p><br></p>
+<h3 id="分支相关操作">9. 分支相关操作</h3>
+<ul>
+<li><h5 id="查看所有分支">查看所有分支</h5></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -av</span><br></pre></td></tr></table></figure>
+<ul>
+<li><h5 id="删除分支">删除分支</h5></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -d 删除分支名  <span class="comment">#必须已经将分支完全合并到其上游分支或者HEAD中，否则不能成功</span></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag"># 学习</a>
+          </div>
+
         
-      
-    </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/06/14/SVM%E4%B8%AD%E6%A2%AF%E5%BA%A6%E7%9A%84%E6%8E%A8%E5%AF%BC/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="汤焱">
-      <meta itemprop="description" content="记录学习和生活">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="额呵呵的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/14/SVM%E4%B8%AD%E6%A2%AF%E5%BA%A6%E7%9A%84%E6%8E%A8%E5%AF%BC/" class="post-title-link" itemprop="url">SVM中梯度的推导</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-06-14 12:44:24 / 修改时间：14:21:04" itemprop="dateCreated datePublished" datetime="2020-06-14T12:44:24+08:00">2020-06-14</time>
-            </span>
-
-          
-            <span id="/2020/06/14/SVM%E4%B8%AD%E6%A2%AF%E5%BA%A6%E7%9A%84%E6%8E%A8%E5%AF%BC/" class="post-meta-item leancloud_visitors" data-flag-title="SVM中梯度的推导" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>这里记录的是在学习CS231n过程中SVM中的梯度推导过程</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/14/SVM%E4%B8%AD%E6%A2%AF%E5%BA%A6%E7%9A%84%E6%8E%A8%E5%AF%BC/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/14/SVM%E4%B8%AD%E6%A2%AF%E5%BA%A6%E7%9A%84%E6%8E%A8%E5%AF%BC/" rel="prev" title="SVM中梯度的推导">
+      <i class="fa fa-chevron-left"></i> SVM中梯度的推导
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/06/14/Jupyter-Notebook%E7%9B%B8%E5%85%B3%E7%AC%94%E8%AE%B0/" rel="next" title="Jupyter Notebook相关笔记">
+      Jupyter Notebook相关笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/06/14/%E5%9F%BA%E4%BA%8ESIFT%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96%E7%9A%84%E5%9B%BE%E5%83%8F%E6%A3%80%E7%B4%A2%E7%A8%8B%E5%BA%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="汤焱">
-      <meta itemprop="description" content="记录学习和生活">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="额呵呵的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/14/%E5%9F%BA%E4%BA%8ESIFT%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96%E7%9A%84%E5%9B%BE%E5%83%8F%E6%A3%80%E7%B4%A2%E7%A8%8B%E5%BA%8F/" class="post-title-link" itemprop="url">基于SIFT特征提取的图像检索程序</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-06-14 12:28:09 / 修改时间：14:18:03" itemprop="dateCreated datePublished" datetime="2020-06-14T12:28:09+08:00">2020-06-14</time>
-            </span>
-
-          
-            <span id="/2020/06/14/%E5%9F%BA%E4%BA%8ESIFT%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96%E7%9A%84%E5%9B%BE%E5%83%8F%E6%A3%80%E7%B4%A2%E7%A8%8B%E5%BA%8F/" class="post-meta-item leancloud_visitors" data-flag-title="基于SIFT特征提取的图像检索程序" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>测试Mathjax</p>
-<p><span class="math display">\[\begin{equation}\label{eq2}
-\begin{aligned}
-a &amp;= b + c \\
-  &amp;= d + e + f + g \\
-  &amp;= h + i
-\end{aligned}
-\end{equation}\]</span></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/06/14/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="汤焱">
-      <meta itemprop="description" content="记录学习和生活">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="额呵呵的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/06/14/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-06-14 12:04:12 / 修改时间：12:39:45" itemprop="dateCreated datePublished" datetime="2020-06-14T12:04:12+08:00">2020-06-14</time>
-            </span>
-
-          
-            <span id="/2020/06/14/hello-world/" class="post-meta-item leancloud_visitors" data-flag-title="Hello World" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/14/hello-world/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
   
 
 
@@ -564,6 +358,7 @@ a &amp;= b + c \\
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#git概述和安装"><span class="nav-number">1.</span> <span class="nav-text">1. git概述和安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置user信息"><span class="nav-number">2.</span> <span class="nav-text">2. 配置user信息</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#配置user.name和user.email"><span class="nav-number">2.0.1.</span> <span class="nav-text">配置user.name和user.email</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#显示config的配置加--list"><span class="nav-number">2.0.2.</span> <span class="nav-text">显示config的配置，加--list</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#其他常用设置"><span class="nav-number">2.0.3.</span> <span class="nav-text">其他常用设置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#建立git仓库"><span class="nav-number">3.</span> <span class="nav-text">3. 建立Git仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#把已有的项目代码纳入git管理"><span class="nav-number">3.0.1.</span> <span class="nav-text">（1）把已有的项目代码纳入Git管理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#新建的项目直接用git管理"><span class="nav-number">3.0.2.</span> <span class="nav-text">（2）新建的项目直接用Git管理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加文件"><span class="nav-number">4.</span> <span class="nav-text">4. 添加文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#给文件重命名"><span class="nav-number">5.</span> <span class="nav-text">5. 给文件重命名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看版本历史git-log"><span class="nav-number">6.</span> <span class="nav-text">6. 查看版本历史(git log)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#仓库目录下.git文件夹"><span class="nav-number">7.</span> <span class="nav-text">7. 仓库目录下.git文件夹</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#commit命令的相关使用"><span class="nav-number">8.</span> <span class="nav-text">8. commit命令的相关使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#修改最近提交的commit的message"><span class="nav-number">8.0.1.</span> <span class="nav-text">修改最近提交的commit的message</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#修改老旧commit的message"><span class="nav-number">8.0.2.</span> <span class="nav-text">修改老旧commit的message</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#合并多个commit"><span class="nav-number">8.0.3.</span> <span class="nav-text">合并多个commit</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分支相关操作"><span class="nav-number">9.</span> <span class="nav-text">9. 分支相关操作</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#查看所有分支"><span class="nav-number">9.0.1.</span> <span class="nav-text">查看所有分支</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#删除分支"><span class="nav-number">9.0.2.</span> <span class="nav-text">删除分支</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -832,61 +627,6 @@ window.addEventListener('pjax:success', () => {
   
 
   
-      
-
-<script>
-  if (typeof MathJax === 'undefined') {
-    window.MathJax = {
-      loader: {
-          load: ['[tex]/mhchem'],
-        source: {
-          '[tex]/amsCd': '[tex]/amscd',
-          '[tex]/AMScd': '[tex]/amscd'
-        }
-      },
-      tex: {
-        inlineMath: {'[+]': [['$', '$']]},
-          packages: {'[+]': ['mhchem']},
-        tags: 'ams'
-      },
-      options: {
-        renderActions: {
-          findScript: [10, doc => {
-            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
-              const display = !!node.type.match(/; *mode=display/);
-              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-              const text = document.createTextNode('');
-              node.parentNode.replaceChild(text, node);
-              math.start = {node: text, delim: '', n: 0};
-              math.end = {node: text, delim: '', n: 0};
-              doc.math.push(math);
-            });
-          }, '', false],
-          insertedScript: [200, () => {
-            document.querySelectorAll('mjx-container').forEach(node => {
-              let target = node.parentNode;
-              if (target.nodeName.toLowerCase() === 'li') {
-                target.parentNode.classList.add('has-jax');
-              }
-            });
-          }, '', false]
-        }
-      }
-    };
-    (function () {
-      var script = document.createElement('script');
-      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
-      script.defer = true;
-      document.head.appendChild(script);
-    })();
-  } else {
-    MathJax.startup.document.state(0);
-    MathJax.texReset();
-    MathJax.typeset();
-  }
-</script>
-
-    
 
   
 
