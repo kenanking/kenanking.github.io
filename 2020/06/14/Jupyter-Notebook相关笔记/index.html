@@ -201,21 +201,21 @@
       
         <p>这里记录了一些Jupyter Notebook的常见配置，便于后续查阅。 <a id="more"></a></p>
 <h2 id="jupyter简单配置">Jupyter简单配置</h2>
-<hr>
+<hr />
 <h3 id="一修改默认工作目录">一、修改默认工作目录</h3>
 <h4 id="生成配置文件">1. 生成配置文件</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jupyter --generate-config</span><br></pre></td></tr></table></figure>
 <p>默认配置文件生成在<code>C:\Users\[用户名]\.jupyter</code>文件夹下。</p>
 <h4 id="修改默认工作目录">2. 修改默认工作目录</h4>
 <p>找到配置文件中的<code>#c.NotebookApp.notebook_dir = ''</code>，修改为个人目录并取消注释。 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c.NotebookApp.notebook_dir = <span class="string">r'D:\Jupyter notebook'</span></span><br></pre></td></tr></table></figure></p>
-<hr>
+<hr />
 <h3 id="二安装扩展插件和修改颜色主题">二、安装扩展插件和修改颜色主题</h3>
 <h4 id="安装扩展插件">1. 安装扩展插件</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pip install jupyter_contrib_nbextensions</span><br><span class="line">pip install jupyter_nbextensions_configurator</span><br><span class="line"></span><br><span class="line">jupyter contrib nbextension install --user      <span class="comment"># 设置用户</span></span><br><span class="line">jupyter nbextensions_configurator <span class="built_in">enable</span> --user <span class="comment"># 启用用户</span></span><br></pre></td></tr></table></figure>
 <h4 id="修改颜色主题">2. 修改颜色主题</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install jupyterthemes</span><br></pre></td></tr></table></figure>
 <p>主题使用方法：<a href="%22https://github.com/dunovank/jupyter-themes%22">https://github.com/dunovank/jupyter-themes</a></p>
-<hr>
+<hr />
 <h3 id="三windows添加虚拟环境">三、Windows添加虚拟环境</h3>
 <h4 id="安装并创建虚拟环境virtualenv">1. 安装并创建虚拟环境virtualenv</h4>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip install virtualenv</span><br><span class="line">virtualenv [环境名称]       <span class="comment"># 新建虚拟环境</span></span><br><span class="line">./[环境名称]/Scripts/activate   <span class="comment"># 进入虚拟环境</span></span><br></pre></td></tr></table></figure>

@@ -30,13 +30,13 @@
 <meta property="og:site_name" content="额呵呵的博客">
 <meta property="og:description" content="这里记录了一些在学习过程中常用的git命令，在后续使用中方便自己查阅。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://kenanking.github.io/.io//git01.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesgit01.png">
 <meta property="article:published_time" content="2020-06-14T06:53:39.000Z">
-<meta property="article:modified_time" content="2020-06-14T07:16:32.780Z">
+<meta property="article:modified_time" content="2020-06-14T10:37:44.294Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="学习">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://kenanking.github.io/.io//git01.png">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesgit01.png">
 
 <link rel="canonical" href="https://kenanking.github.io/2020/06/14/git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
 
@@ -180,7 +180,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-06-14 14:53:39 / 修改时间：15:16:32" itemprop="dateCreated datePublished" datetime="2020-06-14T14:53:39+08:00">2020-06-14</time>
+              <time title="创建时间：2020-06-14 14:53:39 / 修改时间：18:37:44" itemprop="dateCreated datePublished" datetime="2020-06-14T14:53:39+08:00">2020-06-14</time>
             </span>
 
           
@@ -203,7 +203,6 @@
       
         <p>这里记录了一些在学习过程中常用的git命令，在后续使用中方便自己查阅。 <a id="more"></a></p>
 <h3 id="git概述和安装">1. git概述和安装</h3>
-<p><br></p>
 <h3 id="配置user信息">2. 配置user信息</h3>
 <ul>
 <li><h5 id="配置user.name和user.email">配置user.name和user.email</h5></li>
@@ -220,29 +219,24 @@
 <li>设置代理（从GitHub下载项目时使用代理会更快）</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git config --global http.proxy 127.0.0.1:8080     <span class="comment">#端口根据实际情况修改</span></span><br><span class="line">$ git config --global https.proxy 127.0.0.1:8080</span><br></pre></td></tr></table></figure>
-<p><br></p>
 <h3 id="建立git仓库">3. 建立Git仓库</h3>
 <h5 id="把已有的项目代码纳入git管理">（1）把已有的项目代码纳入Git管理</h5>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> 项目代码所在的文件夹</span><br><span class="line">$ git init</span><br></pre></td></tr></table></figure>
 <h5 id="新建的项目直接用git管理">（2）新建的项目直接用Git管理</h5>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> 某个文件夹</span><br><span class="line">$ git init project_name     <span class="comment">#在当前路径下建立project_name文件夹</span></span><br><span class="line">$ <span class="built_in">cd</span> project_name</span><br></pre></td></tr></table></figure>
-<p><br></p>
 <h3 id="添加文件">4. 添加文件</h3>
 <blockquote>
 <p>git添加文件的模式： 工作目录 ==&gt;（git add） 暂存区 ==&gt;(git commit) 版本历史</p>
 </blockquote>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git add [文件] [文件夹]...</span><br><span class="line">$ git add -u    <span class="comment">#将工作目录下被删除的和被修改的文件添加到暂存区（只对于被git管理的文件）</span></span><br><span class="line">$ git add .  <span class="comment">#将工作目录下新增的和被修改的文件添加到暂存区</span></span><br><span class="line">$ git add -i    <span class="comment">#通过交互式的方式把文件加入暂存区，使用起来比较方便</span></span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git commit -m<span class="string">'message'</span></span><br></pre></td></tr></table></figure>
-<p><br></p>
 <h3 id="给文件重命名">5. 给文件重命名</h3>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git mv [变更前文件名] [变更后文件名]</span><br></pre></td></tr></table></figure>
-<p><br></p>
 <h3 id="查看版本历史git-log">6. 查看版本历史(git log)</h3>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">log</span> [命令1] [命令2]... </span><br><span class="line"><span class="comment"># 常用命令</span></span><br><span class="line"><span class="comment"># --all     查看所有分支的历史(默认查看当前分支)</span></span><br><span class="line"><span class="comment"># --oneline 查看单行的简洁历史</span></span><br><span class="line"><span class="comment"># --graph   查看图形化的版本历史</span></span><br><span class="line"><span class="comment"># -n4       查看最近四条历史</span></span><br><span class="line"></span><br><span class="line">$ git <span class="built_in">help</span> --web <span class="built_in">log</span>    <span class="comment">#跳转到git log的帮助文档网页</span></span><br></pre></td></tr></table></figure>
-<p><br></p>
 <h3 id="仓库目录下.git文件夹">7. 仓库目录下.git文件夹</h3>
 <figure>
-<img src="/.io//git01.png" alt><figcaption>.git文件夹内容</figcaption>
+<img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesgit01.png" alt="" /><figcaption>.git文件夹下内容</figcaption>
 </figure>
 <ul>
 <li><p>HEAD文件内容为一个引用，指向当前工作的分支（执行切换分支操作时内容会变化）</p></li>
