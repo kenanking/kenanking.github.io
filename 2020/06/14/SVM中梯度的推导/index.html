@@ -14,26 +14,27 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"tangyan.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="这里记录的是在学习CS231n过程中SVM中的梯度推导过程">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SVM中梯度的推导">
-<meta property="og:url" content="https://tangyan.github.io/2020/06/14/SVM%E4%B8%AD%E6%A2%AF%E5%BA%A6%E7%9A%84%E6%8E%A8%E5%AF%BC/index.html">
+<meta property="og:url" content="https://kenanking.github.io/2020/06/14/SVM%E4%B8%AD%E6%A2%AF%E5%BA%A6%E7%9A%84%E6%8E%A8%E5%AF%BC/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
 <meta property="og:description" content="这里记录的是在学习CS231n过程中SVM中的梯度推导过程">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-06-14T04:44:24.000Z">
-<meta property="article:modified_time" content="2020-06-14T04:58:09.822Z">
+<meta property="article:modified_time" content="2020-06-14T06:21:04.125Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="机器学习">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://tangyan.github.io/2020/06/14/SVM%E4%B8%AD%E6%A2%AF%E5%BA%A6%E7%9A%84%E6%8E%A8%E5%AF%BC/">
+<link rel="canonical" href="https://kenanking.github.io/2020/06/14/SVM%E4%B8%AD%E6%A2%AF%E5%BA%A6%E7%9A%84%E6%8E%A8%E5%AF%BC/">
 
 
 <script id="page-configurations">
@@ -151,7 +152,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://tangyan.github.io/2020/06/14/SVM%E4%B8%AD%E6%A2%AF%E5%BA%A6%E7%9A%84%E6%8E%A8%E5%AF%BC/">
+    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/06/14/SVM%E4%B8%AD%E6%A2%AF%E5%BA%A6%E7%9A%84%E6%8E%A8%E5%AF%BC/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -175,7 +176,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-06-14 12:44:24 / 修改时间：12:58:09" itemprop="dateCreated datePublished" datetime="2020-06-14T12:44:24+08:00">2020-06-14</time>
+              <time title="创建时间：2020-06-14 12:44:24 / 修改时间：14:21:04" itemprop="dateCreated datePublished" datetime="2020-06-14T12:44:24+08:00">2020-06-14</time>
             </span>
 
           
@@ -192,25 +193,25 @@
         <p>这里记录的是在学习CS231n过程中SVM中的梯度推导过程</p>
 <a id="more"></a>
 <p><span class="math display">\[ f(x_i, W) =  W^{T} x_i \]</span></p>
-<p>$ x_i <span class="math inline">\(表示第\)</span> i <span class="math inline">\(个样本。假设有\)</span> N <span class="math inline">\(个样本,特征个数为\)</span> D <span class="math inline">\(，\)</span> X <span class="math inline">\(的维度为\)</span> (N, D) $</p>
-<p>$ y_j <span class="math inline">\(表示该样本的label，假设有\)</span> C $个类</p>
-<p>$ W <span class="math inline">\(表示权重，\)</span> W <span class="math inline">\(的维度为\)</span> (D, C) $</p>
+<p><span class="math inline">\(x_i\)</span>表示第<span class="math inline">\(i\)</span>个样本。假设有<span class="math inline">\(N\)</span>个样本,特征个数为<span class="math inline">\(D\)</span>，<span class="math inline">\(X\)</span>的维度为<span class="math inline">\((N, D)\)</span></p>
+<p><span class="math inline">\(y_j\)</span>表示该样本的label，假设有<span class="math inline">\(C\)</span>个类</p>
+<p><span class="math inline">\(W\)</span>表示权重，<span class="math inline">\(W\)</span>的维度为<span class="math inline">\((D, C)\)</span></p>
 <h4 id="loss-function">Loss Function:</h4>
 <p><span class="math display">\[ L =  \underbrace{ \frac{1}{N} \sum_i L_i }_\text{data loss} + \underbrace{ \lambda R(W) }_\text{regularization loss} \]</span></p>
 <p><span class="math display">\[ L_i = \sum_{j\neq y_i} \max(0, s_j - s_{y_i} + \Delta) \]</span></p>
-<p>其中： $ i <span class="math inline">\(表示第\)</span> i $个训练样本 $ s_j <span class="math inline">\(表示第\)</span> j $类的score $ $表示我们希望正确类的score相比其他类的score高出的数值，可以自己设定</p>
+<p>其中： <span class="math inline">\(i\)</span>表示第<span class="math inline">\(i\)</span>个训练样本 <span class="math inline">\(s_j\)</span>表示第<span class="math inline">\(j\)</span>类的score <span class="math inline">\(\Delta\)</span>表示我们希望正确类的score相比其他类的score高出的数值，可以自己设定</p>
 <p>由score function可以得到： <span class="math display">\[ s_j = f(x_i, W^{T}_j) = W^{T}_j x_i  \]</span></p>
 <p><span class="math display">\[ s_{y_i} = f(x_i, W^{T}_{y_i}) = W^{T}_{y_i} x_i \]</span></p>
 <p>即对于某一个样本：</p>
 <p><span class="math display">\[ L_i = \sum_{j\neq y_i} \max(0, W^{T}_j x_i - W^{T}_{y_i} x_i + \Delta) \]</span></p>
-<p>对$ L_i <span class="math inline">\(求导可以得到\)</span> W $， $ W $用矩阵形式表达为：</p>
+<p>对<span class="math inline">\(L_i\)</span>求导可以得到<span class="math inline">\(\mathrm{d}W\)</span>，<span class="math inline">\(\mathrm{d}W\)</span>用矩阵形式表达为：</p>
 <p><span class="math display">\[ \mathrm{d}W=
 \begin{bmatrix}
 \frac{\mathrm{d}Li}{\mathrm{d}w_{11}} &amp; \frac{\mathrm{d}Li}{\mathrm{d}w_{12}} &amp; \dots &amp; \frac{\mathrm{d}Li}{\mathrm{d}w_{1y_i}} &amp; \dots &amp; \frac{\mathrm{d}Li}{\mathrm{d}w_{1C}} \\ 
 \vdots &amp; \vdots &amp; \ddots &amp; \vdots &amp; \ddots &amp; \vdots \\ 
 \frac{\mathrm{d}Li}{\mathrm{d}w_{D1}} &amp; \frac{\mathrm{d}Li}{\mathrm{d}w_{D2}} &amp; \dots &amp; \frac{\mathrm{d}Li}{\mathrm{d}w_{Dy_i}} &amp; \dots &amp; \frac{\mathrm{d}Li}{\mathrm{d}w_{DC}}
 \end{bmatrix} \]</span></p>
-<p>对于一个元素$  <span class="math inline">\(，如果\)</span> W^{T}<em>j x_i - W^{T}</em>{y_i} x_i + &gt; 0<span class="math inline">\(，那么\)</span> L_i $经展开可得：</p>
+<p>对于一个元素<span class="math inline">\(\frac{\mathrm{d}Li}{\mathrm{d}w_{11}}\)</span>，如果<span class="math inline">\(W^{T}_j x_i - W^{T}_{y_i} x_i + \Delta &gt; 0\)</span>，那么<span class="math inline">\(L_i\)</span>经展开可得：</p>
 <p><span class="math display">\[ \begin{aligned}
 L_i = &amp;(x_{i1}w_{11} + x_{i2}w_{21} + \dotsb + x_{iD}w_{D1}) - (x_{i1}w_{1y_i} + x_{i2}w_{2y_i} + \dotsb + x_{iD}w_{Dy_i}) + \Delta \\ 
 &amp;+(x_{i1}w_{12} + x_{i2}w_{22} + \dotsb + x_{iD}w_{D2}) - (x_{i1}w_{1y_i} + x_{i2}w_{2y_i} + \dotsb + x_{iD}w_{Dy_i}) + \Delta \\ &amp; + \dotsb \\ &amp; + (x_{i1}w_{1C} + x_{i2}w_{2C} + \dotsb + x_{iD}w_{DC}) - (x_{i1}w_{1y_i} + x_{i2}w_{2y_i} + \dotsb + x_{iD}w_{Dy_i}) + \Delta
@@ -221,11 +222,11 @@ L_i = &amp;(x_{i1}w_{11} + x_{i2}w_{21} + \dotsb + x_{iD}w_{D1}) - (x_{i1}w_{1y_
 <p><span class="math display">\[ \begin{aligned}
     \frac{\mathrm{d}Li}{\mathrm{d}W_{11}} &amp;= x_{i1} \\ \frac{\mathrm{d}Li}{\mathrm{d}W_{21}} &amp;= x_{i2} \\ \frac{\mathrm{d}Li}{\mathrm{d}W_{31}} &amp;= x_{i3} \\ &amp;\vdots \\ \frac{\mathrm{d}Li}{\mathrm{d}W_{D1}} &amp;= x_{iD} 
 \end{aligned} \]</span></p>
-<p>经合并可以得到，当$ j y_1 $时：</p>
+<p>经合并可以得到，当<span class="math inline">\(j \neq y_1\)</span>时：</p>
 <p><span class="math display">\[ \frac{\mathrm{d}Li}{\mathrm{d}W_{j}} = \begin{bmatrix}
     x_{i1} \\ x_{i2} \\x_{i3} \\ \vdots \\x_{iD}
 \end{bmatrix} = x_i \]</span></p>
-<p>同样的方法可以得到，当$ j = y_1 $时：</p>
+<p>同样的方法可以得到，当<span class="math inline">\(j = y_1\)</span>时：</p>
 <p><span class="math display">\[ \frac{\mathrm{d}Li}{\mathrm{d}W_{y_i}} = -\begin{bmatrix}
     x_{i1} \\ x_{i2} \\x_{i3} \\ \vdots \\x_{iD}
 \end{bmatrix} = -x_i \]</span></p>
@@ -331,7 +332,7 @@ L_i = &amp;(x_{i1}w_{11} + x_{i2}w_{21} + \dotsb + x_{iD}w_{D1}) - (x_{i1}w_{1y_
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -382,6 +383,8 @@ L_i = &amp;(x_{i1}w_{11} + x_{i2}w_{21} + \dotsb + x_{iD}w_{D1}) - (x_{i1}w_{1y_
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 
@@ -417,6 +420,61 @@ L_i = &amp;(x_{i1}w_{11} + x_{i2}w_{21} + \dotsb + x_{iD}w_{D1}) - (x_{i1}w_{1y_
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+          load: ['[tex]/mhchem'],
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+          packages: {'[+]': ['mhchem']},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
