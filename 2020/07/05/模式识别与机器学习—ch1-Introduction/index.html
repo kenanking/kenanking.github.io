@@ -301,29 +301,28 @@ E(\mathbf{w})=\frac{1}{2} \sum_{n=1}^{N}\left\{y\left(x_{n}, \mathbf{w}\right)-t
 <p>下面是解析法求参数<span class="math inline">\(\mathbf{w}^{*}\)</span>的简要推导过程：</p>
 <p><span class="math display">\[
 \begin{align}
-E(\mathbf{w})&amp;=\frac{1}{2} \sum_{n=1}^{N}\{y(x_{n}, \mathbf{w})-t_{n}\}^{2} \\
-             &amp;=\frac{1}{2}(\substack{X \\{\scriptsize N \times (M+1)} }  \substack{\mathbf{w} \\{\scriptsize (M+1) \times 1} }-\substack{\mathbf{t} \\{\scriptsize N \times 1} })^{T}(\substack{X \\{\scriptsize N \times (M+1)} }  \substack{\mathbf{w} \\{\scriptsize (M+1) \times 1} }-\substack{\mathbf{t} \\{\scriptsize N \times 1} }) \\
-             &amp;=\frac{1}{2}((X \mathbf{w})^{T}-\mathbf{t}^{T})(X \mathbf{w}-\mathbf{t}) \\
-             &amp;=\frac{1}{2}(\mathbf{w}^{T} X^{T}-\mathbf{t}^{T})(X \mathbf{w}-\mathbf{t}) \\
-             &amp;=\frac{1}{2}(\mathbf{w}^{T} X^{T} X \mathbf{w}-\mathbf{t}^{T} X \mathbf{w}-\mathbf{w}^{T} X^{T} \mathbf{t}+\mathbf{t}^{T} \mathbf{t})
-\nonumber
+E(\mathbf{w})&amp;=\frac{1}{2} \sum_{n=1}^{N}\{y(x_{n}, \mathbf{w})-t_{n}\}^{2} \notag\\
+             &amp;=\frac{1}{2}(\substack{X \\{\scriptsize N \times (M+1)} }  \substack{\mathbf{w} \\{\scriptsize (M+1) \times 1} }-\substack{\mathbf{t} \\{\scriptsize N \times 1} })^{T}(\substack{X \\{\scriptsize N \times (M+1)} }  \substack{\mathbf{w} \\{\scriptsize (M+1) \times 1} }-\substack{\mathbf{t} \\{\scriptsize N \times 1} }) \notag\\
+             &amp;=\frac{1}{2}((X \mathbf{w})^{T}-\mathbf{t}^{T})(X \mathbf{w}-\mathbf{t}) \notag\\
+             &amp;=\frac{1}{2}(\mathbf{w}^{T} X^{T}-\mathbf{t}^{T})(X \mathbf{w}-\mathbf{t}) \notag\\
+             &amp;=\frac{1}{2}(\mathbf{w}^{T} X^{T} X \mathbf{w}-\mathbf{t}^{T} X \mathbf{w}-\mathbf{w}^{T} X^{T} \mathbf{t}+\mathbf{t}^{T} \mathbf{t}) \notag
 \end{align}
 \]</span></p>
 <p>对<span class="math inline">\(E(\mathbf{w})\)</span>求导，当导数为零时，可以得到<span class="math inline">\(E(\mathbf{w})\)</span>的最小值： <span class="math display">\[
 \begin{align}
-\frac{\partial E(\mathbf{w})}{\partial \mathbf{w}}&amp;=\frac{1}{2}(2 X^{T} X \mathbf{w}-(\mathbf{t}^{T} X)^{T}-X^{T} \mathbf{t}) \\
-&amp;=\frac{1}{2}(2 X^{T} X \mathbf{w}-X^{T} \mathbf{t}-X^{T} \mathbf{t}) \\
+\frac{\partial E(\mathbf{w})}{\partial \mathbf{w}}&amp;=\frac{1}{2}(2 X^{T} X \mathbf{w}-(\mathbf{t}^{T} X)^{T}-X^{T} \mathbf{t}) \notag\\
+&amp;=\frac{1}{2}(2 X^{T} X \mathbf{w}-X^{T} \mathbf{t}-X^{T} \mathbf{t}) \notag\\
 &amp;=X^{T} X \mathbf{w}-X^{T} \mathbf{t}
-\nonumber
+\notag
 \end{align}
 \]</span></p>
 <p>令导数为零：</p>
 <p><span class="math display">\[
 \begin{align}
-X^{T} X \mathbf{w}-X^{T} \mathbf{t} &amp;= 0 \\
-X^{T} X \mathbf{w} &amp;= X^{T} \mathbf{t} \\
+X^{T} X \mathbf{w}-X^{T} \mathbf{t} &amp;= 0 \notag\\
+X^{T} X \mathbf{w} &amp;= X^{T} \mathbf{t} \notag\\
 \mathbf{w} &amp;= (X^{T} X)^{-1} X^{T} \mathbf{t}
-\nonumber
+\notag
 \end{align}
 \]</span></p>
 <p>所以最终线性回归的解析解为：<span class="math inline">\(\mathbf{w} = (X^{T} X)^{-1} X^{T} \mathbf{t}\)</span>。</p>
