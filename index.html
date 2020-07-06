@@ -389,13 +389,14 @@ E(\mathbf{w})&amp;=\frac{1}{2} \sum_{n=1}^{N}\{y(x_{n}, \mathbf{w})-t_{n}\}^{2} 
              &amp;=\frac{1}{2}(\substack{X \\{\scriptsize N \times (M+1)} }  \substack{\mathbf{w} \\{\scriptsize (M+1) \times 1} }-\substack{\mathbf{t} \\{\scriptsize N \times 1} })^{T}(\substack{X \\{\scriptsize N \times (M+1)} }  \substack{\mathbf{w}  \\{\scriptsize (M+1) \times 1} }-\substack{\mathbf{t} \\{\scriptsize N \times 1} }) \notag \\
              &amp;=\frac{1}{2}((X \mathbf{w})^{T}-\mathbf{t}^{T})(X \mathbf{w}-\mathbf{t}) \notag \\
              &amp;=\frac{1}{2}(\mathbf{w}^{T} X^{T}-\mathbf{t}^{T})(X \mathbf{w}-\mathbf{t}) \notag \\
-             &amp;=\frac{1}{2}(\mathbf{w}^{T} X^{T} X \mathbf{w}-\mathbf{t}^{T} X \mathbf{w}-\mathbf{w}^{T} X^{T} \mathbf{t}+\mathbf{t}^{T} \mathbf{t}) \notag
+             &amp;=\frac{1}{2}(\mathbf{w}^{T} X^{T} X \mathbf{w}-\mathbf{t}^{T} X \mathbf{w}-\mathbf{w}^{T} X^{T} \mathbf{t}+\mathbf{t}^{T} \mathbf{t}) \notag \\
+             &amp;=\frac{1}{2}(\mathbf{w}^{T} X^{T} X \mathbf{w}-2\mathbf{w}^{T} X^{T} \mathbf{t}+\mathbf{t}^{T} \mathbf{t}) \notag
 \end{align}
 \]</span></p>
 <p>对<span class="math inline">\(E(\mathbf{w})\)</span>求导，当导数为零时，可以得到<span class="math inline">\(E(\mathbf{w})\)</span>的最小值： <span class="math display">\[
 \begin{align}
-\frac{\partial E(\mathbf{w})}{\partial \mathbf{w}}&amp;=\frac{1}{2}(2 X^{T} X \mathbf{w}-(\mathbf{t}^{T} X)^{T}-X^{T} \mathbf{t}) \notag \\
-&amp;=\frac{1}{2}(2 X^{T} X \mathbf{w}-X^{T} \mathbf{t}-X^{T} \mathbf{t}) \notag \\
+\frac{\partial E(\mathbf{w})}{\partial \mathbf{w}}
+&amp;=\frac{1}{2}(2 X^{T} X \mathbf{w}-2X^{T} \mathbf{t}) \notag \\
 &amp;=X^{T} X \mathbf{w}-X^{T} \mathbf{t} \notag
 \end{align}
 \]</span></p>
@@ -455,10 +456,11 @@ E_{\mathrm{RMS}}=\sqrt{2 E(\mathbf{w}^{*}) / N}
 <p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesRMSErrorLambda.png" alt="均方根误差随ln(λ)的变化"  /></p>
 <h2 id="概率论">1.2 概率论</h2>
 <hr />
-<h2 id="其他参考资料">其他参考资料：</h2>
+<h2 id="其他参考资料">其他参考资料</h2>
 <ol type="1">
-<li><p>部分代码参考：https://github.com/ctgk/PRML</p></li>
-<li><p>线性回归解析法推导过程：https://blog.csdn.net/a755199443/article/details/104198033</p></li>
+<li>部分代码参考：https://github.com/ctgk/PRML</li>
+<li>线性回归解析法推导过程：https://blog.csdn.net/a755199443/article/details/104198033</li>
+<li>机器学习-白板推导系列-线性回归(Linear Regression)：https://github.com/shuhuai007/Machine-Learning-Session</li>
 </ol>
 
       
