@@ -375,16 +375,44 @@ E_{\mathrm{RMS}}=\sqrt{2 E(\mathbf{w}^{*}) / N}
 <p>在模式识别中的关键就是不确定性，这是由于测量误差和数据集大小的有限性引起的。概率论为这种不确定性的量化和计算提供了一个框架。</p>
 <p>这一部分首先介绍了概率论中的两个基本法则： <span class="math display">\[
 \begin{eqnarray}
-\text { sum rule } &amp; p(X) &amp; = &amp; \sum_{Y} p(X, Y) \\
-\text { product rule } &amp; p(X, Y) &amp; = &amp; p(Y \mid X) p(X)
+\text { sum rule } \quad\quad &amp; p(X) &amp; = &amp; \sum_{Y} p(X, Y) \\
+\text { product rule }\quad\quad &amp; p(X, Y) &amp; = &amp; p(Y \mid X) p(X)
 \end{eqnarray}
 \]</span></p>
 <p>然后介绍了<strong>贝叶斯定理（Bayes’ theorem）</strong>，这个定理在模式识别和机器学习中起到重要作用。 <span class="math display">\[
 p(Y \mid X)=\frac{p(X \mid Y) p(Y)}{p(X)}
 \]</span></p>
-<p>在这个公式中<span class="math inline">\(p(X)\)</span>为<strong>先验概率（prior probability）</strong>，因为这个概率值在事件还没发生之前我们就知道。<span class="math inline">\(p(Y \mid X)\)</span>为<strong>后验概率（posterior probability）</strong>，因为这个概率是在我们通过实验产生了结果<span class="math inline">\(X\)</span>后才计算出来的。</p>
-<p>在概率论课上老师其实讲过，<span class="math inline">\(p(X)\)</span>可以看作“结果”的概率，<span class="math inline">\(p(Y \mid X)\)</span>可以看作由<span class="math inline">\(Y\)</span>引起<span class="math inline">\(X\)</span>的“原因”的概率。</p>
+<p><span class="math inline">\(p(X)\)</span>可以由全概率公式求得，即：<span class="math inline">\(p(X)=\sum_{Y} p(X \mid Y) p(Y)\)</span>。</p>
+<p>在这个公式中<span class="math inline">\(p(Y)\)</span>为<strong>先验概率（prior probability）</strong>，因为这个概率值在事件还没发生之前我们就知道。<span class="math inline">\(p(Y \mid X)\)</span>为<strong>后验概率（posterior probability）</strong>，因为这个概率是在我们通过实验产生了结果<span class="math inline">\(X\)</span>后才计算出来的。</p>
 <h3 id="概率密度">1.2.1 概率密度</h3>
+<p>对于连续变量<span class="math inline">\(x\)</span>，当<span class="math inline">\(\delta x \rightarrow 0\)</span>时，在区间<span class="math inline">\((x, x+\delta x)\)</span>上的概率为<span class="math inline">\(p(x)\delta x\)</span>，这里的<span class="math inline">\(p(x)\)</span>为变量<span class="math inline">\(x\)</span>的<strong>概率密度（probability density）</strong>。</p>
+<p>概率密度满足下面两个性质： <span class="math display">\[
+\begin{eqnarray}
+\mathsf{非负性}   \quad\quad  &amp; p(x) \mathrm{d} x &amp; \ge  &amp; 1 \\
+\mathsf{规范性}   \quad\quad  &amp; \int_{-\infty}^{\infty} p(x) \mathrm{d} x &amp; = &amp; 1
+\end{eqnarray}
+\]</span></p>
+<p>在变量为非线性的情况下，可以通过Jacobian因子进行转换。假设有两个变量关系为<span class="math inline">\(x=g(y)\)</span>，现在有概率密度函数<span class="math inline">\(p_x(x)\)</span>，那么可以得到： <span class="math display">\[
+\begin{eqnarray}
+p_{y}(y) &amp; &amp; = &amp; p_{x}(x)\left|\frac{\mathrm{d} x}{\mathrm{d} y}\right| \\
+&amp; &amp; = &amp; p_{x}(g(y))\left|g^{\prime}(y)\right|
+\end{eqnarray}
+\]</span></p>
+<p>位于区间<span class="math inline">\((-\infty, z)\)</span>的<span class="math inline">\(x\)</span>的概率由<strong>累积分布函数(cumulative distribution function)</strong>给出： <span class="math display">\[
+P(z)=\int_{-\infty}^{z} p(x) \mathrm{d} x
+\]</span></p>
+<p>概率的加法、乘法，贝叶斯定理对于离散型随机变量和连续型随机变量，以及它们的组合都成立。</p>
+<h3 id="期望和协方差">1.2.2 期望和协方差</h3>
+<p><strong>期望（expectation）</strong>就是函数的加权平均值，对于函数<span class="math inline">\(f(x)\)</span>的期望记作<span class="math inline">\(\mathbb{E}[f]\)</span>。</p>
+<p>在离散情况下： <span class="math display">\[
+\mathbb{E}[f]=\sum_{x} p(x) f(x)
+\]</span> 在连续情况下： <span class="math display">\[
+\mathbb{E}[f]=\int p(x) f(x) \mathrm{d} x
+\]</span></p>
+<p>在两种情况下，如果给定有限数量的<span class="math inline">\(N\)</span>个点，可以通过求和的方式来估计期望： <span class="math display">\[
+\mathbb{E}[f] \simeq \frac{1}{N} \sum_{n=1}^{N} f\left(x_{n}\right)
+\]</span></p>
+<h3 id="贝叶斯概率">1.2.3 贝叶斯概率</h3>
 <hr />
 <h2 id="其他参考资料">其他参考资料</h2>
 <ol type="1">
@@ -474,7 +502,7 @@ p(Y \mid X)=\frac{p(X \mid Y) p(Y)}{p(X)}
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#例子多项式曲线拟合"><span class="nav-text">1.1 例子：多项式曲线拟合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述"><span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解析法推导过程"><span class="nav-text">解析法推导过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线性回归代码实现"><span class="nav-text">线性回归代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析"><span class="nav-text">分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#增大训练集的数据规模"><span class="nav-text">增大训练集的数据规模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正则化"><span class="nav-text">正则化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#含正则化的线性回归代码实现"><span class="nav-text">含正则化的线性回归代码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率论"><span class="nav-text">1.2 概率论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概率密度"><span class="nav-text">1.2.1 概率密度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#例子多项式曲线拟合"><span class="nav-text">1.1 例子：多项式曲线拟合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述"><span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解析法推导过程"><span class="nav-text">解析法推导过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线性回归代码实现"><span class="nav-text">线性回归代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析"><span class="nav-text">分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#增大训练集的数据规模"><span class="nav-text">增大训练集的数据规模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正则化"><span class="nav-text">正则化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#含正则化的线性回归代码实现"><span class="nav-text">含正则化的线性回归代码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率论"><span class="nav-text">1.2 概率论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概率密度"><span class="nav-text">1.2.1 概率密度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#期望和协方差"><span class="nav-text">1.2.2 期望和协方差</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#贝叶斯概率"><span class="nav-text">1.2.3 贝叶斯概率</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
