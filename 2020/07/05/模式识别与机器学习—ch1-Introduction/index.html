@@ -37,7 +37,7 @@
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesdifferentNResultsReg.png">
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesRMSErrorLambda.png">
 <meta property="article:published_time" content="2020-07-05T08:43:25.000Z">
-<meta property="article:modified_time" content="2020-07-06T11:03:52.000Z">
+<meta property="article:modified_time" content="2020-07-07T09:18:52.000Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
@@ -210,7 +210,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-06 19:03:52" itemprop="dateModified" datetime="2020-07-06T19:03:52+08:00">2020-07-06</time>
+                <time title="修改时间：2020-07-07 17:18:52" itemprop="dateModified" datetime="2020-07-07T17:18:52+08:00">2020-07-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -371,12 +371,13 @@ E_{\mathrm{RMS}}=\sqrt{2 E(\mathbf{w}^{*}) / N}
 <p>当<span class="math inline">\(\lambda\)</span>较大时，获得的函数越光滑。下面是在训练集和测试集上的均方根误差随<span class="math inline">\(ln(\lambda)\)</span>的变化情况：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">trainingErrors = []</span><br><span class="line">testErrors = []</span><br><span class="line">x = list(range(<span class="number">-40</span>, <span class="number">21</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">-40</span>, <span class="number">21</span>):</span><br><span class="line">    lambd = np.power(np.e, i)</span><br><span class="line"></span><br><span class="line">    model = LinearRegressionWithRegulariztion(<span class="number">9</span>,lambd)</span><br><span class="line">    model.fit(xTrain, yTrain)</span><br><span class="line">    yPredict = model.predict(xTest)</span><br><span class="line"></span><br><span class="line">    trainingErrors.append(computeRMSError(model.predict(xTrain), yTrain))</span><br><span class="line">    testErrors.append(computeRMSError(model.predict(xTest), yTest))</span><br><span class="line"></span><br><span class="line">plt.plot(x, trainingErrors, <span class="string">'-'</span>, mfc=<span class="string">"none"</span>,</span><br><span class="line">         mec=<span class="string">"b"</span>, ms=<span class="number">10</span>, c=<span class="string">"b"</span>, label=<span class="string">"Training"</span>)</span><br><span class="line">plt.plot(x, testErrors, <span class="string">'-'</span>, mfc=<span class="string">"none"</span>, mec=<span class="string">"r"</span>, ms=<span class="number">10</span>, c=<span class="string">"r"</span>, label=<span class="string">"Test"</span>)</span><br><span class="line">plt.xticks(np.arange(<span class="number">-35</span>, <span class="number">21</span>, <span class="number">5</span>))</span><br><span class="line">plt.yticks([<span class="number">0</span>, <span class="number">0.5</span>, <span class="number">1</span>, <span class="number">1.5</span>])</span><br><span class="line">plt.legend()</span><br><span class="line">plt.xlabel(<span class="string">"$ln(\lambda)$"</span>)</span><br><span class="line">plt.ylabel(<span class="string">"$E_&#123;RMS&#125;$"</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
 <p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesRMSErrorLambda.png" alt="均方根误差随ln(λ)的变化"  /></p>
+<hr />
 <h2 id="概率论">1.2 概率论</h2>
 <p>在模式识别中的关键就是不确定性，这是由于测量误差和数据集大小的有限性引起的。概率论为这种不确定性的量化和计算提供了一个框架。</p>
 <p>这一部分首先介绍了概率论中的两个基本法则： <span class="math display">\[
 \begin{eqnarray}
-\text { sum rule } \quad\quad &amp; p(X) &amp; = &amp; \sum_{Y} p(X, Y) \\
-\text { product rule }\quad\quad &amp; p(X, Y) &amp; = &amp; p(Y \mid X) p(X)
+\text { sum rule } \quad\quad &amp; p(X) &amp; = &amp; \sum_{Y} p(X, Y)  \notag \\
+\text { product rule }\quad\quad &amp; p(X, Y) &amp; = &amp; p(Y \mid X) p(X) \notag
 \end{eqnarray}
 \]</span></p>
 <p>然后介绍了<strong>贝叶斯定理（Bayes’ theorem）</strong>，这个定理在模式识别和机器学习中起到重要作用。 <span class="math display">\[
@@ -388,14 +389,14 @@ p(Y \mid X)=\frac{p(X \mid Y) p(Y)}{p(X)}
 <p>对于连续变量<span class="math inline">\(x\)</span>，当<span class="math inline">\(\delta x \rightarrow 0\)</span>时，在区间<span class="math inline">\((x, x+\delta x)\)</span>上的概率为<span class="math inline">\(p(x)\delta x\)</span>，这里的<span class="math inline">\(p(x)\)</span>为变量<span class="math inline">\(x\)</span>的<strong>概率密度（probability density）</strong>。</p>
 <p>概率密度满足下面两个性质： <span class="math display">\[
 \begin{eqnarray}
-\mathsf{非负性}   \quad\quad  &amp; p(x) \mathrm{d} x &amp; \ge  &amp; 1 \\
-\mathsf{规范性}   \quad\quad  &amp; \int_{-\infty}^{\infty} p(x) \mathrm{d} x &amp; = &amp; 1
+\mathsf{非负性}   \quad\quad  &amp; p(x) \mathrm{d} x &amp; \ge  &amp; 1 \notag \\
+\mathsf{规范性}   \quad\quad  &amp; \int_{-\infty}^{\infty} p(x) \mathrm{d} x &amp; = &amp; 1 \notag
 \end{eqnarray}
 \]</span></p>
 <p>在变量为非线性的情况下，可以通过Jacobian因子进行转换。假设有两个变量关系为<span class="math inline">\(x=g(y)\)</span>，现在有概率密度函数<span class="math inline">\(p_x(x)\)</span>，那么可以得到： <span class="math display">\[
 \begin{eqnarray}
-p_{y}(y) &amp; &amp; = &amp; p_{x}(x)\left|\frac{\mathrm{d} x}{\mathrm{d} y}\right| \\
-&amp; &amp; = &amp; p_{x}(g(y))\left|g^{\prime}(y)\right|
+p_{y}(y) &amp; &amp; = &amp; p_{x}(x)\left|\frac{\mathrm{d} x}{\mathrm{d} y}\right| \notag \\
+&amp; &amp; = &amp; p_{x}(g(y))\left|g^{\prime}(y)\right| \notag
 \end{eqnarray}
 \]</span></p>
 <p>位于区间<span class="math inline">\((-\infty, z)\)</span>的<span class="math inline">\(x\)</span>的概率由<strong>累积分布函数(cumulative distribution function)</strong>给出： <span class="math display">\[
@@ -403,6 +404,7 @@ P(z)=\int_{-\infty}^{z} p(x) \mathrm{d} x
 \]</span></p>
 <p>概率的加法、乘法，贝叶斯定理对于离散型随机变量和连续型随机变量，以及它们的组合都成立。</p>
 <h3 id="期望和协方差">1.2.2 期望和协方差</h3>
+<h4 id="期望">期望</h4>
 <p><strong>期望（expectation）</strong>就是函数的加权平均值，对于函数<span class="math inline">\(f(x)\)</span>的期望记作<span class="math inline">\(\mathbb{E}[f]\)</span>。</p>
 <p>在离散情况下： <span class="math display">\[
 \mathbb{E}[f]=\sum_{x} p(x) f(x)
@@ -412,6 +414,36 @@ P(z)=\int_{-\infty}^{z} p(x) \mathrm{d} x
 <p>在两种情况下，如果给定有限数量的<span class="math inline">\(N\)</span>个点，可以通过求和的方式来估计期望： <span class="math display">\[
 \mathbb{E}[f] \simeq \frac{1}{N} \sum_{n=1}^{N} f\left(x_{n}\right)
 \]</span></p>
+<p>此外，在两个随机变量的情况下，<span class="math inline">\(\mathbb{E}_{x}[f(x, y)]\)</span>表示函数<span class="math inline">\(f(x, y)\)</span>关于<span class="math inline">\(x\)</span>的分布的期望，<span class="math inline">\(\mathbb{E}_{x}[f(x, y)]\)</span>为关于<span class="math inline">\(y\)</span>的一个函数。</p>
+<p>条件分布的<strong>条件期望（conditional expectation）</strong>：</p>
+<p>在离散情况下： <span class="math display">\[
+\mathbb{E}_{x}[f \mid y]=\sum_{x} p(x \mid y) f(x)
+\]</span></p>
+<h4 id="方差">方差</h4>
+<p>函数<span class="math inline">\(f(x)\)</span>的<strong>方差（variance）</strong>为： <span class="math display">\[
+\operatorname{var}[f]=\mathbb{E}\left[(f(x)-\mathbb{E}[f(x)])^{2}\right]
+\]</span></p>
+<p>将平方项展开，也可以得到： <span class="math display">\[
+\operatorname{var}[f]=\mathbb{E}\left[f(x)^{2}\right]-\mathbb{E}[f(x)]^{2}
+\]</span></p>
+<p>特别的，对于变量<span class="math inline">\(x\)</span>本身的方差为： <span class="math display">\[
+\operatorname{var}[x]=\mathbb{E}\left[x^{2}\right]-\mathbb{E}[x]^{2}
+\]</span></p>
+<h4 id="协方差">协方差</h4>
+<p>对于两个随机变量<span class="math inline">\(x\)</span>和<span class="math inline">\(y\)</span>，它们的<strong>协方差（covariance）</strong>为： <span class="math display">\[
+\begin{aligned}
+\operatorname{cov}[x, y] &amp;=\mathbb{E}_{x, y}[\{x-\mathbb{E}[x]\}\{y-\mathbb{E}[y]\}] \notag \\
+&amp;=\mathbb{E}_{x, y}[x y]-\mathbb{E}[x] \mathbb{E}[y]  \notag
+\end{aligned}
+\]</span></p>
+<p>协方差表示了两个变量变化情况相同的程度。当变量<span class="math inline">\(x\)</span>和<span class="math inline">\(y\)</span>相互独立时，协方差为<span class="math inline">\(0\)</span>。</p>
+<p>在<span class="math inline">\(\mathbf{x}\)</span>和<span class="math inline">\(\mathbf{y}\)</span>都是<span class="math inline">\(n\)</span>维向量的情况下，协方差变成一个矩阵——<strong>互协方差阵</strong>： <span class="math display">\[
+\begin{aligned}
+\operatorname{cov}[\mathbf{x}, \mathbf{y}] &amp;=\mathbb{E}_{\mathbf{x}, \mathbf{y}}\left[\{\mathbf{x}-\mathbb{E}[\mathbf{x}]\}\left\{\mathbf{y}^{\mathrm{T}}-\mathbb{E}\left[\mathbf{y}^{\mathrm{T}}\right]\right\}\right] \notag \\
+&amp;=\mathbb{E}_{\mathbf{x}, \mathbf{y}}\left[\mathbf{x} \mathbf{y}^{\mathrm{T}}\right]-\mathbb{E}[\mathbf{x}] \mathbb{E}\left[\mathbf{y}^{\mathrm{T}}\right] \notag
+\end{aligned}
+\]</span></p>
+<p>如果考虑向量<span class="math inline">\(\mathbf{x}\)</span>各个分量之间的协方差，那么可以得到随机向量<span class="math inline">\(\mathbf{x}\)</span>的<strong>方差—协方差阵</strong>，记为：<span class="math inline">\(\operatorname{cov}[\mathrm{x}] \equiv \operatorname{cov}[\mathrm{x}, \mathrm{x}]\)</span>。</p>
 <h3 id="贝叶斯概率">1.2.3 贝叶斯概率</h3>
 <hr />
 <h2 id="其他参考资料">其他参考资料</h2>
@@ -502,7 +534,7 @@ P(z)=\int_{-\infty}^{z} p(x) \mathrm{d} x
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#例子多项式曲线拟合"><span class="nav-text">1.1 例子：多项式曲线拟合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述"><span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解析法推导过程"><span class="nav-text">解析法推导过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线性回归代码实现"><span class="nav-text">线性回归代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析"><span class="nav-text">分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#增大训练集的数据规模"><span class="nav-text">增大训练集的数据规模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正则化"><span class="nav-text">正则化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#含正则化的线性回归代码实现"><span class="nav-text">含正则化的线性回归代码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率论"><span class="nav-text">1.2 概率论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概率密度"><span class="nav-text">1.2.1 概率密度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#期望和协方差"><span class="nav-text">1.2.2 期望和协方差</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#贝叶斯概率"><span class="nav-text">1.2.3 贝叶斯概率</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#例子多项式曲线拟合"><span class="nav-text">1.1 例子：多项式曲线拟合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述"><span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解析法推导过程"><span class="nav-text">解析法推导过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线性回归代码实现"><span class="nav-text">线性回归代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析"><span class="nav-text">分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#增大训练集的数据规模"><span class="nav-text">增大训练集的数据规模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正则化"><span class="nav-text">正则化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#含正则化的线性回归代码实现"><span class="nav-text">含正则化的线性回归代码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率论"><span class="nav-text">1.2 概率论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概率密度"><span class="nav-text">1.2.1 概率密度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#期望和协方差"><span class="nav-text">1.2.2 期望和协方差</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#期望"><span class="nav-text">期望</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方差"><span class="nav-text">方差</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#协方差"><span class="nav-text">协方差</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#贝叶斯概率"><span class="nav-text">1.2.3 贝叶斯概率</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
