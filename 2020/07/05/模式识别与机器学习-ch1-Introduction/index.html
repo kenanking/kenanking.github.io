@@ -23,12 +23,12 @@
     var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="模式识别与机器学习—ch1_Introduction   多项式曲线拟合  概率论  模型选择  维度灾难  决策论  信息论">
+  <meta name="description" content="多项式曲线拟合  概率论  模型选择  维度灾难  决策论  信息论">
 <meta property="og:type" content="article">
-<meta property="og:title" content="模式识别与机器学习—ch1_Introduction">
-<meta property="og:url" content="https://kenanking.github.io/2020/07/05/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94ch1-Introduction/index.html">
+<meta property="og:title" content="模式识别与机器学习_ch1-Introduction">
+<meta property="og:url" content="https://kenanking.github.io/2020/07/05/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch1-Introduction/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
-<meta property="og:description" content="模式识别与机器学习—ch1_Introduction   多项式曲线拟合  概率论  模型选择  维度灾难  决策论  信息论">
+<meta property="og:description" content="多项式曲线拟合  概率论  模型选择  维度灾难  决策论  信息论">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagestraining_data.png">
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesdifferentMResults.png">
@@ -37,14 +37,14 @@
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesdifferentNResultsReg.png">
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesRMSErrorLambda.png">
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesnormal%20distribution.png">
-<meta property="article:published_time" content="2020-07-05T08:43:25.000Z">
-<meta property="article:modified_time" content="2020-07-08T11:36:34.000Z">
+<meta property="article:published_time" content="2020-07-05T11:46:19.000Z">
+<meta property="article:modified_time" content="2020-07-08T11:46:19.000Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagestraining_data.png">
 
-<link rel="canonical" href="https://kenanking.github.io/2020/07/05/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94ch1-Introduction/">
+<link rel="canonical" href="https://kenanking.github.io/2020/07/05/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch1-Introduction/">
 
 
 <script id="page-configurations">
@@ -57,7 +57,7 @@
   };
 </script>
 
-  <title>模式识别与机器学习—ch1_Introduction | 额呵呵的博客</title>
+  <title>模式识别与机器学习_ch1-Introduction | 额呵呵的博客</title>
   
 
 
@@ -179,7 +179,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/05/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94ch1-Introduction/">
+    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/05/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch1-Introduction/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -192,7 +192,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          模式识别与机器学习—ch1_Introduction
+          模式识别与机器学习_ch1-Introduction
         </h1>
 
         <div class="post-meta">
@@ -204,14 +204,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-07-05 16:43:25" itemprop="dateCreated datePublished" datetime="2020-07-05T16:43:25+08:00">2020-07-05</time>
+              <time title="创建时间：2020-07-05 19:46:19" itemprop="dateCreated datePublished" datetime="2020-07-05T19:46:19+08:00">2020-07-05</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-08 19:36:34" itemprop="dateModified" datetime="2020-07-08T19:36:34+08:00">2020-07-08</time>
+                <time title="修改时间：2020-07-08 19:46:19" itemprop="dateModified" datetime="2020-07-08T19:46:19+08:00">2020-07-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -224,7 +224,7 @@
             </span>
 
           
-            <span id="/2020/07/05/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E2%80%94ch1-Introduction/" class="post-meta-item leancloud_visitors" data-flag-title="模式识别与机器学习—ch1_Introduction" title="阅读次数">
+            <span id="/2020/07/05/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch1-Introduction/" class="post-meta-item leancloud_visitors" data-flag-title="模式识别与机器学习_ch1-Introduction" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -241,8 +241,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="模式识别与机器学习ch1_introduction">模式识别与机器学习—ch1_Introduction</h1>
-<ul class="task-list">
+        <ul class="task-list">
 <li><input type="checkbox" disabled="" checked="" />
 多项式曲线拟合</li>
 <li><input type="checkbox" disabled="" />
@@ -591,7 +590,7 @@ p\left(\mathbf{x} \mid \mu, \sigma^{2}\right)=\prod_{n=1}^{N} \mathcal{N}\left(x
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#模式识别与机器学习ch1_introduction"><span class="nav-text">模式识别与机器学习—ch1_Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#例子多项式曲线拟合"><span class="nav-text">1.1 例子：多项式曲线拟合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述"><span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解析法推导过程"><span class="nav-text">解析法推导过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线性回归代码实现"><span class="nav-text">线性回归代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析"><span class="nav-text">分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#增大训练集的数据规模"><span class="nav-text">增大训练集的数据规模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正则化"><span class="nav-text">正则化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#含正则化的线性回归代码实现"><span class="nav-text">含正则化的线性回归代码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率论"><span class="nav-text">1.2 概率论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概率密度"><span class="nav-text">1.2.1 概率密度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#期望和协方差"><span class="nav-text">1.2.2 期望和协方差</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#期望"><span class="nav-text">期望</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方差"><span class="nav-text">方差</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#协方差"><span class="nav-text">协方差</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#贝叶斯概率"><span class="nav-text">1.2.3 贝叶斯概率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布"><span class="nav-text">1.2.4 高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#曲线拟合问题"><span class="nav-text">1.2.5 曲线拟合问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#贝叶斯曲线拟合"><span class="nav-text">1.2.6 贝叶斯曲线拟合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模型选择"><span class="nav-text">1.3 模型选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#例子多项式曲线拟合"><span class="nav-text">1.1 例子：多项式曲线拟合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述"><span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解析法推导过程"><span class="nav-text">解析法推导过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线性回归代码实现"><span class="nav-text">线性回归代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析"><span class="nav-text">分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#增大训练集的数据规模"><span class="nav-text">增大训练集的数据规模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正则化"><span class="nav-text">正则化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#含正则化的线性回归代码实现"><span class="nav-text">含正则化的线性回归代码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率论"><span class="nav-text">1.2 概率论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概率密度"><span class="nav-text">1.2.1 概率密度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#期望和协方差"><span class="nav-text">1.2.2 期望和协方差</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#期望"><span class="nav-text">期望</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方差"><span class="nav-text">方差</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#协方差"><span class="nav-text">协方差</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#贝叶斯概率"><span class="nav-text">1.2.3 贝叶斯概率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布"><span class="nav-text">1.2.4 高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#曲线拟合问题"><span class="nav-text">1.2.5 曲线拟合问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#贝叶斯曲线拟合"><span class="nav-text">1.2.6 贝叶斯曲线拟合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模型选择"><span class="nav-text">1.3 模型选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -939,7 +938,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'kenanking.github.io',
       owner       : 'kenanking',
       admin       : ['kenanking'],
-      id          : '0a2593d10b1d9fa52eb7267658d3b25a',
+      id          : 'a3494764e584732b8b38b49f7f263b18',
         language: 'zh-CN',
       distractionFreeMode: true
     });
