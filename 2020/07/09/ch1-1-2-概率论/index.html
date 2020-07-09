@@ -23,20 +23,22 @@
     var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="多项式曲线拟合  概率论  模型选择  维度灾难  决策论  信息论">
+  <meta name="description" content="1.2 概率论 在模式识别中的关键就是不确定性，这是由于测量误差和数据集大小的有限性引起的。概率论为这种不确定性的量化和计算提供了一个框架。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="模式识别与机器学习_ch1-Introduction">
-<meta property="og:url" content="https://kenanking.github.io/2020/07/05/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch1-Introduction/index.html">
+<meta property="og:title" content="ch1-1.2 概率论">
+<meta property="og:url" content="https://kenanking.github.io/2020/07/09/ch1-1-2-%E6%A6%82%E7%8E%87%E8%AE%BA/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
-<meta property="og:description" content="多项式曲线拟合  概率论  模型选择  维度灾难  决策论  信息论">
+<meta property="og:description" content="1.2 概率论 在模式识别中的关键就是不确定性，这是由于测量误差和数据集大小的有限性引起的。概率论为这种不确定性的量化和计算提供了一个框架。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-07-05T11:46:19.000Z">
-<meta property="article:modified_time" content="2020-07-08T11:46:19.000Z">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesnormal%20distribution.png">
+<meta property="article:published_time" content="2020-07-09T10:13:06.000Z">
+<meta property="article:modified_time" content="2020-07-09T10:13:06.000Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesnormal%20distribution.png">
 
-<link rel="canonical" href="https://kenanking.github.io/2020/07/05/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch1-Introduction/">
+<link rel="canonical" href="https://kenanking.github.io/2020/07/09/ch1-1-2-%E6%A6%82%E7%8E%87%E8%AE%BA/">
 
 
 <script id="page-configurations">
@@ -49,7 +51,7 @@
   };
 </script>
 
-  <title>模式识别与机器学习_ch1-Introduction | 额呵呵的博客</title>
+  <title>ch1-1.2 概率论 | 额呵呵的博客</title>
   
 
 
@@ -171,7 +173,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/05/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch1-Introduction/">
+    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/09/ch1-1-2-%E6%A6%82%E7%8E%87%E8%AE%BA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -184,31 +186,20 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          模式识别与机器学习_ch1-Introduction
+          ch1-1.2 概率论
         </h1>
 
         <div class="post-meta">
 
               
-  <i class="fa fa-thumbs-up"></i>
-  <font color="gray">置顶</font>
-  <span class="post-meta-divider">|</span>
-    
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-07-05 19:46:19" itemprop="dateCreated datePublished" datetime="2020-07-05T19:46:19+08:00">2020-07-05</time>
+              <time title="创建时间：2020-07-09 18:13:06" itemprop="dateCreated datePublished" datetime="2020-07-09T18:13:06+08:00">2020-07-09</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-08 19:46:19" itemprop="dateModified" datetime="2020-07-08T19:46:19+08:00">2020-07-08</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -220,7 +211,7 @@
             </span>
 
           
-            <span id="/2020/07/05/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch1-Introduction/" class="post-meta-item leancloud_visitors" data-flag-title="模式识别与机器学习_ch1-Introduction" title="阅读次数">
+            <span id="/2020/07/09/ch1-1-2-%E6%A6%82%E7%8E%87%E8%AE%BA/" class="post-meta-item leancloud_visitors" data-flag-title="ch1-1.2 概率论" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -237,59 +228,133 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <ul class="task-list">
-<li><input type="checkbox" disabled="" checked="" />
-多项式曲线拟合</li>
-<li><input type="checkbox" disabled="" />
-概率论</li>
-<li><input type="checkbox" disabled="" />
-模型选择</li>
-<li><input type="checkbox" disabled="" />
-维度灾难</li>
-<li><input type="checkbox" disabled="" />
-决策论</li>
-<li><input type="checkbox" disabled="" />
-信息论</li>
-</ul>
+        <h2 id="概率论">1.2 概率论</h2>
+<p>在模式识别中的关键就是不确定性，这是由于测量误差和数据集大小的有限性引起的。概率论为这种不确定性的量化和计算提供了一个框架。</p>
 <a id="more"></a>
-<p>在Introduction部分首先引入了模式识别的概念和意义，然后通过手写体数字识别的例子，讲述使用传统编写规则或者提取形状特征方法的缺陷，从而引出了效果更好的方法——<strong>机器学习</strong>的方法。</p>
+<p>这一部分首先介绍了概率论中的两个基本法则： <span class="math display">\[
+\begin{eqnarray}
+\text { sum rule } \quad\quad &amp; p(X) &amp; = &amp; \sum_{Y} p(X, Y)  \notag \\
+\text { product rule }\quad\quad &amp; p(X, Y) &amp; = &amp; p(Y \mid X) p(X) \notag
+\end{eqnarray}
+\]</span></p>
+<p>然后介绍了<strong>贝叶斯定理（Bayes’ theorem）</strong>，这个定理在模式识别和机器学习中的核心理论。 <span class="math display">\[
+p(Y \mid X)=\frac{p(X \mid Y) p(Y)}{p(X)}
+\]</span></p>
+<p><span class="math inline">\(p(X)\)</span>可以由全概率公式求得，即：<span class="math inline">\(p(X)=\sum_{Y} p(X \mid Y) p(Y)\)</span>。</p>
+<p>在这个公式中<span class="math inline">\(p(Y)\)</span>为<strong>先验概率（prior probability）</strong>，因为这个概率值在事件还没发生之前我们就知道。<span class="math inline">\(p(Y \mid X)\)</span>为<strong>后验概率（posterior probability）</strong>，因为这个概率是在我们通过实验产生了结果<span class="math inline">\(X\)</span>后才计算出来的。</p>
+<h3 id="概率密度">1.2.1 概率密度</h3>
+<p>对于连续变量<span class="math inline">\(x\)</span>，当<span class="math inline">\(\delta x \rightarrow 0\)</span>时，在区间<span class="math inline">\((x, x+\delta x)\)</span>上的概率为<span class="math inline">\(p(x)\delta x\)</span>，这里的<span class="math inline">\(p(x)\)</span>为变量<span class="math inline">\(x\)</span>的<strong>概率密度（probability density）</strong>。</p>
+<p>概率密度满足下面两个性质： <span class="math display">\[
+\begin{eqnarray}
+\mathsf{非负性}   \quad\quad  &amp; p(x) \mathrm{d} x &amp; \ge  &amp; 1 \notag \\
+\mathsf{规范性}   \quad\quad  &amp; \int_{-\infty}^{\infty} p(x) \mathrm{d} x &amp; = &amp; 1 \notag
+\end{eqnarray}
+\]</span></p>
+<p>在变量为非线性的情况下，可以通过Jacobian因子进行转换。假设有两个变量关系为<span class="math inline">\(x=g(y)\)</span>，现在有概率密度函数<span class="math inline">\(p_x(x)\)</span>，那么可以得到： <span class="math display">\[
+\begin{eqnarray}
+p_{y}(y) &amp; &amp; = &amp; p_{x}(x)\left|\frac{\mathrm{d} x}{\mathrm{d} y}\right| \notag \\
+&amp; &amp; = &amp; p_{x}(g(y))\left|g^{\prime}(y)\right| \notag
+\end{eqnarray}
+\]</span></p>
+<p>位于区间<span class="math inline">\((-\infty, z)\)</span>的<span class="math inline">\(x\)</span>的概率由<strong>累积分布函数(cumulative distribution function)</strong>给出： <span class="math display">\[
+P(z)=\int_{-\infty}^{z} p(x) \mathrm{d} x
+\]</span></p>
+<p>概率的加法原理、乘法原理，贝叶斯定理对于离散型随机变量和连续型随机变量，以及它们的组合都成立。</p>
+<h3 id="期望和协方差">1.2.2 期望和协方差</h3>
+<h4 id="期望">期望</h4>
+<p><strong>期望（expectation）</strong>就是函数的加权平均值，对于函数<span class="math inline">\(f(x)\)</span>的期望记作<span class="math inline">\(\mathbb{E}[f]\)</span>。</p>
+<p>在离散情况下： <span class="math display">\[
+\mathbb{E}[f]=\sum_{x} p(x) f(x)
+\]</span> 在连续情况下： <span class="math display">\[
+\mathbb{E}[f]=\int p(x) f(x) \mathrm{d} x
+\]</span></p>
+<p>在两种情况下，如果给定有限数量的<span class="math inline">\(N\)</span>个点，可以通过求和的方式来估计期望： <span class="math display">\[
+\mathbb{E}[f] \simeq \frac{1}{N} \sum_{n=1}^{N} f\left(x_{n}\right)
+\]</span></p>
+<p>此外，在两个随机变量的情况下，<span class="math inline">\(\mathbb{E}_{x}[f(x, y)]\)</span>表示函数<span class="math inline">\(f(x, y)\)</span>关于<span class="math inline">\(x\)</span>的分布的期望，<span class="math inline">\(\mathbb{E}_{x}[f(x, y)]\)</span>为关于<span class="math inline">\(y\)</span>的一个函数。</p>
+<p>条件分布的<strong>条件期望（conditional expectation）</strong>：</p>
+<p>在离散情况下： <span class="math display">\[
+\mathbb{E}_{x}[f \mid y]=\sum_{x} p(x \mid y) f(x)
+\]</span></p>
+<h4 id="方差">方差</h4>
+<p>函数<span class="math inline">\(f(x)\)</span>的<strong>方差（variance）</strong>为： <span class="math display">\[
+\operatorname{var}[f]=\mathbb{E}\left[(f(x)-\mathbb{E}[f(x)])^{2}\right]
+\]</span></p>
+<p>将平方项展开，也可以得到： <span class="math display">\[
+\operatorname{var}[f]=\mathbb{E}\left[f(x)^{2}\right]-\mathbb{E}[f(x)]^{2}
+\]</span></p>
+<p>特别的，对于变量<span class="math inline">\(x\)</span>本身的方差为： <span class="math display">\[
+\operatorname{var}[x]=\mathbb{E}\left[x^{2}\right]-\mathbb{E}[x]^{2}
+\]</span></p>
+<h4 id="协方差">协方差</h4>
+<p>对于两个随机变量<span class="math inline">\(x\)</span>和<span class="math inline">\(y\)</span>，它们的<strong>协方差（covariance）</strong>为： <span class="math display">\[
+\begin{aligned}
+\operatorname{cov}[x, y] &amp;=\mathbb{E}_{x, y}[\{x-\mathbb{E}[x]\}\{y-\mathbb{E}[y]\}] \notag \\
+&amp;=\mathbb{E}_{x, y}[x y]-\mathbb{E}[x] \mathbb{E}[y]  \notag
+\end{aligned}
+\]</span></p>
+<p>协方差表示了两个变量变化情况相同的程度。当变量<span class="math inline">\(x\)</span>和<span class="math inline">\(y\)</span>相互独立时，协方差为<span class="math inline">\(0\)</span>。</p>
+<p>在<span class="math inline">\(\mathbf{x}\)</span>和<span class="math inline">\(\mathbf{y}\)</span>都是<span class="math inline">\(n\)</span>维向量的情况下，协方差变成一个矩阵——<strong>互协方差阵</strong>： <span class="math display">\[
+\begin{aligned}
+\operatorname{cov}[\mathbf{x}, \mathbf{y}] &amp;=\mathbb{E}_{\mathbf{x}, \mathbf{y}}\left[\{\mathbf{x}-\mathbb{E}[\mathbf{x}]\}\left\{\mathbf{y}^{\mathrm{T}}-\mathbb{E}\left[\mathbf{y}^{\mathrm{T}}\right]\right\}\right] \notag \\
+&amp;=\mathbb{E}_{\mathbf{x}, \mathbf{y}}\left[\mathbf{x} \mathbf{y}^{\mathrm{T}}\right]-\mathbb{E}[\mathbf{x}] \mathbb{E}\left[\mathbf{y}^{\mathrm{T}}\right] \notag
+\end{aligned}
+\]</span></p>
+<p>如果考虑向量<span class="math inline">\(\mathbf{x}\)</span>各个分量之间的协方差，那么可以得到随机向量<span class="math inline">\(\mathbf{x}\)</span>的<strong>方差—协方差阵</strong>，记为：<span class="math inline">\(\operatorname{cov}[\mathrm{x}] \equiv \operatorname{cov}[\mathrm{x}, \mathrm{x}]\)</span>。</p>
+<h3 id="贝叶斯概率">1.2.3 贝叶斯概率</h3>
+<p>在<strong>经典（classical）概率论</strong>或<strong>频率派（frequentist）</strong>观点中：概率是重复事件随机发生的频率。</p>
 <blockquote>
-<p>The field of <strong>pattern recognition</strong> is concerned with the automatic discovery of regularities in data through the use of computer algorithms and with the use of these regularities to take actions such as classifying the data into different categories.</p>
+<p>frequencies of random, repeatable events</p>
 </blockquote>
-<p>在机器学习方法中，由<span class="math inline">\(N\)</span>个数字<span class="math inline">\(\{\mathbf{x}_1,\cdots,\mathbf{x}_N\}\)</span>组成的集合为<strong>训练集（training set）</strong>，其对应的数字组成的向量为<strong>目标向量（target vector）</strong><span class="math inline">\(\mathbf{t}\)</span>。机器学习算法的任务就是找到一个函数<span class="math inline">\(y(\mathbf{x})\)</span>，输入一个新的图像<span class="math inline">\(\mathbf{x}\)</span>，输出这个图像对应的类别<span class="math inline">\(\mathbf{y}\)</span>。</p>
-<p>函数<span class="math inline">\(\mathrm{y}(\mathrm{x})\)</span>的具体形式在<strong>训练（training）</strong>阶段（也叫做<strong>学习（learning）</strong>阶段）确定。一旦函数的形式被确定，就可以使用新图像组成的<strong>测试集（test set）</strong>，来测试这个函数区分新的样本的能力，这个能力叫做<strong>泛化（generalization）</strong>，也就是训练结果在新数据上的表现。泛化是模式识别中的重要目标。</p>
-<p>在实际应用中，原始输入通常会经过<strong>预处理（preprocessed）</strong>后输入机器学习模型中，这个预处理过程有时也叫做<strong>特征提取（feature extraction）</strong>。特征提取也可以用在加快计算速度上，不过相对的就会遗弃一些信息，使得系统整体精度下降。</p>
-<hr />
-<p><strong>模式识别问题的分类：</strong></p>
-<ul>
-<li><p><strong>监督学习（supervised learning）</strong></p>
-<p>训练数据中包含输入向量和目标向量。</p>
-<p>如果输出为离散的类别，为<strong>分类（classification）</strong>问题。</p>
-<p>如果输出为连续的变量，为<strong>回归（regression）</strong>问题。</p></li>
-<li><p><strong>无监督学习（unsupervised learning）</strong></p>
-<p>训练数据只包含输入向量。</p>
-<ol type="1">
-<li><strong>聚类（clustering）</strong>：发现相似样本并分组</li>
-<li><strong>密度估计（density estimation）</strong>：决定输入空间中数据的分布</li>
-<li><strong>数据可视化（visualization）</strong>：将数据从高维空间投影到二维和三维空间用以呈现</li>
-</ol></li>
-<li><p><strong>强化学习（reinforcement learning）</strong></p>
-<p>在给定<strong>环境（environment）</strong>下，找到一系列合适的<strong>动作（action）</strong>，使得最终<strong>奖赏值（reward）</strong>最大。</p>
+<p>在<strong>贝叶斯派（Bayesian）</strong>的观点中：概率提供了不确定性的一个定量描述。</p>
 <blockquote>
-<p>The technique of reinforcement learning is concerned with the problem of finding suitable actions to take in a given situation in order to maximize a reward.</p>
-</blockquote></li>
-</ul>
-<hr />
-<h2 id="例子多项式曲线拟合">1.1 例子：多项式曲线拟合</h2>
-<h2 id="概率论">1.2 概率论</h2>
-<h2 id="模型选择">1.3 模型选择</h2>
-<h2 id="其他参考资料">其他参考资料</h2>
-<ol type="1">
-<li><p>部分代码参考：https://github.com/ctgk/PRML</p></li>
-<li><p>线性回归解析法推导过程：https://blog.csdn.net/a755199443/article/details/104198033</p></li>
-<li><p>机器学习-白板推导系列-线性回归(Linear Regression)：https://github.com/shuhuai007/Machine-Learning-Session</p></li>
-<li><p>贝叶斯定理：https://www.bilibili.com/video/BV1R7411a76r</p></li>
-</ol>
+<p>a quantification of uncertainty</p>
+</blockquote>
+<p>之前曲线拟合的例子中，在得到观测数据前，我们有了对参数<span class="math inline">\(\mathbf{w}\)</span>的假设，作为先验概率<span class="math inline">\(p(\mathbf{w})\)</span>。得到观测数据<span class="math inline">\(\mathcal{D}=\left\{t_{1}, \ldots, t_{N}\right\}\)</span>后，根据贝叶斯定理参数<span class="math inline">\(\mathbf{w}\)</span>的分布可以通过后验概率<span class="math inline">\(p(\mathbf{w} \mid \mathcal{D})\)</span>表达。 <span class="math display">\[
+p(\mathbf{w} \mid \mathcal{D})=\frac{p(\mathcal{D} \mid \mathbf{w}) p(\mathbf{w})}{p(\mathcal{D})}
+\]</span></p>
+<p>其中，<span class="math inline">\(p(\mathcal{D} \mid \mathbf{w})\)</span>被称为<strong>似然函数（likelihood function）</strong>。似然函数表示在选择不同参数<span class="math inline">\(\mathbf{w}\)</span>时，观测数据出现的可能性。分母<span class="math inline">\(p(\mathcal{D})\)</span>可以由全概率公式计算：<span class="math inline">\(p(\mathcal{D})=\int p(\mathcal{D} \mid \mathbf{w}) p(\mathbf{w}) \mathrm{d} \mathbf{w}\)</span>。</p>
+<p>贝叶斯定理用文字表达： <span class="math display">\[
+\mathrm{posterior}   \propto  \mathrm{likelihood}   \times  \mathrm{prior}
+\]</span></p>
+<p>在贝叶斯派和频率派的观点中，似然函数<span class="math inline">\(p(\mathcal{D} \mid \mathbf{w})\)</span>都有着重要意义，然而在两种观点中，对待似然函数的方法有着本质的区别。</p>
+<p>在频率派观点中，参数<span class="math inline">\(\mathbf{w}\)</span>为一个固定的值，根据给定的观测数据，以某种形式的估计来确定参数的值，例如<strong>极大似然（maximum likelihood）</strong>估计。</p>
+<p>在贝叶斯派观点中，参数<span class="math inline">\(\mathbf{w}\)</span>为一个变量，可以根据给定的观测数据来计算参数<span class="math inline">\(\mathbf{w}\)</span>概率分布。</p>
+<h3 id="高斯分布">1.2.4 高斯分布</h3>
+<p><strong>高斯分布（Gaussian distribution）</strong>也叫正态分布<strong>（normal distribution）</strong>。</p>
+<p>对于一元连续变量<span class="math inline">\(x\)</span>，高斯分布为： <span class="math display">\[
+\mathcal{N}\left(x \mid \mu, \sigma^{2}\right)=\frac{1}{\left(2 \pi \sigma^{2}\right)^{1 / 2}} \exp \left\{-\frac{1}{2 \sigma^{2}}(x-\mu)^{2}\right\}
+\]</span> 其中，参数<span class="math inline">\(\mu\)</span>叫做<strong>均值（mean）</strong>，<span class="math inline">\(\sigma^{2}\)</span>叫做<strong>方差（variance）</strong>。</p>
+<p>方差的算术平方根叫做<strong>标准差（standard deviation）</strong>，记为：<span class="math inline">\(\sigma\)</span>。方差的导数叫<strong>做精度（precision）</strong>，记为：<span class="math inline">\(\beta=1 / \sigma^{2}\)</span>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesnormal%20distribution.png" alt="标准正态分布图像" /></p>
+<p><span class="math inline">\(D\)</span>维向量<span class="math inline">\(\mathbf{x}\)</span>的高斯分布为： <span class="math display">\[
+\mathcal{N}(\mathbf{x} \mid \boldsymbol{\mu}, \mathbf{\Sigma})=\frac{1}{(2 \pi)^{D / 2}} \frac{1}{|\mathbf{\Sigma}|^{1 / 2}} \exp \left\{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} \mathbf{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})\right\}
+\]</span> 其中，<span class="math inline">\(D \times D\)</span>维矩阵<span class="math inline">\(\mathbf{\Sigma}\)</span>称为协方差。</p>
+<p>假定有一个数据集<span class="math inline">\(\mathbf{x}=\left(x_{1}, \ldots, x_{N}\right)^{\mathrm{T}}\)</span>，每个数据点之间是<strong>独立同分布（independent and identically distributed，缩写为：i.i.d）</strong>的。由于独立事件的联合概率为每个事件边缘概率的乘积，在给定<span class="math inline">\(\mu\)</span>和<span class="math inline">\(\sigma^{2}\)</span>的情况下，数据集的概率为： <span class="math display">\[
+p\left(\mathbf{x} \mid \mu, \sigma^{2}\right)=\prod_{n=1}^{N} \mathcal{N}\left(x_{n} \mid \mu, \sigma^{2}\right)
+\]</span></p>
+<p>把上式看成<span class="math inline">\(\mu\)</span>和<span class="math inline">\(\sigma^{2}\)</span>的函数时，这就是高斯分布的似然函数。通过最大化似然函数可以确定未知参数<span class="math inline">\(\mu\)</span>和<span class="math inline">\(\sigma^{2}\)</span>的值。在实际应用中，通常对似然函数取对数。 <span class="math display">\[
+\ln p\left(\mathbf{x} \mid \mu, \sigma^{2}\right)=-\frac{1}{2 \sigma^{2}} \sum_{n=1}^{N}\left(x_{n}-\mu\right)^{2}-\frac{N}{2} \ln \sigma^{2}-\frac{N}{2} \ln (2 \pi)
+\]</span></p>
+<p>分别对<span class="math inline">\(\mu\)</span>和<span class="math inline">\(\sigma^{2}\)</span>求最大值，可以得到极大似然解： <span class="math display">\[
+\begin{eqnarray}
+\mu_{\mathrm{ML}} &amp; = &amp; \frac{1}{N} \sum_{n = 1}^{N} x_{n} \notag \\
+\sigma_{\mathrm{ML}}^{2} &amp; = &amp; \frac{1}{N} \sum_{n=1}^{N}\left(x_{n}-\mu_{\mathrm{ML}}\right)^{2} \notag
+\end{eqnarray}
+\]</span></p>
+<p>这里<span class="math inline">\(\mu_{\mathrm{ML}}\)</span>就是<strong>样本均值（sample mean）</strong>，<span class="math inline">\(\sigma_{\mathrm{ML}}^{2}\)</span>就是<strong>样本方差（sample variance）</strong>。</p>
+<p>然而极大似然法存在一定的局限性，会低估分布的方差，因为得到的方差是<strong>有偏（bias）</strong>估计。 <span class="math display">\[
+\begin{eqnarray}
+\mathbb{E}\left[\mu_{\mathrm{ML}}\right] &amp; = &amp; \mu \notag \\
+\mathbb{E}\left[\sigma_{\mathrm{ML}}^{2}\right] &amp; = &amp; \left(\frac{N-1}{N}\right) \sigma^{2} \notag 
+\end{eqnarray}
+\]</span></p>
+<p>下面是方差的<strong>无偏（unbiased）</strong>估值： <span class="math display">\[
+\widetilde{\sigma}^{2}=\frac{N}{N-1} \sigma_{\mathrm{ML}}^{2}=\frac{1}{N-1} \sum_{n=1}^{N}\left(x_{n}-\mu_{\mathrm{ML}}\right)^{2}
+\]</span></p>
+<p>当<span class="math inline">\(N \rightarrow \infty\)</span>时，极大似然方法的得到的方差可以等价为分布的真实方差。</p>
+<h3 id="曲线拟合问题">1.2.5 曲线拟合问题</h3>
+<h3 id="贝叶斯曲线拟合">1.2.6 贝叶斯曲线拟合</h3>
 
     </div>
 
@@ -309,13 +374,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/06/30/WSL%E8%AE%BF%E9%97%AE%E5%AE%BF%E4%B8%BB%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BB%A3%E7%90%86%E8%AE%BE%E7%BD%AE/" rel="prev" title="WSL访问宿主机网络代理设置">
-      <i class="fa fa-chevron-left"></i> WSL访问宿主机网络代理设置
+    <a href="/2020/07/09/ch1-1-1-%E4%BE%8B%E5%AD%90%EF%BC%9A%E5%A4%9A%E9%A1%B9%E5%BC%8F%E6%9B%B2%E7%BA%BF%E6%8B%9F%E5%90%88/" rel="prev" title="ch1-1.1 例子：多项式曲线拟合">
+      <i class="fa fa-chevron-left"></i> ch1-1.1 例子：多项式曲线拟合
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/07/09/ch1-1-1-%E4%BE%8B%E5%AD%90%EF%BC%9A%E5%A4%9A%E9%A1%B9%E5%BC%8F%E6%9B%B2%E7%BA%BF%E6%8B%9F%E5%90%88/" rel="next" title="ch1-1.1 例子：多项式曲线拟合">
-      ch1-1.1 例子：多项式曲线拟合 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -375,7 +437,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#例子多项式曲线拟合"><span class="nav-text">1.1 例子：多项式曲线拟合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率论"><span class="nav-text">1.2 概率论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模型选择"><span class="nav-text">1.3 模型选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概率论"><span class="nav-text">1.2 概率论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概率密度"><span class="nav-text">1.2.1 概率密度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#期望和协方差"><span class="nav-text">1.2.2 期望和协方差</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#期望"><span class="nav-text">期望</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方差"><span class="nav-text">方差</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#协方差"><span class="nav-text">协方差</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#贝叶斯概率"><span class="nav-text">1.2.3 贝叶斯概率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布"><span class="nav-text">1.2.4 高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#曲线拟合问题"><span class="nav-text">1.2.5 曲线拟合问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#贝叶斯曲线拟合"><span class="nav-text">1.2.6 贝叶斯曲线拟合</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -723,7 +785,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'kenanking.github.io',
       owner       : 'kenanking',
       admin       : ['kenanking'],
-      id          : 'a3494764e584732b8b38b49f7f263b18',
+      id          : '5b38b08419efb2bd3bf00c204da5f15f',
         language: 'zh-CN',
       distractionFreeMode: true
     });
