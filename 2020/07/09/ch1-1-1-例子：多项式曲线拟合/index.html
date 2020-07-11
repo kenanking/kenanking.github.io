@@ -309,7 +309,7 @@ E_{\mathrm{RMS}}=\sqrt{2 E(\mathbf{w}^{*}) / N}
 <p>正则化的做法是原误差函数上增加一个惩罚项，这个惩罚项最简单的形式为所有系数平方和： <span class="math display">\[
 \widetilde{E}(\mathbf{w})=\frac{1}{2} \sum_{n=1}^{N}\{y(x_{n}, \mathbf{w})-t_{n}\}^{2}+\frac{\lambda}{2}\|\mathbf{w}\|^{2}
 \]</span> 通常<span class="math inline">\(w_0\)</span>不包含在正则项中。</p>
-<p>这个惩罚项在这里的作用是让<span class="math inline">\(w_j\)</span>的值接近<span class="math inline">\(0\)</span>，从而使学习到的函数更加光滑。从式子<span class="math inline">\(y(x, \mathbf{w})=\sum_{j=0}^{M} w_{j} x^{j}\)</span>看出，当<span class="math inline">\(w_j\)</span>的值接近<span class="math inline">\(0\)</span>时，光看一阶项，如果输入变量<span class="math inline">\(x\)</span>有一个微小增量<span class="math inline">\(\Delta x\)</span>，这个微小增量<span class="math inline">\(\Delta x\)</span>造成<span class="math inline">\(y\)</span>的变化量为<span class="math inline">\(\Delta x w_j\)</span>也就越小，函数也就越光滑。</p>
+<p>这个惩罚项在这里的作用是让<span class="math inline">\(w_j\)</span>的值接近<span class="math inline">\(0\)</span>，从而使学习到的函数更加光滑。从式子<span class="math inline">\(y(x, \mathbf{w})=\sum_{j=0}^{M} w_{j} x^{j}\)</span>看出，当<span class="math inline">\(w_j\)</span>的值接近<span class="math inline">\(0\)</span>时，光看一阶项，如果输入变量<span class="math inline">\(x\)</span>有一个微小增量<span class="math inline">\(\Delta x\)</span>，这个微小增量<span class="math inline">\(\Delta x\)</span>造成<span class="math inline">\(y\)</span>的变化量为<span class="math inline">\(\Delta x w_j\)</span>也就越小，函数也就越光滑。也可以看成，正则项控制了模型的复杂度，让模型复杂度减小。</p>
 <p>函数越光滑意味着对输入变量越不敏感，那么也就不容易被输入变量中的随机噪声影响。</p>
 <p>这里为了便于计算，仍然是包含了<span class="math inline">\(w_0\)</span>的。同样对上式求导等于零，可以得到<span class="math inline">\(\mathbf{w}\)</span>的解析解为： <span class="math display">\[
 \mathbf{w} = (X^{T} X+\lambda \mathbf{I})^{-1} X^{T} \mathbf{t}
@@ -429,7 +429,7 @@ E_{\mathrm{RMS}}=\sqrt{2 E(\mathbf{w}^{*}) / N}
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
