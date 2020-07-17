@@ -269,7 +269,7 @@ h(x)=-\log _{2} p(x)
 <p>假设有一系列数据通过未知分布<span class="math inline">\(p(\mathrm{x})\)</span>生成，我们想用这些数据对<span class="math inline">\(p(\mathrm{x})\)</span>进行建模。</p>
 <p>我们可以使用分布<span class="math inline">\(q(\mathbf{x} \mid \boldsymbol{\theta})\)</span>来近似，该分布由参数<span class="math inline">\(\theta\)</span>控制。</p>
 <p>一种确定<span class="math inline">\(\theta\)</span>的方式是最小化<span class="math inline">\(p(\mathrm{x})\)</span>和<span class="math inline">\(q(\mathbf{x} \mid \boldsymbol{\theta})\)</span>之间的相对熵，但很明显我们不知道<span class="math inline">\(p(\mathrm{x})\)</span>。但是我们可以通过服从<span class="math inline">\(p(\mathrm{x})\)</span>的有限数量的数据来近似，得到相对熵近似公式为： <span class="math display">\[
-\mathrm{KL}(p \| q) \simeq \sum_{n=1}^{N}\left\{-\ln q\left(\mathrm{x}_{n} \mid \theta\right)+\ln p\left(\mathrm{x}_{n}\right)\right\}
+\mathrm{KL}(p \| q) \simeq \sum_{n=1}^{N}\{-\ln q(\mathrm{x}_{n} \mid \theta)+\ln p(\mathrm{x}_{n})\}
 \]</span></p>
 <p>可以看到上式右边第二项和<span class="math inline">\(\theta\)</span>无关，因此，<strong>最小化相对熵等价于最大化似然函数</strong>。</p>
 <h4 id="互信息">互信息</h4>
