@@ -23,20 +23,22 @@
     var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="这里记录了一些Jupyter Notebook的常见配置，便于后续查阅。">
+  <meta name="description" content="2.1 二项分布">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Jupyter Notebook相关笔记">
-<meta property="og:url" content="https://kenanking.github.io/2020/06/14/Jupyter-Notebook%E7%9B%B8%E5%85%B3%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:title" content="ch2-2.1 二项分布">
+<meta property="og:url" content="https://kenanking.github.io/2020/07/19/ch2-2-1-%E4%BA%8C%E9%A1%B9%E5%88%86%E5%B8%83/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
-<meta property="og:description" content="这里记录了一些Jupyter Notebook的常见配置，便于后续查阅。">
+<meta property="og:description" content="2.1 二项分布">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-06-14T06:56:34.000Z">
-<meta property="article:modified_time" content="2020-06-16T13:09:46.762Z">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesBeta%20Distribution.png">
+<meta property="article:published_time" content="2020-07-19T13:45:25.000Z">
+<meta property="article:modified_time" content="2020-07-19T13:45:25.000Z">
 <meta property="article:author" content="汤焱">
-<meta property="article:tag" content="Jupyter Notebook">
+<meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesBeta%20Distribution.png">
 
-<link rel="canonical" href="https://kenanking.github.io/2020/06/14/Jupyter-Notebook%E7%9B%B8%E5%85%B3%E7%AC%94%E8%AE%B0/">
+<link rel="canonical" href="https://kenanking.github.io/2020/07/19/ch2-2-1-%E4%BA%8C%E9%A1%B9%E5%88%86%E5%B8%83/">
 
 
 <script id="page-configurations">
@@ -49,7 +51,7 @@
   };
 </script>
 
-  <title>Jupyter Notebook相关笔记 | 额呵呵的博客</title>
+  <title>ch2-2.1 二项分布 | 额呵呵的博客</title>
   
 
 
@@ -171,7 +173,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/06/14/Jupyter-Notebook%E7%9B%B8%E5%85%B3%E7%AC%94%E8%AE%B0/">
+    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/19/ch2-2-1-%E4%BA%8C%E9%A1%B9%E5%88%86%E5%B8%83/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -184,7 +186,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Jupyter Notebook相关笔记
+          ch2-2.1 二项分布
         </h1>
 
         <div class="post-meta">
@@ -196,27 +198,20 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-06-14 14:56:34" itemprop="dateCreated datePublished" datetime="2020-06-14T14:56:34+08:00">2020-06-14</time>
+              <time title="创建时间：2020-07-19 21:45:25" itemprop="dateCreated datePublished" datetime="2020-07-19T21:45:25+08:00">2020-07-19</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-16 21:09:46" itemprop="dateModified" datetime="2020-06-16T21:09:46+08:00">2020-06-16</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+                  <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
                 </span>
             </span>
 
           
-            <span id="/2020/06/14/Jupyter-Notebook%E7%9B%B8%E5%85%B3%E7%AC%94%E8%AE%B0/" class="post-meta-item leancloud_visitors" data-flag-title="Jupyter Notebook相关笔记" title="阅读次数">
+            <span id="/2020/07/19/ch2-2-1-%E4%BA%8C%E9%A1%B9%E5%88%86%E5%B8%83/" class="post-meta-item leancloud_visitors" data-flag-title="ch2-2.1 二项分布" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -233,32 +228,86 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>这里记录了一些Jupyter Notebook的常见配置，便于后续查阅。 <a id="more"></a></p>
-<h2 id="jupyter简单配置">Jupyter简单配置</h2>
-<hr />
-<h3 id="一修改默认工作目录">一、修改默认工作目录</h3>
-<h4 id="生成配置文件">1. 生成配置文件</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jupyter --generate-config</span><br></pre></td></tr></table></figure>
-<p>默认配置文件生成在<code>C:\Users\[用户名]\.jupyter</code>文件夹下。</p>
-<h4 id="修改默认工作目录">2. 修改默认工作目录</h4>
-<p>找到配置文件中的<code>#c.NotebookApp.notebook_dir = ''</code>，修改为个人目录并取消注释。 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c.NotebookApp.notebook_dir = <span class="string">r'D:\Jupyter notebook'</span></span><br></pre></td></tr></table></figure></p>
-<hr />
-<h3 id="二安装扩展插件和修改颜色主题">二、安装扩展插件和修改颜色主题</h3>
-<h4 id="安装扩展插件">1. 安装扩展插件</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pip install jupyter_contrib_nbextensions</span><br><span class="line">pip install jupyter_nbextensions_configurator</span><br><span class="line"></span><br><span class="line">jupyter contrib nbextension install --user      <span class="comment"># 设置用户</span></span><br><span class="line">jupyter nbextensions_configurator <span class="built_in">enable</span> --user <span class="comment"># 启用用户</span></span><br></pre></td></tr></table></figure>
-<h4 id="修改颜色主题">2. 修改颜色主题</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install jupyterthemes</span><br></pre></td></tr></table></figure>
-<p>主题使用方法：<a href="%22https://github.com/dunovank/jupyter-themes%22">https://github.com/dunovank/jupyter-themes</a></p>
-<hr />
-<h3 id="三windows添加虚拟环境">三、Windows添加虚拟环境</h3>
-<h4 id="安装并创建虚拟环境virtualenv">1. 安装并创建虚拟环境virtualenv</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip install virtualenv</span><br><span class="line">virtualenv [环境名称]       <span class="comment"># 新建虚拟环境</span></span><br><span class="line">./[环境名称]/Scripts/activate   <span class="comment"># 进入虚拟环境</span></span><br></pre></td></tr></table></figure>
-<h4 id="安装jupyter-kernel并连接虚拟环境到jupyter-kernel">2. 安装jupyter kernel并连接虚拟环境到jupyter kernel</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install ipykernel</span><br><span class="line">python -m ipykernel install --user --name [环境名称]</span><br></pre></td></tr></table></figure>
-<h4 id="查看与删除虚拟环境">3. 查看与删除虚拟环境</h4>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jupyter kernelspec list     <span class="comment"># 查看存在的虚拟环境</span></span><br><span class="line">jupyter kernelspec uninstall [环境名称]   <span class="comment"># 删除虚拟环境</span></span><br></pre></td></tr></table></figure>
-<h3 id="四jupyter中使用matplotlib和seaborn的相关配置">四、Jupyter中使用Matplotlib和Seaborn的相关配置</h3>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置 matplotlib 图形分辨率</span></span><br><span class="line">plt.rcParams[<span class="string">'figure.dpi'</span>] = <span class="number">150</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># matplotlib 支持中文</span></span><br><span class="line">plt.rcParams[<span class="string">'font.sans-serif'</span>] = [<span class="string">'SimHei'</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># matplotlib 正常显示负号</span></span><br><span class="line">plt.rcParams[<span class="string">'axes.unicode_minus'</span>] = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Seaborn 字体与字号设置</span></span><br><span class="line">sns.set( font=<span class="string">'SimHei'</span>, font_scale=<span class="number">1.2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># MacOS：matplotlib 与 Seaborn 支持中文</span></span><br><span class="line">plt.rcParams[<span class="string">'font.family'</span>] = [<span class="string">'Arial Unicode MS'</span>]</span><br><span class="line">sns.set_style(<span class="string">'whitegrid'</span>, &#123;<span class="string">'font.sans-serif'</span>: [<span class="string">'Arial Unicode MS'</span>, <span class="string">'Arial'</span>]&#125;)</span><br></pre></td></tr></table></figure>
+        <h2 id="二项分布">2.1 二项分布</h2>
+<a id="more"></a>
+<h3 id="伯努利分布">伯努利分布</h3>
+<p>对于二元随机变量<span class="math inline">\(x \in \{0,1\}\)</span>，<span class="math inline">\(x=1\)</span>的概率记作参数<span class="math inline">\(\mu\)</span>，因此： <span class="math display">\[
+p(x=1 \mid \mu)=\mu
+\]</span></p>
+<p>其中<span class="math inline">\(0 \leqslant \mu \leqslant 1\)</span>。于是<span class="math inline">\(p(x=0 \mid \mu)=1-\mu\)</span>，由此<span class="math inline">\(x\)</span>的概率分布可以写为： <span class="math display">\[
+\operatorname{Bern}(x \mid \mu)=\mu^{x}(1-\mu)^{1-x}
+\]</span></p>
+<p>这叫做<strong>伯努利分布（Bernoulli distribution）</strong>。伯努利分布是归一化的，均值和方差为： <span class="math display">\[
+\begin{aligned}
+\mathbb{E}[x] &amp;=\mu \notag \\
+\operatorname{var}[x] &amp;=\mu(1-\mu) \notag 
+\end{aligned}
+\]</span></p>
+<p>假设存在观测数据集<span class="math inline">\(\mathcal{D}=\left\{x_{1}, \ldots, x_{N}\right\}\)</span>，其中每次观测都是独立的，且服从<span class="math inline">\(p(x \mid \mu)\)</span>。于是可以构造关于<span class="math inline">\(\mu\)</span>的似然函数： <span class="math display">\[
+p(\mathcal{D} \mid \mu)=\prod_{n=1}^{N} p\left(x_{n} \mid \mu\right)=\prod_{n=1}^{N} \mu^{x_{n}}(1-\mu)^{1-x_{n}}
+\]</span> 取对数得到对数似然函数： <span class="math display">\[
+\ln p(\mathcal{D} \mid \mu)=\sum_{n=1}^{N} \ln p\left(x_{n} \mid \mu\right)=\sum_{n=1}^{N}\left\{x_{n} \ln \mu+\left(1-x_{n}\right) \ln (1-\mu)\right\}
+\]</span></p>
+<p>根据频率派观点，最大化似然函数可以估计<span class="math inline">\(\mu\)</span>的值。于是在伯努利分布的情况下，<span class="math inline">\(\mu\)</span>的最大似然估计值为： <span class="math display">\[
+\mu_{\mathrm{ML}}=\frac{1}{N} \sum_{n=1}^{N} x_{n}
+\]</span></p>
+<p><span class="math inline">\(\mu\)</span>的最大似然估计值等于样本均值。如果记<span class="math inline">\(x=1\)</span>的观测数量为<span class="math inline">\(m\)</span>，则可以写成这样的形式：<span class="math inline">\(\mu_{\mathrm{ML}}=\frac{m}{N}\)</span>。</p>
+<p>很显然，对于小规模数据集，<strong>最大似然得到的结果可能会是不合理的</strong>。假设扔一个硬币<span class="math inline">\(3\)</span>次都正面朝上，那么<span class="math inline">\(\mu_{\mathrm{ML}}=1\)</span>，认为所有未来的观测值都是正面朝上的，显然是不合理的。这个时候就要引入<span class="math inline">\(\mu\)</span>的先验分布，得到一个更合理的结论。</p>
+<h3 id="二项分布-1">二项分布</h3>
+<p>在给定数据集大小<span class="math inline">\(N\)</span>的条件下，<span class="math inline">\(x = 1\)</span>的观测出现的数量<span class="math inline">\(m\)</span>的概率分布，称为<strong>⼆项分布（binomial distribution）</strong>。写成： <span class="math display">\[
+\operatorname{Bin}(m \mid N, \mu)=\left(\begin{array}{l}
+N \\
+m
+\end{array}\right) \mu^{m}(1-\mu)^{N-m}
+\]</span></p>
+<p>其中： <span class="math display">\[
+\left(\begin{array}{l}
+N \\
+m
+\end{array}\right) \equiv \frac{N !}{(N-m) ! m !}
+\]</span></p>
+<p>⼆项分布的均值和⽅差为： <span class="math display">\[
+\begin{aligned}
+\mathbb{E}[m] \equiv \sum_{m=0}^{N} m \operatorname{Bin}(m \mid N, \mu) &amp;=N \mu \notag \\
+\operatorname{var}[m] \equiv \sum_{m=0}^{N}(m-\mathbb{E}[m])^{2} \operatorname{Bin}(m \mid N, \mu) &amp;=N \mu(1-\mu) \notag 
+\end{aligned}
+\]</span></p>
+<h3 id="beta分布">2.1.1 Beta分布</h3>
+<p>在上面看到，在小规模数据集下，用最大似然的角度求解问题会出现严重的过拟合现象。</p>
+<p>为了从贝叶斯的角度看待问题，我们需要引入<span class="math inline">\(\mu\)</span>的先验分布。由于似然函数形如<span class="math inline">\(\mu^{x}(1-\mu)^{1-x}\)</span>，所有我们选择先验分布正比于<span class="math inline">\(\mu\)</span>和<span class="math inline">\((1-\mu)\)</span>时，后验分布也会具有相同的形式，这种性质称为<strong>共轭（conjugacy）</strong>。</p>
+<p>我们选择的先验分布形式为： <span class="math display">\[
+\operatorname{Beta}(\mu \mid a, b)=\frac{\Gamma(a+b)}{\Gamma(a) \Gamma(b)} \mu^{a-1}(1-\mu)^{b-1}
+\]</span> 这称为<strong>Beta分布（beta distribution）</strong>。</p>
+<p>其中： <span class="math display">\[
+\Gamma(x) \equiv \int_{0}^{\infty} u^{x-1} e^{-u} \mathrm{d} u
+\]</span></p>
+<p>Beta分布的均值和方差为： <span class="math display">\[
+\begin{aligned}
+\mathbb{E}[\mu] &amp;=\frac{a}{a+b} \notag \\
+\operatorname{var}[\mu] &amp;=\frac{a b}{(a+b)^{2}(a+b+1)} \notag 
+\end{aligned}
+\]</span></p>
+<p>参数<span class="math inline">\(a\)</span>和<span class="math inline">\(b\)</span>称为<strong>超参数（hyperparameter）</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.special <span class="keyword">import</span> gamma</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">betaPDF</span><span class="params">(mu, a, b)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> (gamma(a + b)</span><br><span class="line">            * np.power(mu, a - <span class="number">1</span>)</span><br><span class="line">            * np.power(<span class="number">1</span> - mu, b - <span class="number">1</span>)</span><br><span class="line">            / gamma(a)</span><br><span class="line">            / gamma(b))</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesBeta%20Distribution.png" alt="不同的超参数值对应Beta分布" /></p>
+<p>于是后验分布正比于Beta分布和二项分布的乘积： <span class="math display">\[
+p(\mu \mid m, l, a, b) \propto \mu^{m+a-1}(1-\mu)^{l+b-1}
+\]</span></p>
+<p>其中：<span class="math inline">\(l = N - m\)</span>，为<span class="math inline">\(x = 0\)</span>的观测值个数。事实上，后验分布也是一个Beta分布，通过对于Beta分布的形式，可以得到后验分布的表达式为： <span class="math display">\[
+p(\mu \mid m, l, a, b)=\frac{\Gamma(m+a+l+b)}{\Gamma(m+a) \Gamma(l+b)} \mu^{m+a-1}(1-\mu)^{l+b-1}
+\]</span></p>
+<p>可以看到，<span class="math inline">\(m\)</span>次<span class="math inline">\(x=1\)</span>的观测值等效于使<span class="math inline">\(a\)</span>的值增加了<span class="math inline">\(m\)</span>，而<span class="math inline">\(l\)</span>次<span class="math inline">\(x=0\)</span>的观测值等效于使<span class="math inline">\(b\)</span>的值增加了<span class="math inline">\(l\)</span>。因此，超参数<span class="math inline">\(a\)</span>和<span class="math inline">\(b\)</span>可以简单的认为是<span class="math inline">\(x = 1\)</span> 和<span class="math inline">\(x = 0\)</span>的<strong>有效观测数（effective number of observations）</strong>。</p>
+<p>当我们从贝叶斯的角度来看时，<strong>顺序学习的方法（sequential approach to learning）</strong>就很自然了。它与先验和似然函数的选择⽆关，只依赖于数据独⽴同分布的假设。</p>
+<p>顺序学习的方法一次只是用一个观测值或一小批观测值，在实时学习和或大规模数据集学习的时候很有用。</p>
+<p>在给定数据集<span class="math inline">\(\mathcal{D}\)</span>的情况下，<span class="math inline">\(x\)</span>预测分布为： <span class="math display">\[
+p(x=1 \mid \mathcal{D})=\int_{0}^{1} p(x=1 \mid \mu) p(\mu \mid \mathcal{D}) \mathrm{d} \mu=\int_{0}^{1} \mu p(\mu \mid \mathcal{D}) \mathrm{d} \mu=\mathbb{E}[\mu \mid \mathcal{D}]
+\]</span></p>
+<p><span class="math inline">\(p(\mu \mid \mathcal{D})\)</span>的形式为上面后验分布的表达式，由Beta分布的均值可以得到： <span class="math display">\[
+p(x=1 \mid \mathcal{D})=\frac{m+a}{m+a+l+b}
+\]</span></p>
+<p>这个结果简单的来说其实就是<span class="math inline">\(x=1\)</span>的观测值所占的比例。</p>
+<p><strong>当数据集趋向无穷大时，贝叶斯得到的结果与极大似然得到的结果其实是相同的。</strong></p>
+<p>另外，由后验分布的方差（也就是Beta分布的方差）来看：<strong>随着观测到越来越多的数据，后验概率表⽰的不确定性将会持续下降。</strong>平均来看，这个性质对于贝叶斯学习普遍成立，但也存在例外。</p>
 
     </div>
 
@@ -269,7 +318,7 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/Jupyter-Notebook/" rel="tag"><i class="fa fa-tag"></i> Jupyter Notebook</a>
+              <a href="/tags/PRML/" rel="tag"><i class="fa fa-tag"></i> PRML</a>
           </div>
 
         
@@ -278,13 +327,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/06/14/git%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="prev" title="git学习笔记">
-      <i class="fa fa-chevron-left"></i> git学习笔记
+    <a href="/2020/07/19/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch2-Probability-Distribution/" rel="prev" title="模式识别与机器学习_ch2-Probability Distribution">
+      <i class="fa fa-chevron-left"></i> 模式识别与机器学习_ch2-Probability Distribution
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/06/30/WSL%E8%AE%BF%E9%97%AE%E5%AE%BF%E4%B8%BB%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BB%A3%E7%90%86%E8%AE%BE%E7%BD%AE/" rel="next" title="WSL访问宿主机网络代理设置">
-      WSL访问宿主机网络代理设置 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -344,7 +390,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#jupyter简单配置"><span class="nav-text">Jupyter简单配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一修改默认工作目录"><span class="nav-text">一、修改默认工作目录</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#生成配置文件"><span class="nav-text">1. 生成配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改默认工作目录"><span class="nav-text">2. 修改默认工作目录</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二安装扩展插件和修改颜色主题"><span class="nav-text">二、安装扩展插件和修改颜色主题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#安装扩展插件"><span class="nav-text">1. 安装扩展插件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改颜色主题"><span class="nav-text">2. 修改颜色主题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三windows添加虚拟环境"><span class="nav-text">三、Windows添加虚拟环境</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#安装并创建虚拟环境virtualenv"><span class="nav-text">1. 安装并创建虚拟环境virtualenv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装jupyter-kernel并连接虚拟环境到jupyter-kernel"><span class="nav-text">2. 安装jupyter kernel并连接虚拟环境到jupyter kernel</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查看与删除虚拟环境"><span class="nav-text">3. 查看与删除虚拟环境</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四jupyter中使用matplotlib和seaborn的相关配置"><span class="nav-text">四、Jupyter中使用Matplotlib和Seaborn的相关配置</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#二项分布"><span class="nav-text">2.1 二项分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#伯努利分布"><span class="nav-text">伯努利分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二项分布-1"><span class="nav-text">二项分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#beta分布"><span class="nav-text">2.1.1 Beta分布</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -623,6 +669,61 @@ window.addEventListener('pjax:success', () => {
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+          load: ['[tex]/mhchem'],
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+          packages: {'[+]': ['mhchem']},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
@@ -637,7 +738,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'kenanking.github.io',
       owner       : 'kenanking',
       admin       : ['kenanking'],
-      id          : '7c8f234d6630ae1d1871f7e4bb3f75ba',
+      id          : '2894a2ff90c3355acfbc3a286879173d',
         language: 'zh-CN',
       distractionFreeMode: true
     });
