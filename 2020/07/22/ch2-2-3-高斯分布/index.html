@@ -23,20 +23,22 @@
     var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="2.2 多项式分布 二元变量只能用来描述两种可能的取值，然而实际会遇到存在\(K\)种状态的情况。这种情况下，我们使用\(1-\mathrm{of}-K\)的方法，可以更方便地进行表示。将变量\(\mathbf{x}\)表示成一个\(K\)维向量，向量中元素\(x_k\)等于\(1\)，其余元素等于\(0\)。">
+  <meta name="description" content="2.3 高斯分布 ⾼斯分布（Gaussian distribution），也被称为正态分布（normal distribution），⼴泛应⽤于连续型随机变量分布的模型中。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ch2-2.2 多项式分布">
-<meta property="og:url" content="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%88%86%E5%B8%83/index.html">
+<meta property="og:title" content="ch2-2.3 高斯分布">
+<meta property="og:url" content="https://kenanking.github.io/2020/07/22/ch2-2-3-%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
-<meta property="og:description" content="2.2 多项式分布 二元变量只能用来描述两种可能的取值，然而实际会遇到存在\(K\)种状态的情况。这种情况下，我们使用\(1-\mathrm{of}-K\)的方法，可以更方便地进行表示。将变量\(\mathbf{x}\)表示成一个\(K\)维向量，向量中元素\(x_k\)等于\(1\)，其余元素等于\(0\)。">
+<meta property="og:description" content="2.3 高斯分布 ⾼斯分布（Gaussian distribution），也被称为正态分布（normal distribution），⼴泛应⽤于连续型随机变量分布的模型中。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-07-21T05:22:57.000Z">
-<meta property="article:modified_time" content="2020-07-21T05:22:57.000Z">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesGaussian%20Distribution.png">
+<meta property="article:published_time" content="2020-07-22T13:53:02.000Z">
+<meta property="article:modified_time" content="2020-07-22T13:53:02.000Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesGaussian%20Distribution.png">
 
-<link rel="canonical" href="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%88%86%E5%B8%83/">
+<link rel="canonical" href="https://kenanking.github.io/2020/07/22/ch2-2-3-%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83/">
 
 
 <script id="page-configurations">
@@ -49,7 +51,7 @@
   };
 </script>
 
-  <title>ch2-2.2 多项式分布 | 额呵呵的博客</title>
+  <title>ch2-2.3 高斯分布 | 额呵呵的博客</title>
   
 
 
@@ -171,7 +173,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%88%86%E5%B8%83/">
+    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/22/ch2-2-3-%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -184,7 +186,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          ch2-2.2 多项式分布
+          ch2-2.3 高斯分布
         </h1>
 
         <div class="post-meta">
@@ -196,7 +198,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-07-21 13:22:57" itemprop="dateCreated datePublished" datetime="2020-07-21T13:22:57+08:00">2020-07-21</time>
+              <time title="创建时间：2020-07-22 21:53:02" itemprop="dateCreated datePublished" datetime="2020-07-22T21:53:02+08:00">2020-07-22</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -209,7 +211,7 @@
             </span>
 
           
-            <span id="/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%88%86%E5%B8%83/" class="post-meta-item leancloud_visitors" data-flag-title="ch2-2.2 多项式分布" title="阅读次数">
+            <span id="/2020/07/22/ch2-2-3-%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83/" class="post-meta-item leancloud_visitors" data-flag-title="ch2-2.3 高斯分布" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -226,48 +228,94 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="多项式分布">2.2 多项式分布</h2>
-<p>二元变量只能用来描述两种可能的取值，然而实际会遇到存在<span class="math inline">\(K\)</span>种状态的情况。这种情况下，我们使用<span class="math inline">\(1-\mathrm{of}-K\)</span>的方法，可以更方便地进行表示。将变量<span class="math inline">\(\mathbf{x}\)</span>表示成一个<span class="math inline">\(K\)</span>维向量，向量中元素<span class="math inline">\(x_k\)</span>等于<span class="math inline">\(1\)</span>，其余元素等于<span class="math inline">\(0\)</span>。</p>
+        <h2 id="高斯分布">2.3 高斯分布</h2>
+<p><strong>⾼斯分布（Gaussian distribution）</strong>，也被称为<strong>正态分布（normal distribution）</strong>，⼴泛应⽤于连续型随机变量分布的模型中。</p>
 <a id="more"></a>
-<p>例如有一个具有<span class="math inline">\(K=6\)</span>种状态的变量<span class="math inline">\(\mathbf{x}\)</span>，某次观测时恰好<span class="math inline">\(x_3=1\)</span>，则变量<span class="math inline">\(\mathbf{x}\)</span>可以表示为： <span class="math display">\[
-\mathbf{x}=(0,0,1,0,0,0)^{\mathrm{T}}
+<p>对于一元变量<span class="math inline">\(x\)</span>，高斯分布为： <span class="math display">\[
+\mathcal{N}\left(x \mid \mu, \sigma^{2}\right)=\frac{1}{\left(2 \pi \sigma^{2}\right)^{1 / 2}} \exp \left\{-\frac{1}{2 \sigma^{2}}(x-\mu)^{2}\right\}
 \]</span></p>
-<p>这个向量<span class="math inline">\(\mathbf{x}\)</span>满足<span class="math inline">\(\sum_{k=1}^{K} x_{k}=1\)</span>。如果用参数<span class="math inline">\(\mu_k\)</span>表示<span class="math inline">\(x_k=1\)</span>的概率，那么<span class="math inline">\(\mathbf{x}\)</span>的分布可以表示为： <span class="math display">\[
-p(\mathbf{x} \mid \boldsymbol{\mu})=\prod_{k=1}^{K} \mu_{k}^{x_{k}}
+<p>其中，<span class="math inline">\(\mu\)</span>是均值，<span class="math inline">\(\sigma^{2}\)</span>是方差。</p>
+<p>对于<span class="math inline">\(D\)</span>维向量<span class="math inline">\(\mathrm{x}\)</span>，高斯分布为： <span class="math display">\[
+\mathcal{N}(\mathrm{x} \mid \boldsymbol{\mu}, \Sigma)=\frac{1}{(2 \pi)^{D / 2}} \frac{1}{|\Sigma|^{1 / 2}} \exp \left\{-\frac{1}{2}(\mathrm{x}-\boldsymbol{\mu})^{\mathrm{T}} \Sigma^{-1}(\mathrm{x}-\boldsymbol{\mu})\right\}
 \]</span></p>
-<p>其中：<span class="math inline">\(\boldsymbol{\mu}=\left(\mu_{1}, \ldots, \mu_{K}\right)^{\mathrm{T}}\)</span>，且<span class="math inline">\(\mu_{k} \geqslant 0\)</span>，<span class="math inline">\(\sum_{k} \mu_{k}=1\)</span>。</p>
-<p>从形式上开，<span class="math inline">\(\mathbf{x}\)</span>的概率分布可以看作是伯努利分布在多输出情况下的推广。</p>
-<p>该分布的期望为： <span class="math display">\[
-\mathbb{E}[\mathbf{x} \mid \boldsymbol{\mu}]=\sum_{\mathbf{x}} p(\mathbf{x} \mid \boldsymbol{\mu}) \mathbf{x}=\left(\mu_{1}, \ldots, \mu_{M}\right)^{\mathrm{T}}=\boldsymbol{\mu}
+<p>其中，<span class="math inline">\(\boldsymbol{\mu}\)</span>是<span class="math inline">\(D\)</span>维的均值向量，<span class="math inline">\(\Sigma\)</span>是一个<span class="math inline">\(D \times D\)</span>的协方差矩阵，<span class="math inline">\(|\Sigma|\)</span>是<span class="math inline">\(\Sigma\)</span>的行列式。</p>
+<p>高斯分布会在很多不同的问题中产生。例如：①对于一元实值向量，满足高斯分布时熵最大。②<strong>中心极限定理（central limit theorem）</strong>：一组随机变量之和的概率 分布会随着数量的增加而趋向高斯分布。</p>
+<h3 id="对高斯分布的分析">对高斯分布的分析</h3>
+<p>这一部分在[机器学习白板推导-数学基础][https://www.bilibili.com/video/av32905863/?p=3]中，讲的比较清楚。</p>
+<p>高斯分布对于<span class="math inline">\(\mathbf{x}\)</span>的依赖是通过下面的二次型： <span class="math display">\[
+\Delta^{2}=(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} \boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})
 \]</span></p>
-<p>对于<span class="math inline">\(N\)</span>个独立观测向量<span class="math inline">\(\mathbf{x}_{1}, \ldots, \mathbf{x}_{N}\)</span>组成的数据集<span class="math inline">\(\mathcal{D}\)</span>，它的似然函数为： <span class="math display">\[
-p(\mathcal{D} \mid \boldsymbol{\mu})=\prod_{n=1}^{N} \prod_{k=1}^{K} \mu_{k}^{x_{n k}}=\prod_{k=1}^{K} \mu_{k}^{\left(\sum_{n} x_{n k}\right)}=\prod_{k=1}^{K} \mu_{k}^{m_{k}}
+<p><span class="math inline">\(\Delta\)</span>叫做<span class="math inline">\(\boldsymbol{\mu}\)</span>和<span class="math inline">\(\mathbf{x}\)</span>之间的<strong>马⽒距离（Mahalanobis distance）</strong>。当<span class="math inline">\(\Sigma\)</span>为单位阵时，<span class="math inline">\(\Delta\)</span>变成欧氏距离。</p>
+<p>在下面的分析中，令<span class="math inline">\(\Sigma\)</span>为对称阵，因为任何⾮对称项都会从指数中消失。</p>
+<blockquote>
+<p>First of all, we note that the matrix <span class="math inline">\(\Sigma\)</span> can be taken to be symmetric, withoutl oss of generality, because any antisymmetric component would disappear from the exponent.</p>
+</blockquote>
+<p>下面解释一下这段话：</p>
+<p>令<span class="math inline">\(A=\boldsymbol{\Sigma}^{-1}\)</span>，于是：<span class="math inline">\(\Delta^{2}=(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} A(\mathbf{x}-\boldsymbol{\mu})\)</span>。</p>
+<p><span class="math inline">\(A\)</span>可以写成如下形式：<span class="math inline">\(A=\frac{1}{2}\left(A+A^{T}\right)+\frac{1}{2}\left(A-A^{T}\right)\)</span>。</p>
+<p>令<span class="math inline">\(B = \frac{1}{2}\left(A+A^{T}\right)\)</span>，<span class="math inline">\(C = \frac{1}{2}\left(A-A^{T}\right)\)</span>。注意到这里<span class="math inline">\(B\)</span>为对称阵，<span class="math inline">\(C\)</span>为反对称阵（即：<span class="math inline">\(c_{ij} = - c_{ji}\)</span>）。</p>
+<p>于是： <span class="math display">\[
+\Delta^{2}=(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} B (\mathbf{x}-\boldsymbol{\mu}) + (\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} C (\mathbf{x}-\boldsymbol{\mu})
 \]</span></p>
-<p>其中：令<span class="math inline">\(m_{k}=\sum_{n} x_{n k}\)</span>，<span class="math inline">\(m_k\)</span>表示观测到<span class="math inline">\(x_k=1\)</span>的次数。</p>
-<p>通过最大化似然函数，可以得到： <span class="math display">\[
-\mu_{k}^{\mathrm{ML}}=\frac{m_{k}}{N}
-\]</span></p>
-<p>我们考虑<span class="math inline">\(m_{1}, \ldots, m_{K}\)</span>在参数<span class="math inline">\(\mu\)</span>和观测总数<span class="math inline">\(N\)</span>条件下的联合分布，可以得到这个分布的形式为： <span class="math display">\[
-\operatorname{Mult}\left(m_{1}, m_{2}, \ldots, m_{K} \mid \mu, N\right)=\left(\begin{array}{c}
-N \\
-m_{1} m_{2} \ldots m_{K}
-\end{array}\right) \prod_{k=1}^{K} \mu_{k}^{m_{k}}
-\]</span></p>
-<p>这个分布为<strong>多项式分布（multinomial distribution）</strong>。</p>
-<p>其中：<span class="math inline">\(\left(\begin{array}{c} N \\ m_{1} m_{2} \ldots m_{K} \end{array}\right)=\frac{N !}{m_{1} ! m_{2} ! \ldots m_{K} !}\)</span>，且<span class="math inline">\(m_k\)</span>满足<span class="math inline">\(\sum_{k=1}^{K} m_{k}=N\)</span>。</p>
-<h3 id="狄利克雷分布">2.2.1 狄利克雷分布</h3>
-<p>这里引入的是多项式分布的参数<span class="math inline">\(\left\{\mu_{k}\right\}\)</span>的先验分布，<strong>狄利克雷分布（Dirichlet distribution）</strong>，它的形式为： <span class="math display">\[
-\operatorname{Dir}(\boldsymbol{\mu} \mid \boldsymbol{\alpha})=\frac{\Gamma\left(\alpha_{0}\right)}{\Gamma\left(\alpha_{1}\right) \cdots \Gamma\left(\alpha_{K}\right)} \prod_{k=1}^{K} \mu_{k}^{\alpha_{k}-1}
-\]</span></p>
-<p>其中：<span class="math inline">\(\alpha_{1}, \ldots, \alpha_{K}\)</span>是分布的参数，<span class="math inline">\(\boldsymbol{\alpha}\)</span>表示<span class="math inline">\(\left(\alpha_{1}, \ldots, \alpha_{K}\right)^{\mathrm{T}}\)</span>。</p>
-<p>狄利克雷分布是多项式分布的共轭先验。</p>
-<p>后验分布的形式为： <span class="math display">\[
+<p>其中： <span class="math display">\[
 \begin{aligned}
-p(\boldsymbol{\mu} \mid \mathcal{D}, \boldsymbol{\alpha}) &amp;=\operatorname{Dir}(\boldsymbol{\mu} \mid \boldsymbol{\alpha}+\mathbf{m}) \notag \\
-&amp;=\frac{\Gamma\left(\alpha_{0}+N\right)}{\Gamma\left(\alpha_{1}+m_{1}\right) \cdots \Gamma\left(\alpha_{K}+m_{K}\right)} \prod_{k=1}^{K} \mu_{k}^{\alpha_{k}+m_{k}-1} \notag 
+(x-\mu)^{T} C(x-\mu) &amp;=\sum_{i=1}^{D} \sum_{j=1}^{D} c_{i j}(x-\mu)_{i}(x-\mu)_{j} \notag \\
+&amp;=\sum_{i=1}^{D} \sum_{j=i+1}^{D}\left(c_{i j}+c_{j i}\right)(x-\mu)_{i}(x-\mu)_{j} \notag \\
+&amp;=0 \notag 
 \end{aligned}
 \]</span></p>
-<p>与Beta分布类似，狄利克雷分布中的参数<span class="math inline">\(\alpha_k\)</span>可以看作是<span class="math inline">\(x_k=1\)</span>的有效观测数。</p>
+<p>所以可以得到： <span class="math display">\[
+\Delta^{2}=(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} B (\mathbf{x}-\boldsymbol{\mu})
+\]</span></p>
+<p>其中：<span class="math inline">\(B\)</span>为对称阵。</p>
+<p>从上面的过程可以得到，如果<span class="math inline">\(\Sigma\)</span>不是对称阵，那么总会存在对称阵<span class="math inline">\(B\)</span>，使得<span class="math inline">\(\Delta^{2}=(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} \boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu}) = (\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} B (\mathbf{x}-\boldsymbol{\mu})\)</span>。</p>
+<p>考虑协方差矩阵的特征值，对<span class="math inline">\(\boldsymbol{\Sigma}\)</span>进行特征值分解，设对角阵<span class="math inline">\(\boldsymbol{\Lambda}\)</span>，正交矩阵<span class="math inline">\(\boldsymbol{ U}\)</span>：</p>
+<p><span class="math display">\[
+\boldsymbol{\Sigma} \mathbf{u}_{i}=\lambda_{i} \mathbf{u}_{i}
+\]</span></p>
+<p>设对角阵<span class="math inline">\(\boldsymbol{\Lambda}\)</span>，正交矩阵<span class="math inline">\(\boldsymbol{ U}\)</span>： <span class="math display">\[
+\boldsymbol\Lambda = 
+\left(\begin{array}{cccc}
+\lambda_{1} &amp; &amp; &amp; \\
+&amp; \lambda_{L} &amp; &amp;\\
+&amp; &amp; \cdots &amp;\\
+&amp; &amp; &amp;\lambda_{D}
+\end{array}\right)，\ \ \boldsymbol U =
+\begin{pmatrix}
+\boldsymbol u_1,\boldsymbol u_2...\boldsymbol u_D
+\end{pmatrix}
+\]</span></p>
+<p>由于协方差矩阵为实对称矩阵，特征值都是实数，且特征向量互相正交。 <span class="math display">\[
+\begin{aligned}
+&amp;\boldsymbol{\Sigma} =\boldsymbol{U} \boldsymbol{\Lambda} \boldsymbol{U}^{T}=\sum_{i}^{D} \lambda_{i} \boldsymbol{u}_{i} \boldsymbol{u}_{i}^{T} \notag \\
+&amp;\boldsymbol{\Sigma}^{-1} =(\boldsymbol{U} \boldsymbol{\Lambda} \boldsymbol{U}^{T})^{-1} = \boldsymbol{U} \boldsymbol{\Lambda}^{-1} \boldsymbol{U}^{T} = \sum_{i}^{D} \frac{1}{\lambda_{i}} \boldsymbol{u}_{i} \boldsymbol{u}_{i}^{T} \notag 
+\end{aligned}
+\]</span></p>
+<p>于是，上面的二次型可以进一步写成： <span class="math display">\[
+\begin{align}
+\Delta^{2} &amp;= (\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} \boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu}) \notag \\
+&amp;= (\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}}\sum_{i}^{D} \frac{1}{\lambda_{i}} \boldsymbol{u}_{i} \boldsymbol{u}_{i}^{T} (\mathbf{x}-\boldsymbol{\mu}) \notag \\
+&amp;= \sum_{i}^{D} (\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}}\boldsymbol{u}_{i} \frac{1}{\lambda_{i}} \boldsymbol{u}_{i}^{T} (\mathbf{x}-\boldsymbol{\mu}) \notag 
+\end{align}
+\]</span></p>
+<p>令<span class="math inline">\(y_{i}=\mathbf{u}_{i}^{\mathrm{T}}(\mathrm{x}-\boldsymbol{\mu})\)</span>，可以得到： <span class="math display">\[
+\Delta^{2}=\sum_{i=1}^{D} \frac{y_{i}^{2}}{\lambda_{i}}
+\]</span></p>
+<p>我们可以把<span class="math inline">\(\left\{y_{i}\right\}\)</span>看作一个新的坐标系，其中<span class="math inline">\(y_i\)</span>表示正交向量<span class="math inline">\(u_i\)</span>关于原始坐标<span class="math inline">\(x_i\)</span>经过平移和旋转后形成的新的坐标。</p>
+<p>定义：<span class="math inline">\(\boldsymbol y = (y_1,...,y_D)^T\)</span>，于是有： <span class="math display">\[
+\mathbf{y}=\mathbf{U}(\mathbf{x}-\boldsymbol{\mu})
+\]</span></p>
+<p>对于<span class="math inline">\(\Delta^{2}=\sum_{i=1}^{D} \frac{y_{i}^{2}}{\lambda_{i}}\)</span>，可以令<span class="math inline">\(D = 2\)</span>，<span class="math inline">\(\Delta^{2}=1\)</span>，这样其实就得到了一个椭圆曲线，椭圆的中心为<span class="math inline">\(\boldsymbol{\mu}\)</span>，椭圆的轴沿着方向<span class="math inline">\(\mathbf{u}_{i}\)</span>： <span class="math display">\[
+\frac{y_{1}^{2}}{\lambda_{1}}+\frac{y_{2}^{2}}{\lambda_{2}}=1
+\]</span></p>
+<p><span class="math inline">\(\Delta^{2}\)</span>和<span class="math inline">\(\mathbf{x}\)</span>的取值相关，可以理解为二维高斯分布的概率密度图像的水平切线在底面的投影，如下图所示。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesGaussian Distribution.png" alt="二维高斯分布曲线"  /></p>
+<h3 id="高斯分布的局限性">高斯分布的局限性</h3>
+<h2 id="其他参考资料">其他参考资料</h2>
+<ol type="1">
+<li><p>对“any antisymmetric component would disappear from the exponent”的理解。 https://math.stackexchange.com/questions/2262171/we-note-that-the-matrix-%CE%A3-can-be-taken-to-be-symmetric-without-loss-of-general</p></li>
+<li><p>机器学习-白板推导系列-数学基础：https://github.com/shuhuai007/Machine-Learning-Session</p></li>
+</ol>
 
     </div>
 
@@ -287,13 +335,10 @@ p(\boldsymbol{\mu} \mid \mathcal{D}, \boldsymbol{\alpha}) &amp;=\operatorname{Di
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/07/19/ch2-2-1-%E4%BA%8C%E9%A1%B9%E5%88%86%E5%B8%83/" rel="prev" title="ch2-2.1 二项分布">
-      <i class="fa fa-chevron-left"></i> ch2-2.1 二项分布
+    <a href="/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%88%86%E5%B8%83/" rel="prev" title="ch2-2.2 多项式分布">
+      <i class="fa fa-chevron-left"></i> ch2-2.2 多项式分布
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/07/22/ch2-2-3-%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83/" rel="next" title="ch2-2.3 高斯分布">
-      ch2-2.3 高斯分布 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -353,7 +398,7 @@ p(\boldsymbol{\mu} \mid \mathcal{D}, \boldsymbol{\alpha}) &amp;=\operatorname{Di
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#多项式分布"><span class="nav-text">2.2 多项式分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#狄利克雷分布"><span class="nav-text">2.2.1 狄利克雷分布</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#高斯分布"><span class="nav-text">2.3 高斯分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对高斯分布的分析"><span class="nav-text">对高斯分布的分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的局限性"><span class="nav-text">高斯分布的局限性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -701,7 +746,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'kenanking.github.io',
       owner       : 'kenanking',
       admin       : ['kenanking'],
-      id          : '6f42aaf436c72f5df0febcb0a0737d4c',
+      id          : 'b928c2ff968755a78c5cbb2ef458bf5e',
         language: 'zh-CN',
       distractionFreeMode: true
     });
