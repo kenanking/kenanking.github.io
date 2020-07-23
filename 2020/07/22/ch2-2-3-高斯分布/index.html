@@ -239,7 +239,7 @@
 \mathcal{N}(\mathrm{x} \mid \boldsymbol{\mu}, \Sigma)=\frac{1}{(2 \pi)^{D / 2}} \frac{1}{|\Sigma|^{1 / 2}} \exp \left\{-\frac{1}{2}(\mathrm{x}-\boldsymbol{\mu})^{\mathrm{T}} \Sigma^{-1}(\mathrm{x}-\boldsymbol{\mu})\right\}
 \]</span></p>
 <p>其中，<span class="math inline">\(\boldsymbol{\mu}\)</span>是<span class="math inline">\(D\)</span>维的均值向量，<span class="math inline">\(\Sigma\)</span>是一个<span class="math inline">\(D \times D\)</span>的协方差矩阵，<span class="math inline">\(|\Sigma|\)</span>是<span class="math inline">\(\Sigma\)</span>的行列式。</p>
-<p>高斯分布会在很多不同的问题中产生。例如：①对于一元实值向量，满足高斯分布时熵最大。②<strong>中心极限定理（central limit theorem）</strong>：一组随机变量之和的概率 分布会随着数量的增加而趋向高斯分布。</p>
+<p>在很多不同的问题中产生都会出现高斯分布的应用。例如：①对于一元实值向量，满足高斯分布时熵最大。②<strong>中心极限定理（central limit theorem）</strong>：一组随机变量之和的概率 分布会随着数量的增加而趋向高斯分布。</p>
 <h3 id="对高斯分布的分析">对高斯分布的分析</h3>
 <p>这一部分在<a href="https://www.bilibili.com/video/av32905863/?p=3" target="_blank" rel="noopener">机器学习白板推导-数学基础</a>中，讲的比较清楚。</p>
 <p>高斯分布对于<span class="math inline">\(\mathbf{x}\)</span>的依赖是通过下面的二次型： <span class="math display">\[
@@ -248,7 +248,7 @@
 <p><span class="math inline">\(\Delta\)</span>叫做<span class="math inline">\(\boldsymbol{\mu}\)</span>和<span class="math inline">\(\mathbf{x}\)</span>之间的<strong>马⽒距离（Mahalanobis distance）</strong>。当<span class="math inline">\(\Sigma\)</span>为单位阵时，<span class="math inline">\(\Delta\)</span>变成欧氏距离。</p>
 <p>在下面的分析中，令<span class="math inline">\(\Sigma\)</span>为对称阵，因为任何⾮对称项都会从指数中消失。</p>
 <blockquote>
-<p>First of all, we note that the matrix <span class="math inline">\(\Sigma\)</span> can be taken to be symmetric, withoutl oss of generality, because any antisymmetric component would disappear from the exponent.</p>
+<p>First of all, we note that the matrix <span class="math inline">\(\Sigma\)</span> can be taken to be symmetric, without loss of generality, because any antisymmetric component would disappear from the exponent.</p>
 </blockquote>
 <p>下面解释一下这段话：</p>
 <p>令<span class="math inline">\(A=\boldsymbol{\Sigma}^{-1}\)</span>，于是：<span class="math inline">\(\Delta^{2}=(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} A(\mathbf{x}-\boldsymbol{\mu})\)</span>。</p>
@@ -282,7 +282,7 @@
 &amp; &amp; &amp;\lambda_{D}
 \end{array}\right)，\ \ \boldsymbol U =
 \begin{pmatrix}
-\boldsymbol u_1,\boldsymbol u_2...\boldsymbol u_D
+\boldsymbol u_1,\boldsymbol u_2,...,\boldsymbol u_D
 \end{pmatrix}
 \]</span></p>
 <p>由于协方差矩阵为实对称矩阵，特征值都是实数，且特征向量互相正交。 <span class="math display">\[
@@ -311,11 +311,11 @@
 <p><span class="math inline">\(\Delta^{2}\)</span>和<span class="math inline">\(\mathbf{x}\)</span>的取值相关，可以理解为二维高斯分布的概率密度图像的水平切线在底面的投影，如下图所示。</p>
 <p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesGaussian Distribution.png" alt="二维高斯分布曲线"  /></p>
 <h3 id="高斯分布的局限性">高斯分布的局限性</h3>
+<h4 id="局限一">局限一</h4>
+<h4 id="局限二">局限二</h4>
 <h2 id="其他参考资料">其他参考资料</h2>
-<ol type="1">
-<li>对“any antisymmetric component would disappear from the exponent”的理解：<a href="https://math.stackexchange.com/questions/2262171/we-note-that-the-matrix-Σ-can-be-taken-to-be-symmetric-without-loss-of-general" target="_blank" rel="noopener">https://math.stackexchange.com/questions/2262171/we-note-that-the-matrix-%CE%A3-can-be-taken-to-be-symmetric-without-loss-of-general</a></li>
-<li>机器学习-白板推导系列-数学基础：<a href="https://github.com/shuhuai007/Machine-Learning-Session" target="_blank" rel="noopener">https://github.com/shuhuai007/Machine-Learning-Session</a></li>
-</ol>
+<p>①对“any antisymmetric component would disappear from the exponent”的理解：https://math.stackexchange.com/questions/2262171/we-note-that-the-matrix-%CE%A3-can-be-taken-to-be-symmetric-without-loss-of-general</p>
+<p>②机器学习-白板推导系列-数学基础：https://github.com/shuhuai007/Machine-Learning-Session</p>
 
     </div>
 
@@ -398,7 +398,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#高斯分布"><span class="nav-text">2.3 高斯分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对高斯分布的分析"><span class="nav-text">对高斯分布的分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的局限性"><span class="nav-text">高斯分布的局限性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#高斯分布"><span class="nav-text">2.3 高斯分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对高斯分布的分析"><span class="nav-text">对高斯分布的分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的局限性"><span class="nav-text">高斯分布的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#局限一"><span class="nav-text">局限一</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#局限二"><span class="nav-text">局限二</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
