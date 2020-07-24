@@ -389,6 +389,70 @@ p(\mathbf{x} \mid \mathbf{y}) &amp;=\mathcal{N}(\mathbf{x} \mid \boldsymbol{\Sig
 \]</span></p>
 <p>其中：<span class="math inline">\(\boldsymbol{\Sigma}=\left(\boldsymbol{\Lambda}+\mathbf{A}^{\mathrm{T}} \mathbf{L} \mathbf{A}\right)^{-1}\)</span>。</p>
 <h3 id="高斯分布的最大似然估计">2.3.4 高斯分布的最大似然估计</h3>
+<p>给定一个由独立的服从多元高斯分布的观测量组成的数据集<span class="math inline">\(\mathbf{X}=\left(\mathbf{x}_{1}, \ldots, \mathbf{x}_{N}\right)^{\mathrm{T}}\)</span>。</p>
+<p>得到对数似然函数为： <span class="math display">\[
+\ln p(\mathbf{X} \mid \boldsymbol{\mu}, \mathbf{\Sigma})=-\frac{N D}{2} \ln (2 \pi)-\frac{N}{2} \ln |\boldsymbol{\Sigma}|-\frac{1}{2} \sum_{n=1}^{N}(\mathbf{x}_{n}-\boldsymbol{\mu})^{\mathrm{T}} \boldsymbol{\Sigma}^{-1}(\mathbf{x}_{n}-\boldsymbol{\mu})
+\]</span></p>
+<p>对<span class="math inline">\(\boldsymbol{\mu}\)</span>求导等于零，得到： <span class="math display">\[
+\boldsymbol{\mu}_{\mathrm{ML}}=\frac{1}{N} \sum_{n=1}^{N} \mathrm{x}_{n}
+\]</span></p>
+<p><span class="math inline">\(\mathbf{\Sigma}\)</span>的最大似然估计值为： <span class="math display">\[
+\boldsymbol{\Sigma}_{\mathrm{ML}}=\frac{1}{N} \sum_{n=1}^{N}(\mathrm{x}_{n}-\boldsymbol{\mu}_{\mathrm{ML}})(\mathrm{x}_{n}-\boldsymbol{\mu}_{\mathrm{ML}})^{\mathrm{T}}
+\]</span></p>
+<p>多元高斯分布的结果和一元高斯分布是类似的，<span class="math inline">\(\mathbf{\Sigma}\)</span>的最大似然估计值也是有偏的。</p>
+<h3 id="顺序估计">2.3.5 顺序估计</h3>
+<h4 id="顺序估计思想">顺序估计思想</h4>
+<p>最大似然的顺序估计。顺序的方法允许每次处理⼀个数据点，然后丢弃这个点。</p>
+<blockquote>
+<p><strong>Sequential methods</strong> allow data points to be processed one at a time and then discarded and are important for on-line applications, and also where large data sets are involved so that batch processing of all data points at once is infeasible.</p>
+</blockquote>
+<p>在讲Beta分布的时候，其实就讲到了<strong>顺序学习的方法</strong>思想。</p>
+<p>考虑高斯分布均值的最大似然结果<span class="math inline">\(\mu_{\mathrm{ML}}\)</span>，当它基于前<span class="math inline">\(N\)</span>次的观测时，记作<span class="math inline">\(\boldsymbol{\mu}_{\mathrm{ML}}^{(N)}\)</span>。于是，我们可以分析出最后一个数据点<span class="math inline">\(\mathbf{x}_N\)</span>的贡献：</p>
+<p><span class="math display">\[
+\begin{aligned}
+\boldsymbol{\mu}_{\mathrm{ML}}^{(N)} &amp;=\frac{1}{N} \sum_{n=1}^{N} \mathrm{x}_{n} \notag \\
+&amp;=\frac{1}{N} \mathrm{x}_{N}+\frac{1}{N} \sum_{n=1}^{N-1} \mathrm{x}_{n} \notag \\
+&amp;=\frac{1}{N} \mathrm{x}_{N}+\frac{N-1}{N} \boldsymbol{\mu}_{\mathrm{ML}}^{(N-1)} \notag \\
+&amp;=\boldsymbol{\mu}_{\mathrm{ML}}^{(N-1)}+\frac{1}{N}\left(\mathrm{x}_{N}-\boldsymbol{\mu}_{\mathrm{ML}}^{(N-1)}\right) \notag 
+\end{aligned}
+\]</span></p>
+<p>上面的计算结果得到了一个迭代公式。根据前<span class="math inline">\(N-1\)</span>次的观测，我们可以把<span class="math inline">\(\boldsymbol{\mu}\)</span>估计为<span class="math inline">\(\boldsymbol{\mu}_{\mathrm{ML}}^{(N-1)}\)</span>。在得到数据点<span class="math inline">\(\mathbf{x}\)</span>后，我们得到了一个修正的估计<span class="math inline">\(\boldsymbol{\mu}_{\mathrm{ML}}^{(N)}\)</span>。</p>
+<h4 id="顺序估计的一般方法单变量情况">顺序估计的一般方法（单变量情况）</h4>
+<p>为了给出顺序学习的一般方法，给出了<strong>Robbins-Monro算法（Robbins-Monro algorithm）。</strong></p>
+<p>对于一对随机变量<span class="math inline">\(\theta\)</span>和<span class="math inline">\(z\)</span>，它们由一个联合概率分布<span class="math inline">\(p(z,\theta)\)</span>控制。已知<span class="math inline">\(\theta\)</span>的条件下，<span class="math inline">\(z\)</span>的条件期望定义了一个确定的函数<span class="math inline">\(f(\theta)\)</span>： <span class="math display">\[
+f(\theta) \equiv \mathbb{E}[z \mid \theta]=\int z p(z \mid \theta) \mathrm{d} z
+\]</span></p>
+<p>这个函数称为<strong>回归函数（regression function）</strong>。</p>
+<p>我们的目标是找到<span class="math inline">\(\theta^\star\)</span>使得<span class="math inline">\(f(\theta^\star)=0\)</span>。</p>
+<ol type="1">
+<li>假定<span class="math inline">\(z\)</span>的条件方差是有穷的：<span class="math inline">\(\mathbb{E}[(z-f)^{2} \mid \theta]&lt;\infty\)</span>。</li>
+<li>考虑当<span class="math inline">\(\theta&gt;\theta^{\star}\)</span>，<span class="math inline">\(f(\theta)&gt;0\)</span>；当<span class="math inline">\(\theta&lt;\theta^{\star}\)</span>，<span class="math inline">\(f(\theta)&lt;0\)</span>的情况。</li>
+</ol>
+<p>则<span class="math inline">\(\theta^{\star}\)</span>的顺序估计可以由序列<span class="math inline">\(\theta^{(N)}=\theta^{(N-1)}+a_{N-1} z(\theta^{(N-1)})\)</span>得到。</p>
+<p>其中，系数<span class="math inline">\(\{a_{N}\}\)</span>为一个满足下列条件的正数数列： <span class="math display">\[
+\begin{aligned}
+\lim _{N \rightarrow \infty} a_{N} &amp;=0 \notag \\
+\sum_{N=1}^{\infty} a_{N} &amp;=\infty \notag \\
+\sum_{N=1}^{\infty} a_{N}^{2} &amp;&lt;\infty \notag
+\end{aligned}
+\]</span></p>
+<p>特殊的，当<span class="math inline">\(a_{N}=\frac{1}{z&#39;(\theta^{(N-1)}}\)</span>时，迭代公式可以写作： <span class="math display">\[
+\theta^{(N)}=\theta^{(N-1)}+\frac{z(\theta^{(N-1)})}{z&#39;(\theta^{(N-1)})}
+\]</span></p>
+<p>这就是非线性方差求根中常用的<strong>牛顿法（Newton's method）</strong>。</p>
+<p>上面的做法仅针对<strong>单变量的情况</strong>。</p>
+<h4 id="例子最大似然问题">例子：最大似然问题</h4>
+<p>对于参数<span class="math inline">\(\theta\)</span>的最大似然解<span class="math inline">\(\theta^{\star}\)</span>是对数似然函数的一个驻点，因此有： <span class="math display">\[
+\left.\frac{\partial}{\partial \theta}\left\{\frac{1}{N} \sum_{n=1}^{N} \ln p\left(\mathbf{x}_{n} \mid \theta\right)\right\}\right|_{\theta_{\mathrm{ML}}}=0
+\]</span></p>
+<p>等式右边交换位置，取极限<span class="math inline">\(N \rightarrow \infty\)</span>，可以得到： <span class="math display">\[
+\lim _{N \rightarrow \infty} \frac{1}{N} \sum_{n=1}^{N} \frac{\partial}{\partial \theta} \ln p\left(x_{n} \mid \theta\right)=\mathbb{E}_{x}\left[\frac{\partial}{\partial \theta} \ln p(x \mid \theta)\right]
+\]</span></p>
+<p>因此，<strong>寻找最大似然解对应于寻找回归函数的根</strong>。</p>
+<p>我们可以得到Robbins-Monro算法的迭代形式为： <span class="math display">\[
+\theta^{(N)}=\theta^{(N-1)}+a_{N-1} \frac{\partial}{\partial \theta^{(N-1)}} \ln p\left(x_{N} \mid \theta^{(N-1)}\right)
+\]</span></p>
+<h3 id="高斯分布的贝叶斯推断">2.3.6 高斯分布的贝叶斯推断</h3>
 <h2 id="其他参考资料">其他参考资料</h2>
 <ol type="1">
 <li>对“any antisymmetric component would disappear from the exponent”的理解：<a href="https://math.stackexchange.com/questions/2262171/we-note-that-the-matrix-Σ-can-be-taken-to-be-symmetric-without-loss-of-general" target="_blank" rel="noopener">https://math.stackexchange.com/questions/2262171/we-note-that-the-matrix-%CE%A3-can-be-taken-to-be-symmetric-without-loss-of-general</a></li>
@@ -476,7 +540,7 @@ p(\mathbf{x} \mid \mathbf{y}) &amp;=\mathcal{N}(\mathbf{x} \mid \boldsymbol{\Sig
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#高斯分布"><span class="nav-text">2.3 高斯分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对高斯分布的分析"><span class="nav-text">对高斯分布的分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的局限性"><span class="nav-text">高斯分布的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#局限一高斯分布自由参数数量多"><span class="nav-text">局限一：高斯分布自由参数数量多</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#局限二高斯分布是单峰的不能很好地近似多峰分布"><span class="nav-text">局限二：高斯分布是单峰的，不能很好地近似多峰分布</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件高斯分布"><span class="nav-text">2.3.1 条件高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#边缘高斯分布"><span class="nav-text">2.3.2 边缘高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯变量的贝叶斯定理"><span class="nav-text">2.3.3 高斯变量的贝叶斯定理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的最大似然估计"><span class="nav-text">2.3.4 高斯分布的最大似然估计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#高斯分布"><span class="nav-text">2.3 高斯分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对高斯分布的分析"><span class="nav-text">对高斯分布的分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的局限性"><span class="nav-text">高斯分布的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#局限一高斯分布自由参数数量多"><span class="nav-text">局限一：高斯分布自由参数数量多</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#局限二高斯分布是单峰的不能很好地近似多峰分布"><span class="nav-text">局限二：高斯分布是单峰的，不能很好地近似多峰分布</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件高斯分布"><span class="nav-text">2.3.1 条件高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#边缘高斯分布"><span class="nav-text">2.3.2 边缘高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯变量的贝叶斯定理"><span class="nav-text">2.3.3 高斯变量的贝叶斯定理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的最大似然估计"><span class="nav-text">2.3.4 高斯分布的最大似然估计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#顺序估计"><span class="nav-text">2.3.5 顺序估计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#顺序估计思想"><span class="nav-text">顺序估计思想</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#顺序估计的一般方法单变量情况"><span class="nav-text">顺序估计的一般方法（单变量情况）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例子最大似然问题"><span class="nav-text">例子：最大似然问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的贝叶斯推断"><span class="nav-text">2.3.6 高斯分布的贝叶斯推断</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
