@@ -440,7 +440,7 @@ f(\theta) \equiv \mathbb{E}[z \mid \theta]=\int z p(z \mid \theta) \mathrm{d} z
 \theta^{(N)}=\theta^{(N-1)}+\frac{z(\theta^{(N-1)})}{z&#39;(\theta^{(N-1)})}
 \]</span></p>
 <p>这就是非线性方差求根中常用的<strong>牛顿法（Newton's method）</strong>。</p>
-<p>上面的做法仅针对<strong>单变量的情况</strong>。</p>
+<p>上面的做法仅讨论了<strong>单变量的情况</strong>，对多元变量同样适用。</p>
 <h4 id="例子最大似然问题">例子：最大似然问题</h4>
 <p>对于参数<span class="math inline">\(\theta\)</span>的最大似然解<span class="math inline">\(\theta^{\star}\)</span>是对数似然函数的一个驻点，因此有： <span class="math display">\[
 \left.\frac{\partial}{\partial \theta}\left\{\frac{1}{N} \sum_{n=1}^{N} \ln p\left(\mathbf{x}_{n} \mid \theta\right)\right\}\right|_{\theta_{\mathrm{ML}}}=0
