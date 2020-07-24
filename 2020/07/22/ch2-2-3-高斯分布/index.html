@@ -363,7 +363,7 @@ p\left(\mathbf{x}_{a} \mid \mathbf{x}_{b}\right)=\mathcal{N}\left(\mathbf{x} \mi
 \]</span></p>
 <h3 id="边缘高斯分布">2.3.2 边缘高斯分布</h3>
 <p>在<a href="https://www.bilibili.com/video/BV1RW411m7WE?t=331&amp;p=5" target="_blank" rel="noopener">机器学习-白板推导系列(二)-数学基础</a>中，比较清楚的讲了推导的过程。</p>
-<p>这里的结论是比较符号直觉的： <span class="math display">\[
+<p>这里的结论是比较符合直觉的： <span class="math display">\[
 \begin{aligned}
 \mathbb{E}\left[\mathbf{x}_{a}\right] &amp;=\boldsymbol{\mu}_{a} \notag \\
 \operatorname{cov}\left[\mathbf{x}_{a}\right] &amp;=\boldsymbol{\Sigma}_{a a} \notag 
@@ -373,6 +373,21 @@ p\left(\mathbf{x}_{a} \mid \mathbf{x}_{b}\right)=\mathcal{N}\left(\mathbf{x} \mi
 p\left(\mathbf{x}_{a}\right)=\mathcal{N}\left(\mathbf{x}_{a} \mid \boldsymbol{\mu}_{a}, \mathbf{\Sigma}_{a a}\right)
 \]</span></p>
 <h3 id="高斯变量的贝叶斯定理">2.3.3 高斯变量的贝叶斯定理</h3>
+<p>已知： <span class="math display">\[
+\begin{aligned}
+p(\mathbf{x}) &amp;=\mathcal{N}\left(\mathbf{x} \mid \boldsymbol{\mu}, \boldsymbol{\Lambda}^{-1}\right) \notag \\
+p(\mathbf{y} \mid \mathbf{x}) &amp;=\mathcal{N}\left(\mathbf{y} \mid \mathbf{A} \mathbf{x}+\mathbf{b}, \mathbf{L}^{-1}\right) \notag 
+\end{aligned}
+\]</span></p>
+<p>求：<span class="math inline">\(p(\mathbf{y})\)</span>和<span class="math inline">\(p(\mathbf{x \mid y})\)</span>。</p>
+<p>在<a href="https://www.bilibili.com/video/BV1RW411m7WE?p=6" target="_blank" rel="noopener">机器学习-白板推导系列(二)-数学基础</a>中，比较清楚的讲了推导的过程。</p>
+<p>下面是结论： <span class="math display">\[
+\begin{aligned}
+p(\mathbf{y}) &amp;=\mathcal{N}\left(\mathbf{y} \mid \mathbf{A} \boldsymbol{\mu}+\mathbf{b}, \mathbf{L}^{-1}+\mathbf{A} \mathbf{\Lambda}^{-1} \mathbf{A}^{\mathrm{T}}\right) \notag \\
+p(\mathbf{x} \mid \mathbf{y}) &amp;=\mathcal{N}\left(\mathbf{x} \mid \boldsymbol{\Sigma}\left\{\mathbf{A}^{\mathrm{T}} \mathbf{L}(\mathbf{y}-\mathbf{b})+\boldsymbol{\Lambda} \boldsymbol{\mu}\right\}, \boldsymbol{\Sigma}\right) \notag 
+\end{aligned}
+\]</span></p>
+<p>其中：<span class="math inline">\(\boldsymbol{\Sigma}=\left(\boldsymbol{\Lambda}+\mathbf{A}^{\mathrm{T}} \mathbf{L} \mathbf{A}\right)^{-1}\)</span>。</p>
 
     </div>
 
