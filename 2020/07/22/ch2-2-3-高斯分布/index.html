@@ -311,8 +311,68 @@
 <p><span class="math inline">\(\Delta^{2}\)</span>和<span class="math inline">\(\mathbf{x}\)</span>的取值相关，可以理解为二维高斯分布的概率密度图像的水平切线在底面的投影，如下图所示。</p>
 <p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesGaussian Distribution.png" alt="二维高斯分布曲线"  /></p>
 <h3 id="高斯分布的局限性">高斯分布的局限性</h3>
-<h4 id="局限一">局限一</h4>
-<h4 id="局限二">局限二</h4>
+<h4 id="局限一高斯分布自由参数数量多">局限一：高斯分布自由参数数量多</h4>
+<p>协方差矩阵<span class="math inline">\(\Sigma\)</span>中通常有<span class="math inline">\(\frac{D(D+1)}{2}\)</span>个独立参数，<span class="math inline">\(\boldsymbol{\mu}\)</span>中存在<span class="math inline">\(D\)</span>个独立参数，所有总计有<span class="math inline">\(\frac{D(D+3)}{2}\)</span>个参数。对于高维问题，要学习的参数非常多，计算复杂。</p>
+<p>一般解决方法可以假设协方差矩阵<span class="math inline">\(\Sigma\)</span>为对角阵，就可以简化矩阵求逆的运算。此时椭圆的轴与坐标轴平行。</p>
+<p>特殊的还可以令协方差矩阵<span class="math inline">\(\Sigma\)</span>为对角阵并且对角线元素都相等，这种情况称为<strong>各向同性</strong>。此时椭圆变成圆。</p>
+<h4 id="局限二高斯分布是单峰的不能很好地近似多峰分布">局限二：高斯分布是单峰的，不能很好地近似多峰分布</h4>
+<p>解决方法一般有使用混合高斯模型等。</p>
+<h3 id="条件高斯分布">2.3.1 条件高斯分布</h3>
+<p>多元⾼斯分布的⼀个重要性质是，如果两组变量是联合⾼斯分布，那么以⼀组变量为条件， 另⼀组变量同样是⾼斯分布。</p>
+<p>类似地，任何⼀个变量的边缘分布也是⾼斯分布。</p>
+<p>假设<span class="math inline">\(\mathbf{x}\)</span>是一个服从<span class="math inline">\(\mathcal{N}(\mathrm{x} \mid \mu, \Sigma)\)</span>的随机向量，划分为<span class="math inline">\(\mathbf{x}_{a}\)</span>和<span class="math inline">\(\mathbf{x}_{b}\)</span>两个互不相交的子集。 <span class="math display">\[
+\mathbf{x}=\left(\begin{array}{l}
+\mathbf{x}_{a} \\
+\mathbf{x}_{b}
+\end{array}\right)
+\]</span></p>
+<p>对应的均值向量<span class="math inline">\(\boldsymbol{\mu}\)</span>为： <span class="math display">\[
+\boldsymbol{\mu} =\left(\begin{array}{l}
+\boldsymbol{\mu}_{a} \\
+\boldsymbol{\mu}_{b}
+\end{array}\right)
+\]</span></p>
+<p>对应的协方差矩阵<span class="math inline">\(\boldsymbol{\Sigma}\)</span>为： <span class="math display">\[
+\boldsymbol{\Sigma}=\left(\begin{array}{ll}
+\boldsymbol{\Sigma}_{a a} &amp; \boldsymbol{\Sigma}_{a b} \\
+\boldsymbol{\Sigma}_{b a} &amp; \boldsymbol{\Sigma}_{b b}
+\end{array}\right)
+\]</span></p>
+<p>在许多情况下，为了方便起见，经常使用协方差矩阵的逆矩阵，称为精度矩阵。 <span class="math display">\[
+\mathbf{\Lambda} = \mathbf{\Sigma}^{-1} =\left(\begin{array}{ll}
+\Lambda_{a a} &amp; \Lambda_{a b} \\
+\Lambda_{b a} &amp; \Lambda_{b b}
+\end{array}\right)
+\]</span></p>
+<p>根据分块矩阵求逆： <span class="math display">\[
+\begin{array}{l}
+\boldsymbol{\Lambda}_{a a}=\left(\boldsymbol{\Sigma}_{a a}-\boldsymbol{\Sigma}_{a b} \boldsymbol{\Sigma}_{b b}^{-1} \boldsymbol{\Sigma}_{b a}\right)^{-1} \notag \\
+\boldsymbol{\Lambda}_{a b}=-\left(\boldsymbol{\Sigma}_{a a}-\boldsymbol{\Sigma}_{a b} \boldsymbol{\Sigma}_{b b}^{-1} \boldsymbol{\Sigma}_{b a}\right)^{-1} \boldsymbol{\Sigma}_{a b} \boldsymbol{\Sigma}_{b b}^{-1} \notag 
+\end{array}
+\]</span></p>
+<p>书本上的推导过程较为复杂，但一步步看也是能看懂的。在<a href="https://www.bilibili.com/video/BV1RW411m7WE?t=331&amp;p=5" target="_blank" rel="noopener">机器学习-白板推导系列(二)-数学基础</a>中，有较为简单的通过构造法推导的过程。</p>
+<p>下面是结论： <span class="math display">\[
+\begin{aligned}
+\boldsymbol{\mu}_{a \mid b} &amp;=\boldsymbol{\mu}_{a}+\boldsymbol{\Sigma}_{a b} \boldsymbol{\Sigma}_{b b}^{-1}\left(\mathrm{x}_{b}-\boldsymbol{\mu}_{b}\right) = \mu_{a}-\boldsymbol{\Lambda}_{a a}^{-1} \boldsymbol{\Lambda}_{a b}\left(\mathrm{x}_{b}-\mu_{b}\right) \notag \\
+\boldsymbol{\Sigma}_{a \mid b} &amp;=\boldsymbol{\Sigma}_{a a}-\boldsymbol{\Sigma}_{a b} \boldsymbol{\Sigma}_{b b}^{-1} \boldsymbol{\Sigma}_{b a} =\boldsymbol{\Lambda}_{a a}^{-1} \notag 
+\end{aligned}
+\]</span></p>
+<p>可以看出，均值是<span class="math inline">\(\mathbf{x}_b\)</span>的线性函数，而协方差与<span class="math inline">\(\mathbf{x}_b\)</span>无关。</p>
+<p>条件概率分布为： <span class="math display">\[
+p\left(\mathbf{x}_{a} \mid \mathbf{x}_{b}\right)=\mathcal{N}\left(\mathbf{x} \mid \boldsymbol{\mu}_{a \mid b}, \boldsymbol{\Lambda}_{a a}^{-1}\right)
+\]</span></p>
+<h3 id="边缘高斯分布">2.3.2 边缘高斯分布</h3>
+<p>在<a href="https://www.bilibili.com/video/BV1RW411m7WE?t=331&amp;p=5" target="_blank" rel="noopener">机器学习-白板推导系列(二)-数学基础</a>中，比较清楚的讲了推导的过程。</p>
+<p>这里的结论是比较符号直觉的： <span class="math display">\[
+\begin{aligned}
+\mathbb{E}\left[\mathbf{x}_{a}\right] &amp;=\boldsymbol{\mu}_{a} \notag \\
+\operatorname{cov}\left[\mathbf{x}_{a}\right] &amp;=\boldsymbol{\Sigma}_{a a} \notag 
+\end{aligned}
+\]</span></p>
+<p>边缘概率分布为： <span class="math display">\[
+p\left(\mathbf{x}_{a}\right)=\mathcal{N}\left(\mathbf{x}_{a} \mid \boldsymbol{\mu}_{a}, \mathbf{\Sigma}_{a a}\right)
+\]</span></p>
+<h3 id="高斯变量的贝叶斯定理">2.3.3 高斯变量的贝叶斯定理</h3>
 
     </div>
 
@@ -395,7 +455,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#高斯分布"><span class="nav-text">2.3 高斯分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对高斯分布的分析"><span class="nav-text">对高斯分布的分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的局限性"><span class="nav-text">高斯分布的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#局限一"><span class="nav-text">局限一</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#局限二"><span class="nav-text">局限二</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#高斯分布"><span class="nav-text">2.3 高斯分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对高斯分布的分析"><span class="nav-text">对高斯分布的分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的局限性"><span class="nav-text">高斯分布的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#局限一高斯分布自由参数数量多"><span class="nav-text">局限一：高斯分布自由参数数量多</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#局限二高斯分布是单峰的不能很好地近似多峰分布"><span class="nav-text">局限二：高斯分布是单峰的，不能很好地近似多峰分布</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件高斯分布"><span class="nav-text">2.3.1 条件高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#边缘高斯分布"><span class="nav-text">2.3.2 边缘高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯变量的贝叶斯定理"><span class="nav-text">2.3.3 高斯变量的贝叶斯定理</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
