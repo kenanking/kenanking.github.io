@@ -23,12 +23,12 @@
     var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="2.3 高斯分布 ⾼斯分布（Gaussian distribution），也被称为正态分布（normal distribution），⼴泛应⽤于连续型随机变量分布的模型中。">
+  <meta name="description" content="2.3 高斯分布 高斯分布（Gaussian distribution），也被称为正态分布（normal distribution），⼴泛应⽤于连续型随机变量分布的模型中。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ch2-2.3 高斯分布">
 <meta property="og:url" content="https://kenanking.github.io/2020/07/22/ch2-2-3-%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
-<meta property="og:description" content="2.3 高斯分布 ⾼斯分布（Gaussian distribution），也被称为正态分布（normal distribution），⼴泛应⽤于连续型随机变量分布的模型中。">
+<meta property="og:description" content="2.3 高斯分布 高斯分布（Gaussian distribution），也被称为正态分布（normal distribution），⼴泛应⽤于连续型随机变量分布的模型中。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesGaussian%20Distribution.png">
 <meta property="article:published_time" content="2020-07-22T13:53:02.000Z">
@@ -229,29 +229,29 @@
 
       
         <h2 id="高斯分布">2.3 高斯分布</h2>
-<p><strong>⾼斯分布（Gaussian distribution）</strong>，也被称为<strong>正态分布（normal distribution）</strong>，⼴泛应⽤于连续型随机变量分布的模型中。</p>
+<p><strong>高斯分布（Gaussian distribution）</strong>，也被称为<strong>正态分布（normal distribution）</strong>，⼴泛应⽤于连续型随机变量分布的模型中。</p>
 <a id="more"></a>
 <p>对于一元变量<span class="math inline">\(x\)</span>，高斯分布为： <span class="math display">\[
-\mathcal{N}\left(x \mid \mu, \sigma^{2}\right)=\frac{1}{\left(2 \pi \sigma^{2}\right)^{1 / 2}} \exp \left\{-\frac{1}{2 \sigma^{2}}(x-\mu)^{2}\right\}
+\mathcal{N}(x \mid \mu, \sigma^{2})=\frac{1}{(2 \pi \sigma^{2})^{1 / 2}} \exp \{-\frac{1}{2 \sigma^{2}}(x-\mu)^{2}\}
 \]</span></p>
 <p>其中，<span class="math inline">\(\mu\)</span>是均值，<span class="math inline">\(\sigma^{2}\)</span>是方差。</p>
 <p>对于<span class="math inline">\(D\)</span>维向量<span class="math inline">\(\mathrm{x}\)</span>，高斯分布为： <span class="math display">\[
-\mathcal{N}(\mathrm{x} \mid \boldsymbol{\mu}, \Sigma)=\frac{1}{(2 \pi)^{D / 2}} \frac{1}{|\Sigma|^{1 / 2}} \exp \left\{-\frac{1}{2}(\mathrm{x}-\boldsymbol{\mu})^{\mathrm{T}} \Sigma^{-1}(\mathrm{x}-\boldsymbol{\mu})\right\}
+\mathcal{N}(\mathrm{x} \mid \boldsymbol{\mu}, \Sigma)=\frac{1}{(2 \pi)^{D / 2}} \frac{1}{|\Sigma|^{1 / 2}} \exp \{-\frac{1}{2}(\mathrm{x}-\boldsymbol{\mu})^{\mathrm{T}} \Sigma^{-1}(\mathrm{x}-\boldsymbol{\mu})\}
 \]</span></p>
-<p>其中，<span class="math inline">\(\boldsymbol{\mu}\)</span>是<span class="math inline">\(D\)</span>维的均值向量，<span class="math inline">\(\Sigma\)</span>是一个<span class="math inline">\(D \times D\)</span>的协方差矩阵，<span class="math inline">\(|\Sigma|\)</span>是<span class="math inline">\(\Sigma\)</span>的行列式。</p>
+<p>其中，<span class="math inline">\(\boldsymbol{\mu}\)</span>是<span class="math inline">\(D\)</span>维的均值向量，<span class="math inline">\(\Sigma\)</span>是一个<span class="math inline">\(D \times D\)</span>的协方差矩阵，<span class="math inline">\(\mid \Sigma \mid\)</span>是<span class="math inline">\(\Sigma\)</span>的行列式。</p>
 <p>在很多不同的问题中产生都会出现高斯分布的应用。例如：①对于一元实值向量，满足高斯分布时熵最大。②<strong>中心极限定理（central limit theorem）</strong>：一组随机变量之和的概率 分布会随着数量的增加而趋向高斯分布。</p>
 <h3 id="对高斯分布的分析">对高斯分布的分析</h3>
 <p>这一部分在<a href="https://www.bilibili.com/video/av32905863/?p=3" target="_blank" rel="noopener">机器学习白板推导-数学基础</a>中，讲的比较清楚。</p>
 <p>高斯分布对于<span class="math inline">\(\mathbf{x}\)</span>的依赖是通过下面的二次型： <span class="math display">\[
 \Delta^{2}=(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} \boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})
 \]</span></p>
-<p><span class="math inline">\(\Delta\)</span>叫做<span class="math inline">\(\boldsymbol{\mu}\)</span>和<span class="math inline">\(\mathbf{x}\)</span>之间的<strong>马⽒距离（Mahalanobis distance）</strong>。当<span class="math inline">\(\Sigma\)</span>为单位阵时，<span class="math inline">\(\Delta\)</span>变成欧氏距离。</p>
+<p><span class="math inline">\(\Delta\)</span>叫做<span class="math inline">\(\boldsymbol{\mu}\)</span>和<span class="math inline">\(\mathbf{x}\)</span>之间的<strong>马氏距离（Mahalanobis distance）</strong>。当<span class="math inline">\(\Sigma\)</span>为单位阵时，<span class="math inline">\(\Delta\)</span>变成欧氏距离。</p>
 <p>在下面的分析中，令<span class="math inline">\(\Sigma\)</span>为对称阵，因为任何⾮对称项都会从指数中消失。</p>
 <blockquote>
 <p>First of all, we note that the matrix <span class="math inline">\(\Sigma\)</span> can be taken to be symmetric, without loss of generality, because any antisymmetric component would disappear from the exponent.</p>
 </blockquote>
 <p>下面解释一下这段话：</p>
-<p>令<span class="math inline">\(A=\boldsymbol{\Sigma}^{-1}\)</span>，于是：<span class="math inline">\(\Delta^{2}=(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} A(\mathbf{x}-\boldsymbol{\mu})\)</span>。</p>
+<p>令<span class="math inline">\(A=\boldsymbol{\Sigma}^{-1}\)</span>，于是：<span class="math inline">\(\Delta^{2}=(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} A (\mathbf{x}-\boldsymbol{\mu})\)</span>。</p>
 <p><span class="math inline">\(A\)</span>可以写成如下形式：<span class="math inline">\(A=\frac{1}{2}\left(A+A^{T}\right)+\frac{1}{2}\left(A-A^{T}\right)\)</span>。</p>
 <p>令<span class="math inline">\(B = \frac{1}{2}\left(A+A^{T}\right)\)</span>，<span class="math inline">\(C = \frac{1}{2}\left(A-A^{T}\right)\)</span>。注意到这里<span class="math inline">\(B\)</span>为对称阵，<span class="math inline">\(C\)</span>为反对称阵（即：<span class="math inline">\(c_{ij} = - c_{ji}\)</span>）。</p>
 <p>于是： <span class="math display">\[
@@ -292,11 +292,11 @@
 \end{aligned}
 \]</span></p>
 <p>于是，上面的二次型可以进一步写成： <span class="math display">\[
-\begin{align}
+\begin{aligned}
 \Delta^{2} &amp;= (\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} \boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu}) \notag \\
 &amp;= (\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}}\sum_{i}^{D} \frac{1}{\lambda_{i}} \boldsymbol{u}_{i} \boldsymbol{u}_{i}^{T} (\mathbf{x}-\boldsymbol{\mu}) \notag \\
 &amp;= \sum_{i}^{D} (\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}}\boldsymbol{u}_{i} \frac{1}{\lambda_{i}} \boldsymbol{u}_{i}^{T} (\mathbf{x}-\boldsymbol{\mu}) \notag 
-\end{align}
+\end{aligned}
 \]</span></p>
 <p>令<span class="math inline">\(y_{i}=\mathbf{u}_{i}^{\mathrm{T}}(\mathrm{x}-\boldsymbol{\mu})\)</span>，可以得到： <span class="math display">\[
 \Delta^{2}=\sum_{i=1}^{D} \frac{y_{i}^{2}}{\lambda_{i}}
@@ -375,19 +375,25 @@ p\left(\mathbf{x}_{a}\right)=\mathcal{N}\left(\mathbf{x}_{a} \mid \boldsymbol{\m
 <h3 id="高斯变量的贝叶斯定理">2.3.3 高斯变量的贝叶斯定理</h3>
 <p>已知： <span class="math display">\[
 \begin{aligned}
-p(\mathbf{x}) &amp;=\mathcal{N}\left(\mathbf{x} \mid \boldsymbol{\mu}, \boldsymbol{\Lambda}^{-1}\right) \notag \\
-p(\mathbf{y} \mid \mathbf{x}) &amp;=\mathcal{N}\left(\mathbf{y} \mid \mathbf{A} \mathbf{x}+\mathbf{b}, \mathbf{L}^{-1}\right) \notag 
+p(\mathbf{x}) &amp;=\mathcal{N}(\mathbf{x} \mid \boldsymbol{\mu}, \boldsymbol{\Lambda}^{-1}) \notag \\
+p(\mathbf{y} \mid \mathbf{x}) &amp;=\mathcal{N}(\mathbf{y} \mid \mathbf{A} \mathbf{x}+\mathbf{b}, \mathbf{L}^{-1}) \notag 
 \end{aligned}
 \]</span></p>
 <p>求：<span class="math inline">\(p(\mathbf{y})\)</span>和<span class="math inline">\(p(\mathbf{x \mid y})\)</span>。</p>
 <p>在<a href="https://www.bilibili.com/video/BV1RW411m7WE?p=6" target="_blank" rel="noopener">机器学习-白板推导系列(二)-数学基础</a>中，比较清楚的讲了推导的过程。</p>
 <p>下面是结论： <span class="math display">\[
 \begin{aligned}
-p(\mathbf{y}) &amp;=\mathcal{N}\left(\mathbf{y} \mid \mathbf{A} \boldsymbol{\mu}+\mathbf{b}, \mathbf{L}^{-1}+\mathbf{A} \mathbf{\Lambda}^{-1} \mathbf{A}^{\mathrm{T}}\right) \notag \\
-p(\mathbf{x} \mid \mathbf{y}) &amp;=\mathcal{N}\left(\mathbf{x} \mid \boldsymbol{\Sigma}\left\{\mathbf{A}^{\mathrm{T}} \mathbf{L}(\mathbf{y}-\mathbf{b})+\boldsymbol{\Lambda} \boldsymbol{\mu}\right\}, \boldsymbol{\Sigma}\right) \notag 
+p(\mathbf{y}) &amp;=\mathcal{N}(\mathbf{y} \mid \mathbf{A} \boldsymbol{\mu}+\mathbf{b}, \mathbf{L}^{-1}+\mathbf{A} \mathbf{\Lambda}^{-1} \mathbf{A}^{\mathrm{T}}) \notag \\
+p(\mathbf{x} \mid \mathbf{y}) &amp;=\mathcal{N}(\mathbf{x} \mid \boldsymbol{\Sigma}\left\{\mathbf{A}^{\mathrm{T}} \mathbf{L}(\mathbf{y}-\mathbf{b})+\boldsymbol{\Lambda} \boldsymbol{\mu}\right\}, \boldsymbol{\Sigma}) \notag 
 \end{aligned}
 \]</span></p>
 <p>其中：<span class="math inline">\(\boldsymbol{\Sigma}=\left(\boldsymbol{\Lambda}+\mathbf{A}^{\mathrm{T}} \mathbf{L} \mathbf{A}\right)^{-1}\)</span>。</p>
+<h3 id="高斯分布的最大似然估计">2.3.4 高斯分布的最大似然估计</h3>
+<h2 id="其他参考资料">其他参考资料</h2>
+<ol type="1">
+<li>对“any antisymmetric component would disappear from the exponent”的理解：<a href="https://math.stackexchange.com/questions/2262171/we-note-that-the-matrix-Σ-can-be-taken-to-be-symmetric-without-loss-of-general" target="_blank" rel="noopener">https://math.stackexchange.com/questions/2262171/we-note-that-the-matrix-%CE%A3-can-be-taken-to-be-symmetric-without-loss-of-general</a></li>
+<li>机器学习-白板推导系列-数学基础：<a href="https://github.com/shuhuai007/Machine-Learning-Session" target="_blank" rel="noopener">https://github.com/shuhuai007/Machine-Learning-Session</a></li>
+</ol>
 
     </div>
 
@@ -470,7 +476,7 @@ p(\mathbf{x} \mid \mathbf{y}) &amp;=\mathcal{N}\left(\mathbf{x} \mid \boldsymbol
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#高斯分布"><span class="nav-text">2.3 高斯分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对高斯分布的分析"><span class="nav-text">对高斯分布的分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的局限性"><span class="nav-text">高斯分布的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#局限一高斯分布自由参数数量多"><span class="nav-text">局限一：高斯分布自由参数数量多</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#局限二高斯分布是单峰的不能很好地近似多峰分布"><span class="nav-text">局限二：高斯分布是单峰的，不能很好地近似多峰分布</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件高斯分布"><span class="nav-text">2.3.1 条件高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#边缘高斯分布"><span class="nav-text">2.3.2 边缘高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯变量的贝叶斯定理"><span class="nav-text">2.3.3 高斯变量的贝叶斯定理</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#高斯分布"><span class="nav-text">2.3 高斯分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对高斯分布的分析"><span class="nav-text">对高斯分布的分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的局限性"><span class="nav-text">高斯分布的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#局限一高斯分布自由参数数量多"><span class="nav-text">局限一：高斯分布自由参数数量多</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#局限二高斯分布是单峰的不能很好地近似多峰分布"><span class="nav-text">局限二：高斯分布是单峰的，不能很好地近似多峰分布</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件高斯分布"><span class="nav-text">2.3.1 条件高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#边缘高斯分布"><span class="nav-text">2.3.2 边缘高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯变量的贝叶斯定理"><span class="nav-text">2.3.3 高斯变量的贝叶斯定理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的最大似然估计"><span class="nav-text">2.3.4 高斯分布的最大似然估计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
