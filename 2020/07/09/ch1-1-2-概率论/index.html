@@ -400,7 +400,7 @@ p(\mathbf{w} \mid \mathbf{x}, \mathbf{t}, \alpha, \beta) \propto p(\mathbf{t} \m
 <p>由贝叶斯方法可以得到： <span class="math display">\[
 p(t \mid x, \mathbf{x}, \mathbf{t})=\int p(t \mid x, \mathbf{w}) p(\mathbf{w} \mid \mathbf{x}, \mathbf{t}) \mathrm{d} \mathbf{w}
 \]</span></p>
-<p>$ p(t x, )<span class="math inline">\(可以由\)</span>p(t x, , )=(t y(x, ), ^{-1})<span class="math inline">\(得到，而\)</span>p( , )<span class="math inline">\(可以通过归一化\)</span>p( , , , ) p( , , ) p( )$得到。</p>
+<p><span class="math inline">\(p(t \mid x, \mathbf{w})\)</span>可以由<span class="math inline">\(p(t \mid x, \mathbf{w}, \beta)=\mathcal{N}\left(t \mid y(x, \mathbf{w}), \beta^{-1}\right)\)</span>得到，而<span class="math inline">\(p(\mathbf{w} \mid \mathbf{x}, \mathbf{t})\)</span>可以通过归一化<span class="math inline">\(p(\mathbf{w} \mid \mathbf{x}, \mathbf{t}, \alpha, \beta) \propto p(\mathbf{t} \mid \mathbf{x}, \mathbf{w}, \beta) p(\mathbf{w} \mid \alpha)\)</span>得到。</p>
 <p>对于曲线拟合问题，后验分布可以解析求解，并且是一个高斯分布，形式如： <span class="math display">\[
 p(t \mid x, \mathbf{x}, \mathbf{t})=\mathcal{N}\left(t \mid m(x), s^{2}(x)\right)
 \]</span> 其中： <span class="math display">\[
