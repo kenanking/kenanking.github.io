@@ -31,8 +31,9 @@
 <meta property="og:description" content="2.3 高斯分布 高斯分布（Gaussian distribution），也被称为正态分布（normal distribution），⼴泛应⽤于连续型随机变量分布的模型中。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesGaussian%20Distribution.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesstudent">
 <meta property="article:published_time" content="2020-07-22T13:53:02.000Z">
-<meta property="article:modified_time" content="2020-07-22T13:53:02.000Z">
+<meta property="article:modified_time" content="2020-07-25T06:31:49.000Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
@@ -200,6 +201,13 @@
 
               <time title="创建时间：2020-07-22 21:53:02" itemprop="dateCreated datePublished" datetime="2020-07-22T21:53:02+08:00">2020-07-22</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-25 14:31:49" itemprop="dateModified" datetime="2020-07-25T14:31:49+08:00">2020-07-25</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -453,6 +461,103 @@ f(\theta) \equiv \mathbb{E}[z \mid \theta]=\int z p(z \mid \theta) \mathrm{d} z
 \theta^{(N)}=\theta^{(N-1)}+a_{N-1} \frac{\partial}{\partial \theta^{(N-1)}} \ln p(x_{N} \mid \theta^{(N-1)})
 \]</span></p>
 <h3 id="高斯分布的贝叶斯推断">2.3.6 高斯分布的贝叶斯推断</h3>
+<h4 id="方差已知求均值">方差已知，求均值</h4>
+<p>考虑一元随机变量<span class="math inline">\(x\)</span>，假设方差<span class="math inline">\(\sigma^{2}\)</span>已知，从一组<span class="math inline">\(N\)</span>次观测<span class="math inline">\(\mathbf{X}=\{x_{1}, \ldots, x_{N}\}\)</span>中推断<span class="math inline">\(\mu\)</span>。</p>
+<p>似然函数： <span class="math display">\[
+p(\mathbf{X} \mid \mu)=\prod_{n=1}^{N} p\left(x_{n} \mid \mu\right)=\frac{1}{\left(2 \pi \sigma^{2}\right)^{N / 2}} \exp \left\{-\frac{1}{2 \sigma^{2}} \sum_{n=1}^{N}\left(x_{n}-\mu\right)^{2}\right\}
+\]</span></p>
+<p>注：似然函数不是概率密度。</p>
+<p>根据似然函数的形式，选择先验分布<span class="math inline">\(p(\mu)\)</span>为高斯分布。这样，它就是似然函数的一个共轭分布。 <span class="math display">\[
+p(\mu)=\mathcal{N}\left(\mu \mid \mu_{0}, \sigma_{0}^{2}\right)
+\]</span></p>
+<p>从而后验分布： <span class="math display">\[
+p(\mu \mid \mathbf{X}) \propto p(\mathbf{X} \mid \mu) p(\mu)
+\]</span></p>
+<p>经过计算可以得到，后验分布为： <span class="math display">\[
+p(\mu \mid \mathbf{X})=\mathcal{N}\left(\mu \mid \mu_{N}, \sigma_{N}^{2}\right)
+\]</span></p>
+<p>其中： <span class="math display">\[
+\begin{aligned}
+\mu_{N} &amp;=\frac{\sigma^{2}}{N \sigma_{0}^{2}+\sigma^{2}} \mu_{0}+\frac{N \sigma_{0}^{2}}{N \sigma_{0}^{2}+\sigma^{2}} \mu_{\mathrm{ML}} \notag \\
+\frac{1}{\sigma_{N}^{2}} &amp;=\frac{1}{\sigma_{0}^{2}}+\frac{N}{\sigma^{2}} \notag 
+\end{aligned}
+\]</span></p>
+<p>下面是从贝叶斯的观点看待顺序估计问题。把后验分布中，最后一个数据点<span class="math inline">\(x_N\)</span>的贡献单独写出来： <span class="math display">\[
+p(\boldsymbol{\mu} \mid D ) \propto\left[p(\boldsymbol{\mu}) \prod_{n=1}^{N-1} p\left(\mathbf{x}_{n} \mid \boldsymbol{\mu}\right)\right] p\left(\mathbf{x}_{N} \mid \boldsymbol{\mu}\right)
+\]</span></p>
+<p>⽅括号中的项是观测到<span class="math inline">\(N-1\)</span>个数据点之后的后验概率分布。它可以被看作时一个先验分布，然后用贝叶斯定理与似然函数结合到一起，得到观测<span class="math inline">\(N\)</span>个数据点之后的后验概率。</p>
+<p>这种贝叶斯推断的顺序观点是非常通用的，可以应用于任何观测数据独立同分布的问题中。</p>
+<h4 id="均值已知求方差">均值已知，求方差</h4>
+<p>这里用方差的倒数——精度<span class="math inline">\(\lambda \equiv 1 / \sigma^{2}\)</span>进行计算会更方便。</p>
+<p>得到<span class="math inline">\(\lambda\)</span>的似然函数为： <span class="math display">\[
+p(\mathbf{X} \mid \lambda)=\prod_{n=1}^{N} \mathcal{N}\left(x_{n} \mid \mu, \lambda^{-1}\right) \propto \lambda^{N / 2} \exp \left\{-\frac{\lambda}{2} \sum_{n=1}^{N}\left(x_{n}-\mu\right)^{2}\right\}
+\]</span></p>
+<p>对应的共轭先验因此应该正比于<span class="math inline">\(\lambda\)</span>的幂指数，也正比于<span class="math inline">\(\lambda\)</span>的线性函数。</p>
+<p>我们选择<strong>Gamma分布（gamma distribution）</strong>，定义为： <span class="math display">\[
+\operatorname{Gam}(\lambda \mid a, b)=\frac{1}{\Gamma(a)} b^{a} \lambda^{a-1} \exp (-b \lambda)
+\]</span></p>
+<p>Gamma分布的均值和⽅差为： <span class="math display">\[
+\begin{aligned}
+\mathbb{E}[\lambda] &amp;=\frac{a}{b} \notag \\
+\operatorname{var}[\lambda] &amp;=\frac{a}{b^{2}} \notag 
+\end{aligned}
+\]</span></p>
+<p>似然函数和Gamma分布的相乘后，得到后验分布为： <span class="math display">\[
+p(\lambda \mid \mathbf{X}) \propto \lambda^{a_{0}-1} \lambda^{N / 2} \exp\left\{-b_{0} \lambda-\frac{\lambda}{2} \sum_{n=1}^{N}\left(x_{n}-\mu\right)^{2}\right\}
+\]</span></p>
+<p>可以把后验分布看出形如<span class="math inline">\(\operatorname{Gam}\left(\lambda \mid a_{N}, b_{N}\right)\)</span>的Gamma分布，其中： <span class="math display">\[
+\begin{array}{l}
+a_{N}=a_{0}+\frac{N}{2} \notag \\
+b_{N}=b_{0}+\frac{1}{2} \sum_{n=1}^{N}\left(x_{n}-\mu\right)^{2}=b_{0}+\frac{N}{2} \sigma_{\mathrm{ML}}^{2} \notag
+\end{array}
+\]</span></p>
+<h4 id="均值和方差均未知">均值和方差均未知</h4>
+<p>考虑似然函数为： <span class="math display">\[
+\begin{aligned}
+p(\mathbf{X} \mid \mu, \lambda) &amp;= \prod_{n  = 1}^{N}\left(\frac{\lambda}{2 \pi}\right)^{1 / 2} \exp \left\{-\frac{\lambda}{2}\left(x_{n}-\mu\right)^{2}\right\} \notag \\
+&amp;\propto\left[\lambda^{1 / 2} \exp \left(-\frac{\lambda \mu^{2}}{2}\right)\right]^{N} \exp \left\{\lambda \mu \sum_{n  = 1}^{N} x_{n}-\frac{\lambda}{2} \sum_{n  = 1}^{N} x_{n}^{2}\right\} \notag 
+\end{aligned}
+\]</span></p>
+<p>假设先验分布的形式为： <span class="math display">\[
+\begin{aligned}
+p(\mu, \lambda) &amp;\propto\left[\lambda^{\frac{1}{2}} \exp \left(-\frac{\lambda \mu^{2}}{2}\right)\right]^{\beta} \exp \{c \lambda \mu-d \lambda\} \\
+\quad &amp; = \exp \left\{-\frac{\beta \lambda}{2}\left(\mu-\frac{c}{\beta}\right)^{2}\right\} \lambda^{\frac{\beta}{2}} \exp \left\{-\left(d-\frac{c^{2}}{2 \beta}\right) \lambda\right\}
+\end{aligned}
+\]</span></p>
+<p>由于<span class="math inline">\(p(\mu, \lambda)=p(\mu \mid \lambda) p(\lambda)\)</span>，从上式中观察可以得到，<span class="math inline">\(p(\mu \mid \lambda)\)</span>是一个高斯分布，<span class="math inline">\(p(\mu )\)</span>是一个Gamma分布。</p>
+<p>因此，先验分布为： <span class="math display">\[
+p(\mu, \lambda)=\mathcal{N}\left(\mu \mid \mu_{0},(\beta \lambda)^{-1}\right) \operatorname{Gam}(\lambda \mid a, b)
+\]</span></p>
+<p>其中： <span class="math display">\[
+\begin{aligned}
+\mu_{0} &amp; = \frac{c}{\beta} \notag \\
+a &amp;= 1 + \frac{\beta}{2} \notag \\
+b &amp;= d - \frac{c^2}{2\beta} \notag 
+\end{aligned}
+\]</span></p>
+<p>这个分布称为<strong>高斯-Gamma分布</strong>。</p>
+<h3 id="学生t-分布">2.3.7 学生t-分布</h3>
+<h4 id="学生t-分布定义">学生t-分布定义</h4>
+<p>如果有一个一元高斯分布<span class="math inline">\(\mathcal{N}\left(x \mid \mu, \tau^{-1}\right)\)</span>和一个Gamma分布<span class="math inline">\(\operatorname{Gam}(\tau \mid a, b)\)</span>，对精度进行积分，得到<span class="math inline">\(x\)</span>的边缘分布为： <span class="math display">\[
+\begin{aligned}
+p(x \mid \mu, a, b) &amp;=\int_{0}^{\infty} \mathcal{N}\left(x \mid \mu, \tau^{-1}\right) \operatorname{Gam}(\tau \mid a, b) \mathrm{d} \tau \notag \\
+&amp;=\int_{0}^{\infty} \frac{b^{a} e^{(-b \tau)} \tau^{a-1}}{\Gamma(a)}\left(\frac{\tau}{2 \pi}\right)^{1 / 2} \exp \left\{-\frac{\tau}{2}(x-\mu)^{2}\right\} \mathrm{d} \tau \notag \\
+&amp;=\frac{b^{a}}{\Gamma(a)}\left(\frac{1}{2 \pi}\right)^{1 / 2}\left[b+\frac{(x-\mu)^{2}}{2}\right]^{-a-1 / 2} \Gamma(a+1 / 2) \notag 
+\end{aligned}
+\]</span></p>
+<p>令<span class="math inline">\(v=2a\)</span>，<span class="math inline">\(\lambda=a/b\)</span>，<span class="math inline">\(p(x \mid \mu, a, b)\)</span>的形式为： <span class="math display">\[
+\operatorname{St}(x \mid \mu, \lambda, \nu)=\frac{\Gamma(\nu / 2+1 / 2)}{\Gamma(\nu / 2)}\left(\frac{\lambda}{\pi \nu}\right)^{1 / 2}\left[1+\frac{\lambda(x-\mu)^{2}}{\nu}\right]^{-\nu / 2-1 / 2}
+\]</span></p>
+<p>这个分布称为<strong>学生t-分布（Student’s t-distribution）</strong>。参数<span class="math inline">\(\lambda\)</span>称为<strong>精度（precision）</strong>，参数<span class="math inline">\(v\)</span>称为<strong>自由度（degrees of freedom）</strong>。</p>
+<p>对于<span class="math inline">\(v=1\)</span>的情况，t分布变成了<strong>柯西分布（Cauchy distribution）</strong>。</p>
+<p>在<span class="math inline">\(v \rightarrow \infty\)</span>的情况下，t分布<span class="math inline">\(\operatorname{St}(x \mid \mu, \lambda, \nu)\)</span>变成高斯分布<span class="math inline">\(\mathcal{N}\left(x \mid \mu, \lambda^{-1}\right)\)</span>。</p>
+<h4 id="分析">分析</h4>
+<p>从学生t-分布的定义来看，它是由无穷多个相同均值，不同精度的高斯分布相加而成的。</p>
+<p>学生t-分布比高斯分布有着更长的尾巴，少量离群的数据点对学生t-分布的影响要远远小于高斯分布，因此学生t-分布具有<strong>鲁棒性</strong>。</p>
+<p>鲁棒性对回归问题很重要，最小二乘法的的鲁棒性不高是由于其相当于（条件）高斯分布下的最大似然解。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesstudent's t distribution.png" alt="与⾼斯分布相⽐，学⽣t-分布具有鲁棒性" style="zoom:80%;" /></p>
+<h3 id="周期变量">2.3.8 周期变量</h3>
+<p>尽管高斯分布在实际中十分常用，但是它并不适用于周期变量的建模。</p>
 <h2 id="其他参考资料">其他参考资料</h2>
 <ol type="1">
 <li>对“any antisymmetric component would disappear from the exponent”的理解：<a href="https://math.stackexchange.com/questions/2262171/we-note-that-the-matrix-Σ-can-be-taken-to-be-symmetric-without-loss-of-general" target="_blank" rel="noopener">https://math.stackexchange.com/questions/2262171/we-note-that-the-matrix-%CE%A3-can-be-taken-to-be-symmetric-without-loss-of-general</a></li>
@@ -540,7 +645,7 @@ f(\theta) \equiv \mathbb{E}[z \mid \theta]=\int z p(z \mid \theta) \mathrm{d} z
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#高斯分布"><span class="nav-text">2.3 高斯分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对高斯分布的分析"><span class="nav-text">对高斯分布的分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的局限性"><span class="nav-text">高斯分布的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#局限一高斯分布自由参数数量多"><span class="nav-text">局限一：高斯分布自由参数数量多</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#局限二高斯分布是单峰的不能很好地近似多峰分布"><span class="nav-text">局限二：高斯分布是单峰的，不能很好地近似多峰分布</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件高斯分布"><span class="nav-text">2.3.1 条件高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#边缘高斯分布"><span class="nav-text">2.3.2 边缘高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯变量的贝叶斯定理"><span class="nav-text">2.3.3 高斯变量的贝叶斯定理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的最大似然估计"><span class="nav-text">2.3.4 高斯分布的最大似然估计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#顺序估计"><span class="nav-text">2.3.5 顺序估计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#顺序估计思想"><span class="nav-text">顺序估计思想</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#顺序估计的一般方法单变量情况"><span class="nav-text">顺序估计的一般方法（单变量情况）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例子最大似然问题"><span class="nav-text">例子：最大似然问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的贝叶斯推断"><span class="nav-text">2.3.6 高斯分布的贝叶斯推断</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#高斯分布"><span class="nav-text">2.3 高斯分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对高斯分布的分析"><span class="nav-text">对高斯分布的分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的局限性"><span class="nav-text">高斯分布的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#局限一高斯分布自由参数数量多"><span class="nav-text">局限一：高斯分布自由参数数量多</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#局限二高斯分布是单峰的不能很好地近似多峰分布"><span class="nav-text">局限二：高斯分布是单峰的，不能很好地近似多峰分布</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件高斯分布"><span class="nav-text">2.3.1 条件高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#边缘高斯分布"><span class="nav-text">2.3.2 边缘高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯变量的贝叶斯定理"><span class="nav-text">2.3.3 高斯变量的贝叶斯定理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的最大似然估计"><span class="nav-text">2.3.4 高斯分布的最大似然估计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#顺序估计"><span class="nav-text">2.3.5 顺序估计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#顺序估计思想"><span class="nav-text">顺序估计思想</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#顺序估计的一般方法单变量情况"><span class="nav-text">顺序估计的一般方法（单变量情况）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例子最大似然问题"><span class="nav-text">例子：最大似然问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的贝叶斯推断"><span class="nav-text">2.3.6 高斯分布的贝叶斯推断</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方差已知求均值"><span class="nav-text">方差已知，求均值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#均值已知求方差"><span class="nav-text">均值已知，求方差</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#均值和方差均未知"><span class="nav-text">均值和方差均未知</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#学生t-分布"><span class="nav-text">2.3.7 学生t-分布</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#学生t-分布定义"><span class="nav-text">学生t-分布定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分析"><span class="nav-text">分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#周期变量"><span class="nav-text">2.3.8 周期变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
