@@ -32,8 +32,11 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesGaussian%20Distribution.png">
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesstudent">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesUnitCircle.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagespoints.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagespointsfit.png">
 <meta property="article:published_time" content="2020-07-22T13:53:02.000Z">
-<meta property="article:modified_time" content="2020-07-25T06:31:49.000Z">
+<meta property="article:modified_time" content="2020-07-25T15:14:25.000Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
@@ -206,7 +209,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-25 14:31:49" itemprop="dateModified" datetime="2020-07-25T14:31:49+08:00">2020-07-25</time>
+                <time title="修改时间：2020-07-25 23:14:25" itemprop="dateModified" datetime="2020-07-25T23:14:25+08:00">2020-07-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -558,6 +561,58 @@ p(x \mid \mu, a, b) &amp;=\int_{0}^{\infty} \mathcal{N}\left(x \mid \mu, \tau^{-
 <p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesstudent's t distribution.png" alt="与⾼斯分布相⽐，学⽣t-分布具有鲁棒性" style="zoom:80%;" /></p>
 <h3 id="周期变量">2.3.8 周期变量</h3>
 <p>尽管高斯分布在实际中十分常用，但是它并不适用于周期变量的建模。</p>
+<p>考虑一组包含周期变量的数据集<span class="math inline">\(\mathcal{D}=\left\{\theta_{1}, \ldots, \theta_{N}\right\}\)</span>。使用单位圆上的点<span class="math inline">\(\mathbf{x}_n\)</span>描述周期变量的值<span class="math inline">\(\theta_n\)</span>，如下图所示。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesUnitCircle.png" alt="周期变量表示为单位圆上的二维向量" /></p>
+<p>则向量的平均值为： <span class="math display">\[
+\overline{\mathrm{x}}=\frac{1}{N} \sum_{n=1}^{N} \mathrm{x}_{n}
+\]</span></p>
+<p><span class="math inline">\(\overline{\mathrm{x}}\)</span>通常位于单位圆内部。</p>
+<p>在笛卡尔坐标系下，观测值可以表示为：<span class="math inline">\(\mathbf{x}_{n}=\left(\cos \theta_{n}, \sin \theta_{n}\right)\)</span>，均值可以表示为：<span class="math inline">\(\overline{\mathrm{x}}=(\bar{r} \cos \bar{\theta}, \bar{r} \sin \bar{\theta})\)</span>。</p>
+<p>于是均值的两个分量可以表示为： <span class="math display">\[
+\bar{x}_1=\bar{r} \cos \bar{\theta}=\frac{1}{N} \sum_{n=1}^{N} \cos \theta_{n}, \qquad \bar{x}_2=\bar{r} \sin \bar{\theta}=\frac{1}{N} \sum_{n=1}^{N} \sin \theta_{n}
+\]</span></p>
+<p>两者的比值可以求出<span class="math inline">\(\bar{\theta}\)</span>： <span class="math display">\[
+\bar{\theta}=\tan ^{-1}\left\{\frac{\sum_{n} \sin \theta_{n}}{\sum_{n} \cos \theta_{n}}\right\}
+\]</span></p>
+<p>下面引出的是高斯分布对于周期变量的推广：<strong>von Mises分布（von Mises distribution）</strong>。考虑在一元变量的情况下，周期概率分布为：<span class="math inline">\(p(\theta)\)</span>，<span class="math inline">\(p(\theta)\)</span>很自然地满足下面条件： <span class="math display">\[
+\begin{aligned}
+p(\theta) &amp; \geqslant 0 \notag \\
+\int_{0}^{2 \pi} p(\theta) \mathrm{d} \theta &amp;=1 \notag \\
+p(\theta+M2 \pi) &amp;=p(\theta), \mathrm{M为整数}  \notag
+\end{aligned}
+\]</span></p>
+<p>考虑二维高斯分布，随机向量为<span class="math inline">\(\mathbf{x}=(x_1, x_2)\)</span>，均值为<span class="math inline">\(\boldsymbol{\mu}=(\mu_1,\mu_2)\)</span>，协方差矩阵为<span class="math inline">\(\boldsymbol{\Sigma}=\sigma^{2} \mathbf{I}\)</span>。则该高斯分布形式为： <span class="math display">\[
+p\left(x_{1}, x_{2}\right)=\frac{1}{2 \pi \sigma^{2}} \exp \left\{-\frac{\left(x_{1}-\mu_{1}\right)^{2}+\left(x_{2}-\mu_{2}\right)^{2}}{2 \sigma^{2}}\right\}
+\]</span></p>
+<p>代入上面的观测向量： <span class="math display">\[
+x_{1}=r \cos \theta, \quad x_{2}=r \sin \theta  \quad (\mathrm{其中：}r=1 )
+\]</span> 均值向量为： <span class="math display">\[
+\mu_{1}=r_{0} \cos \theta_{0}, \quad \mu_{2}=r_{0} \sin \theta_{0}
+\]</span></p>
+<p>最终得到<span class="math inline">\(p(\theta)\)</span>的表达式为： <span class="math display">\[
+p\left(\theta \mid \theta_{0}, m\right)=\frac{1}{2 \pi I_{0}(m)} \exp \left\{m \cos \left(\theta-\theta_{0}\right)\right\}
+\]</span></p>
+<p>其中：<span class="math inline">\(I_{0}(m)\)</span>为零阶修正贝塞尔函数。 <span class="math display">\[
+I_{0}(m)=\frac{1}{2 \pi} \int_{0}^{2 \pi} \exp \{m \cos \theta\} \mathrm{d} \theta
+\]</span></p>
+<p>这就是<strong>von Mises分布</strong>，或者称为<strong>循环正态分布（circular normal）</strong>。参数<span class="math inline">\(\theta_0\)</span>和均值相关，参数<span class="math inline">\(m=r_0/\sigma^2\)</span>，称为<strong>集中度（concentration）参数</strong>。</p>
+<h3 id="混合高斯模型">2.3.9 混合高斯模型</h3>
+<p>单个高斯分布无法描述具有多个峰的数据集。例如下图中的数据，具有三个中心，一个简单的高斯分布无法描述这种结构，而三个高斯分布的线性叠加可以更好地描述这个数据集。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagespoints.png" alt="具有三个中心的数据" style="zoom:80%;" /></p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagespointsfit.png" alt="使用三个高斯分布拟合数据集" style="zoom:80%;" /></p>
+<p>通过将基本的概率分布（例如高斯分布）进行线性组合形成新的概率模型，这种模型称为<strong>混合模型（mixture distribution）</strong>。</p>
+<p>考虑<span class="math inline">\(K\)</span>个高斯分布的叠加，形如： <span class="math display">\[
+p(\mathbf{x})=\sum_{k=1}^{K} \pi_{k} \mathcal{N}\left(\mathbf{x} \mid \boldsymbol{\mu}_{k}, \mathbf{\Sigma}_{k}\right)
+\]</span></p>
+<p>这被称为<strong>混合⾼斯（mixture of Gaussians）</strong>。每一个高斯分布<span class="math inline">\(\mathcal{N}\left(\mathbf{x} \mid \boldsymbol{\mu}_{k}, \mathbf{\Sigma}_{k}\right)\)</span>称为混合分布的一个成分。</p>
+<p>参数<span class="math inline">\(\pi_{k}\)</span>为<strong>混合系数（mixing coefficients）</strong>，满足条件： <span class="math display">\[
+\sum_{k=1}^{K} \pi_{k}=1
+\]</span> 并且 <span class="math display">\[
+0 \leqslant \pi_{k} \leqslant 1
+\]</span></p>
+<p>高斯混合模型中有参数<span class="math inline">\(\boldsymbol{\pi}\)</span>，<span class="math inline">\(\boldsymbol{\mu}\)</span>和<span class="math inline">\(\boldsymbol{\Sigma}\)</span>。其中：<span class="math inline">\(\boldsymbol{\pi} \equiv\left\{\pi_{1}, \ldots, \pi_{K}\right\}\)</span>，<span class="math inline">\(\boldsymbol{\mu} \equiv\left\{\boldsymbol{\mu}_{1}, \ldots, \boldsymbol{\mu}_{K}\right\}\)</span>，<span class="math inline">\(\mathbf{\Sigma} \equiv\left\{\mathbf{\Sigma}_{1}, \ldots \mathbf{\Sigma}_{K}\right\}\)</span>。</p>
+<p>一种确定这些参数的方法为最大似然法，然而，此时的似然函数非常复杂，不再有解析解。</p>
+<p>此时最大化似然函数的方法有：<strong>迭代数值优化法</strong>、<strong>期望最大化（expectation maximization）</strong>。</p>
 <h2 id="其他参考资料">其他参考资料</h2>
 <ol type="1">
 <li>对“any antisymmetric component would disappear from the exponent”的理解：<a href="https://math.stackexchange.com/questions/2262171/we-note-that-the-matrix-Σ-can-be-taken-to-be-symmetric-without-loss-of-general" target="_blank" rel="noopener">https://math.stackexchange.com/questions/2262171/we-note-that-the-matrix-%CE%A3-can-be-taken-to-be-symmetric-without-loss-of-general</a></li>
@@ -645,7 +700,7 @@ p(x \mid \mu, a, b) &amp;=\int_{0}^{\infty} \mathcal{N}\left(x \mid \mu, \tau^{-
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#高斯分布"><span class="nav-text">2.3 高斯分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对高斯分布的分析"><span class="nav-text">对高斯分布的分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的局限性"><span class="nav-text">高斯分布的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#局限一高斯分布自由参数数量多"><span class="nav-text">局限一：高斯分布自由参数数量多</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#局限二高斯分布是单峰的不能很好地近似多峰分布"><span class="nav-text">局限二：高斯分布是单峰的，不能很好地近似多峰分布</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件高斯分布"><span class="nav-text">2.3.1 条件高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#边缘高斯分布"><span class="nav-text">2.3.2 边缘高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯变量的贝叶斯定理"><span class="nav-text">2.3.3 高斯变量的贝叶斯定理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的最大似然估计"><span class="nav-text">2.3.4 高斯分布的最大似然估计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#顺序估计"><span class="nav-text">2.3.5 顺序估计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#顺序估计思想"><span class="nav-text">顺序估计思想</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#顺序估计的一般方法单变量情况"><span class="nav-text">顺序估计的一般方法（单变量情况）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例子最大似然问题"><span class="nav-text">例子：最大似然问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的贝叶斯推断"><span class="nav-text">2.3.6 高斯分布的贝叶斯推断</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方差已知求均值"><span class="nav-text">方差已知，求均值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#均值已知求方差"><span class="nav-text">均值已知，求方差</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#均值和方差均未知"><span class="nav-text">均值和方差均未知</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#学生t-分布"><span class="nav-text">2.3.7 学生t-分布</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#学生t-分布定义"><span class="nav-text">学生t-分布定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分析"><span class="nav-text">分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#周期变量"><span class="nav-text">2.3.8 周期变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#高斯分布"><span class="nav-text">2.3 高斯分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对高斯分布的分析"><span class="nav-text">对高斯分布的分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的局限性"><span class="nav-text">高斯分布的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#局限一高斯分布自由参数数量多"><span class="nav-text">局限一：高斯分布自由参数数量多</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#局限二高斯分布是单峰的不能很好地近似多峰分布"><span class="nav-text">局限二：高斯分布是单峰的，不能很好地近似多峰分布</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件高斯分布"><span class="nav-text">2.3.1 条件高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#边缘高斯分布"><span class="nav-text">2.3.2 边缘高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯变量的贝叶斯定理"><span class="nav-text">2.3.3 高斯变量的贝叶斯定理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的最大似然估计"><span class="nav-text">2.3.4 高斯分布的最大似然估计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#顺序估计"><span class="nav-text">2.3.5 顺序估计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#顺序估计思想"><span class="nav-text">顺序估计思想</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#顺序估计的一般方法单变量情况"><span class="nav-text">顺序估计的一般方法（单变量情况）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例子最大似然问题"><span class="nav-text">例子：最大似然问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯分布的贝叶斯推断"><span class="nav-text">2.3.6 高斯分布的贝叶斯推断</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方差已知求均值"><span class="nav-text">方差已知，求均值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#均值已知求方差"><span class="nav-text">均值已知，求方差</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#均值和方差均未知"><span class="nav-text">均值和方差均未知</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#学生t-分布"><span class="nav-text">2.3.7 学生t-分布</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#学生t-分布定义"><span class="nav-text">学生t-分布定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分析"><span class="nav-text">分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#周期变量"><span class="nav-text">2.3.8 周期变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#混合高斯模型"><span class="nav-text">2.3.9 混合高斯模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
