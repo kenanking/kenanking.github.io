@@ -23,12 +23,12 @@
     var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="2.2 多项式分布 二元变量只能用来描述两种可能的取值，然而实际会遇到存在\(K\)种状态的情况。这种情况下，我们使用\(1-\mathrm{of}-K\)的方法，可以更方便地进行表示。将变量\(\mathbf{x}\)表示成一个\(K\)维向量，向量中元素\(x_k\)等于\(1\)，其余元素等于\(0\)。">
+  <meta name="description" content="2.2 多项式变量 二元变量只能用来描述两种可能的取值，然而实际会遇到存在\(K\)种状态的情况。这种情况下，我们使用\(1-\mathrm{of}-K\)的方法，可以更方便地进行表示。将变量\(\mathbf{x}\)表示成一个\(K\)维向量，向量中元素\(x_k\)等于\(1\)，其余元素等于\(0\)。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ch2-2.2 多项式分布">
-<meta property="og:url" content="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%88%86%E5%B8%83/index.html">
+<meta property="og:url" content="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
-<meta property="og:description" content="2.2 多项式分布 二元变量只能用来描述两种可能的取值，然而实际会遇到存在\(K\)种状态的情况。这种情况下，我们使用\(1-\mathrm{of}-K\)的方法，可以更方便地进行表示。将变量\(\mathbf{x}\)表示成一个\(K\)维向量，向量中元素\(x_k\)等于\(1\)，其余元素等于\(0\)。">
+<meta property="og:description" content="2.2 多项式变量 二元变量只能用来描述两种可能的取值，然而实际会遇到存在\(K\)种状态的情况。这种情况下，我们使用\(1-\mathrm{of}-K\)的方法，可以更方便地进行表示。将变量\(\mathbf{x}\)表示成一个\(K\)维向量，向量中元素\(x_k\)等于\(1\)，其余元素等于\(0\)。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-07-21T05:22:57.000Z">
 <meta property="article:modified_time" content="2020-07-21T05:22:57.000Z">
@@ -36,7 +36,7 @@
 <meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%88%86%E5%B8%83/">
+<link rel="canonical" href="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/">
 
 
 <script id="page-configurations">
@@ -171,7 +171,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%88%86%E5%B8%83/">
+    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -209,7 +209,7 @@
             </span>
 
           
-            <span id="/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%88%86%E5%B8%83/" class="post-meta-item leancloud_visitors" data-flag-title="ch2-2.2 多项式分布" title="阅读次数">
+            <span id="/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/" class="post-meta-item leancloud_visitors" data-flag-title="ch2-2.2 多项式分布" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -226,7 +226,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="多项式分布">2.2 多项式分布</h2>
+        <h2 id="多项式变量">2.2 多项式变量</h2>
 <p>二元变量只能用来描述两种可能的取值，然而实际会遇到存在<span class="math inline">\(K\)</span>种状态的情况。这种情况下，我们使用<span class="math inline">\(1-\mathrm{of}-K\)</span>的方法，可以更方便地进行表示。将变量<span class="math inline">\(\mathbf{x}\)</span>表示成一个<span class="math inline">\(K\)</span>维向量，向量中元素<span class="math inline">\(x_k\)</span>等于<span class="math inline">\(1\)</span>，其余元素等于<span class="math inline">\(0\)</span>。</p>
 <a id="more"></a>
 <p>例如有一个具有<span class="math inline">\(K=6\)</span>种状态的变量<span class="math inline">\(\mathbf{x}\)</span>，某次观测时恰好<span class="math inline">\(x_3=1\)</span>，则变量<span class="math inline">\(\mathbf{x}\)</span>可以表示为： <span class="math display">\[
@@ -287,7 +287,7 @@ p(\boldsymbol{\mu} \mid \mathcal{D}, \boldsymbol{\alpha}) &amp;=\operatorname{Di
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/07/19/ch2-2-1-%E4%BA%8C%E9%A1%B9%E5%88%86%E5%B8%83/" rel="prev" title="ch2-2.1 二项分布">
+    <a href="/2020/07/19/ch2-2-1-%E4%BA%8C%E5%85%83%E5%8F%98%E9%87%8F/" rel="prev" title="ch2-2.1 二项分布">
       <i class="fa fa-chevron-left"></i> ch2-2.1 二项分布
     </a></div>
       <div class="post-nav-item">
@@ -353,7 +353,7 @@ p(\boldsymbol{\mu} \mid \mathcal{D}, \boldsymbol{\alpha}) &amp;=\operatorname{Di
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#多项式分布"><span class="nav-text">2.2 多项式分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#狄利克雷分布"><span class="nav-text">2.2.1 狄利克雷分布</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#多项式变量"><span class="nav-text">2.2 多项式变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#狄利克雷分布"><span class="nav-text">2.2.1 狄利克雷分布</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -701,7 +701,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'kenanking.github.io',
       owner       : 'kenanking',
       admin       : ['kenanking'],
-      id          : '6f42aaf436c72f5df0febcb0a0737d4c',
+      id          : '13c3114e2ae0ba0fabcf8ebd0c534a59',
         language: 'zh-CN',
       distractionFreeMode: true
     });
