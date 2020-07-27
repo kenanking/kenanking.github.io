@@ -245,6 +245,14 @@
 固定基函数的局限性</li>
 </ul>
 <a id="more"></a>
+<p>在第一章中已经遇到了一个回归问题的例子：多项式曲线拟合的问题。这是一个典型的线性回归模型。</p>
+<p>线性回归模型的参数具有线性函数的性质。</p>
+<p>线性回归模型最简单的形式是——输入变量的线性函数。但是也可以通过将一组输入变量的非线性函数进行线性组合，得到更有用的函数，这一系列非线性函数称为<strong>基函数（basis function）</strong>。</p>
+<p>线性回归模型是参数的线性函数，这样会使得在分析上更简单。但它也可以是输入变量的非线性函数。</p>
+<p>给定一个由<span class="math inline">\(N\)</span>个观测值<span class="math inline">\(\{\mathbf{x}_n\}\)</span>组成数据集，其中<span class="math inline">\(n=1, \ldots, N\)</span>，以及对应的目标值<span class="math inline">\(\left\{t_{n}\right\}\)</span>。我们的目标是在给出新的<span class="math inline">\(\mathbf{x}\)</span>时预测<span class="math inline">\(t\)</span>的值。</p>
+<p>最简单的方法是建立一个适当的函数关系<span class="math inline">\(y(\mathbf{x})\)</span>，对于新的输入<span class="math inline">\(\mathbf{x}\)</span>，直接给出对应<span class="math inline">\(t\)</span>的预测。</p>
+<p>一般地，从概率的观点来看，可以对预测分布<span class="math inline">\(p(t \mid \mathbf{x})\)</span>进行建模，它表达了对于每个<span class="math inline">\(\mathbf{x}\)</span>的值，<span class="math inline">\(t\)</span>的不确定西。从这个条件分布中，我们可以对于新的输入<span class="math inline">\(\mathbf{x}\)</span>，对<span class="math inline">\(t\)</span>做出预测。这种方法等价于最小化一个恰当选择的损失函数的期望值。</p>
+<p>虽然线性模型在实际应用中由很大的局限，但它是构成更加复杂模型的基础。</p>
 <h2 id="线性基函数模型">3.1 线性基函数模型</h2>
 <h2 id="偏置-方差分解">3.2 偏置-方差分解</h2>
 <h2 id="贝叶斯线性回归">3.3 贝叶斯线性回归</h2>
