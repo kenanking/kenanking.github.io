@@ -23,20 +23,20 @@
     var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="2.2 多项式变量 二元变量只能用来描述两种可能的取值，然而实际会遇到存在\(K\)种状态的情况。这种情况下，我们使用\(1-\mathrm{of}-K\)的方法，可以更方便地进行表示。将变量\(\mathbf{x}\)表示成一个\(K\)维向量，向量中元素\(x_k\)等于\(1\)，其余元素等于\(0\)。">
+  <meta name="description" content="模式识别与机器学习—ch3_Linear Models for Regression   线性基函数模型  偏置-方差分解  贝叶斯线性回归  贝叶斯模型比较  证据近似  固定基函数的局限性">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ch2-2.2 多项式分布">
-<meta property="og:url" content="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/index.html">
+<meta property="og:title" content="模式识别与机器学习_ch3-Linear Models for Regression">
+<meta property="og:url" content="https://kenanking.github.io/2020/07/27/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch3-Linear-Models-for-Regression/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
-<meta property="og:description" content="2.2 多项式变量 二元变量只能用来描述两种可能的取值，然而实际会遇到存在\(K\)种状态的情况。这种情况下，我们使用\(1-\mathrm{of}-K\)的方法，可以更方便地进行表示。将变量\(\mathbf{x}\)表示成一个\(K\)维向量，向量中元素\(x_k\)等于\(1\)，其余元素等于\(0\)。">
+<meta property="og:description" content="模式识别与机器学习—ch3_Linear Models for Regression   线性基函数模型  偏置-方差分解  贝叶斯线性回归  贝叶斯模型比较  证据近似  固定基函数的局限性">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-07-21T05:22:57.000Z">
-<meta property="article:modified_time" content="2020-07-21T05:22:57.000Z">
+<meta property="article:published_time" content="2020-07-27T12:12:25.000Z">
+<meta property="article:modified_time" content="2020-07-27T12:12:25.000Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/">
+<link rel="canonical" href="https://kenanking.github.io/2020/07/27/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch3-Linear-Models-for-Regression/">
 
 
 <script id="page-configurations">
@@ -49,7 +49,7 @@
   };
 </script>
 
-  <title>ch2-2.2 多项式分布 | 额呵呵的博客</title>
+  <title>模式识别与机器学习_ch3-Linear Models for Regression | 额呵呵的博客</title>
   
 
 
@@ -171,7 +171,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/">
+    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/27/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch3-Linear-Models-for-Regression/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -184,19 +184,23 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          ch2-2.2 多项式分布
+          模式识别与机器学习_ch3-Linear Models for Regression
         </h1>
 
         <div class="post-meta">
 
               
+  <i class="fa fa-thumbs-up"></i>
+  <font color="gray">置顶</font>
+  <span class="post-meta-divider">|</span>
+    
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-07-21 13:22:57" itemprop="dateCreated datePublished" datetime="2020-07-21T13:22:57+08:00">2020-07-21</time>
+              <time title="创建时间：2020-07-27 20:12:25" itemprop="dateCreated datePublished" datetime="2020-07-27T20:12:25+08:00">2020-07-27</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -209,7 +213,7 @@
             </span>
 
           
-            <span id="/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/" class="post-meta-item leancloud_visitors" data-flag-title="ch2-2.2 多项式分布" title="阅读次数">
+            <span id="/2020/07/27/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch3-Linear-Models-for-Regression/" class="post-meta-item leancloud_visitors" data-flag-title="模式识别与机器学习_ch3-Linear Models for Regression" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -226,48 +230,28 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="多项式变量">2.2 多项式变量</h2>
-<p>二元变量只能用来描述两种可能的取值，然而实际会遇到存在<span class="math inline">\(K\)</span>种状态的情况。这种情况下，我们使用<span class="math inline">\(1-\mathrm{of}-K\)</span>的方法，可以更方便地进行表示。将变量<span class="math inline">\(\mathbf{x}\)</span>表示成一个<span class="math inline">\(K\)</span>维向量，向量中元素<span class="math inline">\(x_k\)</span>等于<span class="math inline">\(1\)</span>，其余元素等于<span class="math inline">\(0\)</span>。</p>
+        <h1 id="模式识别与机器学习ch3_linear-models-for-regression">模式识别与机器学习—ch3_Linear Models for Regression</h1>
+<ul class="task-list">
+<li><input type="checkbox" disabled="" />
+线性基函数模型</li>
+<li><input type="checkbox" disabled="" />
+偏置-方差分解</li>
+<li><input type="checkbox" disabled="" />
+贝叶斯线性回归</li>
+<li><input type="checkbox" disabled="" />
+贝叶斯模型比较</li>
+<li><input type="checkbox" disabled="" />
+证据近似</li>
+<li><input type="checkbox" disabled="" />
+固定基函数的局限性</li>
+</ul>
 <a id="more"></a>
-<p>例如有一个具有<span class="math inline">\(K=6\)</span>种状态的变量<span class="math inline">\(\mathbf{x}\)</span>，某次观测时恰好<span class="math inline">\(x_3=1\)</span>，则变量<span class="math inline">\(\mathbf{x}\)</span>可以表示为： <span class="math display">\[
-\mathbf{x}=(0,0,1,0,0,0)^{\mathrm{T}}
-\]</span></p>
-<p>这个向量<span class="math inline">\(\mathbf{x}\)</span>满足<span class="math inline">\(\sum_{k=1}^{K} x_{k}=1\)</span>。如果用参数<span class="math inline">\(\mu_k\)</span>表示<span class="math inline">\(x_k=1\)</span>的概率，那么<span class="math inline">\(\mathbf{x}\)</span>的分布可以表示为： <span class="math display">\[
-p(\mathbf{x} \mid \boldsymbol{\mu})=\prod_{k=1}^{K} \mu_{k}^{x_{k}}
-\]</span></p>
-<p>其中：<span class="math inline">\(\boldsymbol{\mu}=\left(\mu_{1}, \ldots, \mu_{K}\right)^{\mathrm{T}}\)</span>，且<span class="math inline">\(\mu_{k} \geqslant 0\)</span>，<span class="math inline">\(\sum_{k} \mu_{k}=1\)</span>。</p>
-<p>从形式上开，<span class="math inline">\(\mathbf{x}\)</span>的概率分布可以看作是伯努利分布在多输出情况下的推广。</p>
-<p>该分布的期望为： <span class="math display">\[
-\mathbb{E}[\mathbf{x} \mid \boldsymbol{\mu}]=\sum_{\mathbf{x}} p(\mathbf{x} \mid \boldsymbol{\mu}) \mathbf{x}=\left(\mu_{1}, \ldots, \mu_{M}\right)^{\mathrm{T}}=\boldsymbol{\mu}
-\]</span></p>
-<p>对于<span class="math inline">\(N\)</span>个独立观测向量<span class="math inline">\(\mathbf{x}_{1}, \ldots, \mathbf{x}_{N}\)</span>组成的数据集<span class="math inline">\(\mathcal{D}\)</span>，它的似然函数为： <span class="math display">\[
-p(\mathcal{D} \mid \boldsymbol{\mu})=\prod_{n=1}^{N} \prod_{k=1}^{K} \mu_{k}^{x_{n k}}=\prod_{k=1}^{K} \mu_{k}^{\left(\sum_{n} x_{n k}\right)}=\prod_{k=1}^{K} \mu_{k}^{m_{k}}
-\]</span></p>
-<p>其中：令<span class="math inline">\(m_{k}=\sum_{n} x_{n k}\)</span>，<span class="math inline">\(m_k\)</span>表示观测到<span class="math inline">\(x_k=1\)</span>的次数。</p>
-<p>通过最大化似然函数，可以得到： <span class="math display">\[
-\mu_{k}^{\mathrm{ML}}=\frac{m_{k}}{N}
-\]</span></p>
-<p>我们考虑<span class="math inline">\(m_{1}, \ldots, m_{K}\)</span>在参数<span class="math inline">\(\mu\)</span>和观测总数<span class="math inline">\(N\)</span>条件下的联合分布，可以得到这个分布的形式为： <span class="math display">\[
-\operatorname{Mult}\left(m_{1}, m_{2}, \ldots, m_{K} \mid \mu, N\right)=\left(\begin{array}{c}
-N \\
-m_{1} m_{2} \ldots m_{K}
-\end{array}\right) \prod_{k=1}^{K} \mu_{k}^{m_{k}}
-\]</span></p>
-<p>这个分布为<strong>多项式分布（multinomial distribution）</strong>。</p>
-<p>其中：<span class="math inline">\(\left(\begin{array}{c} N \\ m_{1} m_{2} \ldots m_{K} \end{array}\right)=\frac{N !}{m_{1} ! m_{2} ! \ldots m_{K} !}\)</span>，且<span class="math inline">\(m_k\)</span>满足<span class="math inline">\(\sum_{k=1}^{K} m_{k}=N\)</span>。</p>
-<h3 id="狄利克雷分布">2.2.1 狄利克雷分布</h3>
-<p>这里引入的是多项式分布的参数<span class="math inline">\(\left\{\mu_{k}\right\}\)</span>的先验分布，<strong>狄利克雷分布（Dirichlet distribution）</strong>，它的形式为： <span class="math display">\[
-\operatorname{Dir}(\boldsymbol{\mu} \mid \boldsymbol{\alpha})=\frac{\Gamma\left(\alpha_{0}\right)}{\Gamma\left(\alpha_{1}\right) \cdots \Gamma\left(\alpha_{K}\right)} \prod_{k=1}^{K} \mu_{k}^{\alpha_{k}-1}
-\]</span></p>
-<p>其中：<span class="math inline">\(\alpha_{1}, \ldots, \alpha_{K}\)</span>是分布的参数，<span class="math inline">\(\boldsymbol{\alpha}\)</span>表示<span class="math inline">\(\left(\alpha_{1}, \ldots, \alpha_{K}\right)^{\mathrm{T}}\)</span>。</p>
-<p>狄利克雷分布是多项式分布的共轭先验。</p>
-<p>后验分布的形式为： <span class="math display">\[
-\begin{aligned}
-p(\boldsymbol{\mu} \mid \mathcal{D}, \boldsymbol{\alpha}) &amp;=\operatorname{Dir}(\boldsymbol{\mu} \mid \boldsymbol{\alpha}+\mathbf{m}) \notag \\
-&amp;=\frac{\Gamma\left(\alpha_{0}+N\right)}{\Gamma\left(\alpha_{1}+m_{1}\right) \cdots \Gamma\left(\alpha_{K}+m_{K}\right)} \prod_{k=1}^{K} \mu_{k}^{\alpha_{k}+m_{k}-1} \notag 
-\end{aligned}
-\]</span></p>
-<p>与Beta分布类似，狄利克雷分布中的参数<span class="math inline">\(\alpha_k\)</span>可以看作是<span class="math inline">\(x_k=1\)</span>的有效观测数。</p>
+<h2 id="线性基函数模型">3.1 线性基函数模型</h2>
+<h2 id="偏置-方差分解">3.2 偏置-方差分解</h2>
+<h2 id="贝叶斯线性回归">3.3 贝叶斯线性回归</h2>
+<h2 id="贝叶斯模型比较">3.4 贝叶斯模型比较</h2>
+<h2 id="证据近似">3.5 证据近似</h2>
+<h2 id="固定基函数的局限性">3.6 固定基函数的局限性</h2>
 
     </div>
 
@@ -287,13 +271,10 @@ p(\boldsymbol{\mu} \mid \mathcal{D}, \boldsymbol{\alpha}) &amp;=\operatorname{Di
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/07/19/ch2-2-1-%E4%BA%8C%E5%85%83%E5%8F%98%E9%87%8F/" rel="prev" title="ch2-2.1 二项分布">
-      <i class="fa fa-chevron-left"></i> ch2-2.1 二项分布
+    <a href="/2020/07/27/ch2-2-5-%E9%9D%9E%E5%8F%82%E6%95%B0%E5%88%86%E5%B8%83/" rel="prev" title="ch2-2.5 非参数分布">
+      <i class="fa fa-chevron-left"></i> ch2-2.5 非参数分布
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/07/22/ch2-2-3-%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83/" rel="next" title="ch2-2.3 高斯分布">
-      ch2-2.3 高斯分布 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -353,7 +334,7 @@ p(\boldsymbol{\mu} \mid \mathcal{D}, \boldsymbol{\alpha}) &amp;=\operatorname{Di
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#多项式变量"><span class="nav-text">2.2 多项式变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#狄利克雷分布"><span class="nav-text">2.2.1 狄利克雷分布</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#模式识别与机器学习ch3_linear-models-for-regression"><span class="nav-text">模式识别与机器学习—ch3_Linear Models for Regression</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#线性基函数模型"><span class="nav-text">3.1 线性基函数模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#偏置-方差分解"><span class="nav-text">3.2 偏置-方差分解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#贝叶斯线性回归"><span class="nav-text">3.3 贝叶斯线性回归</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#贝叶斯模型比较"><span class="nav-text">3.4 贝叶斯模型比较</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#证据近似"><span class="nav-text">3.5 证据近似</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#固定基函数的局限性"><span class="nav-text">3.6 固定基函数的局限性</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -701,7 +682,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'kenanking.github.io',
       owner       : 'kenanking',
       admin       : ['kenanking'],
-      id          : '13c3114e2ae0ba0fabcf8ebd0c534a59',
+      id          : '2485b65bbc7d7b1a34a16588fc6800e1',
         language: 'zh-CN',
       distractionFreeMode: true
     });
