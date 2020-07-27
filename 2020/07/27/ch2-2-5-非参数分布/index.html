@@ -287,8 +287,28 @@ k(\mathbf{u}) &amp; \geqslant 0 \notag \\
 \int k(\mathbf{u}) \mathrm{du} &amp;=1 \notag 
 \end{aligned}
 \]</span></p>
-<p>核密度估计有⼀个很⼤的优点，即不需要进行“训练”阶段的计算，因为“训练”阶段只需要存储训练集即可。然⽽，这也是⼀个巨⼤的缺点，因为估计概率密度的计算代价随着数据集的规模线性增长。</p>
+<p>核密度估计有⼀个很⼤的优点，即不需要进行“训练”阶段的计算，因为“训练”阶段只需要存储训练集即可。然而，这也是⼀个巨⼤的缺点，因为估计概率密度的计算代价随着数据集的规模线性增长。</p>
 <h3 id="近邻方法nearest-neighbour-methods">2.5.2 近邻方法（Nearest-neighbour methods）</h3>
+<p>核密度估计方法存在的一个问题是<span class="math inline">\(h\)</span>对所有核都是固定的。在数据比较集中的区域，较大的<span class="math inline">\(h\)</span>值可能造成过度平滑；而在数据比较稀疏的区域，减小<span class="math inline">\(h\)</span>值可能会带来更多噪声。因此<span class="math inline">\(h\)</span>的选择可能<strong>依赖于数据空间的位置</strong>。</p>
+<p>先选取以<span class="math inline">\(\mathbf{x}\)</span>为中心的一个很小的球面，然后逐渐增大半径直到球面包含了恰好<span class="math inline">\(K\)</span>个数据点为止，此时球面所围城的体积即为所求的<span class="math inline">\(V\)</span>。这种方法称为<strong><span class="math inline">\(K\)</span>近邻法。</strong></p>
+<p><span class="math inline">\(K\)</span>的值控制了光滑程度，不能选择过大的，也不能选择过小的。</p>
+<h4 id="k近邻推广到分类问题中"><span class="math inline">\(K\)</span>近邻推广到分类问题中</h4>
+<p><span class="math inline">\(K\)</span>近邻方法也可以推广到分类问题中，使用<span class="math inline">\(K\)</span>近邻法对每一个类别进行密度估计，然后应用贝叶斯理论得到后验概率。</p>
+<p>假设有一个总数为<span class="math inline">\(N\)</span>的数据集，其中<span class="math inline">\(N_k\)</span>个数据点属于类别<span class="math inline">\(\mathcal{C}_k\)</span>。如果想对新的数据点<span class="math inline">\(\mathbf{x}\)</span>进行分类，那么可以以<span class="math inline">\(\mathbf{x}\)</span>为中心画一个刚好能包含<span class="math inline">\(K\)</span>个数据点的球面，球面围成的体积为<span class="math inline">\(V\)</span>，含有每一类<span class="math inline">\(\mathcal{C}_k\)</span>的数据点为<span class="math inline">\(K_k\)</span>个。那么每一类的概率密度为： <span class="math display">\[
+p(\mathbf{x}|\mathcal{C}_k)=\cfrac{K_k}{N_kV}
+\]</span></p>
+<p>则非条件概率密度<span class="math inline">\(p(\mathbf{x})\)</span>为每一类的概率密度之和： <span class="math display">\[
+p(\mathbf{x})=\frac{K}{N V}
+\]</span></p>
+<p>每一类的先验概率为： <span class="math display">\[
+p\left(\mathcal{C}_{k}\right)=\frac{N_{k}}{N}
+\]</span></p>
+<p>于是，每一类别的后验概率为： <span class="math display">\[
+p\left(\mathcal{C}_{k} \mid \mathbf{x}\right)=\frac{p\left(\mathbf{x} \mid \mathcal{C}_{k}\right) p\left(\mathcal{C}_{k}\right)}{p(\mathbf{x})}=\frac{K_{k}}{K}
+\]</span></p>
+<p>如果我们想最小化错误分类的概率，可以把新数据点分配给后验概率最大的类别（即<span class="math inline">\(K_{k}/K\)</span>最大）。</p>
+<p>特殊的，当<span class="math inline">\(K=1\)</span>时，称为<strong>最近邻方法（nearest-neighbour rule）</strong>。新数据点被简单的分给数据集中距离最近的点的类别。</p>
+<p><span class="math inline">\(K\)</span>近邻⽅法和核密度估计方法都需要存储整个训练数据。如果数据集很大的话，会造成很大的计算代价。通过建⽴⼀个基于树的搜索结构（kd树），使得近邻可以⾼效地被找到，而不必遍历整个数据集，这种计算代价可以被抵消，代价就是需要进行⼀次性的额外计算量。</p>
 
     </div>
 
@@ -371,7 +391,7 @@ k(\mathbf{u}) &amp; \geqslant 0 \notag \\
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#非参数化方法"><span class="nav-text">2.5 非参数化方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方法引入"><span class="nav-text">方法引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核密度估计kernel-density-estimators"><span class="nav-text">2.5.1 核密度估计（Kernel density estimators）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#近邻方法nearest-neighbour-methods"><span class="nav-text">2.5.2 近邻方法（Nearest-neighbour methods）</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#非参数化方法"><span class="nav-text">2.5 非参数化方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方法引入"><span class="nav-text">方法引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核密度估计kernel-density-estimators"><span class="nav-text">2.5.1 核密度估计（Kernel density estimators）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#近邻方法nearest-neighbour-methods"><span class="nav-text">2.5.2 近邻方法（Nearest-neighbour methods）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#k近邻推广到分类问题中"><span class="nav-text">\(K\)近邻推广到分类问题中</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
