@@ -23,20 +23,20 @@
     var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="2.2 多项式变量 二元变量只能用来描述两种可能的取值，然而实际会遇到存在\(K\)种状态的情况。这种情况下，我们使用\(1-\mathrm{of}-K\)的方法，可以更方便地进行表示。将变量\(\mathbf{x}\)表示成一个\(K\)维向量，向量中元素\(x_k\)等于\(1\)，其余元素等于\(0\)。">
+  <meta name="description" content="2.5 非参数化方法 这一章之前的内容介绍的都是有具体函数形式的概率分布，这些概率分布由少量参数控制，参数则可以由数据集通过估计得到。这种对数据建模的方法称为参数化（parametric）方法。 这种方法的局限性在于概率密度的形式是确定的，对实际数据来说可能并不灵活，无法描述实际数据。 这一节中，使用非参数化（nonparametric）方法进行概率密度估计。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ch2-2.2 多项式分布">
-<meta property="og:url" content="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/index.html">
+<meta property="og:title" content="ch2-2.5 非参数分布">
+<meta property="og:url" content="https://kenanking.github.io/2020/07/27/ch2-2-5-%E9%9D%9E%E5%8F%82%E6%95%B0%E5%88%86%E5%B8%83/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
-<meta property="og:description" content="2.2 多项式变量 二元变量只能用来描述两种可能的取值，然而实际会遇到存在\(K\)种状态的情况。这种情况下，我们使用\(1-\mathrm{of}-K\)的方法，可以更方便地进行表示。将变量\(\mathbf{x}\)表示成一个\(K\)维向量，向量中元素\(x_k\)等于\(1\)，其余元素等于\(0\)。">
+<meta property="og:description" content="2.5 非参数化方法 这一章之前的内容介绍的都是有具体函数形式的概率分布，这些概率分布由少量参数控制，参数则可以由数据集通过估计得到。这种对数据建模的方法称为参数化（parametric）方法。 这种方法的局限性在于概率密度的形式是确定的，对实际数据来说可能并不灵活，无法描述实际数据。 这一节中，使用非参数化（nonparametric）方法进行概率密度估计。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-07-21T05:22:57.000Z">
-<meta property="article:modified_time" content="2020-07-21T05:22:57.000Z">
+<meta property="article:published_time" content="2020-07-27T11:36:06.000Z">
+<meta property="article:modified_time" content="2020-07-27T11:36:06.000Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/">
+<link rel="canonical" href="https://kenanking.github.io/2020/07/27/ch2-2-5-%E9%9D%9E%E5%8F%82%E6%95%B0%E5%88%86%E5%B8%83/">
 
 
 <script id="page-configurations">
@@ -49,7 +49,7 @@
   };
 </script>
 
-  <title>ch2-2.2 多项式分布 | 额呵呵的博客</title>
+  <title>ch2-2.5 非参数分布 | 额呵呵的博客</title>
   
 
 
@@ -171,7 +171,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/">
+    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/27/ch2-2-5-%E9%9D%9E%E5%8F%82%E6%95%B0%E5%88%86%E5%B8%83/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -184,7 +184,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          ch2-2.2 多项式分布
+          ch2-2.5 非参数分布
         </h1>
 
         <div class="post-meta">
@@ -196,7 +196,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-07-21 13:22:57" itemprop="dateCreated datePublished" datetime="2020-07-21T13:22:57+08:00">2020-07-21</time>
+              <time title="创建时间：2020-07-27 19:36:06" itemprop="dateCreated datePublished" datetime="2020-07-27T19:36:06+08:00">2020-07-27</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -209,7 +209,7 @@
             </span>
 
           
-            <span id="/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/" class="post-meta-item leancloud_visitors" data-flag-title="ch2-2.2 多项式分布" title="阅读次数">
+            <span id="/2020/07/27/ch2-2-5-%E9%9D%9E%E5%8F%82%E6%95%B0%E5%88%86%E5%B8%83/" class="post-meta-item leancloud_visitors" data-flag-title="ch2-2.5 非参数分布" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -226,48 +226,69 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="多项式变量">2.2 多项式变量</h2>
-<p>二元变量只能用来描述两种可能的取值，然而实际会遇到存在<span class="math inline">\(K\)</span>种状态的情况。这种情况下，我们使用<span class="math inline">\(1-\mathrm{of}-K\)</span>的方法，可以更方便地进行表示。将变量<span class="math inline">\(\mathbf{x}\)</span>表示成一个<span class="math inline">\(K\)</span>维向量，向量中元素<span class="math inline">\(x_k\)</span>等于<span class="math inline">\(1\)</span>，其余元素等于<span class="math inline">\(0\)</span>。</p>
+        <h2 id="非参数化方法">2.5 非参数化方法</h2>
+<p>这一章之前的内容介绍的都是有具体函数形式的概率分布，这些概率分布由少量参数控制，参数则可以由数据集通过估计得到。这种对数据建模的方法称为<strong>参数化（parametric）方法</strong>。</p>
+<p>这种方法的局限性在于概率密度的形式是确定的，对实际数据来说可能并不灵活，无法描述实际数据。</p>
+<p>这一节中，使用<strong>非参数化（nonparametric）方法</strong>进行概率密度估计。</p>
 <a id="more"></a>
-<p>例如有一个具有<span class="math inline">\(K=6\)</span>种状态的变量<span class="math inline">\(\mathbf{x}\)</span>，某次观测时恰好<span class="math inline">\(x_3=1\)</span>，则变量<span class="math inline">\(\mathbf{x}\)</span>可以表示为： <span class="math display">\[
-\mathbf{x}=(0,0,1,0,0,0)^{\mathrm{T}}
+<p>一种常用的密度估计方法是<strong>直方图（histogram）</strong>。但是直方图在实际应用中存在局限性：</p>
+<ol type="1">
+<li>直方图估计的概率密度不连续，因为直方图本身分成一组一组，就是不连续的。</li>
+<li>直方图会将维度放大，把<span class="math inline">\(D\)</span>维空间中的每一维变量都划分称<span class="math inline">\(M\)</span>组，一共会划分<span class="math inline">\(M^D\)</span>组。指数级的数据量是不可接受的。</li>
+</ol>
+<p>下面介绍的两种方法更适合实际使用。</p>
+<h3 id="方法引入">方法引入</h3>
+<p>假设在<span class="math inline">\(D\)</span>维欧氏空间中存在某个未知的概率密度分布<span class="math inline">\(p(\mathbf{x})\)</span>，我们想要估计<span class="math inline">\(p(\mathbf{x})\)</span>的值。考虑包含<span class="math inline">\(\mathbf{x}\)</span>的某个小区域<span class="math inline">\(\mathcal{R}\)</span>，这个区域的<strong>概率质量（probability mass）</strong>为： <span class="math display">\[
+P=\int_{\mathcal{R}} p(\mathbf{x}) \mathrm{d} \mathbf{x}
 \]</span></p>
-<p>这个向量<span class="math inline">\(\mathbf{x}\)</span>满足<span class="math inline">\(\sum_{k=1}^{K} x_{k}=1\)</span>。如果用参数<span class="math inline">\(\mu_k\)</span>表示<span class="math inline">\(x_k=1\)</span>的概率，那么<span class="math inline">\(\mathbf{x}\)</span>的分布可以表示为： <span class="math display">\[
-p(\mathbf{x} \mid \boldsymbol{\mu})=\prod_{k=1}^{K} \mu_{k}^{x_{k}}
+<p>假设我们有服从<span class="math inline">\(p(\mathbf{x})\)</span>的<span class="math inline">\(N\)</span>次观测，由于每个数据点落在区域<span class="math inline">\(\mathcal{R}\)</span>中的概率为<span class="math inline">\(P\)</span>，因此位于区域<span class="math inline">\(\mathcal{R}\)</span>中的数据点的总数<span class="math inline">\(K\)</span>服从二项分布： <span class="math display">\[
+\operatorname{Bin}(K \mid N, P)=\frac{N !}{K !(N-K) !} P^{K}(1-P)^{1-K}
 \]</span></p>
-<p>其中：<span class="math inline">\(\boldsymbol{\mu}=\left(\mu_{1}, \ldots, \mu_{K}\right)^{\mathrm{T}}\)</span>，且<span class="math inline">\(\mu_{k} \geqslant 0\)</span>，<span class="math inline">\(\sum_{k} \mu_{k}=1\)</span>。</p>
-<p>从形式上开，<span class="math inline">\(\mathbf{x}\)</span>的概率分布可以看作是伯努利分布在多输出情况下的推广。</p>
-<p>该分布的期望为： <span class="math display">\[
-\mathbb{E}[\mathbf{x} \mid \boldsymbol{\mu}]=\sum_{\mathbf{x}} p(\mathbf{x} \mid \boldsymbol{\mu}) \mathbf{x}=\left(\mu_{1}, \ldots, \mu_{M}\right)^{\mathrm{T}}=\boldsymbol{\mu}
+<p>由二项分布的期望，可以得到<span class="math inline">\(\mathbb{E}[K / N]=P\)</span>，<span class="math inline">\(\operatorname{var} [K / N]=P(1-P) / N\)</span>。假设<span class="math inline">\(N\)</span>的值比较大时，二项分布的峰值在均值附加，于是可以得到： <span class="math display">\[
+K \simeq N P
 \]</span></p>
-<p>对于<span class="math inline">\(N\)</span>个独立观测向量<span class="math inline">\(\mathbf{x}_{1}, \ldots, \mathbf{x}_{N}\)</span>组成的数据集<span class="math inline">\(\mathcal{D}\)</span>，它的似然函数为： <span class="math display">\[
-p(\mathcal{D} \mid \boldsymbol{\mu})=\prod_{n=1}^{N} \prod_{k=1}^{K} \mu_{k}^{x_{n k}}=\prod_{k=1}^{K} \mu_{k}^{\left(\sum_{n} x_{n k}\right)}=\prod_{k=1}^{K} \mu_{k}^{m_{k}}
+<p>同时，假设当<span class="math inline">\(\mathcal{R}\)</span>足够小时，可以假定该区域内的<span class="math inline">\(p(\mathbf{x})\)</span>为常数，如果令区域<span class="math inline">\(\mathcal{R}\)</span>的体积为<span class="math inline">\(V\)</span>，则： <span class="math display">\[
+P \simeq p(\mathbf{x}) V
 \]</span></p>
-<p>其中：令<span class="math inline">\(m_{k}=\sum_{n} x_{n k}\)</span>，<span class="math inline">\(m_k\)</span>表示观测到<span class="math inline">\(x_k=1\)</span>的次数。</p>
-<p>通过最大化似然函数，可以得到： <span class="math display">\[
-\mu_{k}^{\mathrm{ML}}=\frac{m_{k}}{N}
+<p>于是，结合上面两个式子，得到概率密度的估计： <span class="math display">\[
+p(\mathbf{x})=\frac{K}{N V}
 \]</span></p>
-<p>我们考虑<span class="math inline">\(m_{1}, \ldots, m_{K}\)</span>在参数<span class="math inline">\(\mu\)</span>和观测总数<span class="math inline">\(N\)</span>条件下的联合分布，可以得到这个分布的形式为： <span class="math display">\[
-\operatorname{Mult}\left(m_{1}, m_{2}, \ldots, m_{K} \mid \mu, N\right)=\left(\begin{array}{c}
-N \\
-m_{1} m_{2} \ldots m_{K}
-\end{array}\right) \prod_{k=1}^{K} \mu_{k}^{m_{k}}
+<p>但是，上面两个假设是<strong>相互矛盾</strong>的。一方面想要区域<span class="math inline">\(\mathcal{R}\)</span>足够小，使得这个区域内的概率密度近似为常数，另一方面也要它足够大，使得<span class="math inline">\(K\)</span>足够大，让二项分布在均值处达到尖峰。</p>
+<p>不过，我们有两种方法使用上面的式子：</p>
+<ol type="1">
+<li>固定<span class="math inline">\(K\)</span>，然后从数据中确定<span class="math inline">\(V\)</span>的值，称为<strong><span class="math inline">\(K\)</span>近邻方法</strong>。</li>
+<li>固定<span class="math inline">\(V\)</span>，然后从数据中确定<span class="math inline">\(K\)</span>的值，称为<strong>核密度估计方法</strong>。</li>
+</ol>
+<h3 id="核密度估计kernel-density-estimators">2.5.1 核密度估计（Kernel density estimators）</h3>
+<p>取区域<span class="math inline">\(\mathcal{R}\)</span>为以<span class="math inline">\(\mathbf{x}\)</span>为中心的小超立方体，为了统计落在这个区域内的数据点的数量<span class="math inline">\(K\)</span>，定义下面的函数： <span class="math display">\[
+k(\mathbf{u})=\left\{\begin{array}{ll}
+1, &amp; \left|u_{i}\right| \leqslant 1 / 2, \quad i=1, \ldots, D \\
+0, &amp; \text { otherwise }
+\end{array}\right.
 \]</span></p>
-<p>这个分布为<strong>多项式分布（multinomial distribution）</strong>。</p>
-<p>其中：<span class="math inline">\(\left(\begin{array}{c} N \\ m_{1} m_{2} \ldots m_{K} \end{array}\right)=\frac{N !}{m_{1} ! m_{2} ! \ldots m_{K} !}\)</span>，且<span class="math inline">\(m_k\)</span>满足<span class="math inline">\(\sum_{k=1}^{K} m_{k}=N\)</span>。</p>
-<h3 id="狄利克雷分布">2.2.1 狄利克雷分布</h3>
-<p>这里引入的是多项式分布的参数<span class="math inline">\(\left\{\mu_{k}\right\}\)</span>的先验分布，<strong>狄利克雷分布（Dirichlet distribution）</strong>，它的形式为： <span class="math display">\[
-\operatorname{Dir}(\boldsymbol{\mu} \mid \boldsymbol{\alpha})=\frac{\Gamma\left(\alpha_{0}\right)}{\Gamma\left(\alpha_{1}\right) \cdots \Gamma\left(\alpha_{K}\right)} \prod_{k=1}^{K} \mu_{k}^{\alpha_{k}-1}
+<p>这表示一个以原点为中心的单位超立方体。</p>
+<p>函数<span class="math inline">\(k(\mathbf{u})\)</span>是一个<strong>核函数（kernel function）</strong>，在这个问题中也称为<strong>Parzen窗口</strong>。</p>
+<p>选取<span class="math inline">\(\mathbf{u}=(\mathbf{x}-\mathbf{x}_n)/h\)</span>，则<span class="math inline">\(\mathbf{x}_n\)</span>在边长为<span class="math inline">\(h\)</span>的超立方中时函数值<span class="math inline">\(k(\mathbf{u})\)</span>为<span class="math inline">\(1\)</span>，否则为<span class="math inline">\(0\)</span>。因此： <span class="math display">\[
+K=\sum_{n=1}^{N} k\left(\frac{\mathrm{x}-\mathrm{x}_{n}}{h}\right)
 \]</span></p>
-<p>其中：<span class="math inline">\(\alpha_{1}, \ldots, \alpha_{K}\)</span>是分布的参数，<span class="math inline">\(\boldsymbol{\alpha}\)</span>表示<span class="math inline">\(\left(\alpha_{1}, \ldots, \alpha_{K}\right)^{\mathrm{T}}\)</span>。</p>
-<p>狄利克雷分布是多项式分布的共轭先验。</p>
-<p>后验分布的形式为： <span class="math display">\[
+<p>代入公式<span class="math inline">\(p(\mathbf{x})=K/NV\)</span>，得到： <span class="math display">\[
+p(\mathbf{x})=\frac{1}{N} \sum_{n=1}^{N} \frac{1}{h^{D}} k\left(\frac{\mathbf{x}-\mathbf{x}_{n}}{h}\right)
+\]</span></p>
+<p>其中，<span class="math inline">\(V=h^D\)</span>为超立方体的体积。</p>
+<p>由于<span class="math inline">\(k(\mathbf{u})\)</span>的对称性，我们可以重新解释上面的式子。之前我们认为这个函数表示以<span class="math inline">\(\mathbf{x}\)</span>为中心的一个超立方体，现在可以理解为以<span class="math inline">\(N\)</span>个数据点<span class="math inline">\(\mathbf{x}_n\)</span>为中心的<span class="math inline">\(N\)</span>个超立方体。</p>
+<p>然而，用上面的公式仍然存在有<strong>不连续</strong>的问题，体现在超立方体的边界上。我们可以通过选取一个较平滑的核函数来解决，通常选择高斯核函数，对应的概率密度模型为： <span class="math display">\[
+p(\mathrm{x})=\frac{1}{N} \sum_{n=1}^{N} \frac{1}{\left(2 \pi h^{2}\right)^{1 / 2}} \exp \left\{-\frac{\left\|\mathrm{x}-\mathrm{x}_{n}\right\|^{2}}{2 h^{2}}\right\}
+\]</span></p>
+<p>其中：<span class="math inline">\(h\)</span>表示高斯分布的标准差。</p>
+<p>参数<span class="math inline">\(h\)</span>对模型的平滑起着重要作用。<span class="math inline">\(h\)</span>过小会造成模型对噪声过于敏感，<span class="math inline">\(h\)</span>过大会造成过度平滑，因此要选择一个折中。</p>
+<p>核函数的选择不是唯一的，只要满足下面的条件： <span class="math display">\[
 \begin{aligned}
-p(\boldsymbol{\mu} \mid \mathcal{D}, \boldsymbol{\alpha}) &amp;=\operatorname{Dir}(\boldsymbol{\mu} \mid \boldsymbol{\alpha}+\mathbf{m}) \notag \\
-&amp;=\frac{\Gamma\left(\alpha_{0}+N\right)}{\Gamma\left(\alpha_{1}+m_{1}\right) \cdots \Gamma\left(\alpha_{K}+m_{K}\right)} \prod_{k=1}^{K} \mu_{k}^{\alpha_{k}+m_{k}-1} \notag 
+k(\mathbf{u}) &amp; \geqslant 0 \notag \\
+\int k(\mathbf{u}) \mathrm{du} &amp;=1 \notag 
 \end{aligned}
 \]</span></p>
-<p>与Beta分布类似，狄利克雷分布中的参数<span class="math inline">\(\alpha_k\)</span>可以看作是<span class="math inline">\(x_k=1\)</span>的有效观测数。</p>
+<p>核密度估计有⼀个很⼤的优点，即不需要进行“训练”阶段的计算，因为“训练”阶段只需要存储训练集即可。然⽽，这也是⼀个巨⼤的缺点，因为估计概率密度的计算代价随着数据集的规模线性增长。</p>
+<h3 id="近邻方法nearest-neighbour-methods">2.5.2 近邻方法（Nearest-neighbour methods）</h3>
 
     </div>
 
@@ -287,13 +308,10 @@ p(\boldsymbol{\mu} \mid \mathcal{D}, \boldsymbol{\alpha}) &amp;=\operatorname{Di
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/07/19/ch2-2-1-%E4%BA%8C%E5%85%83%E5%8F%98%E9%87%8F/" rel="prev" title="ch2-2.1 二项分布">
-      <i class="fa fa-chevron-left"></i> ch2-2.1 二项分布
+    <a href="/2020/07/26/ch2-2-4-%E6%8C%87%E6%95%B0%E6%97%8F%E5%88%86%E5%B8%83/" rel="prev" title="ch2-2.4 指数族分布">
+      <i class="fa fa-chevron-left"></i> ch2-2.4 指数族分布
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/07/22/ch2-2-3-%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83/" rel="next" title="ch2-2.3 高斯分布">
-      ch2-2.3 高斯分布 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -353,7 +371,7 @@ p(\boldsymbol{\mu} \mid \mathcal{D}, \boldsymbol{\alpha}) &amp;=\operatorname{Di
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#多项式变量"><span class="nav-text">2.2 多项式变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#狄利克雷分布"><span class="nav-text">2.2.1 狄利克雷分布</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#非参数化方法"><span class="nav-text">2.5 非参数化方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方法引入"><span class="nav-text">方法引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核密度估计kernel-density-estimators"><span class="nav-text">2.5.1 核密度估计（Kernel density estimators）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#近邻方法nearest-neighbour-methods"><span class="nav-text">2.5.2 近邻方法（Nearest-neighbour methods）</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -701,7 +719,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'kenanking.github.io',
       owner       : 'kenanking',
       admin       : ['kenanking'],
-      id          : '13c3114e2ae0ba0fabcf8ebd0c534a59',
+      id          : '08264237cbb415211d54e58b514031ce',
         language: 'zh-CN',
       distractionFreeMode: true
     });
