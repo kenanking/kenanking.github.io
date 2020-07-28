@@ -277,7 +277,7 @@
 <p>求解得到<span class="math inline">\(y(\mathrm{x})\)</span>： <span class="math display">\[
 y(\mathrm{x})=\frac{\int t p(\mathrm{x}, t) \mathrm{d} t}{p(\mathrm{x})}=\int t p(t \mid \mathrm{x}) \mathrm{d} t=\mathbb{E}_{t}[t \mid \mathrm{x}]
 \]</span></p>
-<p><span class="math inline">\(y(\mathrm{x})\)</span>是<span class="math inline">\(\mathrm{x}\)</span>在条件<span class="math inline">\(t\)</span>下的条件均值，这个函数称为<strong>回归函数（regression function）</strong>。</p>
+<p><span class="math inline">\(y(\mathrm{x})\)</span>是目标变量<span class="math inline">\(t\)</span>在条件<span class="math inline">\(\mathrm{x}\)</span>下的条件均值，这个函数称为<strong>回归函数（regression function）</strong>。</p>
 <p>在回归问题中，平方损失函数不是唯一的选择。在某些情况下会用到<strong>闵可夫斯基损失函数（Minkowski loss）</strong>，它是平方损失函数的推广。对应期望损失为： <span class="math display">\[
 \mathbb{E}\left[L_{q}\right]=\iint|y(\mathbf{x})-t|^{q} p(\mathbf{x}, t) \mathrm{d} \mathbf{x} \mathrm{d} t
 \]</span> 当<span class="math inline">\(q = 2\)</span>时，这个函数就变成了平⽅损失函数的期望损失。</p>
