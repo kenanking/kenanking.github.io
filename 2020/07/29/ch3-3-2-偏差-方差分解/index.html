@@ -23,22 +23,20 @@
     var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="2.1 二项变量 伯努利分布 对于二元随机变量\(x \in \{0,1\}\)，\(x&#x3D;1\)的概率记作参数\(\mu\)，因此： \[ p(x&#x3D;1 \mid \mu)&#x3D;\mu \] 其中\(0 \leqslant \mu \leqslant 1\)。于是\(p(x&#x3D;0 \mid \mu)&#x3D;1-\mu\)，由此\(x\)的概率分布可以写为： \[ \operatorname{Bern">
+  <meta name="description" content="3.2 偏差-方差分解 偏差-方差分解(bias-variance decomposition)是统计学派看待模型复杂度的观点，通常称为偏差-方差折衷（bias-variance trade-off）。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ch2-2.1 二项分布">
-<meta property="og:url" content="https://kenanking.github.io/2020/07/19/ch2-2-1-%E4%BA%8C%E5%85%83%E5%8F%98%E9%87%8F/index.html">
+<meta property="og:title" content="ch3-3.2 偏差-方差分解">
+<meta property="og:url" content="https://kenanking.github.io/2020/07/29/ch3-3-2-%E5%81%8F%E5%B7%AE-%E6%96%B9%E5%B7%AE%E5%88%86%E8%A7%A3/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
-<meta property="og:description" content="2.1 二项变量 伯努利分布 对于二元随机变量\(x \in \{0,1\}\)，\(x&#x3D;1\)的概率记作参数\(\mu\)，因此： \[ p(x&#x3D;1 \mid \mu)&#x3D;\mu \] 其中\(0 \leqslant \mu \leqslant 1\)。于是\(p(x&#x3D;0 \mid \mu)&#x3D;1-\mu\)，由此\(x\)的概率分布可以写为： \[ \operatorname{Bern">
+<meta property="og:description" content="3.2 偏差-方差分解 偏差-方差分解(bias-variance decomposition)是统计学派看待模型复杂度的观点，通常称为偏差-方差折衷（bias-variance trade-off）。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesBeta%20Distribution.png">
-<meta property="article:published_time" content="2020-07-19T13:45:25.000Z">
-<meta property="article:modified_time" content="2020-07-19T13:45:25.000Z">
+<meta property="article:published_time" content="2020-07-29T07:56:38.000Z">
+<meta property="article:modified_time" content="2020-07-29T07:56:38.000Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesBeta%20Distribution.png">
 
-<link rel="canonical" href="https://kenanking.github.io/2020/07/19/ch2-2-1-%E4%BA%8C%E5%85%83%E5%8F%98%E9%87%8F/">
+<link rel="canonical" href="https://kenanking.github.io/2020/07/29/ch3-3-2-%E5%81%8F%E5%B7%AE-%E6%96%B9%E5%B7%AE%E5%88%86%E8%A7%A3/">
 
 
 <script id="page-configurations">
@@ -51,7 +49,7 @@
   };
 </script>
 
-  <title>ch2-2.1 二项分布 | 额呵呵的博客</title>
+  <title>ch3-3.2 偏差-方差分解 | 额呵呵的博客</title>
   
 
 
@@ -173,7 +171,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/19/ch2-2-1-%E4%BA%8C%E5%85%83%E5%8F%98%E9%87%8F/">
+    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/29/ch3-3-2-%E5%81%8F%E5%B7%AE-%E6%96%B9%E5%B7%AE%E5%88%86%E8%A7%A3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -186,7 +184,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          ch2-2.1 二项分布
+          ch3-3.2 偏差-方差分解
         </h1>
 
         <div class="post-meta">
@@ -198,7 +196,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-07-19 21:45:25" itemprop="dateCreated datePublished" datetime="2020-07-19T21:45:25+08:00">2020-07-19</time>
+              <time title="创建时间：2020-07-29 15:56:38" itemprop="dateCreated datePublished" datetime="2020-07-29T15:56:38+08:00">2020-07-29</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -211,7 +209,7 @@
             </span>
 
           
-            <span id="/2020/07/19/ch2-2-1-%E4%BA%8C%E5%85%83%E5%8F%98%E9%87%8F/" class="post-meta-item leancloud_visitors" data-flag-title="ch2-2.1 二项分布" title="阅读次数">
+            <span id="/2020/07/29/ch3-3-2-%E5%81%8F%E5%B7%AE-%E6%96%B9%E5%B7%AE%E5%88%86%E8%A7%A3/" class="post-meta-item leancloud_visitors" data-flag-title="ch3-3.2 偏差-方差分解" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -228,86 +226,29 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="二项变量">2.1 二项变量</h2>
-<h3 id="伯努利分布">伯努利分布</h3>
-<p>对于二元随机变量<span class="math inline">\(x \in \{0,1\}\)</span>，<span class="math inline">\(x=1\)</span>的概率记作参数<span class="math inline">\(\mu\)</span>，因此： <span class="math display">\[
-p(x=1 \mid \mu)=\mu
-\]</span></p>
-<p>其中<span class="math inline">\(0 \leqslant \mu \leqslant 1\)</span>。于是<span class="math inline">\(p(x=0 \mid \mu)=1-\mu\)</span>，由此<span class="math inline">\(x\)</span>的概率分布可以写为： <span class="math display">\[
-\operatorname{Bern}(x \mid \mu)=\mu^{x}(1-\mu)^{1-x}
-\]</span></p>
-<p>这叫做<strong>伯努利分布（Bernoulli distribution）</strong>。伯努利分布是归一化的，均值和方差为： <span class="math display">\[
-\begin{aligned}
-\mathbb{E}[x] &amp;=\mu \notag \\
-\operatorname{var}[x] &amp;=\mu(1-\mu) \notag 
-\end{aligned}
-\]</span></p>
+        <h2 id="偏差-方差分解">3.2 偏差-方差分解</h2>
+<p><strong>偏差-方差分解(bias-variance decomposition)</strong>是统计学派看待<strong>模型复杂度</strong>的观点，通常称为<strong>偏差-方差折衷（bias-variance trade-off）</strong>。</p>
 <a id="more"></a>
-<p>假设存在观测数据集<span class="math inline">\(\mathcal{D}=\left\{x_{1}, \ldots, x_{N}\right\}\)</span>，其中每次观测都是独立的，且服从<span class="math inline">\(p(x \mid \mu)\)</span>。于是可以构造关于<span class="math inline">\(\mu\)</span>的似然函数： <span class="math display">\[
-p(\mathcal{D} \mid \mu)=\prod_{n=1}^{N} p\left(x_{n} \mid \mu\right)=\prod_{n=1}^{N} \mu^{x_{n}}(1-\mu)^{1-x_{n}}
-\]</span> 取对数得到对数似然函数： <span class="math display">\[
-\ln p(\mathcal{D} \mid \mu)=\sum_{n=1}^{N} \ln p\left(x_{n} \mid \mu\right)=\sum_{n=1}^{N}\left\{x_{n} \ln \mu+\left(1-x_{n}\right) \ln (1-\mu)\right\}
+<p>在1.5.5小节中，一旦我们知道条件分布<span class="math inline">\(p(t \mid \mathbf{x})\)</span>，就能得到对应最优预测结果，记作<span class="math inline">\(h(\mathbf{x})\)</span>，<span class="math inline">\(h(\mathbf{x})\)</span>为<span class="math inline">\(t\)</span>条件期望： <span class="math display">\[
+h(\mathbf{x})=\mathbb{E}[t \mid \mathbf{x}]=\int t p(t \mid \mathbf{x}) \mathrm{d} t
 \]</span></p>
-<p>根据频率派观点，最大化似然函数可以估计<span class="math inline">\(\mu\)</span>的值。于是在伯努利分布的情况下，<span class="math inline">\(\mu\)</span>的最大似然估计值为： <span class="math display">\[
-\mu_{\mathrm{ML}}=\frac{1}{N} \sum_{n=1}^{N} x_{n}
+<p>在1.5.5小节中，我们证明了平方损失函数的期望可以写成： <span class="math display">\[
+\mathbb{E}[L]=\int\{y(\mathbf{x})-h(\mathbf{x})\}^{2} p(\mathbf{x}) \mathrm{d} \mathbf{x}+\iint\{h(\mathbf{x})-t\}^{2} p(\mathbf{x}, t) \mathrm{d} \mathbf{x} \mathrm{d} t
 \]</span></p>
-<p><span class="math inline">\(\mu\)</span>的最大似然估计值等于样本均值。如果记<span class="math inline">\(x=1\)</span>的观测数量为<span class="math inline">\(m\)</span>，则可以写成这样的形式：<span class="math inline">\(\mu_{\mathrm{ML}}=\frac{m}{N}\)</span>。</p>
-<p>很显然，对于小规模数据集，<strong>最大似然得到的结果可能会是不合理的</strong>。假设扔一个硬币<span class="math inline">\(3\)</span>次都正面朝上，那么<span class="math inline">\(\mu_{\mathrm{ML}}=1\)</span>，认为所有未来的观测值都是正面朝上的，显然是不合理的。这个时候就要引入<span class="math inline">\(\mu\)</span>的先验分布，得到一个更合理的结论。</p>
-<h3 id="二项分布">二项分布</h3>
-<p>在给定数据集大小<span class="math inline">\(N\)</span>的条件下，<span class="math inline">\(x = 1\)</span>的观测出现的数量<span class="math inline">\(m\)</span>的概率分布，称为<strong>⼆项分布（binomial distribution）</strong>。写成： <span class="math display">\[
-\operatorname{Bin}(m \mid N, \mu)=\left(\begin{array}{l}
-N \\
-m
-\end{array}\right) \mu^{m}(1-\mu)^{N-m}
+<p>其中：第二项与<span class="math inline">\(y(\mathbf{x})\)</span>无关，由数据本身的噪声产生。</p>
+<p>假设我们有<span class="math inline">\(K\)</span>个数据集，每个数据集大小为<span class="math inline">\(N\)</span>，并且每个数据集都独立地从分布<span class="math inline">\(p(t, \mathbf{x})\)</span>中抽取。对于每个数据集<span class="math inline">\(\mathcal{D}\)</span>，我们都可以在其基础上根据学习算法来训练出一个模型<span class="math inline">\(y(\mathbf{x} ; \mathcal{D})\)</span>。</p>
+<p>在不同的数据集上进行训练可以得到不同的模型。学习算法的性能是根据在这<span class="math inline">\(K\)</span>个数据集上训练得到的<span class="math inline">\(K\)</span>个模型的平均性能来衡量的。即： <span class="math display">\[
+\begin{array}{l}
+\mathbb{E}_{\mathcal{D}}\left[\{y(\mathbf{x} ; \mathcal{D})-h(\mathbf{x})\}^{2}\right] \\
+\quad=\underbrace{\left\{\mathbb{E}_{\mathcal{D}}[y(\mathbf{x} ; \mathcal{D})]-h(\mathbf{x})\right\}^{2}}_{(\text { 偏差 })^{2}}+\underbrace{\mathbb{E}_{\mathcal{D}}\left[\left\{y(\mathbf{x} ; \mathcal{D})-\mathbb{E}_{\mathcal{D}}[y(\mathbf{x} ; \mathcal{D})]\right\}^{2}\right]}_{\text {方差 }}
+\end{array}
 \]</span></p>
-<p>其中： <span class="math display">\[
-\left(\begin{array}{l}
-N \\
-m
-\end{array}\right) \equiv \frac{N !}{(N-m) ! m !}
+<p><span class="math inline">\(y(\mathbf{x} ; \mathcal{D})\)</span>与回归函数<span class="math inline">\(h(\mathbf{x})\)</span>之差的平方的期望可以表示为两项之和。</p>
+<p>第一项为<strong>偏差（bias）</strong>的平方，表⽰所有数据集的平均预测与预期的回归函数之间的差异。</p>
+<p>第二项为<strong>方差（variance）</strong>，度量了对于单独的数据集，模型所给出的解在平均值附近波动的情况。</p>
+<p>综合上面的分析，我们可以能到下面对期望损失的分解： <span class="math display">\[
+期望损失 = 偏差^2+方差+噪声
 \]</span></p>
-<p>⼆项分布的均值和⽅差为： <span class="math display">\[
-\begin{aligned}
-\mathbb{E}[m] \equiv \sum_{m=0}^{N} m \operatorname{Bin}(m \mid N, \mu) &amp;=N \mu \notag \\
-\operatorname{var}[m] \equiv \sum_{m=0}^{N}(m-\mathbb{E}[m])^{2} \operatorname{Bin}(m \mid N, \mu) &amp;=N \mu(1-\mu) \notag 
-\end{aligned}
-\]</span></p>
-<h3 id="beta分布">2.1.1 Beta分布</h3>
-<p>在上面看到，在小规模数据集下，用最大似然的角度求解问题会出现严重的过拟合现象。</p>
-<p>为了从贝叶斯的角度看待问题，我们需要引入<span class="math inline">\(\mu\)</span>的先验分布。由于似然函数形如<span class="math inline">\(\mu^{x}(1-\mu)^{1-x}\)</span>，所有我们选择先验分布正比于<span class="math inline">\(\mu\)</span>和<span class="math inline">\((1-\mu)\)</span>时，后验分布也会具有相同的形式，这种性质称为<strong>共轭（conjugacy）</strong>。</p>
-<p>我们选择的先验分布形式为： <span class="math display">\[
-\operatorname{Beta}(\mu \mid a, b)=\frac{\Gamma(a+b)}{\Gamma(a) \Gamma(b)} \mu^{a-1}(1-\mu)^{b-1}
-\]</span> 这称为<strong>Beta分布（beta distribution）</strong>。</p>
-<p>其中： <span class="math display">\[
-\Gamma(x) \equiv \int_{0}^{\infty} u^{x-1} e^{-u} \mathrm{d} u
-\]</span></p>
-<p>Beta分布的均值和方差为： <span class="math display">\[
-\begin{aligned}
-\mathbb{E}[\mu] &amp;=\frac{a}{a+b} \notag \\
-\operatorname{var}[\mu] &amp;=\frac{a b}{(a+b)^{2}(a+b+1)} \notag 
-\end{aligned}
-\]</span></p>
-<p>参数<span class="math inline">\(a\)</span>和<span class="math inline">\(b\)</span>称为<strong>超参数（hyperparameter）</strong>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.special <span class="keyword">import</span> gamma</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">betaPDF</span><span class="params">(mu, a, b)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> (gamma(a + b)</span><br><span class="line">            * np.power(mu, a - <span class="number">1</span>)</span><br><span class="line">            * np.power(<span class="number">1</span> - mu, b - <span class="number">1</span>)</span><br><span class="line">            / gamma(a)</span><br><span class="line">            / gamma(b))</span><br></pre></td></tr></table></figure>
-<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesBeta%20Distribution.png" alt="不同的超参数值对应Beta分布" /></p>
-<p>于是后验分布正比于Beta分布和二项分布的乘积： <span class="math display">\[
-p(\mu \mid m, l, a, b) \propto \mu^{m+a-1}(1-\mu)^{l+b-1}
-\]</span></p>
-<p>其中：<span class="math inline">\(l = N - m\)</span>，为<span class="math inline">\(x = 0\)</span>的观测值个数。事实上，后验分布也是一个Beta分布，通过对于Beta分布的形式，可以得到后验分布的表达式为： <span class="math display">\[
-p(\mu \mid m, l, a, b)=\frac{\Gamma(m+a+l+b)}{\Gamma(m+a) \Gamma(l+b)} \mu^{m+a-1}(1-\mu)^{l+b-1}
-\]</span></p>
-<p>可以看到，<span class="math inline">\(m\)</span>次<span class="math inline">\(x=1\)</span>的观测值等效于使<span class="math inline">\(a\)</span>的值增加了<span class="math inline">\(m\)</span>，而<span class="math inline">\(l\)</span>次<span class="math inline">\(x=0\)</span>的观测值等效于使<span class="math inline">\(b\)</span>的值增加了<span class="math inline">\(l\)</span>。因此，超参数<span class="math inline">\(a\)</span>和<span class="math inline">\(b\)</span>可以简单的认为是<span class="math inline">\(x = 1\)</span> 和<span class="math inline">\(x = 0\)</span>的<strong>有效观测数（effective number of observations）</strong>。</p>
-<p>当我们从贝叶斯的角度来看时，<strong>顺序学习的方法（sequential approach to learning）</strong>就很自然了。它与先验和似然函数的选择⽆关，只依赖于数据独⽴同分布的假设。</p>
-<p>顺序学习的方法一次只是用一个观测值或一小批观测值，在实时学习和或大规模数据集学习的时候很有用。</p>
-<p>在给定数据集<span class="math inline">\(\mathcal{D}\)</span>的情况下，<span class="math inline">\(x\)</span>预测分布为： <span class="math display">\[
-p(x=1 \mid \mathcal{D})=\int_{0}^{1} p(x=1 \mid \mu) p(\mu \mid \mathcal{D}) \mathrm{d} \mu=\int_{0}^{1} \mu p(\mu \mid \mathcal{D}) \mathrm{d} \mu=\mathbb{E}[\mu \mid \mathcal{D}]
-\]</span></p>
-<p><span class="math inline">\(p(\mu \mid \mathcal{D})\)</span>的形式为上面后验分布的表达式，由Beta分布的均值可以得到： <span class="math display">\[
-p(x=1 \mid \mathcal{D})=\frac{m+a}{m+a+l+b}
-\]</span></p>
-<p>这个结果简单的来说其实就是<span class="math inline">\(x=1\)</span>的观测值所占的比例。</p>
-<p><strong>当数据集趋向无穷大时，贝叶斯得到的结果与极大似然得到的结果其实是相同的。</strong></p>
-<p>另外，由后验分布的方差（也就是Beta分布的方差）来看：<strong>随着观测到越来越多的数据，后验概率表⽰的不确定性将会持续下降。</strong>平均来看，这个性质对于贝叶斯学习普遍成立，但也存在例外。</p>
 
     </div>
 
@@ -327,13 +268,10 @@ p(x=1 \mid \mathcal{D})=\frac{m+a}{m+a+l+b}
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/07/19/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch2-Probability-Distribution/" rel="prev" title="模式识别与机器学习_ch2-Probability Distribution">
-      <i class="fa fa-chevron-left"></i> 模式识别与机器学习_ch2-Probability Distribution
+    <a href="/2020/07/28/ch3-3-1-%E7%BA%BF%E6%80%A7%E5%9F%BA%E5%87%BD%E6%95%B0%E6%A8%A1%E5%9E%8B/" rel="prev" title="ch3-3.1 线性基函数模型">
+      <i class="fa fa-chevron-left"></i> ch3-3.1 线性基函数模型
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/" rel="next" title="ch2-2.2 多项式分布">
-      ch2-2.2 多项式分布 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -393,7 +331,7 @@ p(x=1 \mid \mathcal{D})=\frac{m+a}{m+a+l+b}
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#二项变量"><span class="nav-text">2.1 二项变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#伯努利分布"><span class="nav-text">伯努利分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二项分布"><span class="nav-text">二项分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#beta分布"><span class="nav-text">2.1.1 Beta分布</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#偏差-方差分解"><span class="nav-text">3.2 偏差-方差分解</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -741,7 +679,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'kenanking.github.io',
       owner       : 'kenanking',
       admin       : ['kenanking'],
-      id          : '283a828767ef37d8d012215b81bf499a',
+      id          : 'e41746d555578908aa7ef8aeacfd24e4',
         language: 'zh-CN',
       distractionFreeMode: true
     });
