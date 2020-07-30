@@ -23,24 +23,26 @@
     var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="3.1 线性基函数模型 线性基函数模型定义 最简单的线性模型是输入变量的线性组合，形式如： \[ y(\mathbf{x}, \mathbf{w})&#x3D;w_{0}+w_{1} x_{1}+\ldots+w_{D} x_{D} \] 其中：\(\mathbf{x}&#x3D;\left(x_{1}, \ldots, x_{D}\right)^{\mathrm{T}}\)。这称为线性回归（linear">
+  <meta name="description" content="3.3 贝叶斯线性回归 在使用最大似然方法确定线性回归模型参数的时候，我们很难模型的复杂度，简单地最大化似然函数很容易造成过拟合的现象。 因此在这一节，我们从贝叶斯的角度考虑线性回归问题。这样可以避免最大似然引起的过拟合问题，也可以通过训练数据本身自动确定模型的复杂度。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ch3-3.1 线性基函数模型">
-<meta property="og:url" content="https://kenanking.github.io/2020/07/28/ch3-3-1-%E7%BA%BF%E6%80%A7%E5%9F%BA%E5%87%BD%E6%95%B0%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:title" content="ch3-3.3 贝叶斯线性回归">
+<meta property="og:url" content="https://kenanking.github.io/2020/07/30/ch3-3-3-%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
-<meta property="og:description" content="3.1 线性基函数模型 线性基函数模型定义 最简单的线性模型是输入变量的线性组合，形式如： \[ y(\mathbf{x}, \mathbf{w})&#x3D;w_{0}+w_{1} x_{1}+\ldots+w_{D} x_{D} \] 其中：\(\mathbf{x}&#x3D;\left(x_{1}, \ldots, x_{D}\right)^{\mathrm{T}}\)。这称为线性回归（linear">
+<meta property="og:description" content="3.3 贝叶斯线性回归 在使用最大似然方法确定线性回归模型参数的时候，我们很难模型的复杂度，简单地最大化似然函数很容易造成过拟合的现象。 因此在这一节，我们从贝叶斯的角度考虑线性回归问题。这样可以避免最大似然引起的过拟合问题，也可以通过训练数据本身自动确定模型的复杂度。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images%E5%9F%BA%E5%87%BD%E6%95%B0.png">
-<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E7%9A%84%E5%87%A0%E4%BD%95%E8%A7%A3%E9%87%8A.jpg">
-<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images%E6%AD%A3%E5%88%99%E5%8C%96%E8%BD%AE%E5%BB%93%E7%BA%BF.jpg">
-<meta property="article:published_time" content="2020-07-28T05:31:24.000Z">
-<meta property="article:modified_time" content="2020-07-28T09:49:21.000Z">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images%E9%AB%98%E6%96%AF%E5%8F%98%E9%87%8F%E7%9A%84%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9A%E7%90%86.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200730213734470.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200730213751678.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200730213804942.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200730213819517.png">
+<meta property="article:published_time" content="2020-07-30T15:46:55.000Z">
+<meta property="article:modified_time" content="2020-07-30T15:46:55.000Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images%E5%9F%BA%E5%87%BD%E6%95%B0.png">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images%E9%AB%98%E6%96%AF%E5%8F%98%E9%87%8F%E7%9A%84%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9A%E7%90%86.jpg">
 
-<link rel="canonical" href="https://kenanking.github.io/2020/07/28/ch3-3-1-%E7%BA%BF%E6%80%A7%E5%9F%BA%E5%87%BD%E6%95%B0%E6%A8%A1%E5%9E%8B/">
+<link rel="canonical" href="https://kenanking.github.io/2020/07/30/ch3-3-3-%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/">
 
 
 <script id="page-configurations">
@@ -53,7 +55,7 @@
   };
 </script>
 
-  <title>ch3-3.1 线性基函数模型 | 额呵呵的博客</title>
+  <title>ch3-3.3 贝叶斯线性回归 | 额呵呵的博客</title>
   
 
 
@@ -175,7 +177,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/28/ch3-3-1-%E7%BA%BF%E6%80%A7%E5%9F%BA%E5%87%BD%E6%95%B0%E6%A8%A1%E5%9E%8B/">
+    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/30/ch3-3-3-%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -188,7 +190,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          ch3-3.1 线性基函数模型
+          ch3-3.3 贝叶斯线性回归
         </h1>
 
         <div class="post-meta">
@@ -200,15 +202,8 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-07-28 13:31:24" itemprop="dateCreated datePublished" datetime="2020-07-28T13:31:24+08:00">2020-07-28</time>
+              <time title="创建时间：2020-07-30 23:46:55" itemprop="dateCreated datePublished" datetime="2020-07-30T23:46:55+08:00">2020-07-30</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-28 17:49:21" itemprop="dateModified" datetime="2020-07-28T17:49:21+08:00">2020-07-28</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -220,7 +215,7 @@
             </span>
 
           
-            <span id="/2020/07/28/ch3-3-1-%E7%BA%BF%E6%80%A7%E5%9F%BA%E5%87%BD%E6%95%B0%E6%A8%A1%E5%9E%8B/" class="post-meta-item leancloud_visitors" data-flag-title="ch3-3.1 线性基函数模型" title="阅读次数">
+            <span id="/2020/07/30/ch3-3-3-%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" class="post-meta-item leancloud_visitors" data-flag-title="ch3-3.3 贝叶斯线性回归" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -237,121 +232,72 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="线性基函数模型">3.1 线性基函数模型</h2>
-<h3 id="线性基函数模型定义">线性基函数模型定义</h3>
-<p>最简单的线性模型是输入变量的线性组合，形式如： <span class="math display">\[
-y(\mathbf{x}, \mathbf{w})=w_{0}+w_{1} x_{1}+\ldots+w_{D} x_{D}
-\]</span></p>
-<p>其中：<span class="math inline">\(\mathbf{x}=\left(x_{1}, \ldots, x_{D}\right)^{\mathrm{T}}\)</span>。这称为<strong>线性回归（linear regression）</strong>。这个模型的关键在于它是参数<span class="math inline">\(w_{0}, \ldots, w_{D}\)</span>的线性函数，不过对于这个模型它也是输入变量的线性函数，这给模型带来极大的局限性。</p>
+        <h2 id="贝叶斯线性回归">3.3 贝叶斯线性回归</h2>
+<p>在使用最大似然方法确定线性回归模型参数的时候，我们很难模型的复杂度，简单地最大化似然函数很容易造成过拟合的现象。</p>
+<p>因此在这一节，我们从贝叶斯的角度考虑线性回归问题。这样可以避免最大似然引起的过拟合问题，也可以通过训练数据本身自动确定模型的复杂度。</p>
 <a id="more"></a>
-<p>我们可以这样扩展模型：将输入变量固定为非线性函数的线性组合，形式为： <span class="math display">\[
-y(\mathbf{x}, \mathbf{w})=w_{0}+\sum_{j=1}^{M-1} w_{j} \phi_{j}(\mathbf{x})
+<h3 id="参数分布">3.3.1 参数分布</h3>
+<h4 id="后验分布推断inference">后验分布推断（Inference）</h4>
+<p>我们首先引入模型参数<span class="math inline">\(\mathbf{x}\)</span>的先验分布。目前我们把噪声的精度<span class="math inline">\(\beta\)</span>当作已知常数。我们注意到，似然函数<span class="math inline">\(p(\mathbf{t}|\mathbf{w})\)</span>是<span class="math inline">\(N\)</span>个高斯分布连乘的形式，所以对应的共轭先验也是高斯分布，形式为： <span class="math display">\[
+p(\mathbf{w})=\mathcal{N}\left(\mathbf{w} \mid \mathbf{m}_{0}, \mathbf{S}_{0}\right)
 \]</span></p>
-<p>其中：<span class="math inline">\(\phi_{j}(\mathbf{x})\)</span>为<strong>基函数（basis function）</strong>。参数<span class="math inline">\(w_0\)</span>称为<strong>偏置（bias）</strong>参数。不过通常会定义<span class="math inline">\(\phi_{0}(\mathbf{x})=1\)</span>，将偏置项合并到一起考虑。 <span class="math display">\[
-y(\mathbf{x}, \mathbf{w})=\sum_{j=0}^{M-1} w_{j} \phi_{j}(\mathbf{x})=\mathbf{w}^{\mathrm{T}} \boldsymbol{\phi}(\mathbf{x})
-\]</span></p>
-<p>在许多模式识别实际应用中，我们会对原始数据进行某种固定形式的预处理或者特征抽取。如果原始变量由向量<span class="math inline">\(\mathbf{x}\)</span>组成，那么特征可以用基函数<span class="math inline">\(\{\phi_{j}(\mathbf{x})\}\)</span>表示。</p>
-<p>通过使用非线性基函数，我们能够让函数<span class="math inline">\(y(\mathbf{x}, \mathbf{w})\)</span>成为输⼊向量<span class="math inline">\(\mathbf{x}\)</span>的⼀个非线性函数。但是， 这个函数模型仍然被称为线性模型。这种线性性简化了分析，但同时也造成了一下巨大的局限性。</p>
-<h3 id="基函数选择">基函数选择</h3>
-<h4 id="多项式基函数">多项式基函数</h4>
-<p>在多项式拟合的例子中，有一个输入变量<span class="math inline">\(x\)</span>，基函数是<span class="math inline">\(x\)</span>的幂指数形式，即：<span class="math inline">\(\phi_j(x)=x^j\)</span>。在这个例子中，<strong>多项式基函数</strong>的局限性在于它是输入变量的全局函数，改变输入空间的一个区域会影响所有其他区域。这个问题的解决方案可以把输入空间划分为若干个区域，每个区域用不同的多项式函数拟合，这样的函数称为<strong>样条函数（spline function）</strong>。</p>
-<h4 id="高斯基函数">高斯基函数</h4>
-<p><span class="math display">\[
-\phi_{j}(x)=\exp \left\{-\frac{\left(x-\mu_{j}\right)^{2}}{2 s^{2}}\right\}
-\]</span></p>
-<p>其中：参数<span class="math inline">\(\mu_j\)</span>控制了基函数在输入空间中的位置，参数<span class="math inline">\(s\)</span>控制了基函数空间的大小。</p>
-<h4 id="logistic-sigmoid基函数">logistic sigmoid基函数</h4>
-<p><span class="math display">\[
-\phi_{j}(x)=\sigma\left(\frac{x-\mu_{j}}{s}\right)
-\]</span></p>
-<p>logistic sigmoid函数也可以用tanh函数替换，因为<span class="math inline">\(\tanh (a)=2 \sigma(a)-1\)</span>。logistic sigmoid函数的线性组合等价于tanh函数的线性组合。</p>
-<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images基函数.png" alt="基函数" /></p>
-<h4 id="傅里叶基函数">傅里叶基函数</h4>
-<p>傅里叶基函数可以用正弦函数展开。每个基函数表示一个具体的频率，它在空间中可以无限延伸。</p>
-<h3 id="最大似然与最小二乘">3.1.1 最大似然与最小二乘</h3>
-<p>在第一章中，我们通过最小化平方和误差函数，用多项式函数拟合了数据，通过证明得到平方和误差函数可以看成<strong>高斯噪声模型假设下的最大似然解</strong>。这里进一步讨论两者之间的关系。</p>
-<p>假设目标变量<span class="math inline">\(t\)</span>由一个确定的函数加高斯噪声产生： <span class="math display">\[
-t=y(\mathbf{x}, \mathbf{w})+\epsilon
-\]</span> 其中：<span class="math inline">\(\epsilon\)</span>是一个服从均值为零，精度为<span class="math inline">\(\beta\)</span>的高斯分布的随机变量。则<span class="math inline">\(t\)</span>也服从高斯分布： <span class="math display">\[
-p(t \mid \mathbf{x}, \mathbf{w}, \beta)=\mathcal{N}\left(t \mid y(\mathbf{x}, \mathbf{w}), \beta^{-1}\right)
-\]</span></p>
-<p>在1.5.5节中，我们得到在平方损失函数下，<span class="math inline">\(\mathbf{x}\)</span>的最优预测由目标变量的条件均值给出，于是： <span class="math display">\[
-\mathbb{E}[t \mid \mathbf{x}]=\int t p(t \mid \mathbf{x}) \mathrm{d} t=y(\mathbf{x}, \mathbf{w})
-\]</span></p>
-<p>考虑一个数据是独立同分布的数据集<span class="math inline">\(\mathbf{X}=\left\{\mathbf{x}_{1}, \ldots, \mathbf{x}_{N}\right\}\)</span>，对应的目标变量为<span class="math inline">\(t_{1}, \ldots, t_{N}\)</span>。我们把目标变量组成一个列向量，记作<span class="math inline">\(\mathbf{t}\)</span>。则似然函数的表达式如下（这里代入了<span class="math inline">\(y(\mathbf{x}, \mathbf{w})\)</span>）： <span class="math display">\[
+<p>其中：<span class="math inline">\(\mathbf{m}_{0}\)</span>为均值向量，<span class="math inline">\(\mathbf{S}_{0}\)</span>为协方差矩阵。</p>
+<p>下面计算后验分布，它正比于似然函数与先验分布的乘积。由于选择的先验分布是似然函数的共轭先验，所以后验分布也是高斯分布。我们只需要<strong>对指数项进行配方，用高斯分布的标准形式找到归一化参数</strong>即可。</p>
+<p>这里简单写一下过程：</p>
+<p>上面我们得到似然函数为： <span class="math display">\[
 p(\mathbf{t} \mid \mathbf{X}, \mathbf{w}, \beta)=\prod_{n=1}^{N} \mathcal{N}\left(t_{n} \mid \mathbf{w}^{\mathrm{T}} \boldsymbol{\phi}\left(\mathbf{x}_{n}\right), \beta^{-1}\right)
 \]</span></p>
-<p>因为在下面的计算中，<span class="math inline">\(\mathbf{x}\)</span>总是出现在条件变量的位置上，为了保持记号的简洁性，不显示地写出<span class="math inline">\(\mathbf{x}\)</span>。对似然函数取对数得： <span class="math display">\[
+<p>上式进一步展开计算得到： <span class="math display">\[
+p(\mathbf{t} \mid \mathbf{X}, \mathbf{w}, \beta) = \frac{1}{(2\pi\beta ^{-1})^{\frac{N}{2} }} \exp \left\{-\frac{1}{2} (\mathbf{t}-\mathbf{\Phi}\mathbf{w} )^{\mathrm{T} } \beta\mathbf{I}(\mathbf{t}-\mathbf{\Phi}\mathbf{w} )   \right\}
+\]</span></p>
+<p>很明显，似然函数服从的高斯分布：<span class="math inline">\(p(\mathbf{t} \mid \mathbf{w}) = \mathcal{N}(\mathbf{t} \mid \mathbf{\Phi}\mathbf{w},(\beta\mathbf{I})^{-1})\)</span>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images高斯变量的贝叶斯定理.jpg" alt="高斯变量的贝叶斯定理" /></p>
+<p>由第二章中高斯变量的贝叶斯定理中的公式，可以得到后验分布为： <span class="math display">\[
+p(\mathbf{w} \mid \mathbf{t})=\mathcal{N}\left(\mathbf{w} \mid \mathbf{m}_{N}, \mathbf{S}_{N}\right)
+\]</span></p>
+<p>其中： <span class="math display">\[
 \begin{aligned}
-\ln p(\mathbf{t} \mid \mathbf{w}, \beta) &amp;=\sum_{n=1}^{N} \ln \mathcal{N}\left(t_{n} \mid \mathbf{w}^{\mathrm{T}} \phi\left(\mathbf{x}_{n}\right), \beta^{-1}\right) \notag \\
-&amp;=\frac{N}{2} \ln \beta-\frac{N}{2} \ln (2 \pi)-\beta E_{D}(\mathbf{w}) \notag 
+\mathbf{m}_{N} &amp;=\mathbf{S}_{N}\left(\mathbf{S}_{0}^{-1} \mathbf{m}_{0}+\beta \mathbf{\Phi}^{\mathrm{T}} \mathbf{t}\right) \notag\\
+\mathbf{S}_{N}^{-1} &amp;=\mathbf{S}_{0}^{-1}+\beta \mathbf{\Phi}^{\mathrm{T}} \mathbf{\Phi} \notag 
 \end{aligned}
 \]</span></p>
-<p>其中，<span class="math inline">\(E_{D}(\mathbf{w})\)</span>就是平方损失函数： <span class="math display">\[
-E_{D}(\mathbf{w})=\frac{1}{2} \sum_{n=1}^{N}\left\{t_{n}-\mathbf{w}^{\mathrm{T}} \boldsymbol{\phi}\left(\mathbf{x}_{n}\right)\right\}^{2}
+<p>由于后验分布是高斯分布，在<span class="math inline">\(\mathbf{w}\)</span>为均值时，后验概率最大，得到<span class="math inline">\(\mathbf{w}_\mathrm{MAP} = m_{N}\)</span>。如果考虑先验<span class="math inline">\(\mathbf{S}_{0} = \alpha^{-1}\mathbf{I}\)</span>，其中<span class="math inline">\(\alpha \rightarrow 0\)</span>，那么均值<span class="math inline">\(m_{N}\)</span>就变成了最大似然值<span class="math inline">\(\mathbf{w}_\mathrm{ML}\)</span>。</p>
+<p>下面为了简单起见，考虑先验分布为一个零均值各向同性的高斯分布，这个分布由一个精度参数<span class="math inline">\(\alpha\)</span>控制： <span class="math display">\[
+p(\mathbf{w} \mid \alpha)=\mathcal{N}\left(\mathbf{w} \mid \mathbf{0}, \alpha^{-1} \mathbf{I}\right)
 \]</span></p>
-<p>我们看到在条件⾼斯噪声分布的情况下，<strong>线性模型的似然函数的最大化等价于平方和误差函数的最小化</strong>。</p>
-<p>这个最小化的推导过程在1.1的时候已经推导过了，变化就是把<span class="math inline">\(X\)</span>用<span class="math inline">\(\Phi\)</span>替换。 <span class="math display">\[
-\mathbf{w}_{\mathrm{ML}}=\left(\Phi^{\mathrm{T}} \Phi\right)^{-1} \Phi^{\mathrm{T}} \mathbf{t}
+<p>对应后验分布的均值和协方差矩阵为： <span class="math display">\[
+\begin{array}{l}
+\mathbf{m}_{N}=\beta \mathbf{S}_{N} \Phi^{\mathrm{T}} \mathbf{t} \\
+\mathbf{S}_{N}^{-1}=\alpha \mathbf{I}+\beta \Phi^{\mathrm{T}} \Phi
+\end{array}
 \]</span></p>
-<p>这个方程就是最小二乘问题的<strong>法方程（normal equation）</strong>。<span class="math inline">\(\Phi\)</span>为<strong>设计矩阵（design matrix）</strong>。</p>
-<p><span class="math inline">\(\Phi^{\dagger} \equiv\left(\Phi^{\mathrm{T}} \Phi\right)^{-1} \Phi^{\mathrm{T}}\)</span>被称为矩阵<span class="math inline">\(\Phi\)</span>的<strong>Moore-Penrose伪逆矩阵（pseudo-inverse matrix）</strong>。</p>
-<p>此时，我们也可以考虑偏置参数<span class="math inline">\(w_0\)</span>的意义，从平方损失函数中显示地写出偏执参数，并令其导数为零，可以得到： <span class="math display">\[
-w_{0}=\bar{t}-\sum_{j=1}^{M-1} w_{j} \overline{\phi_{j}}
-\]</span> 从上式看出，偏置参数补偿了目标均值和基函数均值之间的差别。</p>
-<p>最后，我们也可以得到噪声精度的最大似然估计： <span class="math display">\[
-\frac{1}{\beta_{\mathrm{ML}}}=\frac{1}{N} \sum_{n=1}^{N}\left\{t_{n}-\mathbf{w}_{\mathrm{ML}}^{\mathrm{T}} \phi\left(\mathrm{x}_{n}\right)\right\}^{2}
+<p>后验分布的对数可以由对数似然函数加上先验分布的对数得到： <span class="math display">\[
+\ln p(\mathbf{w} \mid \mathbf{t})=-\frac{\beta}{2} \sum_{n=1}^{N}\left\{t_{n}-\mathbf{w}^{\mathrm{T}} \boldsymbol{\phi}\left(\mathbf{x}_{n}\right)\right\}^{2}-\frac{\alpha}{2} \mathbf{w}^{\mathrm{T}} \mathbf{w}+\text { const. }
 \]</span></p>
-<p>噪声精度的倒数为目标值在回归函数周围的<strong>残余方差（residual variance）</strong>。</p>
-<h3 id="最小二乘的几何解释">3.1.2 最小二乘的几何解释</h3>
-<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images最小二乘的几何解释.jpg" alt="最小二乘的几何解释"  /></p>
-<h3 id="顺序学习">3.1.3 顺序学习</h3>
-<p>最大似然解的求解过程一次涉及到处理整个数据集，对于处理大规模数据时的计算量是相当大的。当数据集足够大时，使用<strong>顺序算法（sequential algorithms）</strong>，也叫做<strong>在线算法（on-line algorithms）</strong>更有价值。</p>
-<p>顺序学习的算法通过<strong>随机梯度下降（stochastic gradient descent）</strong>，也叫做<strong>顺序（sequential）梯度下降</strong>实现。</p>
-<p>误差函数选择为<span class="math inline">\(n\)</span>个数据点的误差之和：<span class="math inline">\(E=\sum_{n} E_{n}\)</span>。在观测到<span class="math inline">\(n\)</span>个数据点后，用下面的方式更新参数<span class="math inline">\(\mathbf{w}\)</span>： <span class="math display">\[
-\mathbf{w}^{(\tau+1)}=\mathbf{w}^{(\tau)}-\eta \nabla E_{n}
+<p><strong>后验分布关于<span class="math inline">\(\mathbf{w}\)</span>的最大化等价于对平方和误差函数加上⼀个⼆次正则项进⾏最小化。</strong></p>
+<h4 id="例子直线拟合">例子：直线拟合</h4>
+<p>这个例子通过直线拟合来说明贝叶斯线性回归学习过程。</p>
+<p>考虑单一的输入变量<span class="math inline">\(x\)</span>，单一的目标变量<span class="math inline">\(t\)</span>，以及一个形如<span class="math inline">\(y(x, \mathbf{w})=w_{0}+w_{1} x\)</span>的线性模型。</p>
+<p>数据由函数<span class="math inline">\(f(x,\boldsymbol{a})=a_0+a_1x\)</span>生成，其中<span class="math inline">\(a_0=-0.3\)</span>，<span class="math inline">\(a_1=0.5\)</span>，<span class="math inline">\(x_n\)</span>从均匀分布<span class="math inline">\(\mathrm{U}(x \mid-1,1)\)</span>中选择。最后再加上标准差为<span class="math inline">\(0.2\)</span>的高斯噪声，得到目标变量<span class="math inline">\(t_n\)</span>。</p>
+<p>下图中，由于没有观测数据点，也就不存在似然函数，此时后验分布等于先验分布。右侧图中画的直线是从后验分布图中抽取的<span class="math inline">\(\mathbf{w}\)</span>的样本所绘制的，此时这些直线是杂乱无章的。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200730213734470.png" alt="没有观测数据点" /></p>
+<p>下图中，左侧为似然函数关于<span class="math inline">\(\mathbf{w}\)</span>的函数图像，为了便于比较，其中白色十字为真实参数值所在的位置。中间的后验分布图像为上一步的先验分布乘以似然函数归一化后得到的图像。</p>
+<p>这个时候由于只有一个数据点，效果不是很明显。不过可以看到，右侧图中所有抽样得到的直线都经过数据点附加。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200730213751678.png" alt="1个观测数据点" /></p>
+<p>下图中，左图为获得了第二个数据点后的似然函数。此时，上一步的后验分布称为这一步的先验分布，先验分布乘以似然函数归一化后就得到了下图中间的后验分布。</p>
+<p>因为两个点已经足够拟合一条直线，此时会发现后验分布中心已经靠拢到真实参数附近，右图中的直线也已经能明显看出直线的趋势。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200730213804942.png" alt="2个观测数据点" /></p>
+<p>下图为获得了20个数据点的图像，此时后验分布变得更加尖锐。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200730213819517.png" alt="20个观测数据点" /></p>
+<h3 id="预测分布">3.3.2 预测分布</h3>
+<h4 id="预测prediction">预测（Prediction）</h4>
+<p>在实际应⽤中，我们通常感兴趣的不是<span class="math inline">\(\mathbf{w}\)</span>本身的值，而是对于新的<span class="math inline">\(\mathbf{x}\)</span>值预测出<span class="math inline">\(t\)</span>的值。这需要我们计算出<strong>预测分布（predictive distribution）</strong>，定义为： <span class="math display">\[
+p(t \mid \mathbf{t}, \alpha, \beta)=\int p(t \mid \mathbf{w}, \beta) p(\mathbf{w} \mid \mathbf{t}, \alpha, \beta) \mathrm{d} \mathbf{w}
 \]</span></p>
-<p>其他：<span class="math inline">\(\tau\)</span>为迭代次数，<span class="math inline">\(\eta\)</span>为学习率。</p>
-<p>对于平方和误差函数的情况下，上式变为： <span class="math display">\[
-\mathbf{w}^{(\tau+1)}=\mathbf{w}^{(\tau)}+\eta\left(t_{n}-\mathbf{w}^{(\tau)^{\mathrm{T}}} \phi_{n}\right) \phi_{n}
-\]</span></p>
-<p>这称为<strong>最小均方算法（least-mean-squares，LMS）</strong>。</p>
-<h3 id="正则化最小二乘">3.1.4 正则化最小二乘</h3>
-<p>在1.1节中，面对过拟合的现象，我们提出了正则化，于是总的误差函数变成了： <span class="math display">\[
-E_{D}(\mathbf{w})+\lambda E_{W}(\mathbf{w})
-\]</span></p>
-<p>其中：<span class="math inline">\(\lambda\)</span>为正则化系数。</p>
-<p>正则化项的简单形式为权向量各个元素的平方和，即： <span class="math display">\[
-E_{W}(\mathbf{w})=\frac{1}{2} \mathbf{w}^{\mathrm{T}} \mathbf{w}
-\]</span></p>
-<p>这一部分在1.1节中有过介绍，加入上面的正则化项后，最小二乘的解为：<span class="math inline">\(\mathbf{w}=\left(\lambda \mathbf{I}+\mathbf{\Phi}^{\mathrm{T}} \mathbf{\Phi}\right)^{-1} \Phi^{\mathrm{T}} \mathbf{t}\)</span>。</p>
-<p>对于正则化项的选择，在机器学习中称为<strong>权值衰减（weight decay）</strong>，因为它倾向于让权值向零的方向衰减。在统计学中称为<strong>参数收缩（parameter shrinkage）</strong>，因为它把参数的值向零的方向收缩。</p>
-<p>有时我们使用一个更为一般的正则化项，这是正则化的误差函数为： <span class="math display">\[
-\frac{1}{2} \sum_{n=1}^{N}\left\{t_{n}-\mathbf{w}^{\mathrm{T}} \phi\left(\mathbf{x}_{n}\right)\right\}^{2}+\frac{\lambda}{2} \sum_{j=1}^{M}\left|w_{j}\right|^{q}
-\]</span></p>
-<p>当<span class="math inline">\(q=2\)</span>时，此时正则化项是<span class="math inline">\(\mathbf{w}\)</span>的<span class="math inline">\(L_2\)</span>范数，因此也叫做<span class="math inline">\(L_2\)</span>正则化。</p>
-<p>当<span class="math inline">\(q=1\)</span>时，此时正则化项是<span class="math inline">\(\mathbf{w}\)</span>的<span class="math inline">\(L_1\)</span>范数，因此也叫做<span class="math inline">\(L_1\)</span>正则化。</p>
-<p>在线性回归问题中，<span class="math inline">\(L_1\)</span>正则化又称为<strong>Lasso回归</strong>；<span class="math inline">\(L_2\)</span>正则化，又称为<strong>Ridge回归</strong>。</p>
-<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images正则化轮廓线.jpg" alt="正则化轮廓线" /></p>
-<h3 id="多个输出">3.1.5 多个输出</h3>
-<p>目前为止，我们考虑的对于输入变量<span class="math inline">\(\mathbf{x}\)</span>输出单一变量<span class="math inline">\(t\)</span>的情形。在某些应用中，我们可能想预测<span class="math inline">\(K&gt;1\)</span>个目标变量，组成目标向量<span class="math inline">\(\mathbf{t}\)</span>。</p>
-<p>这个问题可以通过对<span class="math inline">\(\mathbf{t}\)</span>的每个分量引入不同的基函数，变成多个独立的回归问题来解决。不过更常用的方法是对目标向量的每个分量用同一组基函数来建模，即： <span class="math display">\[
-\mathbf{y}(\mathbf{x}, \mathbf{w})=\mathbf{W}^{\mathrm{T}} \phi(\mathbf{x})
-\]</span></p>
-<p>其中：<span class="math inline">\(\mathbf{y}\)</span>是一个<span class="math inline">\(K\)</span>维列向量，<span class="math inline">\(\mathbf{W}\)</span>是一个<span class="math inline">\(M \times K\)</span>维参数矩阵，<span class="math inline">\(\phi(\mathbf{x})\)</span>是一个<span class="math inline">\(M\)</span>维列向量。</p>
-<p>假设目标变量的条件概率分布是一个各向同性（即：<span class="math inline">\(\mathbf{\Sigma} = \sigma^2\mathbf{I}\)</span>）的高斯分布： <span class="math display">\[
-p(\mathbf{t} \mid \mathbf{x}, \mathbf{W}, \beta)=\mathcal{N}\left(\mathbf{t} \mid \mathbf{W}^{\mathrm{T}} \phi(\mathbf{x}), \beta^{-1} \mathbf{I}\right)
-\]</span></p>
-<p>对数似然函数为： <span class="math display">\[
-\begin{aligned}
-\ln p(\mathbf{T} \mid \mathbf{X}, \mathbf{W}, \beta) &amp;=\sum_{n=1}^{N} \ln \mathcal{N}\left(\mathbf{t}_{n} \mid \mathbf{W}^{\mathrm{T}} \phi\left(\mathbf{x}_{n}\right), \beta^{-1} \mathbf{I}\right) \notag \\
-&amp;=\frac{N K}{2} \ln \left(\frac{\beta}{2 \pi}\right)-\frac{\beta}{2} \sum_{n=1}^{N}\left\|\mathbf{t}_{n}-\mathbf{W}^{\mathrm{T}} \phi\left(\mathbf{x}_{n}\right)\right\|^{2} \notag 
-\end{aligned}
-\]</span></p>
-<p>最大化似然函数可以解得： <span class="math display">\[
-\mathbf{W}_{\mathrm{ML}}=\left(\Phi^{\mathrm{T}} \Phi\right)^{-1} \Phi^{\mathrm{T}} \mathbf{T}
-\]</span></p>
-<p>这个解的形式和一元的形式是相同的，并且与高斯分布的协方差无关，所以我们只需要考虑单一目标变量<span class="math inline">\(t\)</span>的情形。</p>
+<h2 id="其他参考资料">其他参考资料</h2>
+<ol type="1">
+<li>机器学习-白板推导系列-贝叶斯线性回归(Bayesian Linear Regression). <a href="https://www.bilibili.com/video/av35685274/" target="_blank" rel="noopener">https://www.bilibili.com/video/av35685274/</a></li>
+</ol>
 
     </div>
 
@@ -371,13 +317,10 @@ p(\mathbf{t} \mid \mathbf{x}, \mathbf{W}, \beta)=\mathcal{N}\left(\mathbf{t} \mi
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/07/27/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch3-Linear-Models-for-Regression/" rel="prev" title="模式识别与机器学习_ch3-Linear Models for Regression">
-      <i class="fa fa-chevron-left"></i> 模式识别与机器学习_ch3-Linear Models for Regression
+    <a href="/2020/07/29/ch3-3-2-%E5%81%8F%E5%B7%AE-%E6%96%B9%E5%B7%AE%E5%88%86%E8%A7%A3/" rel="prev" title="ch3-3.2 偏差-方差分解">
+      <i class="fa fa-chevron-left"></i> ch3-3.2 偏差-方差分解
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/07/29/ch3-3-2-%E5%81%8F%E5%B7%AE-%E6%96%B9%E5%B7%AE%E5%88%86%E8%A7%A3/" rel="next" title="ch3-3.2 偏差-方差分解">
-      ch3-3.2 偏差-方差分解 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -437,7 +380,7 @@ p(\mathbf{t} \mid \mathbf{x}, \mathbf{W}, \beta)=\mathcal{N}\left(\mathbf{t} \mi
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#线性基函数模型"><span class="nav-text">3.1 线性基函数模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#线性基函数模型定义"><span class="nav-text">线性基函数模型定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基函数选择"><span class="nav-text">基函数选择</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#多项式基函数"><span class="nav-text">多项式基函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#高斯基函数"><span class="nav-text">高斯基函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#logistic-sigmoid基函数"><span class="nav-text">logistic sigmoid基函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#傅里叶基函数"><span class="nav-text">傅里叶基函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最大似然与最小二乘"><span class="nav-text">3.1.1 最大似然与最小二乘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最小二乘的几何解释"><span class="nav-text">3.1.2 最小二乘的几何解释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#顺序学习"><span class="nav-text">3.1.3 顺序学习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正则化最小二乘"><span class="nav-text">3.1.4 正则化最小二乘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多个输出"><span class="nav-text">3.1.5 多个输出</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#贝叶斯线性回归"><span class="nav-text">3.3 贝叶斯线性回归</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数分布"><span class="nav-text">3.3.1 参数分布</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#后验分布推断inference"><span class="nav-text">后验分布推断（Inference）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例子直线拟合"><span class="nav-text">例子：直线拟合</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#预测分布"><span class="nav-text">3.3.2 预测分布</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#预测prediction"><span class="nav-text">预测（Prediction）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -785,7 +728,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'kenanking.github.io',
       owner       : 'kenanking',
       admin       : ['kenanking'],
-      id          : 'c435328bad86f3a5e3ed5a15dfc4fe00',
+      id          : '9c70eed41b1f618e181042359fe8311b',
         language: 'zh-CN',
       distractionFreeMode: true
     });
