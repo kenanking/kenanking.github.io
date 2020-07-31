@@ -23,27 +23,20 @@
     var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="3.3 贝叶斯线性回归 在使用最大似然方法确定线性回归模型参数的时候，我们很难模型的复杂度，简单地最大化似然函数很容易造成过拟合的现象。 因此在这一节，我们从贝叶斯的角度考虑线性回归问题。这样可以避免最大似然引起的过拟合问题，也可以通过训练数据本身自动确定模型的复杂度。">
+  <meta name="description" content="3.5 证据近似 在完全使用贝叶斯方法处理线性基函数模型时，我们会引入超参数\(\alpha\)和\(\beta\)的先验分布，然后对超参数、参数\(\mathbf{w}\)求积分得到预测分布，即： \[ p(t \mid \mathbf{t})&#x3D;\iiint p(t \mid \mathbf{w}, \beta) p(\mathbf{w} \mid \mathbf{t}, \alpha, \">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ch3-3.3 贝叶斯线性回归">
-<meta property="og:url" content="https://kenanking.github.io/2020/07/30/ch3-3-3-%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/index.html">
+<meta property="og:title" content="ch3-3.5 证据近似">
+<meta property="og:url" content="https://kenanking.github.io/2020/07/31/ch3-3-5-%E8%AF%81%E6%8D%AE%E8%BF%91%E4%BC%BC/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
-<meta property="og:description" content="3.3 贝叶斯线性回归 在使用最大似然方法确定线性回归模型参数的时候，我们很难模型的复杂度，简单地最大化似然函数很容易造成过拟合的现象。 因此在这一节，我们从贝叶斯的角度考虑线性回归问题。这样可以避免最大似然引起的过拟合问题，也可以通过训练数据本身自动确定模型的复杂度。">
+<meta property="og:description" content="3.5 证据近似 在完全使用贝叶斯方法处理线性基函数模型时，我们会引入超参数\(\alpha\)和\(\beta\)的先验分布，然后对超参数、参数\(\mathbf{w}\)求积分得到预测分布，即： \[ p(t \mid \mathbf{t})&#x3D;\iiint p(t \mid \mathbf{w}, \beta) p(\mathbf{w} \mid \mathbf{t}, \alpha, \">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images%E9%AB%98%E6%96%AF%E5%8F%98%E9%87%8F%E7%9A%84%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9A%E7%90%86.jpg">
-<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200730213734470.png">
-<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200730213751678.png">
-<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200730213804942.png">
-<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200730213819517.png">
-<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E9%A2%84%E6%B5%8B%E5%88%86%E5%B8%83.png">
-<meta property="article:published_time" content="2020-07-30T15:46:55.000Z">
-<meta property="article:modified_time" content="2020-07-31T05:31:48.000Z">
+<meta property="article:published_time" content="2020-07-31T14:08:08.000Z">
+<meta property="article:modified_time" content="2020-07-31T14:08:08.000Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images%E9%AB%98%E6%96%AF%E5%8F%98%E9%87%8F%E7%9A%84%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9A%E7%90%86.jpg">
 
-<link rel="canonical" href="https://kenanking.github.io/2020/07/30/ch3-3-3-%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/">
+<link rel="canonical" href="https://kenanking.github.io/2020/07/31/ch3-3-5-%E8%AF%81%E6%8D%AE%E8%BF%91%E4%BC%BC/">
 
 
 <script id="page-configurations">
@@ -56,7 +49,7 @@
   };
 </script>
 
-  <title>ch3-3.3 贝叶斯线性回归 | 额呵呵的博客</title>
+  <title>ch3-3.5 证据近似 | 额呵呵的博客</title>
   
 
 
@@ -178,7 +171,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/30/ch3-3-3-%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/">
+    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/31/ch3-3-5-%E8%AF%81%E6%8D%AE%E8%BF%91%E4%BC%BC/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -191,7 +184,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          ch3-3.3 贝叶斯线性回归
+          ch3-3.5 证据近似
         </h1>
 
         <div class="post-meta">
@@ -203,15 +196,8 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-07-30 23:46:55" itemprop="dateCreated datePublished" datetime="2020-07-30T23:46:55+08:00">2020-07-30</time>
+              <time title="创建时间：2020-07-31 22:08:08" itemprop="dateCreated datePublished" datetime="2020-07-31T22:08:08+08:00">2020-07-31</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-31 13:31:48" itemprop="dateModified" datetime="2020-07-31T13:31:48+08:00">2020-07-31</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -223,7 +209,7 @@
             </span>
 
           
-            <span id="/2020/07/30/ch3-3-3-%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" class="post-meta-item leancloud_visitors" data-flag-title="ch3-3.3 贝叶斯线性回归" title="阅读次数">
+            <span id="/2020/07/31/ch3-3-5-%E8%AF%81%E6%8D%AE%E8%BF%91%E4%BC%BC/" class="post-meta-item leancloud_visitors" data-flag-title="ch3-3.5 证据近似" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -240,98 +226,154 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="贝叶斯线性回归">3.3 贝叶斯线性回归</h2>
-<p>在使用最大似然方法确定线性回归模型参数的时候，我们很难模型的复杂度，简单地最大化似然函数很容易造成过拟合的现象。</p>
-<p>因此在这一节，我们从贝叶斯的角度考虑线性回归问题。这样可以避免最大似然引起的过拟合问题，也可以通过训练数据本身自动确定模型的复杂度。</p>
+        <h2 id="证据近似">3.5 证据近似</h2>
+<p>在完全使用贝叶斯方法处理线性基函数模型时，我们会引入超参数<span class="math inline">\(\alpha\)</span>和<span class="math inline">\(\beta\)</span>的先验分布，然后对超参数、参数<span class="math inline">\(\mathbf{w}\)</span>求积分得到预测分布，即： <span class="math display">\[
+p(t \mid \mathbf{t})=\iiint p(t \mid \mathbf{w}, \beta) p(\mathbf{w} \mid \mathbf{t}, \alpha, \beta) p(\alpha, \beta \mid \mathbf{t}) \mathrm{d} \mathbf{w} \mathrm{d} \alpha \mathrm{d} \beta
+\]</span></p>
+<p>但是这个积分是很难计算的，可能也无法计算。</p>
 <a id="more"></a>
-<h3 id="参数分布">3.3.1 参数分布</h3>
-<h4 id="后验分布推断inference">后验分布推断（Inference）</h4>
-<p>我们首先引入模型参数<span class="math inline">\(\mathbf{x}\)</span>的先验分布。目前我们把噪声的精度<span class="math inline">\(\beta\)</span>当作已知常数。我们注意到，似然函数<span class="math inline">\(p(\mathbf{t}|\mathbf{w})\)</span>是<span class="math inline">\(N\)</span>个高斯分布连乘的形式，所以对应的共轭先验也是高斯分布，形式为： <span class="math display">\[
-p(\mathbf{w})=\mathcal{N}\left(\mathbf{w} \mid \mathbf{m}_{0}, \mathbf{S}_{0}\right)
+<p>所以我们使用一种近似方法，首先对参数<span class="math inline">\(\mathbf{w}\)</span>求积分，得到边缘似然函数，然后通过最大化边缘似然函数，确定超参数的值。这种方法在统计学中称为<strong>经验贝叶斯（empirical Bayes）</strong>，或者<strong>第⼆类最大似然（type 2 maximum likelihood）</strong>，或者<strong>广义最大似然（generalized maximum likelihood）</strong>。</p>
+<p>在机器学习中，这种方法也被称为<strong>证据近似（evidence approximation）</strong>。</p>
+<p>如果我们假设后验分布<span class="math inline">\(p(\alpha, \beta \mid \mathbf{t})\)</span>在<span class="math inline">\(\hat{\alpha}\)</span>和<span class="math inline">\(\hat{\beta}\)</span>处为尖峰，则我们固定超参数<span class="math inline">\(\alpha\)</span>和<span class="math inline">\(\beta\)</span>为<span class="math inline">\(\hat{\alpha}\)</span>和<span class="math inline">\(\hat{\beta}\)</span>，计算对<span class="math inline">\(\mathbf{w}\)</span>的积分： <span class="math display">\[
+p(t \mid \mathbf{t}) \simeq p(t \mid \mathbf{t}, \widehat{\alpha}, \widehat{\beta})=\int p(t \mid \mathbf{w}, \widehat{\beta}) p(\mathbf{w} \mid \mathbf{t}, \widehat{\alpha}, \widehat{\beta}) \mathrm{d} \mathbf{w}
 \]</span></p>
-<p>其中：<span class="math inline">\(\mathbf{m}_{0}\)</span>为均值向量，<span class="math inline">\(\mathbf{S}_{0}\)</span>为协方差矩阵。</p>
-<p>下面计算后验分布，它正比于似然函数与先验分布的乘积。由于选择的先验分布是似然函数的共轭先验，所以后验分布也是高斯分布。我们只需要<strong>对指数项进行配方，用高斯分布的标准形式找到归一化参数</strong>即可。</p>
-<p>这里简单写一下过程：</p>
-<p>上面我们得到似然函数为： <span class="math display">\[
-p(\mathbf{t} \mid \mathbf{X}, \mathbf{w}, \beta)=\prod_{n=1}^{N} \mathcal{N}\left(t_{n} \mid \mathbf{w}^{\mathrm{T}} \boldsymbol{\phi}\left(\mathbf{x}_{n}\right), \beta^{-1}\right)
+<p>下面我们要做的就是找到<span class="math inline">\(\hat{\alpha}\)</span>和<span class="math inline">\(\hat{\beta}\)</span>，根据贝叶斯定理，<span class="math inline">\(\alpha\)</span>和<span class="math inline">\(\beta\)</span>的后验分布为： <span class="math display">\[
+p(\alpha, \beta \mid \mathbf{t}) \propto p(\mathbf{t} \mid \alpha, \beta) p(\alpha, \beta)
 \]</span></p>
-<p>上式进一步展开计算得到： <span class="math display">\[
-p(\mathbf{t} \mid \mathbf{X}, \mathbf{w}, \beta) = \frac{1}{(2\pi\beta ^{-1})^{\frac{N}{2} }} \exp \left\{-\frac{1}{2} (\mathbf{t}-\mathbf{\Phi}\mathbf{w} )^{\mathrm{T} } \beta\mathbf{I}(\mathbf{t}-\mathbf{\Phi}\mathbf{w} )   \right\}
+<p>如果我们假设先验分布相对比较平（接近均匀分布），那么我们可以通过最大化边缘似然函数<span class="math inline">\(p(\mathbf{t} \mid \alpha, \beta)\)</span>来得到<span class="math inline">\(\hat{\alpha}\)</span>和<span class="math inline">\(\hat{\beta}\)</span>。</p>
+<p>这将使我们能够<strong>从训练数据本⾝确定这些超参数的值</strong>，而不需要交叉验证。</p>
+<p>最大化边缘似然函数有两种方法，一种是解析地计算边缘似然函数、求导为零，另一种是<strong>期望最大化（EM）</strong>算法的⽅法。</p>
+<h3 id="计算证据函数">3.5.1 计算证据函数</h3>
+<p>边缘似然函数<span class="math inline">\(p(\mathbf{t} \mid \alpha, \beta)\)</span>是通过对权值参数<span class="math inline">\(\mathbf{w}\)</span>进行积分得到的，即： <span class="math display">\[
+p(\mathbf{t} \mid \alpha, \beta)=\int p(\mathbf{t} \mid \mathbf{w}, \beta) p(\mathbf{w} \mid \alpha) \mathrm{d} \mathbf{w}
 \]</span></p>
-<p>很明显，似然函数服从的高斯分布：<span class="math inline">\(p(\mathbf{t} \mid \mathbf{w}) = \mathcal{N}(\mathbf{t} \mid \mathbf{\Phi}\mathbf{w},(\beta\mathbf{I})^{-1})\)</span>。</p>
-<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images高斯变量的贝叶斯定理.jpg" alt="高斯变量的贝叶斯定理" /></p>
-<p>由第二章中高斯变量的贝叶斯定理中的公式，可以得到后验分布为： <span class="math display">\[
-p(\mathbf{w} \mid \mathbf{t})=\mathcal{N}\left(\mathbf{w} \mid \mathbf{m}_{N}, \mathbf{S}_{N}\right)
-\]</span></p>
-<p>其中： <span class="math display">\[
+<p>由： <span class="math display">\[
 \begin{aligned}
-\mathbf{m}_{N} &amp;=\mathbf{S}_{N}\left(\mathbf{S}_{0}^{-1} \mathbf{m}_{0}+\beta \mathbf{\Phi}^{\mathrm{T}} \mathbf{t}\right) \notag\\
-\mathbf{S}_{N}^{-1} &amp;=\mathbf{S}_{0}^{-1}+\beta \mathbf{\Phi}^{\mathrm{T}} \mathbf{\Phi} \notag 
+\ln p(\mathbf{t} \mid \mathbf{w}, \beta) &amp;=\sum_{n=1}^{N} \ln \mathcal{N}\left(t_{n} \mid \mathbf{w}^{\mathrm{T}} \phi\left(\mathbf{x}_{n}\right), \beta^{-1}\right) \notag \\
+&amp;=\frac{N}{2} \ln \beta-\frac{N}{2} \ln (2 \pi)-\beta E_{D}(\mathbf{w}) \notag 
 \end{aligned}
 \]</span></p>
-<p>由于后验分布是高斯分布，在<span class="math inline">\(\mathbf{w}\)</span>为均值时，后验概率最大，得到<span class="math inline">\(\mathbf{w}_\mathrm{MAP} = m_{N}\)</span>。如果考虑先验<span class="math inline">\(\mathbf{S}_{0} = \alpha^{-1}\mathbf{I}\)</span>，其中<span class="math inline">\(\alpha \rightarrow 0\)</span>，那么均值<span class="math inline">\(m_{N}\)</span>就变成了最大似然值<span class="math inline">\(\mathbf{w}_\mathrm{ML}\)</span>。</p>
-<p>下面为了简单起见，考虑先验分布为一个零均值各向同性的高斯分布，这个分布由一个精度参数<span class="math inline">\(\alpha\)</span>控制： <span class="math display">\[
+<p><span class="math display">\[
+E_{D}(\mathbf{w})=\frac{1}{2} \sum_{n=1}^{N}\left\{t_{n}-\mathbf{w}^{\mathrm{T}} \boldsymbol{\phi}\left(\mathbf{x}_{n}\right)\right\}^{2}
+\]</span></p>
+<p><span class="math display">\[
 p(\mathbf{w} \mid \alpha)=\mathcal{N}\left(\mathbf{w} \mid \mathbf{0}, \alpha^{-1} \mathbf{I}\right)
 \]</span></p>
-<p>对应后验分布的均值和协方差矩阵为： <span class="math display">\[
-\begin{array}{l}
-\mathbf{m}_{N}=\beta \mathbf{S}_{N} \Phi^{\mathrm{T}} \mathbf{t} \\
-\mathbf{S}_{N}^{-1}=\alpha \mathbf{I}+\beta \Phi^{\mathrm{T}} \Phi
-\end{array}
+<p>可以得到： <span class="math display">\[
+\begin{aligned}
+&amp; p(\mathbf{t}  \mid \alpha, \beta) \\
+&amp; = \int \exp \left\{\frac{N}{2} \ln \frac{\beta}{2 \pi}-\frac{\beta}{2} \sum_{i = 1}^{N}\left\{t_{n}-\mathbf{w}^{\mathrm{T}} \boldsymbol{\phi}\left(\mathbf{x}_{n}\right)\right\}^{2}\right\}\left(\frac{\alpha}{2 \pi}\right)^{\frac{M}{2}} \exp \left\{-\frac{\alpha}{2} \mathbf{w}^{2}\right\} \mathrm{d}\mathbf{w} \notag \\ 
+&amp; = \left(\frac{\beta}{2 \pi}\right)^{\frac{N}{2}}\left(\frac{\alpha}{2 \pi}\right)^{\frac{M}{2}} \int \exp \left\{-\frac{\beta}{2} \sum_{i = 1}^{N}\left\{t_{n}-\mathbf{w}^{\mathrm{T}} \boldsymbol{\phi}\left(\mathbf{x}_{n}\right)\right\}^{2}-\frac{\alpha}{2} \mathbf{w}^{2}\right\} \mathrm{d}\mathbf{w} \notag \\ 
+&amp; = \left(\frac{\beta}{2 \pi}\right)^{\frac{N}{2}}\left(\frac{\alpha}{2 \pi}\right)^{\frac{M}{2}} \int \exp \{-E(\mathbf{w})\} \mathrm{d}\mathbf{w} \notag 
+\end{aligned}
 \]</span></p>
-<p>后验分布的对数可以由对数似然函数加上先验分布的对数得到： <span class="math display">\[
-\ln p(\mathbf{w} \mid \mathbf{t})=-\frac{\beta}{2} \sum_{n=1}^{N}\left\{t_{n}-\mathbf{w}^{\mathrm{T}} \boldsymbol{\phi}\left(\mathbf{x}_{n}\right)\right\}^{2}-\frac{\alpha}{2} \mathbf{w}^{\mathrm{T}} \mathbf{w}+\text { const. }
+<p>其中：<span class="math inline">\(M\)</span>是<span class="math inline">\(\mathbf{w}\)</span>的维数，并且定义： <span class="math display">\[
+\begin{aligned}
+E(\mathbf{w}) &amp;=\beta E_{D}(\mathbf{w})+\alpha E_{W}(\mathbf{w}) \notag \\
+&amp;=\frac{\beta}{2}\|\mathbf{t}-\Phi \mathbf{w}\|^{2}+\frac{\alpha}{2} \mathbf{w}^{\mathrm{T}} \mathbf{w} \notag 
+\end{aligned}
 \]</span></p>
-<p><strong>后验分布关于<span class="math inline">\(\mathbf{w}\)</span>的最大化等价于对平方和误差函数加上⼀个二次正则项进行最小化。</strong></p>
-<h4 id="例子直线拟合">例子：直线拟合</h4>
-<p>这个例子通过直线拟合来说明贝叶斯线性回归学习过程。</p>
-<p>考虑单一的输入变量<span class="math inline">\(x\)</span>，单一的目标变量<span class="math inline">\(t\)</span>，以及一个形如<span class="math inline">\(y(x, \mathbf{w})=w_{0}+w_{1} x\)</span>的线性模型。</p>
-<p>数据由函数<span class="math inline">\(f(x,\boldsymbol{a})=a_0+a_1x\)</span>生成，其中<span class="math inline">\(a_0=-0.3\)</span>，<span class="math inline">\(a_1=0.5\)</span>，<span class="math inline">\(x_n\)</span>从均匀分布<span class="math inline">\(\mathrm{U}(x \mid-1,1)\)</span>中选择。最后再加上标准差为<span class="math inline">\(0.2\)</span>的高斯噪声，得到目标变量<span class="math inline">\(t_n\)</span>。</p>
-<p>下图中，由于没有观测数据点，也就不存在似然函数，此时后验分布等于先验分布。右侧图中画的直线是从后验分布图中抽取的<span class="math inline">\(\mathbf{w}\)</span>的样本所绘制的，此时这些直线是杂乱无章的。</p>
-<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200730213734470.png" alt="没有观测数据点" /></p>
-<p>下图中，左侧为似然函数关于<span class="math inline">\(\mathbf{w}\)</span>的函数图像，为了便于比较，其中白色十字为真实参数值所在的位置。中间的后验分布图像为上一步的先验分布乘以似然函数归一化后得到的图像。</p>
-<p>这个时候由于只有一个数据点，效果不是很明显。不过可以看到，右侧图中所有抽样得到的直线都经过数据点附近。</p>
-<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200730213751678.png" alt="1个观测数据点" /></p>
-<p>下图中，左图为获得了第二个数据点后的似然函数。此时，上一步的后验分布变成这一步的先验分布，先验分布乘以似然函数归一化后就得到了下图中间的后验分布。</p>
-<p>因为两个点已经足够拟合一条直线，此时会发现后验分布中心已经靠拢到真实参数附近，右图中的直线也已经能明显看出直线的趋势。</p>
-<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200730213804942.png" alt="2个观测数据点" /></p>
-<p>下图为获得了20个数据点的图像，此时后验分布变得更加尖锐。</p>
-<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200730213819517.png" alt="20个观测数据点" /></p>
-<h3 id="预测分布">3.3.2 预测分布</h3>
-<h4 id="预测prediction">预测（Prediction）</h4>
-<p>在实际应⽤中，我们通常感兴趣的不是<span class="math inline">\(\mathbf{w}\)</span>本身的值，而是对于新的<span class="math inline">\(\mathbf{x}\)</span>值预测出<span class="math inline">\(t\)</span>的值。这需要我们计算出<strong>预测分布（predictive distribution）</strong>，定义为： <span class="math display">\[
-p(t \mid \mathbf{t}, \alpha, \beta)=\int p(t \mid \mathbf{w}, \beta) p(\mathbf{w} \mid \mathbf{t}, \alpha, \beta) \mathrm{d} \mathbf{w}
-\]</span></p>
-<p>这了为了简化记号，条件概率中都省略了输入向量<span class="math inline">\(\mathbf{x}\)</span>。</p>
-<p>上式中，<span class="math inline">\(p(t \mid \mathbf{x}, \mathbf{w}, \beta)\)</span>由3.1.1节中公式：<span class="math inline">\(p(t \mid \mathbf{x}, \mathbf{w}, \beta)=\mathcal{N}\left(t \mid y(\mathbf{x}, \mathbf{w}), \beta^{-1}\right)\)</span>得到。<span class="math inline">\(p(\mathbf{w} \mid \mathbf{t}, \alpha, \beta)\)</span>为后验分布。</p>
-<p>这个同样可以由高斯变量的贝叶斯定理中的公式，得到预测分布的形式为： <span class="math display">\[
-p(t \mid \mathbf{x}, \mathbf{t}, \alpha, \beta)=\mathcal{N}\left(t \mid \mathbf{m}_{N}^{\mathrm{T}} \boldsymbol{\phi}(\mathbf{x}), \sigma_{N}^{2}(\mathbf{x})\right)
+<p>从上式可以看到，<span class="math inline">\(E(\mathbf{w})\)</span>等价于正则化的平方和误差函数。对<span class="math inline">\(\mathbf{w}\)</span>进行配方可得： <span class="math display">\[
+E(\mathbf{w})=E\left(\mathbf{m}_{N}\right)+\frac{1}{2}\left(\mathbf{w}-\mathbf{m}_{N}\right)^{\mathrm{T}} \mathbf{A}\left(\mathbf{w}-\mathbf{m}_{N}\right)
 \]</span></p>
 <p>其中： <span class="math display">\[
-\sigma_{N}^{2}(\mathrm{x})=\frac{1}{\beta}+\phi(\mathrm{x})^{\mathrm{T}} \mathrm{S}_{N} \phi(\mathrm{x})
+\mathbf{A}=\alpha \mathbf{I}+\beta \Phi^{\mathrm{T}} \Phi
 \]</span></p>
-<p>第一项表示<strong>数据中的噪声</strong>，第二项表示<strong>与参数<span class="math inline">\(\mathbf{w}\)</span>关联的不确定性</strong>。</p>
-<p>当额外数据点被观测到时，后验分布会变窄，从而可以证明出：<span class="math inline">\(\sigma_{N+1}^{2}(\mathbf{x}) \leqslant \sigma_{N}^{2}(\mathbf{x})\)</span>。因此在极限<span class="math inline">\(N \rightarrow \infty\)</span>的情况下，第二项趋向于零，从而预测分布的方差只与数据中的噪声有关。</p>
-<p>下图中的例子为第一章中曲线拟合的例子。分别使用大小为<span class="math inline">\(N=1,2,4,25\)</span>的数据集。</p>
-<p>从图中，注意到<strong>预测的不确定性与<span class="math inline">\(\mathbf{x}\)</span>相关，并且在数据点的领域内最小。</strong></p>
-<p>还可以注意到<strong>不确定性的程度随着数据点的增大而逐渐减小</strong>。</p>
-<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images贝叶斯线性回归预测分布.png" alt="贝叶斯线性回归预测分布" /></p>
-<h3 id="等价核">3.3.3 等价核</h3>
-<p>线性基函数模型的后验均值有一个有趣的解释，这个解释为核方法提供了背景。</p>
-<p>预测分布的均值可以写成如下形式： <span class="math display">\[
-y\left(\mathbf{x}, \mathbf{m}_{N}\right)=\mathbf{m}_{N}^{\mathrm{T}} \phi(\mathbf{x})=\beta \phi(\mathbf{x})^{\mathrm{T}} \mathbf{S}_{N} \Phi^{\mathrm{T}} \mathbf{t}=\sum_{n=1}^{N} \beta \phi(\mathbf{x})^{\mathrm{T}} \mathbf{S}_{N} \phi\left(\mathbf{x}_{n}\right) t_{n}
+<p><span class="math display">\[
+E\left(\mathbf{m}_{N}\right)=\frac{\beta}{2}\left\|\mathbf{t}-\Phi \mathbf{m}_{N}\right\|^{2}+\frac{\alpha}{2} \mathbf{m}_{N}^{\mathrm{T}} \mathbf{m}_{N}
 \]</span></p>
-<p>因此可以得到，在<span class="math inline">\(\mathbf{x}\)</span>处的预测均值由训练集目标变量<span class="math inline">\(t_n\)</span>的线性组合给出，即： <span class="math display">\[
-y\left(\mathbf{x}, \mathbf{m}_{N}\right)=\sum_{n=1}^{N} k\left(\mathbf{x}, \mathbf{x}_{n}\right) t_{n}
+<p><span class="math display">\[
+\boldsymbol{m}_{N}=\beta \mathbf{A}^{-1} \boldsymbol{\Phi}^{T} \mathbf{t}
 \]</span></p>
-<p>其中： <span class="math display">\[
-k\left(\mathbf{x}, \mathbf{x_n}\right)=\beta \phi(\mathbf{x})^{\mathrm{T}} \mathbf{S}_{N} \phi\left(\mathbf{x_n}\right)
+<p>这里的矩阵<span class="math inline">\(\mathbf{A}\)</span>对应于平方损失函数的二阶导数， <span class="math display">\[
+\mathbf{A}=\nabla \nabla E(\mathbf{w})
+\]</span> 这个矩阵被称为<strong>Hessian矩阵（Hessian matrix）</strong>。</p>
+<p>下一步是对<span class="math inline">\(\mathbf{w}\)</span>进行积分，积分号可以通过和多元高斯分布进行比较进行求解： <span class="math display">\[
+\begin{aligned}
+\int \exp \{-E(\mathbf{w})\} \mathrm{dw} &amp; = \exp \left\{-E\left(\mathbf{m}_{N}\right)\right\} \int \exp \left\{-\frac{1}{2}\left(\mathbf{w}-\mathbf{m}_{N}\right)^{\mathrm{T}} \mathbf{A}\left(\mathbf{w}-\mathbf{m}_{N}\right)\right\} \mathrm{d} \mathbf{w} \notag \\ 
+&amp; = \exp \left\{-E\left(\mathbf{m}_{N}\right)\right\}(2 \pi)^{M / 2}|\mathbf{A}|^{-1 / 2} \notag 
+\end{aligned}
 \]</span></p>
-<p>这个函数称为<strong>平滑矩阵（smoother matrix）</strong>或者<strong>等价核（equivalent kernel）</strong>。</p>
-<p>像这样的回归函数，通过对训练集的目标变量进行线性组合做出预测，被称为<strong>线性平滑（linear smoother）</strong>。</p>
+<p>最后把这一部分代回到上面的边缘似然函数中，并求对数： <span class="math display">\[
+\ln p(\mathbf{t} \mid \alpha, \beta)=\frac{M}{2} \ln \alpha+\frac{N}{2} \ln \beta-E\left(\mathbf{m}_{N}\right)-\frac{1}{2} \ln |\mathbf{A}|-\frac{N}{2} \ln (2 \pi)
+\]</span></p>
+<p>这就是<strong>证据函数的表达式</strong>。</p>
+<h3 id="最大化证据函数">3.5.2 最大化证据函数</h3>
+<h4 id="关于alpha的最大化">①关于<span class="math inline">\(\alpha\)</span>的最大化</h4>
+<p>首先定义下面的特征向量方程： <span class="math display">\[
+\left(\beta \Phi^{\mathrm{T}} \Phi\right) \mathbf{u}_{i}=\lambda_{i} \mathbf{u}_{i}
+\]</span></p>
+<p>结合公式：<span class="math inline">\(\mathbf{A}=\alpha \mathbf{I}+\beta \Phi^{\mathrm{T}} \Phi\)</span>，可知矩阵<span class="math inline">\(\mathbf{A}\)</span>的特征值为<span class="math inline">\(\alpha+\lambda_{i}\)</span>。</p>
+<p>下面考虑证据函数中<span class="math inline">\(\ln |\mathbf{A}|\)</span>项的关于<span class="math inline">\(\alpha\)</span>导数： <span class="math display">\[
+\frac{d}{d \alpha} \ln |\mathbf{A}|=\frac{d}{d \alpha} \ln \prod_{i}\left(\lambda_{i}+\alpha\right)=\frac{d}{d \alpha} \sum_{i} \ln \left(\lambda_{i}+\alpha\right)=\sum_{i} \frac{1}{\lambda_{i}+\alpha}
+\]</span></p>
+<p>因此证据函数关于<span class="math inline">\(\alpha\)</span>的驻点满足： <span class="math display">\[
+0=\frac{M}{2 \alpha}-\frac{1}{2} \mathrm{m}_{N}^{\mathrm{T}} \mathrm{m}_{N}-\frac{1}{2} \sum_{i} \frac{1}{\lambda_{i}+\alpha}
+\]</span></p>
+<p>两边同时乘以<span class="math inline">\(2\alpha\)</span>，可得： <span class="math display">\[
+\alpha \mathrm{m}_{N}^{\mathrm{T}} \mathrm{m}_{N}=M-\alpha \sum_{i} \frac{1}{\lambda_{i}+\alpha}=\gamma
+\]</span> 其中：<span class="math inline">\(\gamma\)</span>可以写成： <span class="math display">\[
+\begin{aligned}
+\gamma &amp; = M-\alpha \sum_{i} \frac{1}{\lambda_{i}+\alpha} \notag \\
+&amp; = \sum_{i} \left(\frac{\lambda_{i}+\alpha}{\lambda_{i}+\alpha} -  \frac{\alpha}{\lambda_{i}+\alpha} \right) \notag \\
+&amp; = \sum_{i} \frac{\lambda_{i}}{\alpha+\lambda_{i}} \notag
+\end{aligned}
+\]</span></p>
+<p>于是，<span class="math inline">\(\alpha\)</span>满足： <span class="math display">\[
+\alpha=\frac{\gamma}{\mathrm{m}_{N}^{\mathrm{T}} \mathrm{m}_{N}}
+\]</span></p>
+<p>这是一个隐式解，因为不仅<span class="math inline">\(\gamma\)</span>与<span class="math inline">\(\alpha\)</span>相关，<span class="math inline">\(\mathrm{m}_{N}\)</span>也与<span class="math inline">\(\alpha\)</span>相关。这里<span class="math inline">\(\alpha\)</span>可以通过选定一个初始值后迭代求解。</p>
+<h4 id="关于beta的最大化">②关于<span class="math inline">\(\beta\)</span>的最大化</h4>
+<p>下面考虑证据函数中<span class="math inline">\(\ln |\mathbf{A}|\)</span>项的关于<span class="math inline">\(\beta\)</span>导数： <span class="math display">\[
+\frac{d}{d \beta} \ln |\mathbf{A}|=\frac{d}{d \beta} \sum_{i} \ln \left(\lambda_{i}+\alpha\right)=\frac{1}{\beta} \sum_{i} \frac{\lambda_{i}}{\lambda_{i}+\alpha}=\frac{\gamma}{\beta}
+\]</span></p>
+<p>因此证据函数关于<span class="math inline">\(\beta\)</span>的驻点满足： <span class="math display">\[
+0=\frac{N}{2 \beta}-\frac{1}{2} \sum_{n=1}^{N}\left\{t_{n}-\mathbf{m}_{N}^{\mathrm{T}} \boldsymbol{\phi}\left(\mathbf{x}_{n}\right)\right\}^{2}-\frac{\gamma}{2 \beta}
+\]</span></p>
+<p>整理后，可以得到： <span class="math display">\[
+\frac{1}{\beta}=\frac{1}{N-\gamma} \sum_{n=1}^{N}\left\{t_{n}-\mathbf{m}_{N}^{\mathrm{T}} \phi\left(\mathbf{x}_{n}\right)\right\}^{2}
+\]</span></p>
+<p><span class="math inline">\(\beta\)</span>的也是一个隐式解，需要通过选定一个初始值后迭代求解。当然，<span class="math inline">\(\alpha\)</span>和<span class="math inline">\(\beta\)</span>可以同时迭代求解。</p>
+<h3 id="参数的有效数量">3.5.3 参数的有效数量</h3>
+<p>这一部分可以参考博客<a href="http://wiljohn.top/2019/03/25/PRML3-5/#insight-from-alpha" target="_blank" rel="noopener">(PRML Notes)3.5 The Evidence Approximation</a>，有比较详细的推导过程。</p>
+<h4 id="对alpha的理解">对<span class="math inline">\(\alpha\)</span>的理解</h4>
+<p>回顾之前的推导过程，我们得到<span class="math inline">\(\mathbf{w}\)</span>的最大后验估计值为： <span class="math display">\[
+\mathbf{w}_{\mathrm{MAP}}=\mathbf{m}_{N}=\beta \mathbf{A}^{-1} \Phi^{\mathrm{T}} \mathbf{t}=\beta\left(\alpha \mathbf{I}+\beta \Phi^{\mathrm{T}} \Phi\right)^{-1} \Phi^{\mathrm{T}} \mathbf{t}
+\]</span></p>
+<p>而<span class="math inline">\(\mathbf{w}\)</span>的最大似然估计值为： <span class="math display">\[
+\mathbf{w}_{\mathrm{ML}}=\beta\left(\beta \Phi^{\mathrm{T}} \Phi\right)^{-1} \Phi^{\mathrm{T}} \mathbf{t}
+\]</span></p>
+<p>如果我们把参数空间的轴旋转成特征向量<span class="math inline">\(\mathbf{u}_{i}\)</span>对齐，然后把向量<span class="math inline">\(\Phi^{\mathrm{T}} \mathbf{t}\)</span>也投影到该方向上，则： <span class="math display">\[
+\Phi^{\mathrm{T}} \mathbf{t} =\sum_{i}c_i\mathbf{u}_{i}
+\]</span></p>
+<p>然后我们可以得到<span class="math inline">\(\mathbf{w}_{\mathrm{MAP}}\)</span>和<span class="math inline">\(\mathbf{w}_{\mathrm{ML}}\)</span>的新坐标： <span class="math display">\[
+\mathbf{w}_{\mathrm{MAP}} = \beta \sum_{i} c_i \left(\alpha \mathbf{I}+\beta \Phi^{\mathrm{T}} \Phi\right)^{-1}\mathbf{u}_{i} = \beta \sum_{i} \frac{c_i}{\alpha+\lambda_i}\mathbf{u}_{i}
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{w}_{\mathrm{ML}} = \beta \sum_{i} c_i \left(\beta \Phi^{\mathrm{T}} \Phi\right)^{-1}\mathbf{u}_{i} = \beta \sum_{i} \frac{c_i}{\lambda_i}\mathbf{u}_{i}
+\]</span></p>
+<p>于是，我们可以发现，<span class="math inline">\(\mathbf{w}_{\mathrm{MAP}}\)</span>和<span class="math inline">\(\mathbf{w}_{\mathrm{ML}}\)</span>的在每根轴上的坐标值是成比例的，比例系数为<span class="math inline">\(\lambda_i / (\lambda_i+\alpha)\)</span>。这个比值在<span class="math inline">\(0\)</span>和<span class="math inline">\(1\)</span>之间，于是我们可以得到<span class="math inline">\(0 \leqslant \gamma \leqslant M\)</span>。</p>
+<p>对于<span class="math inline">\(\lambda_i \gg \alpha\)</span>的方向，对应参数<span class="math inline">\(\mathbf{w}_i\)</span>会接近最大似然值，并且<span class="math inline">\(\lambda_i / (\lambda_i+\alpha)\)</span>的比值会接近<span class="math inline">\(1\)</span>。这些方向上的参数被称为<strong>良好确定的（well determined）</strong>。</p>
+<p>相反，对于<span class="math inline">\(\lambda_{i} \ll \alpha\)</span>的方法，<span class="math inline">\(\lambda_i / (\lambda_i+\alpha) \rightarrow 0\)</span>，对应的参数<span class="math inline">\(\mathbf{w}_i\)</span>会接近<span class="math inline">\(0\)</span>。可以看出，<strong><span class="math inline">\(\gamma\)</span>度量了良好确定的参数的有效数量</strong>。</p>
+<h4 id="对beta的理解">对<span class="math inline">\(\beta\)</span>的理解</h4>
+<p>通过最大似然的方法，我们得到<span class="math inline">\(\beta\)</span>的估计为： <span class="math display">\[
+\frac{1}{\beta_{\mathrm{ML}}} =\frac{1}{N} \sum_{n=1}^{N}\left\{t_{n}-\mathbf{w}_{\mathrm{ML}}^{\mathrm{T}} \phi\left(\mathbf{x}_{n}\right)\right\}^{2}
+\]</span></p>
+<p>事实上，我们知道这种估计是有偏的。</p>
+<p>通过贝叶斯的方法，我们修正了最大似然方法带来的偏差，通过因子<span class="math inline">\(N-\gamma\)</span>反应出来： <span class="math display">\[
+\frac{1}{\beta}=\frac{1}{N-\gamma} \sum_{n=1}^{N}\left\{t_{n}-\mathbf{m}_{N}^{\mathrm{T}} \phi\left(\mathbf{x}_{n}\right)\right\}^{2}
+\]</span></p>
+<h4 id="alpha和beta的估计"><span class="math inline">\(\alpha\)</span>和<span class="math inline">\(\beta\)</span>的估计</h4>
+<p>考虑<span class="math inline">\(N \gg M\)</span>的情况，我们之前遇到过当数据量趋向无穷时，最大后验的结果会接近最大似然的结果。因为特征值<span class="math inline">\(\lambda_i\)</span>随着数据集规模的增加而增大，所以在这种情况下，我们可以令<span class="math inline">\(\lambda=M\)</span>，于是我们有： <span class="math display">\[
+\begin{aligned}
+\alpha &amp; = \frac{M}{2 E_{W}\left(\mathbf{m}_{N}\right)} \notag \\
+\beta &amp; = \frac{N}{2 E_{D}\left(\mathbf{m}_{N}\right)} \notag 
+\end{aligned}
+\]</span></p>
+<p>这两个式子可以用来简单的估计<span class="math inline">\(\alpha\)</span>和<span class="math inline">\(\beta\)</span>的值。</p>
 <h2 id="其他参考资料">其他参考资料</h2>
 <ol type="1">
-<li>机器学习-白板推导系列-贝叶斯线性回归(Bayesian Linear Regression). <a href="https://www.bilibili.com/video/av35685274/" target="_blank" rel="noopener">https://www.bilibili.com/video/av35685274/</a></li>
+<li>(PRML Notes)3.5 The Evidence Approximation. [http://wiljohn.top/2019/03/25/PRML3-5/#insight-from-alpha](</li>
 </ol>
 
     </div>
@@ -352,12 +394,12 @@ k\left(\mathbf{x}, \mathbf{x_n}\right)=\beta \phi(\mathbf{x})^{\mathrm{T}} \math
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/07/29/ch3-3-2-%E5%81%8F%E5%B7%AE-%E6%96%B9%E5%B7%AE%E5%88%86%E8%A7%A3/" rel="prev" title="ch3-3.2 偏差-方差分解">
-      <i class="fa fa-chevron-left"></i> ch3-3.2 偏差-方差分解
+    <a href="/2020/07/31/ch3-3-4-%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A8%A1%E5%9E%8B%E6%AF%94%E8%BE%83/" rel="prev" title="ch3-3.4 贝叶斯模型比较">
+      <i class="fa fa-chevron-left"></i> ch3-3.4 贝叶斯模型比较
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/07/31/ch3-3-4-%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A8%A1%E5%9E%8B%E6%AF%94%E8%BE%83/" rel="next" title="ch3-3.4 贝叶斯模型比较">
-      ch3-3.4 贝叶斯模型比较 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/07/31/ch3-3-6-%E5%9B%BA%E5%AE%9A%E5%9F%BA%E5%87%BD%E6%95%B0%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7/" rel="next" title="ch3-3.6 固定基函数的局限性">
+      ch3-3.6 固定基函数的局限性 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -418,7 +460,7 @@ k\left(\mathbf{x}, \mathbf{x_n}\right)=\beta \phi(\mathbf{x})^{\mathrm{T}} \math
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#贝叶斯线性回归"><span class="nav-text">3.3 贝叶斯线性回归</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数分布"><span class="nav-text">3.3.1 参数分布</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#后验分布推断inference"><span class="nav-text">后验分布推断（Inference）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例子直线拟合"><span class="nav-text">例子：直线拟合</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#预测分布"><span class="nav-text">3.3.2 预测分布</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#预测prediction"><span class="nav-text">预测（Prediction）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#等价核"><span class="nav-text">3.3.3 等价核</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#证据近似"><span class="nav-text">3.5 证据近似</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#计算证据函数"><span class="nav-text">3.5.1 计算证据函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最大化证据函数"><span class="nav-text">3.5.2 最大化证据函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#关于alpha的最大化"><span class="nav-text">①关于\(\alpha\)的最大化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关于beta的最大化"><span class="nav-text">②关于\(\beta\)的最大化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参数的有效数量"><span class="nav-text">3.5.3 参数的有效数量</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#对alpha的理解"><span class="nav-text">对\(\alpha\)的理解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对beta的理解"><span class="nav-text">对\(\beta\)的理解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#alpha和beta的估计"><span class="nav-text">\(\alpha\)和\(\beta\)的估计</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他参考资料"><span class="nav-text">其他参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -766,7 +808,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'kenanking.github.io',
       owner       : 'kenanking',
       admin       : ['kenanking'],
-      id          : '9c70eed41b1f618e181042359fe8311b',
+      id          : '4a107226d01495adc777260bae4fb5b8',
         language: 'zh-CN',
       distractionFreeMode: true
     });
