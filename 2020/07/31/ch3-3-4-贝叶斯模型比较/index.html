@@ -30,11 +30,14 @@
 <meta property="og:site_name" content="额呵呵的博客">
 <meta property="og:description" content="3.4 贝叶斯模型比较 在第一章中，我们介绍了通过使用交叉验证的方法来设置正则化参数，或者从多个模型中选择合适的一个。 这里，从贝叶斯的角度去考虑模型选择的问题。 模型比较的贝叶斯观点是使用概率来表示模型选择的不确定性。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200731145716762.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200731153515897.png">
 <meta property="article:published_time" content="2020-07-31T05:31:19.000Z">
-<meta property="article:modified_time" content="2020-07-31T05:31:19.000Z">
+<meta property="article:modified_time" content="2020-07-31T07:43:49.000Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200731145716762.png">
 
 <link rel="canonical" href="https://kenanking.github.io/2020/07/31/ch3-3-4-%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A8%A1%E5%9E%8B%E6%AF%94%E8%BE%83/">
 
@@ -198,6 +201,13 @@
 
               <time title="创建时间：2020-07-31 13:31:19" itemprop="dateCreated datePublished" datetime="2020-07-31T13:31:19+08:00">2020-07-31</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-31 15:43:49" itemprop="dateModified" datetime="2020-07-31T15:43:49+08:00">2020-07-31</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -231,6 +241,40 @@
 <p>这里，从贝叶斯的角度去考虑模型选择的问题。</p>
 <p>模型比较的贝叶斯观点是<strong>使用概率来表示模型选择的不确定性</strong>。</p>
 <a id="more"></a>
+<h3 id="模型选择">模型选择</h3>
+<p>假设我们想比较<span class="math inline">\(L\)</span>个模型<span class="math inline">\(\{\mathcal{M}_i\}\)</span>，其中<span class="math inline">\(i=1,\dots,L\)</span>。这里，一个模型指的是观测数据<span class="math inline">\(\mathcal{D}\)</span>上的概率分布。我们假设数据是由这些模型中的一个生成的，但我们不知道是哪一个。我们的不确定西通过先验概率<span class="math inline">\(p(\mathcal{M}_i)\)</span>表示。于是，我们想估计的后验分布为： <span class="math display">\[
+p\left(\mathcal{M}_{i} \mid \mathcal{D}\right) \propto p\left(\mathcal{M}_{i}\right) p\left(\mathcal{D} \mid \mathcal{M}_{i}\right)
+\]</span></p>
+<p>先验分布<span class="math inline">\(p\left(\mathcal{M}_{i}\right)\)</span>表示了我们对于不同模型之间的<strong>偏好（preference）</strong>。这里我们可以假设所有模型都有相同的概率。</p>
+<p><span class="math inline">\(p\left(\mathcal{D} \mid \mathcal{M}_{i}\right)\)</span>在这里被称为<strong>模型证据（model evidence）</strong>，表示了不同模型对数据呈现的偏好。模型证据有时也被称为<strong>边缘似然（marginal likelihood）</strong>。</p>
+<p>两个模型的模型证据之比<span class="math inline">\(p\left(\mathcal{D} \mid \mathcal{M}_{i}\right) / p\left(\mathcal{D} \mid \mathcal{M}_{j}\right)\)</span>，称为<strong>贝叶斯因子（Bayes factor）</strong>。</p>
+<p>一旦我们知道了模型上的后验分布，那么预测分布可以写为： <span class="math display">\[
+p(t \mid \mathbf{x}, \mathcal{D})=\sum_{i=1}^{L} p\left(t \mid \mathbf{x}, \mathcal{M}_{i}, \mathcal{D}\right) p\left(\mathcal{M}_{i} \mid \mathcal{D}\right)
+\]</span></p>
+<p>这是<strong>混合分布（mixture distribution）</strong>的一个例子，因为这个模型是由各个预测模型加权平均得到的。这个公式文字解释就是：对各个模型的预测分布<span class="math inline">\(p\left(t \mid \mathbf{x}, \mathcal{M}_{i}, \mathcal{D}\right)\)</span>加权求平均，权值为这些模型的后验概率<span class="math inline">\(p\left(\mathcal{M}_{i} \mid \mathcal{D}\right)\)</span>。这个模型不一定是一个单峰的模型，可能是一个多峰的概率分布。</p>
+<p><strong>模型选择（model selection）</strong>：使用最可能的一个模型做预测。</p>
+<h3 id="模型证据的进一步理解">模型证据的进一步理解</h3>
+<p>对于一个由参数<span class="math inline">\(\mathbf{w}\)</span>控制的模型，根据概率的加法和乘法，模型证据为： <span class="math display">\[
+p\left(\mathcal{D} \mid \mathcal{M}_{i}\right)=\int p\left(\mathcal{D} \mid \mathbf{w}, \mathcal{M}_{i}\right) p\left(\mathbf{w} \mid \mathcal{M}_{i}\right) \mathrm{d} \mathbf{w}
+\]</span> 从取样的角度来看，边缘似然函数（模型证据）可以被看成从一个模型中生成数据集<span class="math inline">\(\mathcal{D}\)</span>的概率，这个模型的参数是从先验分布中随机取样的。</p>
+<p>通过对参数的积分进行一个简单的近似，我们可以更加深刻地认识模型证据。我们考虑一个一个参数<span class="math inline">\(w\)</span>的情形。这个参数的后验分布正比于<span class="math inline">\(p(\mathcal{D} \mid w) p(w)\)</span>，假设后验分布在最大后验值<span class="math inline">\(w_{\mathrm{MAP}}\)</span>附近是一个尖峰，宽度为<span class="math inline">\(\Delta w_{\text {posterior }}\)</span>。我们进一步假设先验分布在<span class="math inline">\(\Delta w_{\text {prior}}\)</span>范围内为均匀分布，则<span class="math inline">\(p(w)=1 / \Delta w_{\text {prior }}\)</span>，于是积分为： <span class="math display">\[
+p(\mathcal{D})=\int p(\mathcal{D} \mid w) p(w) \mathrm{d} w \simeq p\left(\mathcal{D} \mid w_{\mathrm{MAP}}\right) \frac{\Delta w_{\text {posterior }}}{\Delta w_{\text {prior }}}
+\]</span></p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200731145716762.png" alt="先验分布与后验分布图像" style="zoom:80%;" /></p>
+<p>取对数可得： <span class="math display">\[
+\ln p(\mathcal{D}) \simeq \ln p\left(\mathcal{D} \mid w_{\mathrm{MAP}}\right)+\ln \left(\frac{\Delta w_{\text {posterior }}}{\Delta w_{\text {prior }}}\right)
+\]</span></p>
+<p>第一项表示最有可能的参数拟合出数据集<span class="math inline">\(\mathcal{D}\)</span>的概率的对数，对于先验分布为均匀分布时，这一项对应于对数似然函数。</p>
+<p>第二项用于根据模型的复杂度来惩罚模型。由于<span class="math inline">\(\Delta w_{\text {posterior }}&lt;\Delta w_{\text {prior }}\)</span>，这一项为负。</p>
+<p>对于一个有<span class="math inline">\(M\)</span>个参数的模型，我们可以对每个参数进行类似的近似。假设所有的参数的<span class="math inline">\(\Delta w_{\text {posterior }}/\Delta w_{\text {prior }}\)</span>都相同，可以得到： <span class="math display">\[
+\ln p(\mathcal{D}) \simeq \ln p\left(\mathcal{D} \mid \mathbf{w}_{\mathrm{MAP}}\right)+M \ln \left(\frac{\Delta w_{\text {posterior }}}{\Delta w_{\text {prior }}}\right)
+\]</span></p>
+<p>从上面这个公式，可以简单解释我们之前遇到的问题。</p>
+<p>复杂度惩罚项的大小随着模型中可调节参数数量<span class="math inline">\(M\)</span>的增加线性变化。随着模型复杂度的增加，第一项通常会减小，因为越复杂的模型对数据的拟合越好，而第二项会增大，因为它随<span class="math inline">\(M\)</span>线性变化。所以最优的模型（模型证据<span class="math inline">\(p(\mathcal{D})\)</span>最大的模型），是两者折中的结果。</p>
+<h3 id="例子贝叶斯模型比较">例子：贝叶斯模型比较</h3>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200731153515897.png" alt="三个不同复杂度模型" style="zoom:80%;" /></p>
+<p>在这个例子中，我们考虑三个模型<span class="math inline">\(\mathcal{M}_1\)</span>，<span class="math inline">\(\mathcal{M}_2\)</span>和<span class="math inline">\(\mathcal{M}_3\)</span>，复杂度依次增加。上图横坐标表示一个具体的数据集，纵坐标表示对应数据集在该模型下的模型证据值。</p>
+<p>从图中看，简单的模型由于只能生成简单的数据，表现能力差，生成的数据集都集中在一个很窄的区域。而复杂的模型把它的预测概率散布于过多的可能的数据集当中，从而对它们当中的每一个赋予的概率都相对较小。这两种模型总的模型证据值都不大，只有复杂度适中的模型，最后的模型证据最大。</p>
 
     </div>
 
@@ -313,7 +357,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#贝叶斯模型比较"><span class="nav-text">3.4 贝叶斯模型比较</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#贝叶斯模型比较"><span class="nav-text">3.4 贝叶斯模型比较</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#模型选择"><span class="nav-text">模型选择</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模型证据的进一步理解"><span class="nav-text">模型证据的进一步理解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#例子贝叶斯模型比较"><span class="nav-text">例子：贝叶斯模型比较</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
