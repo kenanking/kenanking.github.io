@@ -23,20 +23,22 @@
     var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="3.2 偏差-方差分解 偏差-方差分解(bias-variance decomposition)是统计学派看待模型复杂度的观点，通常称为偏差-方差折衷（bias-variance trade-off）。">
+  <meta name="description" content="4.1 判别函数 判别函数是一个以向量\(\mathbf{x}\)为输⼊，把它分配到\(K\)个类别中的某⼀个类别（记作\(C_k\)）的函数。这一章中，我们仍然探讨线性判别函数（linear discriminant function），即那些决策⾯ 是超平面的判别函数。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ch3-3.2 偏差-方差分解">
-<meta property="og:url" content="https://kenanking.github.io/2020/07/29/ch3-3-2-%E5%81%8F%E5%B7%AE-%E6%96%B9%E5%B7%AE%E5%88%86%E8%A7%A3/index.html">
+<meta property="og:title" content="ch4-4.1 判别函数">
+<meta property="og:url" content="https://kenanking.github.io/2020/08/01/ch4-4-1-%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
-<meta property="og:description" content="3.2 偏差-方差分解 偏差-方差分解(bias-variance decomposition)是统计学派看待模型复杂度的观点，通常称为偏差-方差折衷（bias-variance trade-off）。">
+<meta property="og:description" content="4.1 判别函数 判别函数是一个以向量\(\mathbf{x}\)为输⼊，把它分配到\(K\)个类别中的某⼀个类别（记作\(C_k\)）的函数。这一章中，我们仍然探讨线性判别函数（linear discriminant function），即那些决策⾯ 是超平面的判别函数。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-07-29T07:56:38.000Z">
-<meta property="article:modified_time" content="2020-07-29T07:56:38.000Z">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0%E5%87%A0%E4%BD%95%E8%A7%A3%E9%87%8A.jpg">
+<meta property="article:published_time" content="2020-08-01T14:52:21.000Z">
+<meta property="article:modified_time" content="2020-08-01T14:52:21.000Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0%E5%87%A0%E4%BD%95%E8%A7%A3%E9%87%8A.jpg">
 
-<link rel="canonical" href="https://kenanking.github.io/2020/07/29/ch3-3-2-%E5%81%8F%E5%B7%AE-%E6%96%B9%E5%B7%AE%E5%88%86%E8%A7%A3/">
+<link rel="canonical" href="https://kenanking.github.io/2020/08/01/ch4-4-1-%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0/">
 
 
 <script id="page-configurations">
@@ -49,7 +51,7 @@
   };
 </script>
 
-  <title>ch3-3.2 偏差-方差分解 | 额呵呵的博客</title>
+  <title>ch4-4.1 判别函数 | 额呵呵的博客</title>
   
 
 
@@ -171,7 +173,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/29/ch3-3-2-%E5%81%8F%E5%B7%AE-%E6%96%B9%E5%B7%AE%E5%88%86%E8%A7%A3/">
+    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/08/01/ch4-4-1-%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -184,7 +186,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          ch3-3.2 偏差-方差分解
+          ch4-4.1 判别函数
         </h1>
 
         <div class="post-meta">
@@ -196,7 +198,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-07-29 15:56:38" itemprop="dateCreated datePublished" datetime="2020-07-29T15:56:38+08:00">2020-07-29</time>
+              <time title="创建时间：2020-08-01 22:52:21" itemprop="dateCreated datePublished" datetime="2020-08-01T22:52:21+08:00">2020-08-01</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -209,7 +211,7 @@
             </span>
 
           
-            <span id="/2020/07/29/ch3-3-2-%E5%81%8F%E5%B7%AE-%E6%96%B9%E5%B7%AE%E5%88%86%E8%A7%A3/" class="post-meta-item leancloud_visitors" data-flag-title="ch3-3.2 偏差-方差分解" title="阅读次数">
+            <span id="/2020/08/01/ch4-4-1-%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0/" class="post-meta-item leancloud_visitors" data-flag-title="ch4-4.1 判别函数" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -226,29 +228,29 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="偏差-方差分解">3.2 偏差-方差分解</h2>
-<p><strong>偏差-方差分解(bias-variance decomposition)</strong>是统计学派看待<strong>模型复杂度</strong>的观点，通常称为<strong>偏差-方差折衷（bias-variance trade-off）</strong>。</p>
+        <h2 id="判别函数">4.1 判别函数</h2>
+<p>判别函数是一个以向量<span class="math inline">\(\mathbf{x}\)</span>为输⼊，把它分配到<span class="math inline">\(K\)</span>个类别中的某⼀个类别（记作<span class="math inline">\(C_k\)</span>）的函数。这一章中，我们仍然探讨<strong>线性判别函数（linear discriminant function）</strong>，即那些决策⾯ 是超平面的判别函数。</p>
 <a id="more"></a>
-<p>在1.5.5小节中，一旦我们知道条件分布<span class="math inline">\(p(t \mid \mathbf{x})\)</span>，就能得到对应最优预测结果，记作<span class="math inline">\(h(\mathbf{x})\)</span>，<span class="math inline">\(h(\mathbf{x})\)</span>为<span class="math inline">\(t\)</span>条件期望： <span class="math display">\[
-h(\mathbf{x})=\mathbb{E}[t \mid \mathbf{x}]=\int t p(t \mid \mathbf{x}) \mathrm{d} t
+<h3 id="二分类">4.1.1 二分类</h3>
+<p>线性判别函数最简单的形式是输入向量的线性函数： <span class="math display">\[
+y(\mathbf{x})=\mathbf{w}^{\mathrm{T}} \mathbf{x}+w_{0}
 \]</span></p>
-<p>在1.5.5小节中，我们证明了平方损失函数的期望可以写成： <span class="math display">\[
-\mathbb{E}[L]=\int\{y(\mathbf{x})-h(\mathbf{x})\}^{2} p(\mathbf{x}) \mathrm{d} \mathbf{x}+\iint\{h(\mathbf{x})-t\}^{2} p(\mathbf{x}, t) \mathrm{d} \mathbf{x} \mathrm{d} t
+<p>其中：<span class="math inline">\(\mathbf{w}\)</span>称为<strong>权向量（weight vector）</strong>，<span class="math inline">\(w_0\)</span>为<strong>偏置（bias）</strong>，偏置的相反数有时被称为<strong>阈值（threshold）</strong>。</p>
+<p>对于一个输入向量<span class="math inline">\(\mathbf{x}\)</span>，如果<span class="math inline">\(y(\mathbf{x}) \geqslant 0\)</span>，则它被分到<span class="math inline">\(C_1\)</span>中，否则分到<span class="math inline">\(C_2\)</span>中。因此，决策边界由<span class="math inline">\(y(\mathbf{x}) = 0\)</span>确定，它对应于<span class="math inline">\(D\)</span>维空间中的一个<span class="math inline">\(D-1\)</span>维的超平面。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images线性判别函数几何解释.jpg" alt="线性判别函数几何解释" /></p>
+<p>我们可以看到，<strong><span class="math inline">\(\mathbf{w}\)</span>决定了决策面的方向</strong>。</p>
+<p>当我们从决策面上选取两个点<span class="math inline">\(\mathbf{x}_A\)</span>和<span class="math inline">\(\mathbf{x}_B\)</span>时，由于两个点都位于决策面上，我们可以得到<span class="math inline">\(y(\mathbf{x}_A) = y(\mathbf{x}_B) = 0\)</span>，于是，我们有<span class="math inline">\(\mathbf{w}^{\mathrm{T}}\left(\mathbf{x}_{\mathrm{A}}-\mathbf{x}_{\mathrm{B}}\right)=0\)</span>。也就是说<strong>向量<span class="math inline">\(\mathbf{w}\)</span>与决策面内任意向量都正交</strong>。</p>
+<p>在此基础上，我们可以得到原点到决策面的距离<span class="math inline">\(d\)</span>（也就是决策面上一个点<span class="math inline">\(\mathbf{x}\)</span>对应的向量在<span class="math inline">\(\mathbf{w}\)</span>上的投影）： <span class="math display">\[
+\mathrm{d} = \frac{\mathbf{w}^{\mathrm{T}} \mathbf{x}}{\|\mathbf{w}\|}=-\frac{w_{0}}{\|\mathbf{w}\|}
 \]</span></p>
-<p>其中：第二项与<span class="math inline">\(y(\mathbf{x})\)</span>无关，由数据本身的噪声产生。</p>
-<p>假设我们有<span class="math inline">\(K\)</span>个数据集，每个数据集大小为<span class="math inline">\(N\)</span>，并且每个数据集都独立地从分布<span class="math inline">\(p(t, \mathbf{x})\)</span>中抽取。对于每个数据集<span class="math inline">\(\mathcal{D}\)</span>，我们都可以在其基础上根据学习算法来训练出一个模型<span class="math inline">\(y(\mathbf{x} ; \mathcal{D})\)</span>。</p>
-<p>在不同的数据集上进行训练可以得到不同的模型。学习算法的性能是根据在这<span class="math inline">\(K\)</span>个数据集上训练得到的<span class="math inline">\(K\)</span>个模型的平均性能来衡量的。即： <span class="math display">\[
-\begin{array}{l}
-\mathbb{E}_{\mathcal{D}}\left[\{y(\mathbf{x} ; \mathcal{D})-h(\mathbf{x})\}^{2}\right] \\
-\quad=\underbrace{\left\{\mathbb{E}_{\mathcal{D}}[y(\mathbf{x} ; \mathcal{D})]-h(\mathbf{x})\right\}^{2}}_{(\text { 偏差 })^{2}}+\underbrace{\mathbb{E}_{\mathcal{D}}\left[\left\{y(\mathbf{x} ; \mathcal{D})-\mathbb{E}_{\mathcal{D}}[y(\mathbf{x} ; \mathcal{D})]\right\}^{2}\right]}_{\text {方差 }}
-\end{array}
+<p>此外，我们也可以得出，<span class="math inline">\(y(\mathbf{x})\)</span>的值给出了点<span class="math inline">\(\mathbf{x}\)</span>到决策面的垂直距离<span class="math inline">\(r\)</span>的一个<strong>有符号</strong>的度量。<span class="math inline">\(r\)</span>的表示形式为： <span class="math display">\[
+r=\frac{y(\mathbf{x})}{\|\mathbf{w}\|}
+\]</span> 可以看到，<strong><span class="math inline">\(r\)</span>的符号会随点<span class="math inline">\(\mathbf{x}\)</span>在决策边界的哪一边而变化</strong>。</p>
+<p>最后，有时候为了简单起见，我们会额外增加<span class="math inline">\(x_0=1\)</span>，从而把<span class="math inline">\(w_0\)</span>并入<span class="math inline">\(\mathbf{w}\)</span>。例如，我们可以定义<span class="math inline">\(\widetilde{\mathbf{w}}=\left(w_{0}, \mathbf{w}\right)\)</span>和<span class="math inline">\(\widetilde{\mathbf{x}}=\left(x_{0}, \mathbf{x}\right)\)</span>，从而： <span class="math display">\[
+y(\mathbf{x})=\widetilde{\mathbf{w}}^{\mathrm{T}} \widetilde{\mathbf{x}}
 \]</span></p>
-<p><span class="math inline">\(y(\mathbf{x} ; \mathcal{D})\)</span>与回归函数<span class="math inline">\(h(\mathbf{x})\)</span>之差的平方的期望可以表示为两项之和。</p>
-<p>第一项为<strong>偏差（bias）</strong>的平方，表⽰所有数据集的平均预测与预期的回归函数之间的差异。</p>
-<p>第二项为<strong>方差（variance）</strong>，度量了对于单独的数据集，模型所给出的解在平均值附近波动的情况。</p>
-<p>综合上面的分析，我们可以能到下面对期望损失的分解： <span class="math display">\[
-期望损失 = 偏差^2+方差+噪声
-\]</span></p>
+<h3 id="多分类">4.1.2 多分类</h3>
+<p>考虑将二分类线性判别函数推广到多分类问题上时，我们可能会尝试把多个二分类判别函数结合起来，构造一个<span class="math inline">\(K\)</span>类判别函数。但是，这样的做法实际上是行不通的。</p>
 
     </div>
 
@@ -268,13 +270,10 @@ h(\mathbf{x})=\mathbb{E}[t \mid \mathbf{x}]=\int t p(t \mid \mathbf{x}) \mathrm{
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/07/28/ch3-3-1-%E7%BA%BF%E6%80%A7%E5%9F%BA%E5%87%BD%E6%95%B0%E6%A8%A1%E5%9E%8B/" rel="prev" title="ch3-3.1 线性基函数模型">
-      <i class="fa fa-chevron-left"></i> ch3-3.1 线性基函数模型
+    <a href="/2020/08/01/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch4-Linear-Models-for-Classification/" rel="prev" title="模式识别与机器学习_ch4-Linear Models for Classification">
+      <i class="fa fa-chevron-left"></i> 模式识别与机器学习_ch4-Linear Models for Classification
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/07/30/ch3-3-3-%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" rel="next" title="ch3-3.3 贝叶斯线性回归">
-      ch3-3.3 贝叶斯线性回归 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -334,7 +333,7 @@ h(\mathbf{x})=\mathbb{E}[t \mid \mathbf{x}]=\int t p(t \mid \mathbf{x}) \mathrm{
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#偏差-方差分解"><span class="nav-text">3.2 偏差-方差分解</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#判别函数"><span class="nav-text">4.1 判别函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#二分类"><span class="nav-text">4.1.1 二分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多分类"><span class="nav-text">4.1.2 多分类</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -682,7 +681,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'kenanking.github.io',
       owner       : 'kenanking',
       admin       : ['kenanking'],
-      id          : 'e41746d555578908aa7ef8aeacfd24e4',
+      id          : '743abd552efcf1c0b39092982c3d717f',
         language: 'zh-CN',
       distractionFreeMode: true
     });

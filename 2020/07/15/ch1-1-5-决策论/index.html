@@ -261,15 +261,15 @@
 <p>做法是设定一个阈值<span class="math inline">\(\theta\)</span>，拒绝后验概率小于等于<span class="math inline">\(\theta\)</span>的输入。</p>
 <h3 id="推断和决策">1.5.4 推断和决策</h3>
 <p>分类问题可以分为两个阶段：<strong>推断（inference）</strong>阶段和<strong>决策（decision）</strong>阶段。</p>
-<p>一种方法是：在推断阶段，使⽤训练数据学习<span class="math inline">\(p\left(\mathcal{C}_{k} \mid \mathrm{x}\right)\)</span>的模型。在决策阶段，使⽤后验概率进⾏最优的分类。</p>
+<p>一种方法是：在推断阶段，使⽤训练数据学习<span class="math inline">\(p\left(\mathcal{C}_{k} \mid \mathrm{x}\right)\)</span>的模型。在决策阶段，使⽤后验概率进行最优的分类。</p>
 <p>另⼀种⽅法是：同时解决两个问题，即学习一个函数，直接将输入映射为决策，这个函数称为<strong>判别函数（discriminant function）</strong>。</p>
 <p>事实上在决策问题中有三个模型，复杂度由高到低为：</p>
 <ol type="1">
 <li><p><strong>生成模型（generative model）</strong></p>
-<p>显式地或隐式地对输⼊以及输出的分布进⾏建模的⽅法。</p></li>
+<p>显式地或隐式地对输⼊以及输出的分布进行建模的⽅法。</p></li>
 <li><p><strong>判别模型（discriminative model）</strong></p>
-<p>直接对后验概率建模的⽅法。</p></li>
-<li><p>找到⼀个函数<span class="math inline">\(f(\mathrm{x})\)</span>，称为判别函数。这个函数把每个输⼊<span class="math inline">\(\mathbb{E}[L]=\iint L(t, y(\mathbf{x})) p(\mathbf{x}, t) \mathrm{d} \mathbf{x} \mathrm{d} t\)</span>直接映射为类别标签。</p></li>
+<p>直接对后验概率建模的方法。</p></li>
+<li><p>找到⼀个函数<span class="math inline">\(f(\mathrm{x})\)</span>，称为<strong>判别函数（discriminant function）</strong>。这个函数把每个输入<span class="math inline">\(\mathbb{E}[L]=\iint L(t, y(\mathbf{x})) p(\mathbf{x}, t) \mathrm{d} \mathbf{x} \mathrm{d} t\)</span>直接映射为类别标签。</p></li>
 </ol>
 <h3 id="回归问题的损失函数">1.5.5 回归问题的损失函数</h3>
 <p>在回归问题中，对于每一个输入<span class="math inline">\(\mathrm{x}\)</span>及其对应的<span class="math inline">\(t\)</span>，估计一个函数<span class="math inline">\(y(\mathrm{x})\)</span>，对应的损失函数为<span class="math inline">\(L(t, y(\mathbf{x}))\)</span>。可以得到期望损失为： <span class="math display">\[
@@ -400,7 +400,7 @@ y(\mathrm{x})=\frac{\int t p(\mathrm{x}, t) \mathrm{d} t}{p(\mathrm{x})}=\int t 
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
