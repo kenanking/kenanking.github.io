@@ -35,8 +35,10 @@
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesK%E7%B1%BB%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0%E5%86%B3%E7%AD%96%E8%BE%B9%E7%95%8C.jpg">
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200802140659831.png">
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200802141250047.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0%E8%A7%A3%E9%87%8A.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200802154620706.png">
 <meta property="article:published_time" content="2020-08-01T14:52:21.000Z">
-<meta property="article:modified_time" content="2020-08-02T06:35:52.000Z">
+<meta property="article:modified_time" content="2020-08-05T07:21:37.000Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
@@ -209,7 +211,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-02 14:35:52" itemprop="dateModified" datetime="2020-08-02T14:35:52+08:00">2020-08-02</time>
+                <time title="修改时间：2020-08-05 15:21:37" itemprop="dateModified" datetime="2020-08-05T15:21:37+08:00">2020-08-05</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -260,6 +262,7 @@ r=\frac{y(\mathbf{x})}{\|\mathbf{w}\|}
 <p>最后，有时候为了简单起见，我们会额外增加<span class="math inline">\(x_0=1\)</span>，从而把<span class="math inline">\(w_0\)</span>并入<span class="math inline">\(\mathbf{w}\)</span>。例如，我们可以定义<span class="math inline">\(\widetilde{\mathbf{w}}=\left(w_{0}, \mathbf{w}\right)\)</span>和<span class="math inline">\(\widetilde{\mathbf{x}}=\left(x_{0}, \mathbf{x}\right)\)</span>，从而： <span class="math display">\[
 y(\mathbf{x})=\widetilde{\mathbf{w}}^{\mathrm{T}} \widetilde{\mathbf{x}}
 \]</span></p>
+<p><br/></p>
 <h3 id="多分类">4.1.2 多分类</h3>
 <h4 id="一对其他和一对一分类器的问题">“一对其他”和“一对一”分类器的问题</h4>
 <p>考虑将二分类线性判别函数推广到多分类问题上时，我们可能会尝试把多个二分类判别函数结合起来，构造一个<span class="math inline">\(K\)</span>类判别函数。但是，这样的做法实际上是行不通的。</p>
@@ -288,6 +291,7 @@ y_{k}(\widehat{\mathrm{x}})=\lambda y_{k}\left(\mathrm{x}_{\mathrm{A}}\right)+(1
 <p>由于<span class="math inline">\(y_{k}\left(\mathbf{x}_{\mathrm{A}}\right)&gt;y_{j}\left(\mathbf{x}_{\mathrm{A}}\right)\)</span>，并且<span class="math inline">\(y_{k}\left(\mathbf{x}_{\mathrm{B}}\right)&gt;y_{j}\left(\mathbf{x}_{\mathrm{B}}\right)\)</span>，于是可以得到：<span class="math inline">\(y_{k}(\widehat{\mathbf{x}})&gt;y_{j}(\widehat{\mathbf{x}})\)</span>。</p>
 <p>综上，可以看出<span class="math inline">\(\widehat{\mathrm{x}}\)</span>位于<span class="math inline">\(\mathcal{R}_k\)</span>内部，即<span class="math inline">\(\mathcal{R}_k\)</span>是单连通并且是凸的。</p>
 <p>下面介绍三种学习线性判别函数参数的方法，分别是<strong>基于最小二乘的方法</strong>、<strong>Fisher线性判别函数</strong>以及<strong>感知机算法</strong>。</p>
+<p><br/></p>
 <h3 id="用于分类的最小二乘方法">4.1.3 用于分类的最小二乘方法</h3>
 <h4 id="问题求解">问题求解</h4>
 <p>之前我们提到过，对于<span class="math inline">\(K\)</span>类判别函数，每个类别可以用下面的线性模型表示： <span class="math display">\[
@@ -310,11 +314,156 @@ E_{D}(\widetilde{\mathbf{W}})=\frac{1}{2} \operatorname{Tr}\left\{(\widetilde{\m
 <p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200802140659831.png" alt="最小二乘方法找到的决策边界（紫色曲线）以及logistic回归模型给出的决策边界（绿色曲线）" /></p>
 <p>最小二乘方法的缺点也很明显——<strong>缺少鲁棒性</strong>。</p>
 <p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200802141250047.png" alt="左图：最小二乘方法 右图：logistic回归" /></p>
-<p>最小二乘方法的缺点来源也是很明显的。<strong>最小二乘方法是高斯条件分布假设下的最大似然方法</strong>，而二值目标向量的概率分布显然不是高斯分布。而<strong>logistic回归模型（虽然名字里说是回归模型，但做的却是分类问题😂）是伯努利分布假设下的最大似然方法</strong>，所以在这里具有更好的表现。</p>
+<p>最小二乘方法的缺点来源也是很明显的。<strong>最小二乘方法是高斯条件分布假设下的最大似然方法</strong>，而二值目标向量的概率分布显然不是高斯分布。而<strong>logistic回归模型（虽然名字里说是回归模型，但做的却是分类问题）是伯努利分布假设下的最大似然方法</strong>，所以在这里具有更好的表现。</p>
+<p><br/></p>
 <h3 id="fisher线性判别函数">4.1.4 Fisher线性判别函数</h3>
+<p>我们可以从<strong>维度降低</strong>的角度考察线性分类模型。我们可以把线性判别函数看作一个投影函数，它把输入向量<span class="math inline">\(\mathbf{x}\)</span>投影到一维： <span class="math display">\[
+y=\mathbf{w}^{\mathrm{T}} \mathbf{x}
+\]</span></p>
+<p>然后，我们可以设置一个阈值，如果<span class="math inline">\(y \geqslant-w_{0}\)</span>，就分到<span class="math inline">\(C_1\)</span>类中，否则就分到<span class="math inline">\(C_2\)</span>类中，通过这种方式，我们就得到了一个线性分类器，示意图如下。</p>
+<p>通常来说，向一维投影会损失相当多的信息。原本在<span class="math inline">\(D\)</span>维空间能够完美分离的样本，在一维空间可能会相互重叠（如下图中绿色直线所表示的）。所以我们想要通过调整权向量<span class="math inline">\(\mathbf{w}\)</span>，选择一个让类别之间分类最大的一个投影。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images线性判别函数解释.jpg" alt="线性判别函数解释" /></p>
+<p>我们假设这个二分类问题中，有<span class="math inline">\(N_1\)</span>个点属于<span class="math inline">\(C_1\)</span>类，<span class="math inline">\(N_2\)</span>个点属于<span class="math inline">\(C_2\)</span>类，两类的均值向量为： <span class="math display">\[
+\mathbf{m}_{1}=\frac{1}{N_{1}} \sum_{n \in C_{1}} \mathbf{x}_{n}, \quad \mathbf{m}_{2}=\frac{1}{N_{2}} \sum_{n \in C_{2}} \mathbf{x}_{n}
+\]</span></p>
+<p>如果把两个类都投影到一维，那么最简单的衡量两个类别之间分开程度的方式，就是<strong>类别均值投影之后的距离</strong>。也就是说，我们可以选择使得下式取最大值的<span class="math inline">\(\mathbf{w}\)</span>： <span class="math display">\[
+m_{2}-m_{1}=\mathbf{w}^{\mathrm{T}}\left(\mathbf{m}_{2}-\mathbf{m}_{1}\right)
+\]</span></p>
+<p>上式中，我们可以限制<span class="math inline">\(\mathbf{w}^{\mathrm{T}}\mathbf{w}=1\)</span>，否则通过增大<span class="math inline">\(\mathbf{w}\)</span>的模，这个表达式可以无限大。因为这个问题中，我们<strong>主要在于知道<span class="math inline">\(\mathbf{w}\)</span>的方向</strong>。</p>
+<p>此外，还有一个问题，在类别均值的投影分开较大的情况下，我们不希望类别之间出现重叠。如下图所示：</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200802154620706.png" alt="类别内部方差大小的影响" /></p>
+<p><strong>Fisher 提出的思想</strong>是最大化⼀个函数，这个函数能够让类均值的投影分开得较大，同时让每个类别内部的方差较小，从而最小化了类别的重叠。总结来说：核心思想是<strong>类内小，类间大</strong>。 <span class="math display">\[
+J(\mathbf{w})=\frac{\left(m_{2}-m_{1}\right)^{2}}{s_{1}^{2}+s_{2}^{2}} \equiv  \frac{\text{类间方差}}{\text{类内方差}}
+\]</span></p>
+<p>其中类内方差为： <span class="math display">\[
+s_{k}^{2}=\sum_{n \in C_{k}}\left(y_{n}-m_{k}\right)^{2},\quad k=1,2
+\]</span></p>
+<p>上式可以进一步写为： <span class="math display">\[
+\begin{aligned}
+J(\mathbf{w})&amp;=\frac{\left(m_{2}-m_{1}\right)^{2}}{s_{1}^{2}+s_{2}^{2}} \notag 
+\\ &amp;= 
+\frac{\mathbf{w}^{\mathrm{T}}\left(\mathbf{m}_{2}-\mathbf{m}_{1}\right)\left(\mathbf{m}_{2}-\mathbf{m}_{1}\right)^{\mathrm{T}}\mathbf{w}}{\sum_{n \in C_{1}}\left(\mathbf{w}^{\mathrm{T}} \mathbf{x}_n-\mathbf{w}^{\mathrm{T}} \mathbf{m}_{1}\right)^2 + \sum_{n \in C_{2}}\left(\mathbf{w}^{\mathrm{T}} \mathbf{x}_n-\mathbf{w}^{\mathrm{T}} \mathbf{m}_{2}\right)^2} \notag 
+\\ &amp;= 
+\frac{\mathbf{w}^{\mathrm{T}}\left(\mathbf{m}_{2}-\mathbf{m}_{1}\right)\left(\mathbf{m}_{2}-\mathbf{m}_{1}\right)^{\mathrm{T}}\mathbf{w}}{\mathbf{w}^\mathrm{T}\left[\sum_{n \in C_{1}}\left(\mathbf{x}_{n}-\mathbf{m}_{1}\right)\left(\mathbf{x}_{n}-\mathbf{m}_{1}\right)^{\mathrm{T}}+\sum_{n \in C_{2}}\left(\mathbf{x}_{n}-\mathbf{m}_{2}\right)\left(\mathbf{x}_{n}-\mathbf{m}_{2}\right)^{\mathrm{T}}\right]\mathbf{w}} \notag 
+\\ &amp;\equiv \frac{\mathbf{w}^{\mathrm{T}} \mathbf{S}_{\mathrm{B}} \mathbf{w}}{\mathbf{w}^{\mathrm{T}} \mathbf{S}_{\mathrm{W}} \mathbf{w}} \notag 
+\end{aligned}
+\]</span></p>
+<p>其中：<span class="math inline">\(\mathbf{S}_{\mathrm{B}}\)</span>称为<strong>类间（between-class）协方差矩阵</strong>，<span class="math inline">\(\mathbf{S}_{\mathrm{W}}\)</span>称为<strong>类内（within-class）协方差矩阵</strong>。</p>
+<p>对<span class="math inline">\(\mathbf{w}\)</span>求导，我们发现<span class="math inline">\(J(\mathbf{w})\)</span>取得最大值的条件为： <span class="math display">\[
+\left(\mathbf{w}^{\mathrm{T}} \mathbf{S}_{\mathrm{B}} \mathbf{w}\right) \mathbf{S}_{\mathrm{W}} \mathbf{w}=\left(\mathbf{w}^{\mathrm{T}} \mathbf{S}_{\mathrm{W}} \mathbf{w}\right) \mathbf{S}_\mathrm{B} \mathbf{w}
+\]</span></p>
+<p>其中：<span class="math inline">\(\left(\mathbf{w}^{\mathrm{T}} \mathbf{S}_{\mathrm{B}} \mathbf{w}\right)\)</span>和<span class="math inline">\(\left(\mathbf{w}^{\mathrm{T}} \mathbf{S}_{\mathrm{W}} \mathbf{w}\right)\)</span>为标量。因为这里我们不关心<span class="math inline">\(\mathbf{w}\)</span>的大小，只关心它的方向，所以我们可以忽略这两个标量。最终，我们有： <span class="math display">\[
+\begin{align}
+\mathbf{w} &amp;\propto \mathbf{S}_{\mathrm{W}}^{-1}\mathbf{S}_\mathrm{B} \mathbf{w} \notag 
+\\&amp;=\mathbf{S}_{\mathrm{W}}^{-1} \left(\mathbf{m}_{2}-\mathbf{m}_{1}\right)\left(\mathbf{m}_{2}-\mathbf{m}_{1}\right)^{\mathrm{T}}\mathbf{w} \notag 
+\\&amp;\propto \mathbf{S}_{\mathrm{W}}^{-1} (\mathbf{m}_{2}-\mathbf{m}_{1}) \notag
+\end{align}
+\]</span></p>
+<p>其中，因为<span class="math inline">\((\mathbf{m}_{2}-\mathbf{m}_{1})^{\mathrm{T}}\mathbf{w}\)</span>为标量，所以我们可以忽略掉它。这里也可以看出，<strong><span class="math inline">\(\mathbf{S}_\mathrm{B} \mathbf{w}\)</span>的方向总是和<span class="math inline">\((\mathbf{m}_{2}-\mathbf{m}_{1})\)</span>的方向相同</strong>，这个结论后面还会用到。</p>
+<p>上面的结果称为<strong>Fisher线性判别函数（Fisher linear discriminant）</strong>。注意到，当类内协方差是各向同性时，<span class="math inline">\(\mathbf{w}\)</span>的方向就和类内均值的差相同。</p>
+<p>通过上面的步骤，我们只是得到了数据向一维投影的一个选择，而不是得到了一个判别函数。我们需要通过选择一个阈值<span class="math inline">\(y_0\)</span>，继续把数据点分类。</p>
+<p><br/></p>
 <h3 id="与最小二乘的关系">4.1.5 与最小二乘的关系</h3>
+<p>在这一小节，对于二分类问题，证明了<strong>Fisher方法可以看成是最小二乘方法的一个特例</strong>。</p>
+<p>首先，我们改变使用<span class="math inline">\(0\)</span>、<span class="math inline">\(1\)</span>表示目标变量值的方式，令属于<span class="math inline">\(C_1\)</span>的目标变量值为<span class="math inline">\(N_1/N\)</span>，其中<span class="math inline">\(N_1\)</span>表示类别<span class="math inline">\(C_1\)</span>的数量，<span class="math inline">\(N\)</span>为总的数量。令类别<span class="math inline">\(C_2\)</span>的值为<span class="math inline">\(-N_2/N\)</span>，需要注意的是，这里有一个<strong>负号</strong>。于是，很容易得到下面的关系： <span class="math display">\[
+\sum_{n=1}^{N} t_{n}=N_{1} \frac{N}{N_{1}}-N_{2} \frac{N}{N_{2}}=0
+\]</span></p>
+<p>回顾一下<strong>平方和误差函数</strong>，我们有下面的式子： <span class="math display">\[
+E=\frac{1}{2} \sum_{n=1}^{N}\left(\mathbf{w}^{\mathrm{T}} \mathbf{x}_{n}+w_{0}-t_{n}\right)^{2}
+\]</span></p>
+<p>分别令<span class="math inline">\(E\)</span>关于<span class="math inline">\(w_0\)</span>和<span class="math inline">\(\mathbf{w}\)</span>的导数为零，我们可以得到： <span class="math display">\[
+\begin{eqnarray}
+\sum_{n = 1}^{N}\left(\mathrm{w}^{\mathrm{T}} \mathrm{x}_{n}+w_{0}-t_{n}\right) &amp; &amp; = &amp; 0  \tag{1} \\
+\sum_{n = 1}^{N}\left(\mathrm{w}^{\mathrm{T}} \mathrm{x}_{n}+w_{0}-t_{n}\right) \mathrm{x}_{n} &amp; &amp; = &amp; 0 \tag{2} 
+\end{eqnarray}
+\]</span></p>
+<p>对于（1）式，我们有： <span class="math display">\[
+w_{0}= -\frac{1}{N}\sum_{n=1}^{N}\left(\mathbf{w}^{\mathrm{T}} \mathbf{x}_{n}\right) = -\mathbf{w}^{\mathrm{T}} \mathbf{m}
+\]</span></p>
+<p>其中，<span class="math inline">\(\mathbf{m}\)</span>为所有数据的均值： <span class="math display">\[
+\mathbf{m}=\frac{1}{N} \sum_{n=1}^{N} \mathbf{x}_{n}=\frac{1}{N}\left(N_{1} \mathbf{m}_{1}+N_{2} \mathbf{m}_{2}\right)
+\]</span></p>
+<p>对于（2）式，经过计算，可以得到（这是书上的结果，我没算过）： <span class="math display">\[
+\left(\mathrm{S}_{\mathrm{W}}+\frac{N_{1} N_{2}}{N} \mathrm{S}_{\mathrm{B}}\right) \mathbf{w}=N\left(\mathbf{m}_{1}-\mathbf{m}_{2}\right)
+\]</span></p>
+<p>由于<span class="math inline">\(\mathbf{S}_\mathrm{B} \mathbf{w}\)</span>的方向总是和<span class="math inline">\((\mathbf{m}_{2}-\mathbf{m}_{1})\)</span>的方向相同，通过上式，我们有： <span class="math display">\[
+\mathbf{w} \propto \mathbf{S}_{\mathrm{W}}^{-1}\left(\mathbf{m}_{2}-\mathbf{m}_{1}\right)
+\]</span></p>
+<p>可以看到，通过这种方式得到的权向量和Fisher判别准则得到的结果相同。</p>
+<p>此外，通过这种方式，我们还得到了偏置项<span class="math inline">\(w_0\)</span>的一个计算公式：<span class="math inline">\(w_{0}= -\mathbf{w}^{\mathrm{T}} \mathbf{m}\)</span>。</p>
+<p><br/></p>
 <h3 id="多分类的fisher判别函数">4.1.6 多分类的Fisher判别函数</h3>
+<p>我们下面考虑Fisher判别函数在<span class="math inline">\(K&gt;2\)</span>情况下的推广。我们假设输入空间的维度<span class="math inline">\(D\)</span>大于类别数量<span class="math inline">\(K\)</span>。</p>
+<p>下一步，我们引入<span class="math inline">\(D^{\prime}&gt;1\)</span>个线性“特征”：<span class="math inline">\(y_{k}=\mathbf{w}_{k}^{\mathrm{T}} \mathbf{x}\)</span>，其中<span class="math inline">\(k=1,\dots,D^{\prime}\)</span>。为了方便，这些特征可以聚合起来组成向量<span class="math inline">\(\mathbf{y}\)</span>，权向量<span class="math inline">\(\{\mathbf{w}_k\}\)</span>可以看出权重矩阵<span class="math inline">\(\mathbf{W}\)</span>的列： <span class="math display">\[
+\mathbf{y}=\mathbf{W}^{\mathrm{T}} \mathbf{x}
+\]</span></p>
+<p>与二分类问题一样，在<span class="math inline">\(\mathbf{y}\)</span>的定义中，也没有偏置项。</p>
+<p>类内协方差矩阵可以做如下的推广： <span class="math display">\[
+\mathbf{S}_{\mathrm{W}}=\sum_{k=1}^{K} \mathbf{S}_{k} = \sum_{k=1}^{K}\sum_{n \in C_{k}}\left(\mathbf{x}_{n}-\mathbf{m}_{k}\right)\left(\mathbf{x}_{n}-\mathbf{m}_{k}\right)^{\mathrm{T}}
+\]</span></p>
+<p>其中： <span class="math display">\[
+\mathbf{m}_{k}=\frac{1}{N_{k}} \sum_{n \in \mathcal{C}_{k}} \mathbf{x}_{n}
+\]</span></p>
+<p>为了找到类间协方差矩阵的推广，我们首先考虑整体的协方差矩阵： <span class="math display">\[
+\mathbf{S}_{\mathrm{T}}=\sum_{n=1}^{N}\left(\mathbf{x}_{n}-\mathbf{m}\right)\left(\mathbf{x}_{n}-\mathbf{m}\right)^{\mathrm{T}}
+\]</span></p>
+<p>其中：<span class="math inline">\(\mathbf{m}\)</span>为整体的均值。 <span class="math display">\[
+\mathbf{m}=\frac{1}{N} \sum_{n=1}^{N} \mathbf{x}_{n}=\frac{1}{N} \sum_{k=1}^{K} N_{k} \mathbf{m}_{k}
+\]</span></p>
+<p>整体的协方差矩阵可以分解为： <span class="math display">\[
+\mathbf{S}_{\mathrm{T}}=\mathbf{S}_{\mathrm{W}}+\mathbf{S}_{\mathrm{B}}
+\]</span></p>
+<p>于是，可以得到： <span class="math display">\[
+\begin{align}
+\mathbf{S}_{\mathrm{B}} &amp;=\mathbf{S}_{\mathrm{T}} - \mathbf{S}_{\mathrm{W}}
+\\ &amp;= \sum_{k=1}^{K} \sum_{n \in C_k}\left(\mathbf{x}_{n}-\mathbf{m}\right)\left(\mathbf{x}_{n}-\mathbf{m}\right)^{\mathrm{T}}  - \sum_{k=1}^{K}\sum_{n \in C_{k}}\left(\mathbf{x}_{n}-\mathbf{m}_{k}\right)\left(\mathbf{x}_{n}-\mathbf{m}_{k}\right)^{\mathrm{T}} 
+\\ &amp;= \sum_{k=1}^{K} \sum_{n \in C_k} \left( \mathbf{x}_{n}\mathbf{x}_{n}^\mathrm{T} - \mathbf{m}\mathbf{x}_{n}^\mathrm{T} - \mathbf{x}_{n}\mathbf{m}^\mathrm{T} + \mathbf{m}\mathbf{m}^\mathrm{T} 
+- \mathbf{x}_{n}\mathbf{x}_{n}^\mathrm{T} + \mathbf{m}_k\mathbf{x}_{n}^\mathrm{T} + \mathbf{x}_{n}\mathbf{m}_k^\mathrm{T} - \mathbf{m}_k\mathbf{m}_k^\mathrm{T} \right)
+\\ &amp;= \sum_{k=1}^{K} \sum_{n \in C_k} \left(  - \mathbf{m}\mathbf{x}_{n}^\mathrm{T} - \mathbf{x}_{n}\mathbf{m}^\mathrm{T} + \mathbf{m}\mathbf{m}^\mathrm{T} 
+ + \mathbf{m}_k\mathbf{x}_{n}^\mathrm{T} + \mathbf{x}_{n}\mathbf{m}_k^\mathrm{T} - \mathbf{m}_k\mathbf{m}_k^\mathrm{T} \right)
+\\ &amp;= \sum_{k=1}^{K} N_k \left(  - \mathbf{m}\mathbf{m}_k^\mathrm{T} - \mathbf{m}_k\mathbf{m}^\mathrm{T} + \mathbf{m}\mathbf{m}^\mathrm{T} 
+ + \mathbf{m}_k\mathbf{m}_k^\mathrm{T} \right)
+\\ &amp;= \sum_{k=1}^{K} N_{k}\left(\mathbf{m}_{k}-\mathbf{m}\right)\left(\mathbf{m}_{k}-\mathbf{m}\right)^{\mathrm{T}}
+\end{align}
+\]</span></p>
+<p>最后，我们选择<span class="math inline">\(J(\mathbf{W})\)</span>的形式为： <span class="math display">\[
+J(\mathbf{w})=\operatorname{Tr}\left\{\left(\mathbf{W} \mathbf{S}_{\mathrm{W}} \mathbf{W}^{\mathrm{T}}\right)^{-1}\left(\mathbf{W} \mathbf{S}_{\mathrm{B}} \mathbf{W}^{\mathrm{T}}\right)\right\}
+\]</span></p>
+<p>从这个式子中，我们可以看到，<strong>权值由<span class="math inline">\(\mathbf{S}_{\mathrm{W}}^{-1} \mathbf{S}_{\mathrm{B}}\)</span>的的特征向量决定</strong>。</p>
+<p>同时，我们也可以发现，通过这种方法，我们最多只能找到<span class="math inline">\((K-1)\)</span>个独立的线性特征，因为<span class="math inline">\(\mathbf{S}_\mathrm{B}\)</span>的秩最大等于<span class="math inline">\((K-1)\)</span>。</p>
+<p>在这种方法中，我们只是当数据投影到一个<span class="math inline">\(D^{\prime}\)</span>平面上，但是同样没有确定一个阈值来区分不同数据点。</p>
+<p><br/></p>
 <h3 id="感知机算法">4.1.7 感知机算法</h3>
+<h4 id="感知机算法形式">感知机算法形式</h4>
+<p>感知机算法比较简单，但在模式识别的历史上有非常重要的地位。感知机算法是一个二分类模型，首先将输入向量<span class="math inline">\(\mathbf{x}\)</span>使用一个固定的非线性变化得到特征向量<span class="math inline">\(\phi(\mathbf{x})\)</span>，特征向量中通常包含一个偏置分量<span class="math inline">\(\phi_0(\mathbf{x})=1\)</span>，然后构造一个线性模型。模型形式为： <span class="math display">\[
+y(\mathbf{x})=f\left(\mathbf{w}^{\mathrm{T}} \boldsymbol{\phi}(\mathbf{x})\right)
+\]</span></p>
+<p>其中，<span class="math inline">\(f(\cdot)\)</span>为一个非线性激活函数，形式为： <span class="math display">\[
+f(a)=\left\{\begin{array}{ll}
++1, &amp; a \geqslant 0 \\
+-1, &amp; a&lt;0
+\end{array}\right.
+\]</span></p>
+<p>为了和激活函数的选择相符，我们使用<span class="math inline">\(t=+1\)</span>表示类<span class="math inline">\(C_1\)</span>，<span class="math inline">\(t=-1\)</span>表示类<span class="math inline">\(C_2\)</span>。</p>
+<p>对于感知机参数<span class="math inline">\(\mathbf{w}\)</span>的确定，我们使用<strong>最小化误差函数的思想</strong>。一种很自然的想法就是使用误分类的总数作为误差函数，但是这样的选择对于参数学习是不合适的。因为误差函数为<span class="math inline">\(\mathbf{w}\)</span>的分段常函数，并且在几乎所有地方导数都为零。</p>
+<p>因此，我们考虑另一种误差函数，称为<strong>感知机准则（perceptron criterion）</strong>。我们注意到，满足正确分类时，满足<span class="math inline">\(\mathbf{w}^{\mathrm{T}} \boldsymbol{\phi}_{n}\left(\mathbf{x}\right)t_n&gt;0\)</span>。在感知机准则下，对于正确分类的数据，我们赋予误差为<span class="math inline">\(0\)</span>，对于误分类的数据，我们试着最小化<span class="math inline">\(-\mathbf{w}^{\mathrm{T}} \boldsymbol{\phi}_{n}\left(\mathbf{x}\right)t_n\)</span>。</p>
+<p>最终，误差函数的形式为： <span class="math display">\[
+E_{\mathrm{P}}(\mathbf{w})=-\sum_{n \in \mathcal{M}} \mathbf{w}^{\mathrm{T}} \boldsymbol{\phi}_{n}\left(\mathbf{x}\right) t_{n}
+\]</span></p>
+<p>其中，<span class="math inline">\(\mathcal{M}\)</span>为误分类数据的集合。</p>
+<p>对于这个算法，我们使用随机梯度下降的方法找到权值。 <span class="math display">\[
+\mathbf{w}^{(\tau+1)}=\mathbf{w}^{(\tau)}-\eta \nabla E_{\mathrm{P}}(\mathbf{w})=\mathbf{w}^{(\tau)}+\eta \boldsymbol{\phi}\left(\mathbf{x}_{n}\right) t_{n}
+\]</span></p>
+<p>其中，<span class="math inline">\(\eta\)</span>为学习率。</p>
+<p>感知机算法会循环迭代每一个数据点，进行判断，如果没有正确分类，就使用梯度下降修改权值，直到所有数据点都被正确分类。</p>
+<p>根据<strong>感知机收敛定理（perceptron convergence theorem）</strong>，如果训练数据线性可分，那么感知器算法可以保证在有限步骤内找到一个精确解。</p>
+<h4 id="感知机算法缺点">感知机算法缺点</h4>
+<ul>
+<li>对于线性可分数据集，可能存在多个解（取决于参数的初始化和数据点出现的顺序）。对于线性不可分数据集，感知机算法不会收敛。</li>
+<li>无法提供概率形式的输出。</li>
+<li>无法直接推广到<span class="math inline">\(K&gt;2\)</span>的情形。</li>
+<li>基于固定基函数的线性组合。</li>
+</ul>
 
     </div>
 
@@ -397,7 +546,7 @@ E_{D}(\widetilde{\mathbf{W}})=\frac{1}{2} \operatorname{Tr}\left\{(\widetilde{\m
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#判别函数"><span class="nav-text">4.1 判别函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#二分类"><span class="nav-text">4.1.1 二分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多分类"><span class="nav-text">4.1.2 多分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一对其他和一对一分类器的问题"><span class="nav-text">“一对其他”和“一对一”分类器的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#k类判别函数"><span class="nav-text">\(K\)类判别函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用于分类的最小二乘方法"><span class="nav-text">4.1.3 用于分类的最小二乘方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#问题求解"><span class="nav-text">问题求解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进一步分析"><span class="nav-text">进一步分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fisher线性判别函数"><span class="nav-text">4.1.4 Fisher线性判别函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#与最小二乘的关系"><span class="nav-text">4.1.5 与最小二乘的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多分类的fisher判别函数"><span class="nav-text">4.1.6 多分类的Fisher判别函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#感知机算法"><span class="nav-text">4.1.7 感知机算法</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#判别函数"><span class="nav-text">4.1 判别函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#二分类"><span class="nav-text">4.1.1 二分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多分类"><span class="nav-text">4.1.2 多分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一对其他和一对一分类器的问题"><span class="nav-text">“一对其他”和“一对一”分类器的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#k类判别函数"><span class="nav-text">\(K\)类判别函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用于分类的最小二乘方法"><span class="nav-text">4.1.3 用于分类的最小二乘方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#问题求解"><span class="nav-text">问题求解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进一步分析"><span class="nav-text">进一步分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fisher线性判别函数"><span class="nav-text">4.1.4 Fisher线性判别函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#与最小二乘的关系"><span class="nav-text">4.1.5 与最小二乘的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多分类的fisher判别函数"><span class="nav-text">4.1.6 多分类的Fisher判别函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#感知机算法"><span class="nav-text">4.1.7 感知机算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#感知机算法形式"><span class="nav-text">感知机算法形式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#感知机算法缺点"><span class="nav-text">感知机算法缺点</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
