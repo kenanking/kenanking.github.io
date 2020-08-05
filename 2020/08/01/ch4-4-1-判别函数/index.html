@@ -314,7 +314,7 @@ E_{D}(\widetilde{\mathbf{W}})=\frac{1}{2} \operatorname{Tr}\left\{(\widetilde{\m
 <p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200802140659831.png" alt="最小二乘方法找到的决策边界（紫色曲线）以及logistic回归模型给出的决策边界（绿色曲线）" /></p>
 <p>最小二乘方法的缺点也很明显——<strong>缺少鲁棒性</strong>。</p>
 <p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/imagesimage-20200802141250047.png" alt="左图：最小二乘方法 右图：logistic回归" /></p>
-<p>最小二乘方法的缺点来源也是很明显的。<strong>最小二乘方法是高斯条件分布假设下的最大似然方法</strong>，而二值目标向量的概率分布显然不是高斯分布。而<strong>logistic回归模型（虽然名字里说是回归模型，但做的却是分类问题）是伯努利分布假设下的最大似然方法</strong>，所以在这里具有更好的表现。</p>
+<p>最小二乘方法的缺点来源也是很明显的。<strong>最小二乘方法是高斯条件分布假设下的最大似然方法</strong>，而二值目标向量的概率分布显然不是高斯分布。而<strong>logistic回归模型（虽然名字里说是回归模型，但做的却是分类问题🤣）是伯努利分布假设下的最大似然方法</strong>，所以在这里具有更好的表现。</p>
 <p><br/></p>
 <h3 id="fisher线性判别函数">4.1.4 Fisher线性判别函数</h3>
 <p>我们可以从<strong>维度降低</strong>的角度考察线性分类模型。我们可以把线性判别函数看作一个投影函数，它把输入向量<span class="math inline">\(\mathbf{x}\)</span>投影到一维： <span class="math display">\[
