@@ -415,15 +415,15 @@ w_{0}= -\frac{1}{N}\sum_{n=1}^{N}\left(\mathbf{w}^{\mathrm{T}} \mathbf{x}_{n}\ri
 \]</span></p>
 <p>于是，可以得到： <span class="math display">\[
 \begin{align}
-\mathbf{S}_{\mathrm{B}} &amp;=\mathbf{S}_{\mathrm{T}} - \mathbf{S}_{\mathrm{W}}
-\\ &amp;= \sum_{k=1}^{K} \sum_{n \in C_k}\left(\mathbf{x}_{n}-\mathbf{m}\right)\left(\mathbf{x}_{n}-\mathbf{m}\right)^{\mathrm{T}}  - \sum_{k=1}^{K}\sum_{n \in C_{k}}\left(\mathbf{x}_{n}-\mathbf{m}_{k}\right)\left(\mathbf{x}_{n}-\mathbf{m}_{k}\right)^{\mathrm{T}} 
+\mathbf{S}_{\mathrm{B}} &amp;=\mathbf{S}_{\mathrm{T}} - \mathbf{S}_{\mathrm{W}} \notag
+\\ &amp;= \sum_{k=1}^{K} \sum_{n \in C_k}\left(\mathbf{x}_{n}-\mathbf{m}\right)\left(\mathbf{x}_{n}-\mathbf{m}\right)^{\mathrm{T}}  - \sum_{k=1}^{K}\sum_{n \in C_{k}}\left(\mathbf{x}_{n}-\mathbf{m}_{k}\right)\left(\mathbf{x}_{n}-\mathbf{m}_{k}\right)^{\mathrm{T}} \notag
 \\ &amp;= \sum_{k=1}^{K} \sum_{n \in C_k} \left( \mathbf{x}_{n}\mathbf{x}_{n}^\mathrm{T} - \mathbf{m}\mathbf{x}_{n}^\mathrm{T} - \mathbf{x}_{n}\mathbf{m}^\mathrm{T} + \mathbf{m}\mathbf{m}^\mathrm{T} 
-- \mathbf{x}_{n}\mathbf{x}_{n}^\mathrm{T} + \mathbf{m}_k\mathbf{x}_{n}^\mathrm{T} + \mathbf{x}_{n}\mathbf{m}_k^\mathrm{T} - \mathbf{m}_k\mathbf{m}_k^\mathrm{T} \right)
+- \mathbf{x}_{n}\mathbf{x}_{n}^\mathrm{T} + \mathbf{m}_k\mathbf{x}_{n}^\mathrm{T} + \mathbf{x}_{n}\mathbf{m}_k^\mathrm{T} - \mathbf{m}_k\mathbf{m}_k^\mathrm{T} \right) \notag
 \\ &amp;= \sum_{k=1}^{K} \sum_{n \in C_k} \left(  - \mathbf{m}\mathbf{x}_{n}^\mathrm{T} - \mathbf{x}_{n}\mathbf{m}^\mathrm{T} + \mathbf{m}\mathbf{m}^\mathrm{T} 
- + \mathbf{m}_k\mathbf{x}_{n}^\mathrm{T} + \mathbf{x}_{n}\mathbf{m}_k^\mathrm{T} - \mathbf{m}_k\mathbf{m}_k^\mathrm{T} \right)
+ + \mathbf{m}_k\mathbf{x}_{n}^\mathrm{T} + \mathbf{x}_{n}\mathbf{m}_k^\mathrm{T} - \mathbf{m}_k\mathbf{m}_k^\mathrm{T} \right) \notag
 \\ &amp;= \sum_{k=1}^{K} N_k \left(  - \mathbf{m}\mathbf{m}_k^\mathrm{T} - \mathbf{m}_k\mathbf{m}^\mathrm{T} + \mathbf{m}\mathbf{m}^\mathrm{T} 
- + \mathbf{m}_k\mathbf{m}_k^\mathrm{T} \right)
-\\ &amp;= \sum_{k=1}^{K} N_{k}\left(\mathbf{m}_{k}-\mathbf{m}\right)\left(\mathbf{m}_{k}-\mathbf{m}\right)^{\mathrm{T}}
+ + \mathbf{m}_k\mathbf{m}_k^\mathrm{T} \right) \notag
+\\ &amp;= \sum_{k=1}^{K} N_{k}\left(\mathbf{m}_{k}-\mathbf{m}\right)\left(\mathbf{m}_{k}-\mathbf{m}\right)^{\mathrm{T}} \notag
 \end{align}
 \]</span></p>
 <p>最后，我们选择<span class="math inline">\(J(\mathbf{W})\)</span>的形式为： <span class="math display">\[
