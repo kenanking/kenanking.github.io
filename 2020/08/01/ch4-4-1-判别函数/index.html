@@ -23,12 +23,12 @@
     var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="4.1 判别函数 判别函数是一个以向量\(\mathbf{x}\)为输⼊，把它分配到\(K\)个类别中的某⼀个类别（记作\(C_k\)）的函数。这一章中，我们仍然探讨线性判别函数（linear discriminant function），即那些决策⾯ 是超平面的判别函数。">
+  <meta name="description" content="4.1 判别函数 判别函数是一个以向量\(\mathbf{x}\)为输⼊，把它分配到\(K\)个类别中的某⼀个类别（记作\(C_k\)）的函数。这一章中，我们仍然探讨线性判别函数（linear discriminant function），即那些决策面是超平面的判别函数。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ch4-4.1 判别函数">
 <meta property="og:url" content="https://kenanking.github.io/2020/08/01/ch4-4-1-%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
-<meta property="og:description" content="4.1 判别函数 判别函数是一个以向量\(\mathbf{x}\)为输⼊，把它分配到\(K\)个类别中的某⼀个类别（记作\(C_k\)）的函数。这一章中，我们仍然探讨线性判别函数（linear discriminant function），即那些决策⾯ 是超平面的判别函数。">
+<meta property="og:description" content="4.1 判别函数 判别函数是一个以向量\(\mathbf{x}\)为输⼊，把它分配到\(K\)个类别中的某⼀个类别（记作\(C_k\)）的函数。这一章中，我们仍然探讨线性判别函数（linear discriminant function），即那些决策面是超平面的判别函数。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0%E5%87%A0%E4%BD%95%E8%A7%A3%E9%87%8A.jpg">
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/images%E4%B8%80%E5%AF%B9%E5%85%B6%E4%BB%96%E5%92%8C%E4%B8%80%E5%AF%B9%E4%B8%80%E5%86%B3%E7%AD%96%E8%BE%B9%E7%95%8C.jpg">
@@ -242,7 +242,7 @@
 
       
         <h2 id="判别函数">4.1 判别函数</h2>
-<p>判别函数是一个以向量<span class="math inline">\(\mathbf{x}\)</span>为输⼊，把它分配到<span class="math inline">\(K\)</span>个类别中的某⼀个类别（记作<span class="math inline">\(C_k\)</span>）的函数。这一章中，我们仍然探讨<strong>线性判别函数（linear discriminant function）</strong>，即那些决策⾯ 是超平面的判别函数。</p>
+<p>判别函数是一个以向量<span class="math inline">\(\mathbf{x}\)</span>为输⼊，把它分配到<span class="math inline">\(K\)</span>个类别中的某⼀个类别（记作<span class="math inline">\(C_k\)</span>）的函数。这一章中，我们仍然探讨<strong>线性判别函数（linear discriminant function）</strong>，即那些决策面是超平面的判别函数。</p>
 <a id="more"></a>
 <h3 id="二分类">4.1.1 二分类</h3>
 <p>线性判别函数最简单的形式是输入向量的线性函数： <span class="math display">\[
@@ -486,7 +486,10 @@ E_{\mathrm{P}}(\mathbf{w})=-\sum_{n \in \mathcal{M}} \mathbf{w}^{\mathrm{T}} \bo
     <a href="/2020/08/01/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch4-Linear-Models-for-Classification/" rel="prev" title="模式识别与机器学习_ch4-Linear Models for Classification">
       <i class="fa fa-chevron-left"></i> 模式识别与机器学习_ch4-Linear Models for Classification
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/07/VSCode%E7%BC%96%E5%86%99LaTeX%E9%85%8D%E7%BD%AE/" rel="next" title="VSCode编写LaTeX配置">
+      VSCode编写LaTeX配置 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -562,7 +565,7 @@ E_{\mathrm{P}}(\mathbf{w})=-\sum_{n \in \mathcal{M}} \mathbf{w}^{\mathrm{T}} \bo
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">28</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -575,7 +578,7 @@ E_{\mathrm{P}}(\mathbf{w})=-\sum_{n \in \mathcal{M}} \mathbf{w}^{\mathrm{T}} \bo
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
