@@ -23,20 +23,23 @@
     var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="2.2 多项式变量 二元变量只能用来描述两种可能的取值，然而实际会遇到存在\(K\)种状态的情况。这种情况下，我们使用\(1-\mathrm{of}-K\)的方法，可以更方便地进行表示。将变量\(\mathbf{x}\)表示成一个\(K\)维向量，向量中元素\(x_k\)等于\(1\)，其余元素等于\(0\)。">
+  <meta name="description" content="IDL基础语法 一、IDL两种工作模式 IDL存在两种基本的工作模式：交互模式（interactive mode）和编译模式（compiled mode）。前者通过在IDL命令行中输入指令执行命令并得到及时反馈，适用于程序原型设计和交互式分析。后者用于编写指令集来开发较复杂的数据分析和可视化应用。 在IDL中，基本的程序单元为过程（procedures）和函数（functions）。 交互">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ch2-2.2 多项式分布">
-<meta property="og:url" content="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/index.html">
+<meta property="og:title" content="IDL基础语法">
+<meta property="og:url" content="https://kenanking.github.io/2020/09/10/IDL%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
-<meta property="og:description" content="2.2 多项式变量 二元变量只能用来描述两种可能的取值，然而实际会遇到存在\(K\)种状态的情况。这种情况下，我们使用\(1-\mathrm{of}-K\)的方法，可以更方便地进行表示。将变量\(\mathbf{x}\)表示成一个\(K\)维向量，向量中元素\(x_k\)等于\(1\)，其余元素等于\(0\)。">
+<meta property="og:description" content="IDL基础语法 一、IDL两种工作模式 IDL存在两种基本的工作模式：交互模式（interactive mode）和编译模式（compiled mode）。前者通过在IDL命令行中输入指令执行命令并得到及时反馈，适用于程序原型设计和交互式分析。后者用于编写指令集来开发较复杂的数据分析和可视化应用。 在IDL中，基本的程序单元为过程（procedures）和函数（functions）。 交互">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-07-21T05:22:57.000Z">
-<meta property="article:modified_time" content="2020-07-21T05:22:57.000Z">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/%E4%BA%A4%E4%BA%92%E6%A8%A1%E5%BC%8F%E7%BB%98%E5%9B%BE.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/%E7%BC%96%E8%AF%91%E6%A8%A1%E5%BC%8FHelloWorld.png">
+<meta property="article:published_time" content="2020-09-10T13:30:36.000Z">
+<meta property="article:modified_time" content="2020-09-10T13:30:36.000Z">
 <meta property="article:author" content="汤焱">
-<meta property="article:tag" content="PRML">
+<meta property="article:tag" content="idl">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/%E4%BA%A4%E4%BA%92%E6%A8%A1%E5%BC%8F%E7%BB%98%E5%9B%BE.png">
 
-<link rel="canonical" href="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/">
+<link rel="canonical" href="https://kenanking.github.io/2020/09/10/IDL%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">
 
 
 <script id="page-configurations">
@@ -49,7 +52,7 @@
   };
 </script>
 
-  <title>ch2-2.2 多项式分布 | 额呵呵的博客</title>
+  <title>IDL基础语法 | 额呵呵的博客</title>
   
 
 
@@ -171,7 +174,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/">
+    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/09/10/IDL%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -184,7 +187,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          ch2-2.2 多项式分布
+          IDL基础语法
         </h1>
 
         <div class="post-meta">
@@ -196,7 +199,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-07-21 13:22:57" itemprop="dateCreated datePublished" datetime="2020-07-21T13:22:57+08:00">2020-07-21</time>
+              <time title="创建时间：2020-09-10 21:30:36" itemprop="dateCreated datePublished" datetime="2020-09-10T21:30:36+08:00">2020-09-10</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -204,12 +207,12 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
                 </span>
             </span>
 
           
-            <span id="/2020/07/21/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/" class="post-meta-item leancloud_visitors" data-flag-title="ch2-2.2 多项式分布" title="阅读次数">
+            <span id="/2020/09/10/IDL%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/" class="post-meta-item leancloud_visitors" data-flag-title="IDL基础语法" title="阅读次数">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -226,48 +229,181 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="多项式变量">2.2 多项式变量</h2>
-<p>二元变量只能用来描述两种可能的取值，然而实际会遇到存在<span class="math inline">\(K\)</span>种状态的情况。这种情况下，我们使用<span class="math inline">\(1-\mathrm{of}-K\)</span>的方法，可以更方便地进行表示。将变量<span class="math inline">\(\mathbf{x}\)</span>表示成一个<span class="math inline">\(K\)</span>维向量，向量中元素<span class="math inline">\(x_k\)</span>等于<span class="math inline">\(1\)</span>，其余元素等于<span class="math inline">\(0\)</span>。</p>
-<a id="more"></a>
-<p>例如有一个具有<span class="math inline">\(K=6\)</span>种状态的变量<span class="math inline">\(\mathbf{x}\)</span>，某次观测时恰好<span class="math inline">\(x_3=1\)</span>，则变量<span class="math inline">\(\mathbf{x}\)</span>可以表示为： <span class="math display">\[
-\mathbf{x}=(0,0,1,0,0,0)^{\mathrm{T}}
-\]</span></p>
-<p>这个向量<span class="math inline">\(\mathbf{x}\)</span>满足<span class="math inline">\(\sum_{k=1}^{K} x_{k}=1\)</span>。如果用参数<span class="math inline">\(\mu_k\)</span>表示<span class="math inline">\(x_k=1\)</span>的概率，那么<span class="math inline">\(\mathbf{x}\)</span>的分布可以表示为： <span class="math display">\[
-p(\mathbf{x} \mid \boldsymbol{\mu})=\prod_{k=1}^{K} \mu_{k}^{x_{k}}
-\]</span></p>
-<p>其中：<span class="math inline">\(\boldsymbol{\mu}=\left(\mu_{1}, \ldots, \mu_{K}\right)^{\mathrm{T}}\)</span>，且<span class="math inline">\(\mu_{k} \geqslant 0\)</span>，<span class="math inline">\(\sum_{k} \mu_{k}=1\)</span>。</p>
-<p>从形式上开，<span class="math inline">\(\mathbf{x}\)</span>的概率分布可以看作是伯努利分布在多输出情况下的推广。</p>
-<p>该分布的期望为： <span class="math display">\[
-\mathbb{E}[\mathbf{x} \mid \boldsymbol{\mu}]=\sum_{\mathbf{x}} p(\mathbf{x} \mid \boldsymbol{\mu}) \mathbf{x}=\left(\mu_{1}, \ldots, \mu_{M}\right)^{\mathrm{T}}=\boldsymbol{\mu}
-\]</span></p>
-<p>对于<span class="math inline">\(N\)</span>个独立观测向量<span class="math inline">\(\mathbf{x}_{1}, \ldots, \mathbf{x}_{N}\)</span>组成的数据集<span class="math inline">\(\mathcal{D}\)</span>，它的似然函数为： <span class="math display">\[
-p(\mathcal{D} \mid \boldsymbol{\mu})=\prod_{n=1}^{N} \prod_{k=1}^{K} \mu_{k}^{x_{n k}}=\prod_{k=1}^{K} \mu_{k}^{\left(\sum_{n} x_{n k}\right)}=\prod_{k=1}^{K} \mu_{k}^{m_{k}}
-\]</span></p>
-<p>其中：令<span class="math inline">\(m_{k}=\sum_{n} x_{n k}\)</span>，<span class="math inline">\(m_k\)</span>表示观测到<span class="math inline">\(x_k=1\)</span>的次数。</p>
-<p>通过最大化似然函数，可以得到： <span class="math display">\[
-\mu_{k}^{\mathrm{ML}}=\frac{m_{k}}{N}
-\]</span></p>
-<p>我们考虑<span class="math inline">\(m_{1}, \ldots, m_{K}\)</span>在参数<span class="math inline">\(\mu\)</span>和观测总数<span class="math inline">\(N\)</span>条件下的联合分布，可以得到这个分布的形式为： <span class="math display">\[
-\operatorname{Mult}\left(m_{1}, m_{2}, \ldots, m_{K} \mid \mu, N\right)=\left(\begin{array}{c}
-N \\
-m_{1} m_{2} \ldots m_{K}
-\end{array}\right) \prod_{k=1}^{K} \mu_{k}^{m_{k}}
-\]</span></p>
-<p>这个分布为<strong>多项式分布（multinomial distribution）</strong>。</p>
-<p>其中：<span class="math inline">\(\left(\begin{array}{c} N \\ m_{1} m_{2} \ldots m_{K} \end{array}\right)=\frac{N !}{m_{1} ! m_{2} ! \ldots m_{K} !}\)</span>，且<span class="math inline">\(m_k\)</span>满足<span class="math inline">\(\sum_{k=1}^{K} m_{k}=N\)</span>。</p>
-<h3 id="狄利克雷分布">2.2.1 狄利克雷分布</h3>
-<p>这里引入的是多项式分布的参数<span class="math inline">\(\left\{\mu_{k}\right\}\)</span>的先验分布，<strong>狄利克雷分布（Dirichlet distribution）</strong>，它的形式为： <span class="math display">\[
-\operatorname{Dir}(\boldsymbol{\mu} \mid \boldsymbol{\alpha})=\frac{\Gamma\left(\alpha_{0}\right)}{\Gamma\left(\alpha_{1}\right) \cdots \Gamma\left(\alpha_{K}\right)} \prod_{k=1}^{K} \mu_{k}^{\alpha_{k}-1}
-\]</span></p>
-<p>其中：<span class="math inline">\(\alpha_{1}, \ldots, \alpha_{K}\)</span>是分布的参数，<span class="math inline">\(\boldsymbol{\alpha}\)</span>表示<span class="math inline">\(\left(\alpha_{1}, \ldots, \alpha_{K}\right)^{\mathrm{T}}\)</span>。</p>
-<p>狄利克雷分布是多项式分布的共轭先验。</p>
-<p>后验分布的形式为： <span class="math display">\[
-\begin{aligned}
-p(\boldsymbol{\mu} \mid \mathcal{D}, \boldsymbol{\alpha}) &amp;=\operatorname{Dir}(\boldsymbol{\mu} \mid \boldsymbol{\alpha}+\mathbf{m}) \notag \\
-&amp;=\frac{\Gamma\left(\alpha_{0}+N\right)}{\Gamma\left(\alpha_{1}+m_{1}\right) \cdots \Gamma\left(\alpha_{K}+m_{K}\right)} \prod_{k=1}^{K} \mu_{k}^{\alpha_{k}+m_{k}-1} \notag 
-\end{aligned}
-\]</span></p>
-<p>与Beta分布类似，狄利克雷分布中的参数<span class="math inline">\(\alpha_k\)</span>可以看作是<span class="math inline">\(x_k=1\)</span>的有效观测数。</p>
+        <h1 id="idl基础语法">IDL基础语法</h1>
+<h2 id="一idl两种工作模式">一、IDL两种工作模式</h2>
+<p>IDL存在两种基本的工作模式：交互模式（interactive mode）和编译模式（compiled mode）。前者通过在IDL命令行中输入指令执行命令并得到及时反馈，适用于程序原型设计和交互式分析。后者用于编写指令集来开发较复杂的数据分析和可视化应用。</p>
+<p>在IDL中，基本的程序单元为过程（procedures）和函数（functions）。</p>
+<h3 id="交互模式interactive-mode">交互模式（interactive mode）</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; x &#x3D; findgen(201) * 0.1</span><br><span class="line">IDL&gt; y &#x3D; sin(x)</span><br><span class="line">IDL&gt; plot, x, y</span><br></pre></td></tr></table></figure>
+<p><code>x</code>为包含0.0~20.0，间隔为0.1，一共201个元素的浮点型数组。<code>y</code>为<code>x</code>数组中对应值的sin值。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/%E4%BA%A4%E4%BA%92%E6%A8%A1%E5%BC%8F%E7%BB%98%E5%9B%BE.png" alt="交互模式绘图" style="zoom: 50%;" /></p>
+<h3 id="编译模式compiled-mode">编译模式（compiled mode）</h3>
+<p>新建<code>hello.pro</code>文件（在idlde开发环境中，或其他文本编辑器中），输入代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PRO HELLO</span><br><span class="line"></span><br><span class="line">print, &quot;Hello world&quot;</span><br><span class="line">map_set, &#x2F;continents, &#x2F;grid</span><br><span class="line"></span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+<p>输入下面命令，编译并执行（也可以在界面中直接编译运行）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; .compile -v &#39;C:\Users\kenan\IDLWorkspace\hello.pro&#39;</span><br><span class="line">% Compiled module: HELLO.</span><br><span class="line">IDL&gt; hello</span><br><span class="line">Hello world</span><br><span class="line">% Compiled module: MAP_SET.</span><br><span class="line">% Compiled module: MAP_CONTINENTS.</span><br><span class="line">% Compiled module: MAP_GRID.</span><br><span class="line">% Compiled module: HELLO.</span><br><span class="line">Hello world</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/%E7%BC%96%E8%AF%91%E6%A8%A1%E5%BC%8FHelloWorld.png" alt="编译模式HelloWorld" style="zoom:50%;" /></p>
+<h2 id="二变量">二、变量</h2>
+<p>IDL中使用变量不需要申明，类型也不是固定的，在任何时候都可以直接指定新的变量。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; var &#x3D; 1.0</span><br><span class="line">IDL&gt; help, var</span><br><span class="line">VAR             FLOAT     &#x3D;       1.00000</span><br><span class="line"></span><br><span class="line">IDL&gt; var &#x3D; 1024</span><br><span class="line">IDL&gt; help, var</span><br><span class="line">VAR             INT       &#x3D;     1024</span><br></pre></td></tr></table></figure>
+<h3 id="数据类型">数据类型</h3>
+<p>IDL支持大量数据类型，主要有：</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">数据类型（数值型）</th>
+<th>Bits</th>
+<th>范围</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">byte</td>
+<td>8</td>
+<td>0 to 255</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">int</td>
+<td>16</td>
+<td>-32767 to 32767</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">uint</td>
+<td>16</td>
+<td>0 to 65535</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">long</td>
+<td>32</td>
+<td><span class="math inline">\(-2^{31}\)</span> to <span class="math inline">\(2^{31}-1\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ulong</td>
+<td>32</td>
+<td>0 to <span class="math inline">\(2^{32}-1\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">long64</td>
+<td>64</td>
+<td><span class="math inline">\(-2^{63}\)</span> to <span class="math inline">\(2^{63}-1\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ulong64</td>
+<td>64</td>
+<td>0 to <span class="math inline">\(2^{64}-1\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">float</td>
+<td>32</td>
+<td><span class="math inline">\(-10^{38}\)</span> to <span class="math inline">\(10^{38}\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">double</td>
+<td>64</td>
+<td><span class="math inline">\(-10^{308}\)</span> to <span class="math inline">\(10^{308}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">complex</td>
+<td>64</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dcomplex</td>
+<td>128</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th>数据类型（非数值型）</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>string</td>
+<td>字符串（0 - 32767个字符）</td>
+</tr>
+<tr class="even">
+<td>struct</td>
+<td>包含1个或多个变量的容器</td>
+</tr>
+<tr class="odd">
+<td>Pointer</td>
+<td>动态分配的变量的引用</td>
+</tr>
+<tr class="even">
+<td>objref</td>
+<td>对象结构的引用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="变量类型跟踪">变量类型跟踪</h3>
+<p>在IDL中，使用<code>help</code>过程，可以有效地查看变量的类型和大小。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; value &#x3D; 3.32</span><br><span class="line">IDL&gt; help, value</span><br><span class="line">VALUE           FLOAT     &#x3D;       3.32000</span><br><span class="line"></span><br><span class="line">IDL&gt; arr &#x3D; [2, 3, 4, 5, 6]</span><br><span class="line">IDL&gt; help, arr</span><br><span class="line">ARR             INT       &#x3D; Array[5]</span><br></pre></td></tr></table></figure>
+<p>在实际应用中，使用<code>help</code>过程可以确保变量拥有正确的类型和大小。如果在idlde开发环境中，可以直接在变量监视窗口查看变量。</p>
+<h3 id="变量类型转换">变量类型转换</h3>
+<p>下表为数据类型及其对应的转换函数：</p>
+<table>
+<thead>
+<tr class="header">
+<th>数据类型</th>
+<th>转换函数</th>
+<th>数据类型</th>
+<th>转换函数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>byte</td>
+<td>byte()</td>
+<td>int</td>
+<td><strong>fix()</strong></td>
+</tr>
+<tr class="even">
+<td>uint</td>
+<td>uint()</td>
+<td>long</td>
+<td>long()</td>
+</tr>
+<tr class="odd">
+<td>ulong</td>
+<td>ulong()</td>
+<td>long64</td>
+<td>long64()</td>
+</tr>
+<tr class="even">
+<td>ulong64</td>
+<td>ulong64()</td>
+<td>float</td>
+<td>float()</td>
+</tr>
+<tr class="odd">
+<td>double</td>
+<td>double()</td>
+<td>complex</td>
+<td>complex()</td>
+</tr>
+<tr class="even">
+<td>dcomplex</td>
+<td>dcomplex()</td>
+<td>string</td>
+<td>string()</td>
+</tr>
+</tbody>
+</table>
+<p>使用方法为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; x &#x3D; 3.1415926</span><br><span class="line">IDL&gt; help, x</span><br><span class="line">X               FLOAT     &#x3D;       3.14159</span><br><span class="line">IDL&gt; x &#x3D; long(x)</span><br><span class="line">IDL&gt; help, x</span><br><span class="line">X               LONG      &#x3D;            3</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，在转换的数据类型占用的字节数比输入的数据类型少时，数据会发生截断。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; value &#x3D; 257</span><br><span class="line">IDL&gt; help, value</span><br><span class="line">VALUE           INT       &#x3D;      257</span><br><span class="line">IDL&gt; value &#x3D; byte(value)</span><br><span class="line">IDL&gt; help, value</span><br><span class="line">VALUE           BYTE      &#x3D;    1</span><br></pre></td></tr></table></figure>
+<h3 id="浮点型转换为整型">浮点型转换为整型</h3>
+<p><code>fix</code>和<code>long</code>函数通常用来将浮点型转换为整型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; [4.32, 7.89, -1.25, -2.93]</span><br><span class="line">IDL&gt; print, fix(arr)</span><br><span class="line">       4       7      -1      -2</span><br><span class="line">IDL&gt; print, long(arr)</span><br><span class="line">           4           7          -1          -2</span><br></pre></td></tr></table></figure>
+<p><code>round</code>，<code>floor</code>，<code>ceil</code>也是常用的函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; print, round(arr)</span><br><span class="line">           4           8          -1          -3</span><br><span class="line">IDL&gt; print, floor(arr)</span><br><span class="line">           4           7          -2          -3</span><br><span class="line">IDL&gt; print, ceil(arr)</span><br><span class="line">           5           8          -1          -2</span><br></pre></td></tr></table></figure>
+<h3 id="字符串类型和数值类型相互转换">字符串类型和数值类型相互转换</h3>
 
     </div>
 
@@ -278,7 +414,7 @@ p(\boldsymbol{\mu} \mid \mathcal{D}, \boldsymbol{\alpha}) &amp;=\operatorname{Di
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/PRML/" rel="tag"><i class="fa fa-tag"></i> PRML</a>
+              <a href="/tags/idl/" rel="tag"><i class="fa fa-tag"></i> idl</a>
           </div>
 
         
@@ -287,13 +423,10 @@ p(\boldsymbol{\mu} \mid \mathcal{D}, \boldsymbol{\alpha}) &amp;=\operatorname{Di
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/07/19/ch2-2-1-%E4%BA%8C%E5%85%83%E5%8F%98%E9%87%8F/" rel="prev" title="ch2-2.1 二项分布">
-      <i class="fa fa-chevron-left"></i> ch2-2.1 二项分布
+    <a href="/2020/08/07/VSCode%E7%BC%96%E5%86%99LaTeX%E9%85%8D%E7%BD%AE/" rel="prev" title="VSCode编写LaTeX配置">
+      <i class="fa fa-chevron-left"></i> VSCode编写LaTeX配置
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/07/22/ch2-2-3-%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83/" rel="next" title="ch2-2.3 高斯分布">
-      ch2-2.3 高斯分布 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -353,7 +486,7 @@ p(\boldsymbol{\mu} \mid \mathcal{D}, \boldsymbol{\alpha}) &amp;=\operatorname{Di
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#多项式变量"><span class="nav-text">2.2 多项式变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#狄利克雷分布"><span class="nav-text">2.2.1 狄利克雷分布</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#idl基础语法"><span class="nav-text">IDL基础语法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一idl两种工作模式"><span class="nav-text">一、IDL两种工作模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#交互模式interactive-mode"><span class="nav-text">交互模式（interactive mode）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编译模式compiled-mode"><span class="nav-text">编译模式（compiled mode）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二变量"><span class="nav-text">二、变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据类型"><span class="nav-text">数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量类型跟踪"><span class="nav-text">变量类型跟踪</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量类型转换"><span class="nav-text">变量类型转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#浮点型转换为整型"><span class="nav-text">浮点型转换为整型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串类型和数值类型相互转换"><span class="nav-text">字符串类型和数值类型相互转换</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -701,7 +834,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'kenanking.github.io',
       owner       : 'kenanking',
       admin       : ['kenanking'],
-      id          : '13c3114e2ae0ba0fabcf8ebd0c534a59',
+      id          : '76e939b93aa07060dbea62ea062aae1b',
         language: 'zh-CN',
       distractionFreeMode: true
     });
