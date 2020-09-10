@@ -23,12 +23,12 @@
     var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="IDL基础语法 一、IDL两种工作模式 IDL存在两种基本的工作模式：交互模式（interactive mode）和编译模式（compiled mode）。前者通过在IDL命令行中输入指令执行命令并得到及时反馈，适用于程序原型设计和交互式分析。后者用于编写指令集来开发较复杂的数据分析和可视化应用。 在IDL中，基本的程序单元为过程（procedures）和函数（functions）。 交互">
+  <meta name="description" content="IDL基础语法 一、IDL两种工作模式 IDL存在两种基本的工作模式：交互模式（interactive mode）和编译模式（compiled mode）。前者通过在IDL命令行中输入指令执行命令并得到及时反馈，适用于程序原型设计和交互式分析。后者用于编写指令集来开发较复杂的数据分析和可视化应用。 在IDL中，基本的程序单元为过程（procedures）和函数（functions）。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="IDL基础语法">
 <meta property="og:url" content="https://kenanking.github.io/2020/09/10/IDL%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
-<meta property="og:description" content="IDL基础语法 一、IDL两种工作模式 IDL存在两种基本的工作模式：交互模式（interactive mode）和编译模式（compiled mode）。前者通过在IDL命令行中输入指令执行命令并得到及时反馈，适用于程序原型设计和交互式分析。后者用于编写指令集来开发较复杂的数据分析和可视化应用。 在IDL中，基本的程序单元为过程（procedures）和函数（functions）。 交互">
+<meta property="og:description" content="IDL基础语法 一、IDL两种工作模式 IDL存在两种基本的工作模式：交互模式（interactive mode）和编译模式（compiled mode）。前者通过在IDL命令行中输入指令执行命令并得到及时反馈，适用于程序原型设计和交互式分析。后者用于编写指令集来开发较复杂的数据分析和可视化应用。 在IDL中，基本的程序单元为过程（procedures）和函数（functions）。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/%E4%BA%A4%E4%BA%92%E6%A8%A1%E5%BC%8F%E7%BB%98%E5%9B%BE.png">
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/%E7%BC%96%E8%AF%91%E6%A8%A1%E5%BC%8FHelloWorld.png">
@@ -233,6 +233,7 @@
 <h2 id="一idl两种工作模式">一、IDL两种工作模式</h2>
 <p>IDL存在两种基本的工作模式：交互模式（interactive mode）和编译模式（compiled mode）。前者通过在IDL命令行中输入指令执行命令并得到及时反馈，适用于程序原型设计和交互式分析。后者用于编写指令集来开发较复杂的数据分析和可视化应用。</p>
 <p>在IDL中，基本的程序单元为过程（procedures）和函数（functions）。</p>
+<a id="more"></a>
 <h3 id="交互模式interactive-mode">交互模式（interactive mode）</h3>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; x &#x3D; findgen(201) * 0.1</span><br><span class="line">IDL&gt; y &#x3D; sin(x)</span><br><span class="line">IDL&gt; plot, x, y</span><br></pre></td></tr></table></figure>
 <p><code>x</code>为包含0.0~20.0，间隔为0.1，一共201个元素的浮点型数组。<code>y</code>为<code>x</code>数组中对应值的sin值。</p>
@@ -403,7 +404,132 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; [4.32, 7.89, -1.25, -2.93]</span><br><span class="line">IDL&gt; print, fix(arr)</span><br><span class="line">       4       7      -1      -2</span><br><span class="line">IDL&gt; print, long(arr)</span><br><span class="line">           4           7          -1          -2</span><br></pre></td></tr></table></figure>
 <p><code>round</code>，<code>floor</code>，<code>ceil</code>也是常用的函数。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; print, round(arr)</span><br><span class="line">           4           8          -1          -3</span><br><span class="line">IDL&gt; print, floor(arr)</span><br><span class="line">           4           7          -2          -3</span><br><span class="line">IDL&gt; print, ceil(arr)</span><br><span class="line">           5           8          -1          -2</span><br></pre></td></tr></table></figure>
-<h3 id="字符串类型和数值类型相互转换">字符串类型和数值类型相互转换</h3>
+<h3 id="字符类型和数值类型相互转换">字符类型和数值类型相互转换</h3>
+<p>字符类型转数值类型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; print, float(&#39;3.2&#39;), float(&#39;123ABC&#39;)</span><br><span class="line">      3.20000      123.000</span><br></pre></td></tr></table></figure>
+<p>当字符串中不含数字时，会输出警告信息，此时输出值为零：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; print, float(&#39;Hello&#39;)</span><br><span class="line">% Type conversion error: Unable to convert given STRING to Float.</span><br><span class="line">% Detected at: $MAIN$</span><br><span class="line">     0.000000</span><br></pre></td></tr></table></figure>
+<p>当字节型转换为字符型时，会将输入的字节类型转换为对应的ASCII字符：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; print, string([48B, 49B, 50B, 51B])</span><br><span class="line">0123</span><br></pre></td></tr></table></figure>
+<p>当字符型转换为字节型时，会将输入的字符串的每个字符转换为对应的ASCII值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; help, byte(&#39;ABCD&#39;)</span><br><span class="line">&lt;Expression&gt;    BYTE      &#x3D; Array[4]</span><br><span class="line">IDL&gt; print, byte(&#39;ABCD&#39;)</span><br><span class="line">  65  66  67  68</span><br></pre></td></tr></table></figure>
+<h3 id="变量命名">变量命名</h3>
+<p>变量名以字母开头，可以包含字母数字和下划线，在IDL中字母是不区分大小写的。IDL中的保留字不能作为变量名，函数名也最好不要作为变量名。</p>
+<h2 id="三数组">三、数组</h2>
+<p>IDL中可以由任何数据类型组成一至八维的数组。在IDL中，可以使用更简洁的语法处理数组、进行数组运算，而非使用循环，这些数组运算通常也是最优化的、执行速度比较快。</p>
+<p>例如：下面两段程序都是求一百万个均匀分布随机数的和。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; npts &#x3D; 1000000L</span><br><span class="line">IDL&gt; data &#x3D; randomu(-1L, npts)</span><br><span class="line">IDL&gt; sum &#x3D; total(data)</span><br><span class="line">IDL&gt; sum</span><br><span class="line">       499385.22</span><br><span class="line"></span><br><span class="line">IDL&gt; sum &#x3D; 0.0</span><br><span class="line">IDL&gt; for i &#x3D; 0L, (npts - 1L) do sum &#x3D; sum + data[i]</span><br><span class="line">IDL&gt; sum</span><br><span class="line">       499394.59</span><br></pre></td></tr></table></figure>
+<p>同样的效果，数组操作比循环语法上更简洁、速度更快。</p>
+<h3 id="创建数组">创建数组</h3>
+<p>在IDL中，使用方括号<code>[]</code>创建和索引数组。</p>
+<p>创建一维数组：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; x &#x3D; [0, 1, 2, 3, 4]</span><br><span class="line">IDL&gt; help, x</span><br><span class="line">X               INT       &#x3D; Array[5]</span><br><span class="line">IDL&gt; print, x</span><br><span class="line">       0       1       2       3       4</span><br></pre></td></tr></table></figure>
+<p>嵌套使用方括号可以创建多维数组：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; x &#x3D; [[0, 1, 2], [3, 4, 5], [6, 7, 8]]</span><br><span class="line">IDL&gt; help, x</span><br><span class="line">X               INT       &#x3D; Array[3, 3]</span><br><span class="line">IDL&gt; print, x</span><br><span class="line">       0       1       2</span><br><span class="line">       3       4       5</span><br><span class="line">       6       7       8</span><br></pre></td></tr></table></figure>
+<p>一个数组的末尾可以添加新的值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; [0, 1, 2, 3, 4]</span><br><span class="line">IDL&gt; arr &#x3D; [arr, 5, 6, 7, 8]</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">       0       1       2       3       4       5       6       7       8</span><br></pre></td></tr></table></figure>
+<h3 id="数组存储格式">数组存储格式</h3>
+<p><strong>IDL中，二维数组的第一维是列，第二维是行，即数组维度为：<code>[ncols, nrows]</code></strong>。在其他大部分语言中，通常为<code>[nrows, ncols]</code>，这是在写IDL程序时需要注意的。</p>
+<p>例如，对于如下数组：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; x</span><br><span class="line">       0       1       2</span><br><span class="line">       3       4       5</span><br><span class="line">       6       7       8</span><br><span class="line">       </span><br><span class="line">IDL&gt; x[1, 2]</span><br><span class="line">       7</span><br><span class="line"></span><br><span class="line">IDL&gt; x[2, 1]</span><br><span class="line">       5</span><br></pre></td></tr></table></figure>
+<p>其中，<code>x[1, 2]</code>表示第二列第三行的元素为<code>7</code>，<code>x[2, 1]</code>表示第三列第二行的元素为<code>5</code>。</p>
+<h3 id="创建数组的函数">创建数组的函数</h3>
+<p>IDL中内置了将数组元素初始化为0或者初始化为索引值的函数，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; zeros &#x3D; intarr(6)</span><br><span class="line">IDL&gt; index &#x3D; indgen(6)</span><br><span class="line">IDL&gt; print, zeros, index</span><br><span class="line">       0       0       0       0       0       0</span><br><span class="line">       0       1       2       3       4       5</span><br></pre></td></tr></table></figure>
+<p>也可以生成多维数组：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; index &#x3D; indgen(5, 3)</span><br><span class="line">IDL&gt; print, index</span><br><span class="line">       0       1       2       3       4</span><br><span class="line">       5       6       7       8       9</span><br><span class="line">      10      11      12      13      14</span><br></pre></td></tr></table></figure>
+<p>下表为将数组元素初始化为0或者初始化为索引值的函数：</p>
+<table>
+<thead>
+<tr class="header">
+<th>数据类型</th>
+<th>零数组</th>
+<th>索引值数组</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>byte</td>
+<td>bytarr()</td>
+<td>bindgen()</td>
+</tr>
+<tr class="even">
+<td>int</td>
+<td>intarr()</td>
+<td>indgen()</td>
+</tr>
+<tr class="odd">
+<td>uint</td>
+<td>uintarr()</td>
+<td>uindgen()</td>
+</tr>
+<tr class="even">
+<td>long</td>
+<td>lonarr()</td>
+<td>lindgen()</td>
+</tr>
+<tr class="odd">
+<td>ulong</td>
+<td>ulonarr()</td>
+<td>ulindgen()</td>
+</tr>
+<tr class="even">
+<td>long64</td>
+<td>lon64arr()</td>
+<td>l64indgen()</td>
+</tr>
+<tr class="odd">
+<td>ulong64</td>
+<td>ulon64arr()</td>
+<td>ul64indgen()</td>
+</tr>
+<tr class="even">
+<td>float</td>
+<td>fltarr()</td>
+<td>findgen()</td>
+</tr>
+<tr class="odd">
+<td>double</td>
+<td>dblarr()</td>
+<td>dindgen()</td>
+</tr>
+<tr class="even">
+<td>complex</td>
+<td>complexarr()</td>
+<td>cindgen()</td>
+</tr>
+<tr class="odd">
+<td>dcomplex</td>
+<td>dcomplexarr()</td>
+<td>dcindgen()</td>
+</tr>
+<tr class="even">
+<td>string</td>
+<td>strarr()</td>
+<td>sindgen()</td>
+</tr>
+</tbody>
+</table>
+<p><code>replicate</code>函数可以将一个标量复制为指定大小的数组：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; replicate(2.0, 4, 2)</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">      2.00000      2.00000      2.00000      2.00000</span><br><span class="line">      2.00000      2.00000      2.00000      2.00000</span><br></pre></td></tr></table></figure>
+<p><code>make_array</code>函数可以生成一个具有指定维数、指定类型的零数组或索引数组，也可以指定数组的值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; zeroed &#x3D; make_array(3, 2, &#x2F;byte)</span><br><span class="line">IDL&gt; print, zeroed</span><br><span class="line">   0   0   0</span><br><span class="line">   0   0   0</span><br><span class="line"></span><br><span class="line">IDL&gt; index &#x3D; make_array(4, 3, &#x2F;float, &#x2F;index)</span><br><span class="line">IDL&gt; print, index</span><br><span class="line">     0.000000      1.00000      2.00000      3.00000</span><br><span class="line">      4.00000      5.00000      6.00000      7.00000</span><br><span class="line">      8.00000      9.00000      10.0000      11.0000</span><br><span class="line"></span><br><span class="line">IDL&gt; arr &#x3D; make_array(6, &#x2F;long, value&#x3D;32L)</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">          32          32          32          32          32          32</span><br></pre></td></tr></table></figure>
+<h3 id="浮点型网格数组">浮点型网格数组</h3>
+<p>在IDL中，可以快速准确地生成任意间距的一维网格数组。例如生成一个1000.0~1010.0之间，间距为0.1的数组。</p>
+<p>首先定义数组的起点、终点和间距：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; x1 &#x3D; 1000.0</span><br><span class="line">IDL&gt; x2 &#x3D; 1010.0</span><br><span class="line">IDL&gt; dx &#x3D; 0.1</span><br></pre></td></tr></table></figure>
+<p>计算数组中元素的个数（加上<code>1.0e-5</code>是为了避免舍入误差）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; nx &#x3D; floor((x2 - x1) &#x2F; dx + 1.0e-5) + 1L</span><br><span class="line">IDL&gt; help, nx</span><br><span class="line">NX              LONG      &#x3D;          101</span><br></pre></td></tr></table></figure>
+<p>生成网格数组：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; lindgen(nx) * dx + x1</span><br><span class="line">IDL&gt; help, arr</span><br><span class="line">ARR             FLOAT     &#x3D; Array[101]</span><br><span class="line">IDL&gt; print, arr[96:100], format&#x3D;&#39;(5f11.4)&#39;</span><br><span class="line">  1009.6000  1009.7000  1009.8000  1009.9000  1010.0000</span><br></pre></td></tr></table></figure>
+<p>注意：网格数组不能使用循环生成，一方面循环效率比较低，另一方面循环造成的舍入误差会让数据不精确。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; fltarr(nx)</span><br><span class="line">IDL&gt; arr[0] &#x3D; x1</span><br><span class="line">IDL&gt; for index &#x3D; 1, (nx - 1) do arr[index] &#x3D; arr[index - 1] + dx</span><br><span class="line">IDL&gt; print, arr[96:100], format&#x3D;&#39;(5f11.4)&#39;</span><br><span class="line">  1009.5977  1009.6976  1009.7976  1009.8976  1009.9976</span><br></pre></td></tr></table></figure>
+<h2 id="四数组索引">四、数组索引</h2>
+<p>在IDL中，数组索引（或切片）是从零开始的，并且只支持正数，形式为：<code>array[index]</code>或<code>(array_expression)[index]</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; indgen(10) * 3</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">       0       3       6       9      12      15      18      21      24      27</span><br><span class="line">IDL&gt; index &#x3D; 5</span><br><span class="line"></span><br><span class="line">IDL&gt; print, arr[index]</span><br><span class="line">      15</span><br><span class="line"></span><br><span class="line">IDL&gt; print, (arr * 10)[index]</span><br><span class="line">     150</span><br><span class="line"></span><br><span class="line">; 索引也可以是一个数组</span><br><span class="line">IDL&gt; index &#x3D; [3, 5, 7, 4, 2]</span><br><span class="line">IDL&gt; print, arr[index]</span><br><span class="line">       9      15      21      12       6</span><br></pre></td></tr></table></figure>
+<h3 id="数组索引的例子">数组索引的例子</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; indgen(8) * 8</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">       0       8      16      24      32      40      48      56</span><br><span class="line"></span><br><span class="line">; 指定数字索引</span><br><span class="line">IDL&gt; print, arr[6]</span><br><span class="line">      48</span><br><span class="line"></span><br><span class="line">; 范围索引，两边都包括</span><br><span class="line">IDL&gt; print, arr[0:3]</span><br><span class="line">       0       8      16      24</span><br><span class="line"></span><br><span class="line">; 整个数组</span><br><span class="line">IDL&gt; print, arr[*]</span><br><span class="line">       0       8      16      24      32      40      48      56</span><br><span class="line"></span><br><span class="line">; 从指定位置到最后</span><br><span class="line">IDL&gt; print, arr[5:*]</span><br><span class="line">      40      48      56</span><br><span class="line"></span><br><span class="line">; 指定索引数组</span><br><span class="line">IDL&gt; index &#x3D; indgen(3) * 2</span><br><span class="line">IDL&gt; print, arr[index]</span><br><span class="line">       0      16      32</span><br></pre></td></tr></table></figure>
+<h3 id="多维数组索引的例子">多维数组索引的例子</h3>
 
     </div>
 
@@ -486,7 +612,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#idl基础语法"><span class="nav-text">IDL基础语法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一idl两种工作模式"><span class="nav-text">一、IDL两种工作模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#交互模式interactive-mode"><span class="nav-text">交互模式（interactive mode）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编译模式compiled-mode"><span class="nav-text">编译模式（compiled mode）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二变量"><span class="nav-text">二、变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据类型"><span class="nav-text">数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量类型跟踪"><span class="nav-text">变量类型跟踪</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量类型转换"><span class="nav-text">变量类型转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#浮点型转换为整型"><span class="nav-text">浮点型转换为整型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串类型和数值类型相互转换"><span class="nav-text">字符串类型和数值类型相互转换</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#idl基础语法"><span class="nav-text">IDL基础语法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一idl两种工作模式"><span class="nav-text">一、IDL两种工作模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#交互模式interactive-mode"><span class="nav-text">交互模式（interactive mode）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编译模式compiled-mode"><span class="nav-text">编译模式（compiled mode）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二变量"><span class="nav-text">二、变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据类型"><span class="nav-text">数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量类型跟踪"><span class="nav-text">变量类型跟踪</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量类型转换"><span class="nav-text">变量类型转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#浮点型转换为整型"><span class="nav-text">浮点型转换为整型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符类型和数值类型相互转换"><span class="nav-text">字符类型和数值类型相互转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量命名"><span class="nav-text">变量命名</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三数组"><span class="nav-text">三、数组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建数组"><span class="nav-text">创建数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数组存储格式"><span class="nav-text">数组存储格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建数组的函数"><span class="nav-text">创建数组的函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#浮点型网格数组"><span class="nav-text">浮点型网格数组</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四数组索引"><span class="nav-text">四、数组索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数组索引的例子"><span class="nav-text">数组索引的例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多维数组索引的例子"><span class="nav-text">多维数组索引的例子</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
