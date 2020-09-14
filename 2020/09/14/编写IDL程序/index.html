@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="编写IDL程序 一、编写与编译IDL程序 IDL程序包含两类：过程（procedures）和函数（functions）。一个过程中通常封装了几个不同的相关操作（比如打开读取文件、显示并缩放图片等等），而一个函数只实现一个功能。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="编写IDL程序">
+<meta property="og:url" content="https://kenanking.github.io/2020/09/14/%E7%BC%96%E5%86%99IDL%E7%A8%8B%E5%BA%8F/index.html">
+<meta property="og:site_name" content="额呵呵的博客">
+<meta property="og:description" content="编写IDL程序 一、编写与编译IDL程序 IDL程序包含两类：过程（procedures）和函数（functions）。一个过程中通常封装了几个不同的相关操作（比如打开读取文件、显示并缩放图片等等），而一个函数只实现一个功能。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/case%E5%AE%9E%E4%BE%8B%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%9C.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20200914074833645.png">
+<meta property="article:published_time" content="2020-09-14T04:38:28.000Z">
+<meta property="article:modified_time" content="2020-09-14T04:38:28.000Z">
+<meta property="article:author" content="汤焱">
+<meta property="article:tag" content="idl">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/case%E5%AE%9E%E4%BE%8B%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%9C.png">
+
+<link rel="canonical" href="https://kenanking.github.io/2020/09/14/%E7%BC%96%E5%86%99IDL%E7%A8%8B%E5%BA%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>编写IDL程序 | 额呵呵的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">额呵呵的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/09/14/%E7%BC%96%E5%86%99IDL%E7%A8%8B%E5%BA%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="汤焱">
+      <meta itemprop="description" content="记录学习和生活（遇到Latex公式加载异常可以刷新网页）">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="额呵呵的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          编写IDL程序
+        </h1>
+
+        <div class="post-meta">
+
+              
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-14 12:38:28" itemprop="dateCreated datePublished" datetime="2020-09-14T12:38:28+08:00">2020-09-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2020/09/14/%E7%BC%96%E5%86%99IDL%E7%A8%8B%E5%BA%8F/" class="post-meta-item leancloud_visitors" data-flag-title="编写IDL程序" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="编写idl程序">编写IDL程序</h1>
+<h2 id="一编写与编译idl程序">一、编写与编译IDL程序</h2>
+<p>IDL程序包含两类：过程（procedures）和函数（functions）。一个过程中通常封装了几个不同的相关操作（比如打开读取文件、显示并缩放图片等等），而一个函数只实现一个功能。</p>
+<a id="more"></a>
+<h3 id="过程procedures">过程（procedures）</h3>
+<p>当有多个变量传递给程序或者从程序返回时，通常使用过程。一个过程通常具有一个输入参数（也可以没有输入参数），具有一个或多个输出参数。</p>
+<p>例如，如果想以某种格式从文件中读取数据数组，则可以编写一个过程。该过程输入参数为文件名，输出参数为文件内容和大小。 在该过程中，相关操作有检查文件是否存在，然后将其打开并以正确的格式读取内容，最后关闭文件。 调用方式可能如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; read_profile, file, profile, nrec&#x3D;nrec</span><br></pre></td></tr></table></figure>
+<p>其中，<code>read_profile</code>为过程名，<code>file</code>为待读取的文件名,<code>profile</code>为从文件中读取的数据。其中<code>nrec</code>为可选参数。</p>
+<p>一个过程以<code>pro</code>申明开始，以<code>end</code>申明结束。<code>pro</code>申明中必须包含一个过程名，可能会有参数表或关键字表。通常情况下，会习惯将<code>PRO</code>和<code>END</code>大写，不过也不是必要的，因为IDL是大小写不敏感的。</p>
+<p>没有参数的过程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PRO HELLO</span><br><span class="line">print, &#39;Hello world&#39;</span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+<p>有三个参数的过程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PRO READ_IMAGE, IMAGE,DATA,TIME</span><br><span class="line">; statements...</span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+<p>有三个参数、两个可选参数的过程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PRO PRINT_IMAGE, IMAGE, DATE, TIME, LANDSCAPE&#x3D;LANDSCAPE, COLOR&#x3D;COLOR</span><br><span class="line">; statements...</span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+<h3 id="函数functions">函数（functions）</h3>
+<p>函数是通过赋值语句返回结果的程序（例如：<code>y=sin(x)</code>）。</p>
+<p>一个函数以<code>function</code>申明开始，包含一个<code>return</code>申明返回输出值，以<code>end</code>申明结束。<code>function</code>申明中必须包含一个函数名，可能会有参数表或关键字表。通常情况下，会习惯将<code>FUNCTION</code>和<code>END</code>大写。</p>
+<p>具有一个参数的函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FUNCTION F_TO_C, DEG_F</span><br><span class="line">return, (def_f - 32.0) * (5.0 &#x2F; 9.0)</span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+<p>具有三个参数、两个可选参数的函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FUNCTION, GET_BOUNDS, IMAGE, LAT, LON, POLAR&#x3D;POLAR, NORMAL&#x3D;NORMAL</span><br><span class="line">; statements...</span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+<h3 id="命名和编辑idl源文件">命名和编辑IDL源文件</h3>
+<p>命名IDL源文件的标准格式是：在过程名或函数名后跟<code>.pro</code>扩展名（例如：<code>imdisp.pro</code>）。</p>
+<p>在Windows平台，通常使用IDL Development Environment编辑IDL程序。</p>
+<h3 id="手动编译">手动编译</h3>
+<p>过程和函数可以手动通过<code>.compile</code>命令进行编译：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; .compile hello.pro</span><br><span class="line"></span><br><span class="line">; 一次可以编译多个过程和函数</span><br><span class="line">IDL&gt; .compile hello.pro imdisp.pro sds_read.pro</span><br></pre></td></tr></table></figure>
+<p>一旦手动编译了过程或函数，则该过程或函数将驻留在内存中，以供IDL会话的其他部分使用而无需重新编译。</p>
+<p>如果修改并重新编译了过程或函数的源代码，则新的编译版本将在内存中处于活动状态，原来的版本将丢失。</p>
+<p>此外，手动编译源文件不会重新编译在中调用的任何过程或函数（除非它们包含在源文件本身中）。</p>
+<h3 id="自动编译">自动编译</h3>
+<p>IDL在运行时会根据需要，自动编译过程和函数。</p>
+<p>如果IDL遇到对先前未在当前会话中编译的过程或函数的调用，它将在当前目录和IDL搜索路径中的所有目录中搜索与该过程或函数调用同名的源文件。</p>
+<p>但是如果一个源文件中，存在多个过程或函数，如果要顺利进行自动编译，这些过程和函数之间的顺序是非常重要的。当IDL自动编译源文件时，调用的每个过程或函数都必须满足以下条件之一：</p>
+<ol type="1">
+<li>在当前源文件中已先对其进行编译</li>
+<li>在当前IDL会话中已先对其进行编译</li>
+<li>可以在IDL路径中找到它并自动对其进行编译</li>
+</ol>
+<p>下面的例子的自动编译无法完成的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">PRO HELLO</span><br><span class="line">print, &#39;Hello world&#39;</span><br><span class="line">print, &#39;The square of 2 is &#39;, square(2)</span><br><span class="line">END</span><br><span class="line"></span><br><span class="line">FUNCTION SQUARE, X</span><br><span class="line">return, x * x</span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+<p>执行过程中会发生：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; hello</span><br><span class="line">% Compiled module: HELLO.</span><br><span class="line">Hello world</span><br><span class="line">% Variable is undefined: SQUARE.</span><br><span class="line">% Execution halted at: HELLO               3 hello.pro</span><br><span class="line">%                      $MAIN$</span><br></pre></td></tr></table></figure>
+<p>要解决此问题，并仍然利用自动编译的便利性，可以使用以下两种方法之一：</p>
+<ol type="1">
+<li>将每个过程和函数保存在单独的源文件中。</li>
+<li>如果相关的函数和过程保存在相同的源文件中，则将主过程或函数放在最后（即，该过程或函数与源文件本身的名称相同）。</li>
+</ol>
+<h2 id="二控制语句">二、控制语句</h2>
+<p>IDL中的控制语句允许指定语句执行的顺序。下表为IDL的控制语句：</p>
+<table>
+<thead>
+<tr class="header">
+<th>语句</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>if</td>
+<td>如果条件成立，执行下面的语句</td>
+</tr>
+<tr class="even">
+<td>case</td>
+<td>从一系列情况中，选择一个执行</td>
+</tr>
+<tr class="odd">
+<td>for</td>
+<td>对指定的次数，执行语句的循环</td>
+</tr>
+<tr class="even">
+<td>while</td>
+<td>条件为真时，执行语句的循环</td>
+</tr>
+<tr class="odd">
+<td>repeat</td>
+<td>重复语句的循环，直到条件为真</td>
+</tr>
+<tr class="even">
+<td>return</td>
+<td>将控制权返回给调用函数或过程</td>
+</tr>
+<tr class="odd">
+<td>goto</td>
+<td>前往一个标签</td>
+</tr>
+<tr class="even">
+<td>switch</td>
+<td>跳转到一系列情况下的某一个情况</td>
+</tr>
+<tr class="odd">
+<td>break</td>
+<td>跳出循环、case语句或switch语句</td>
+</tr>
+<tr class="even">
+<td>continue</td>
+<td>继续执行循环的下一次迭代</td>
+</tr>
+</tbody>
+</table>
+<h3 id="if语句"><code>if</code>语句</h3>
+<p><code>if</code>语句的使用主要有以下几种形式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if condition then statement else statement</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if condition then begin</span><br><span class="line">	statement(s)</span><br><span class="line">endif else begin</span><br><span class="line">	statement(s)</span><br><span class="line">endelse</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if condition then statement</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if condition then begin</span><br><span class="line">	statement(s)</span><br><span class="line">endif</span><br></pre></td></tr></table></figure>
+<p>下面为使用<code>if</code>语句的示例程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">PRO TEST_IF, NUM, DIV</span><br><span class="line"></span><br><span class="line">if ((num mod 2) eq 0) then begin</span><br><span class="line">  print, num, &#39; is even&#39;</span><br><span class="line">endif </span><br><span class="line"></span><br><span class="line">if ((num mod div) eq 0) then begin</span><br><span class="line">  print, num, &#39; is divisible by &#39;, div</span><br><span class="line">endif else begin</span><br><span class="line">  print, num, &#39; is not divisible by &#39;, div</span><br><span class="line">endelse</span><br><span class="line"></span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+<p>在IDL命令中编译并执行上面的程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; .compile test_if.pro</span><br><span class="line">% Compiled module: TEST_IF.</span><br><span class="line">IDL&gt; TEST_IF, 100, 5</span><br><span class="line">     100 is even</span><br><span class="line">     100 is divisible by        5</span><br></pre></td></tr></table></figure>
+<h3 id="case语句"><code>case</code>语句</h3>
+<p><code>case</code>语句根据与标量表达式的匹配，选择要执行的语句或语句块。主要语法为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">case expression of</span><br><span class="line">	exp1:</span><br><span class="line">	exp2: statement</span><br><span class="line">	exp3: begin</span><br><span class="line">			statement(s)</span><br><span class="line">		  end</span><br><span class="line">	else: statement</span><br><span class="line">endcase</span><br></pre></td></tr></table></figure>
+<p>这里，表达式<code>exp1</code>，<code>exp2</code>和<code>exp3</code>是标量表达式。在表达式与<code>case</code>语句中的表达式之间找到<strong>第一个匹配项</strong>时，将执行相应的语句或由<code>begin</code>和<code>end</code>括起来的语句块（仅识别一个匹配的表达式）。语句执行后，<code>case</code>语句终止并继续执行后面的程序。 如果找不到匹配项，则执行<code>else</code>后面的语句或语句块。 如果省略<code>else</code>，将发生错误并停止执行。 因此，在<code>case</code>中包含<code>else</code>是一种好的写程序方法。</p>
+<p>下面为使用<code>case</code>语句的示例程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">PRO TEST_CASE</span><br><span class="line"></span><br><span class="line"> command &#x3D; &#39;&#39;</span><br><span class="line"> </span><br><span class="line"> read, command, prompt&#x3D;&#39;Enter an IDL display command: &#39;</span><br><span class="line"> </span><br><span class="line"> cmdlist &#x3D; [&#39;plot&#39;, &#39;surface&#39;, &#39;tv&#39;]</span><br><span class="line"> index &#x3D; where(strlowcase(command) eq cmdlist)</span><br><span class="line"> </span><br><span class="line"> case index[0] of</span><br><span class="line">  0: plot, sin(findgen(100) * 0.25)</span><br><span class="line">  1: surface, dist(32)</span><br><span class="line">  2: begin</span><br><span class="line">      erase</span><br><span class="line">      image &#x3D; dist(400)</span><br><span class="line">      tvscl, image</span><br><span class="line">     end</span><br><span class="line">  else: print, &#39;Valid display commands are: &#39;, cmdlist</span><br><span class="line"> endcase</span><br><span class="line"> </span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+<p>在IDL命令中编译并执行上面的程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; .compile test_if.pro</span><br><span class="line">% Compiled module: TEST_IF.</span><br><span class="line">IDL&gt; test_case</span><br><span class="line">Enter an IDL display command: surface</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/case%E5%AE%9E%E4%BE%8B%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%9C.png" alt="case示例程序结果" style="zoom:50%;" /></p>
+<h3 id="for语句"><code>for</code>语句</h3>
+<p><code>for</code>语句通过将循环索引变量从起始值递增或递减到结束值，将单个语句或语句块执行指定的次数。 主要使用形式为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for i &#x3D; v1, v2 do statement</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for i &#x3D; v1, v2, inc do statement</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">for i &#x3D; v1, v2, inc do begin</span><br><span class="line">	statement(s)</span><br><span class="line">endfor</span><br></pre></td></tr></table></figure>
+<p>在前两种形式中，每个循环迭代都执行一条语句。 在第三种形式中，在每次循环迭代中都执行一个由<code>begin</code>和<code>endfor</code>包围的语句块。</p>
+<p>循环索引<code>i</code>以<code>v1</code>的值开头。在每次循环迭代中，<code>i</code>的值将以<code>inc</code>增加或减少，具体取决于<code>inc</code>是正还是负（如果未指定<code>inc</code>，则循环索引将在每次迭代中增加1）。</p>
+<p>下面为使用<code>for</code>语句的示例程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">PRO TEST_FOR</span><br><span class="line"></span><br><span class="line">erase</span><br><span class="line">for i &#x3D; 1L, 4L, 1L do begin</span><br><span class="line">  x &#x3D; findgen(100) * (0.1 * i)</span><br><span class="line">  plot, sin(x) + (2 * i), yrange&#x3D;[0, 10]</span><br><span class="line">endfor</span><br><span class="line"></span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20200914074833645.png" alt="for示例程序结果" /></p>
+<h3 id="while语句"><code>while</code>语句</h3>
+<p><code>while</code>语句在指定条件为真时，执行单个语句或语句块。主要使用形式为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">while condition do statement</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">while condition do begin</span><br><span class="line">	statement(s)</span><br><span class="line">endwhile</span><br></pre></td></tr></table></figure>
+<p>下面为使用<code>while</code>语句的示例程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">PRO TEST_WHILE, FILENAME</span><br><span class="line"></span><br><span class="line">openr, lun, filename, &#x2F;get_lun</span><br><span class="line">record &#x3D; &#39;&#39;</span><br><span class="line">while (eof(lun) ne 1) do begin</span><br><span class="line">  readf, lun, record</span><br><span class="line">  print, record</span><br><span class="line">endwhile</span><br><span class="line">free_lun, lun</span><br><span class="line"></span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+<p>这个示例程序使用while循环显示文本文件的每一行，直到遇到文件结尾：</p>
+<p>在IDL命令中编译并执行上面的程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; .compile test_while.pro</span><br><span class="line">IDL&gt; file &#x3D; filepath(&#39;crossp.pro&#39;, subdir&#x3D;&#39;lib&#39;)</span><br><span class="line">IDL&gt; test_while, file</span><br><span class="line">; $Id: &#x2F;&#x2F;depot&#x2F;Release&#x2F;ENVI53_IDL85&#x2F;idl&#x2F;idldir&#x2F;lib&#x2F;crossp.pro#1 $</span><br><span class="line">;</span><br><span class="line">; Copyright (c) 1983-2015, Exelis Visual Information Solutions, Inc. All</span><br><span class="line">;       rights reserved. Unauthorized reproduction is prohibited.</span><br><span class="line">; ………………………</span><br></pre></td></tr></table></figure>
+<h3 id="repeat语句"><code>repeat</code>语句</h3>
+<p><code>repeat</code>语句执行单个语句或语句块，直到指定条件为真为止。主要使用形式为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">repeat statement until condition</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">repeat begin</span><br><span class="line">	statement(s)</span><br><span class="line">endrep until condition</span><br></pre></td></tr></table></figure>
+<p>下面为使用<code>repeat</code>语句的示例程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">PRO TEST_REPEAT</span><br><span class="line"></span><br><span class="line">text &#x3D; &#39;&#39;</span><br><span class="line">count &#x3D; 0</span><br><span class="line">print, &#39;Enter text (done to quit)&#39;</span><br><span class="line">repeat begin</span><br><span class="line">  read, text</span><br><span class="line">  count &#x3D; count + 1</span><br><span class="line">endrep until (text eq &#39;done&#39;)</span><br><span class="line">print, &#39;Number of lines entered: &#39;, count - 1</span><br><span class="line"></span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+<p>在IDL命令中编译并执行上面的程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; .compile test_repeat</span><br><span class="line">% Compiled module: TEST_REPEAT.</span><br><span class="line">IDL&gt; test_repeat</span><br><span class="line">Enter text (done to quit)</span><br><span class="line">: if</span><br><span class="line">: case</span><br><span class="line">: while</span><br><span class="line">: done</span><br><span class="line">Number of lines entered:        3</span><br></pre></td></tr></table></figure>
+<h3 id="return语句"><code>return</code>语句</h3>
+<p><code>return</code>语句使当前程序单元立即退出，并将控制权返回给调用者。主要使用形式为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return, result</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return</span><br></pre></td></tr></table></figure>
+<p>在第一种形式中，<code>result</code>是一个返回给调用者的变量。 此形式在<code>functions</code>中是强制性的，必须始终将一个变量返回给调用方。第二种形式在<code>procedures</code>中使用当后面的语句不需要执行时。</p>
+<p>下面为使用<code>return</code>语句的示例程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">FUNCTION FILEOPEN, FILENAME, ERRTEXT&#x3D;ERRTEXT</span><br><span class="line"></span><br><span class="line">; Set default return value</span><br><span class="line">result &#x3D; -1</span><br><span class="line"></span><br><span class="line">; Check that filename is defined</span><br><span class="line">if (n_elements(filename) eq 0) then begin</span><br><span class="line">  errtext &#x3D; &#39;Filename is undeined&#39;</span><br><span class="line">  return ,result</span><br><span class="line">endif</span><br><span class="line"></span><br><span class="line">; Check that file exists</span><br><span class="line">if ((findfile(filename))[0] eq &#39;&#39;) then begin</span><br><span class="line">  errtext &#x3D; &#39;Filename was not found&#39;</span><br><span class="line">  return ,result</span><br><span class="line">endif</span><br><span class="line"></span><br><span class="line">; Open the file</span><br><span class="line">openr, lun, filename, &#x2F;get_lun</span><br><span class="line">errtext &#x3D; &#39;&#39;</span><br><span class="line">return, lun</span><br><span class="line"></span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+<p>在IDL命令中编译并执行上面的程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; .compile fileopen</span><br><span class="line">% Compiled module: FILEOPEN.</span><br><span class="line">IDL&gt; file &#x3D; filepath(&#39;crossp.pro&#39;, subdir&#x3D;&#39;lib&#39;)</span><br><span class="line">IDL&gt; lun &#x3D; fileopen(file)</span><br></pre></td></tr></table></figure>
+<h3 id="goto语句"><code>goto</code>语句</h3>
+<p><code>goto</code>语句跳转到当前程序单元中的指定位置。主要使用形式为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">goto, label</span><br></pre></td></tr></table></figure>
+<p><code>goto</code>语句的目标由<code>label</code>指定：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">label:</span><br></pre></td></tr></table></figure>
+<p><code>goto</code>语句在程序实现中应该被避免或不使用。</p>
+<h3 id="switch语句"><code>switch</code>语句</h3>
+<p><code>switch</code>语句在一系列情况列表中跳转到第一个匹配的情况，并且执行这个情况中的语句或语句块。主要用法为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">switch expression of</span><br><span class="line">	exp1:</span><br><span class="line">	exp2: statement</span><br><span class="line">	exp3: begin</span><br><span class="line">			statement(s)</span><br><span class="line">		  end</span><br><span class="line">	else: statement</span><br><span class="line">endswitch</span><br></pre></td></tr></table></figure>
+<h3 id="break语句"><code>break</code>语句</h3>
+<h3 id="continue语句"><code>continue</code>语句</h3>
+<h2 id="三参数与关键字">三、参数与关键字</h2>
+<h3 id="参数">参数</h3>
+<h3 id="关键字">关键字</h3>
+<h3 id="使用参数和关键字">使用参数和关键字</h3>
+<h3 id="参数传递机制">参数传递机制</h3>
+<h3 id="额外关键字">额外关键字</h3>
+<h3 id="额外关键字优先级">额外关键字优先级</h3>
+<h3 id="额外关键字传递机制">额外关键字传递机制</h3>
+<h2 id="四检查参数和关键字">四、检查参数和关键字</h2>
+<h2 id="五脚本包含文件和日志">五、脚本、包含文件和日志</h2>
+<h2 id="六全局变量">六、全局变量</h2>
+<h2 id="七错误处理">七、错误处理</h2>
+<h2 id="八编写高效的程序">八、编写高效的程序</h2>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/idl/" rel="tag"><i class="fa fa-tag"></i> idl</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/09/10/IDL%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/" rel="prev" title="IDL基础语法">
+      <i class="fa fa-chevron-left"></i> IDL基础语法
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#编写idl程序"><span class="nav-text">编写IDL程序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一编写与编译idl程序"><span class="nav-text">一、编写与编译IDL程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#过程procedures"><span class="nav-text">过程（procedures）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数functions"><span class="nav-text">函数（functions）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#命名和编辑idl源文件"><span class="nav-text">命名和编辑IDL源文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#手动编译"><span class="nav-text">手动编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自动编译"><span class="nav-text">自动编译</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二控制语句"><span class="nav-text">二、控制语句</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#if语句"><span class="nav-text">if语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#case语句"><span class="nav-text">case语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#for语句"><span class="nav-text">for语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#while语句"><span class="nav-text">while语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#repeat语句"><span class="nav-text">repeat语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#return语句"><span class="nav-text">return语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#goto语句"><span class="nav-text">goto语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#switch语句"><span class="nav-text">switch语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#break语句"><span class="nav-text">break语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#continue语句"><span class="nav-text">continue语句</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三参数与关键字"><span class="nav-text">三、参数与关键字</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数"><span class="nav-text">参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关键字"><span class="nav-text">关键字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用参数和关键字"><span class="nav-text">使用参数和关键字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参数传递机制"><span class="nav-text">参数传递机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#额外关键字"><span class="nav-text">额外关键字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#额外关键字优先级"><span class="nav-text">额外关键字优先级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#额外关键字传递机制"><span class="nav-text">额外关键字传递机制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四检查参数和关键字"><span class="nav-text">四、检查参数和关键字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五脚本包含文件和日志"><span class="nav-text">五、脚本、包含文件和日志</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六全局变量"><span class="nav-text">六、全局变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#七错误处理"><span class="nav-text">七、错误处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#八编写高效的程序"><span class="nav-text">八、编写高效的程序</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="汤焱"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">汤焱</p>
+  <div class="site-description" itemprop="description">记录学习和生活（遇到Latex公式加载异常可以刷新网页）</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">汤焱</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"xwoxrS5IoBnSXb4zno2RCOgA-gzGzoHsz","app_key":"MANLEALrzkpbS0k3MJFWxajk","server_url":"https://xwoxrs5i.lc-cn-n1-shared.com","security":false};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+          load: ['[tex]/mhchem'],
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+          packages: {'[+]': ['mhchem']},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2404a7f127de388e6dd6',
+      clientSecret: '0814196865cc60c2897ffaf2cc6618d38ebfc6d5',
+      repo        : 'kenanking.github.io',
+      owner       : 'kenanking',
+      admin       : ['kenanking'],
+      id          : '9a314c16e8756e75da749538b8b02f47',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

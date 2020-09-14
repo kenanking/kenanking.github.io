@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/%E4%BA%A4%E4%BA%92%E6%A8%A1%E5%BC%8F%E7%BB%98%E5%9B%BE.png">
 <meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/%E7%BC%96%E8%AF%91%E6%A8%A1%E5%BC%8FHelloWorld.png">
 <meta property="article:published_time" content="2020-09-10T13:30:36.000Z">
-<meta property="article:modified_time" content="2020-09-10T13:30:36.000Z">
+<meta property="article:modified_time" content="2020-09-14T04:38:36.000Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="idl">
 <meta name="twitter:card" content="summary">
@@ -201,6 +201,13 @@
 
               <time title="创建时间：2020-09-10 21:30:36" itemprop="dateCreated datePublished" datetime="2020-09-10T21:30:36+08:00">2020-09-10</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-14 12:38:36" itemprop="dateModified" datetime="2020-09-14T12:38:36+08:00">2020-09-14</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -567,7 +574,7 @@
 </tr>
 <tr class="even">
 <td>*</td>
-<td>取消指针引用</td>
+<td>取消指针引用（dereference）（获取指针指向内存空间的值）</td>
 <td>2</td>
 </tr>
 <tr class="odd">
@@ -716,7 +723,408 @@
 </tr>
 </tbody>
 </table>
-<p>关系运算符</p>
+<p>关系运算符也可以用于数组。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">; 一个参数为数组</span><br><span class="line">IDL&gt; a &#x3D; 6</span><br><span class="line">IDL&gt; b &#x3D; bindgen(9)</span><br><span class="line">IDL&gt; print, b</span><br><span class="line">   0   1   2   3   4   5   6   7   8</span><br><span class="line">IDL&gt; c &#x3D; b le a</span><br><span class="line">IDL&gt; print, c</span><br><span class="line">   1   1   1   1   1   1   1   0   0</span><br><span class="line"></span><br><span class="line">; 两个参数都是数组</span><br><span class="line">IDL&gt; a &#x3D; [2, 4, 6, 8]</span><br><span class="line">IDL&gt; b &#x3D; [3, 4, 5, 6]</span><br><span class="line">IDL&gt; print, a gt b</span><br><span class="line">   0   0   1   1</span><br></pre></td></tr></table></figure>
+<p>关系运算符对于数组的一个应用是，提供了一种遮掩数组中某些值的方法。</p>
+<p>例如，我们想找到一个数组中大于等于5的的所有元素之和。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; indgen(9)</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">       0       1       2       3       4       5       6       7       8</span><br><span class="line">IDL&gt; mask &#x3D; arr ge 5</span><br><span class="line">IDL&gt; print, mask * arr</span><br><span class="line">       0       0       0       0       0       5       6       7       8</span><br><span class="line">IDL&gt; print, total(mask * arr)</span><br><span class="line">      26.0000</span><br></pre></td></tr></table></figure>
+<p>需要注意，在判断浮点型变量相等或不相等的时候，要避免使用<code>eq</code>和<code>ne</code>，因为在IDL中，浮点型变量的精度是不确定的。我们可以通过设置一个小的容忍范围来解决这个问题。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; tol &#x3D; 1.0e-6</span><br><span class="line">IDL&gt; var1 &#x3D; 2.0</span><br><span class="line">IDL&gt; var2 &#x3D; 2.0</span><br><span class="line">IDL&gt; if (abs(var1 - var2) lt tol) then print, &#39;Values agree within tolerance&#39;</span><br><span class="line">Values agree within tolerance</span><br></pre></td></tr></table></figure>
+<h3 id="布尔运算符">布尔运算符</h3>
+<p>IDL中，布尔运算符包括<code>not</code>，<code>and</code>，<code>or</code>和<code>xor</code>。</p>
+<h3 id="三元运算符">三元运算符</h3>
+<p>三元运算符的作用是形成一个条件表达式，一般形式为： <span class="math display">\[
+expr_1 \; ? \; expr_2 : expr_3
+\]</span></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; x &#x3D; 10</span><br><span class="line">IDL&gt; y &#x3D; 5</span><br><span class="line">IDL&gt; if (x lt y) then z &#x3D; x else z &#x3D; y</span><br><span class="line">IDL&gt; print, z</span><br><span class="line">       5</span><br><span class="line"></span><br><span class="line">; 使用三元运算符</span><br><span class="line">IDL&gt; z &#x3D; (x lt y) ? x : y</span><br><span class="line">IDL&gt; print, z</span><br><span class="line">       5</span><br></pre></td></tr></table></figure>
+<h2 id="七结构">七、结构</h2>
+<p>结构是一种特殊的数据类型，它允许将不通类型和大小的变量打包到一个实体中（不同于数组，数组中每个元素必须是相同的数据类型）。</p>
+<p>IDL支持两种结构：</p>
+<ul>
+<li>匿名结构（anonymous structure）：包含任意变量</li>
+<li>命名结构（named structure）：包含的变量必须符合之前创建的模板</li>
+</ul>
+<h3 id="匿名结构">匿名结构</h3>
+<p>匿名结构通过把变量的名称和值用<code>{}</code>括起来创建，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; image &#x3D; &#123;name:&#39;Test Image&#39;, valid_range:[0.0, 100.0], data:dist(256)&#125;</span><br><span class="line">% Compiled module: DIST.</span><br><span class="line">IDL&gt; help, image</span><br><span class="line">** Structure &lt;53a3f70&gt;, 3 tags, length&#x3D;262168, data length&#x3D;262168, refs&#x3D;1:</span><br><span class="line">   NAME            STRING    &#39;Test Image&#39;</span><br><span class="line">   VALID_RANGE     FLOAT     Array[2]</span><br><span class="line">   DATA            FLOAT     Array[256, 256]</span><br><span class="line"></span><br><span class="line">; 结构变量访问</span><br><span class="line">IDL&gt; print, image.name</span><br><span class="line">Test Image</span><br><span class="line"></span><br><span class="line">; 通过索引访问</span><br><span class="line">IDL&gt; help, image.(0)</span><br><span class="line">&lt;Expression&gt;    STRING    &#x3D; &#39;Test Image&#39;</span><br><span class="line">IDL&gt; help, image.(1)</span><br><span class="line">&lt;Expression&gt;    FLOAT     &#x3D; Array[2]</span><br><span class="line">IDL&gt; help, image.(2)</span><br><span class="line">&lt;Expression&gt;    FLOAT     &#x3D; Array[256, 256]</span><br><span class="line"></span><br><span class="line">; 修改结构变量值</span><br><span class="line">IDL&gt; image.data &#x3D; image.data * (1.0 &#x2F; max(image.data))</span><br><span class="line">IDL&gt; image.name &#x3D; &#39;Normalized Test Image&#39;</span><br><span class="line">IDL&gt; image.valid_range &#x3D; [0.0, 1.0]</span><br></pre></td></tr></table></figure>
+<p>匿名结构体内变量的数据类型和大小是不能被修改的。</p>
+<p>匿名结构体可以嵌套使用。</p>
+<p>匿名结构不能放到数组中，即使它们的形式和包含的内容都相同也不行，因为不同匿名结构在IDL中的标识符不同，IDL认为它们就是不同的。这个问题可以用命名结构解决。</p>
+<h3 id="命名结构">命名结构</h3>
+<p>命名结构符合一个由用户创建的模板，一旦这个模板被创建，接下来就不能更改。</p>
+<p>创建命名结构的方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; rec &#x3D; &#123;nav_record, time:0.0, lat:0.0, lon:0.0, heading:0.0&#125;</span><br></pre></td></tr></table></figure>
+<p>通过上面的语句，创建了一个模板，叫做<code>nav_record</code>，其中包含了四个变量（时间、纬度、经度和航向）。这个模板创建的第一个实例变量是<code>rec</code>，它是可以被访问的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; print, rec.lat, rec.lon</span><br><span class="line">     0.000000     0.000000</span><br></pre></td></tr></table></figure>
+<p>命名结构新的实例可以通过在模板名称外面加<code>{}</code>来创建，也可以通过复制一个存在的实例来创建：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; xrec &#x3D; &#123;nav_record&#125;</span><br><span class="line">IDL&gt; xrec.time &#x3D; 12.25</span><br><span class="line"></span><br><span class="line">IDL&gt; yrec &#x3D; rec</span><br><span class="line">IDL&gt; yrec.time &#x3D; 13.50</span><br></pre></td></tr></table></figure>
+<p>命名结构的实例可以放在一个数组中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; a &#x3D; &#123;nav_record&#125;</span><br><span class="line">IDL&gt; b &#x3D; &#123;nav_record&#125;</span><br><span class="line">IDL&gt; c &#x3D; [a, b]</span><br><span class="line">IDL&gt; help, c</span><br><span class="line">C               STRUCT    &#x3D; -&gt; NAV_RECORD Array[2]</span><br></pre></td></tr></table></figure>
+<h3 id="结构的相关函数">结构的相关函数</h3>
+<table>
+<thead>
+<tr class="header">
+<th>函数名</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>n_tags()</td>
+<td>返回结构中变量的数量</td>
+</tr>
+<tr class="even">
+<td>tag_names()</td>
+<td>返回结构中每个变量的名称</td>
+</tr>
+<tr class="odd">
+<td>create_struct()</td>
+<td>创建一个结构，或者在结构中增加变量</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; image &#x3D; &#123;name:&#39;Test Image&#39;, valid_range:[0.0, 100.0], data:dist(256)&#125;</span><br><span class="line"></span><br><span class="line">; n_tags使用</span><br><span class="line">IDL&gt; print, n_tags(image)</span><br><span class="line">           3</span><br><span class="line"></span><br><span class="line">; tag_names使用</span><br><span class="line">IDL&gt; print, tag_names(image)</span><br><span class="line">NAME VALID_RANGE DATA</span><br></pre></td></tr></table></figure>
+<p><code>create_struct</code>函数的作用主要体现在两个方面：</p>
+<ol type="1">
+<li>允许在程序运行时创建结构体；</li>
+<li>允许在匿名结构中新增变量。</li>
+</ol>
+<p>使用<code>create_struct</code>函数的方法为：把名称和值作为参数依次输入。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; image &#x3D; create_struct(&#39;data&#39;, dist(256), &#39;valid_range&#39;, [0.0, 100.0])</span><br><span class="line">% Compiled module: DIST.</span><br><span class="line">IDL&gt; help, image.data</span><br><span class="line">&lt;Expression&gt;    FLOAT     &#x3D; Array[256, 256]</span><br><span class="line">IDL&gt; print, image.valid_range</span><br><span class="line">     0.000000      100.000</span><br><span class="line"></span><br><span class="line">; 在image中增加date属性</span><br><span class="line">IDL&gt; image &#x3D; create_struct(image, &#39;date&#39;, systime())</span><br><span class="line">IDL&gt; help, image.data</span><br><span class="line">&lt;Expression&gt;    FLOAT     &#x3D; Array[256, 256]</span><br><span class="line">IDL&gt; help, image.date</span><br><span class="line">&lt;Expression&gt;    STRING    &#x3D; &#39;Sat Sep 12 23:09:46 2020&#39;</span><br></pre></td></tr></table></figure>
+<h2 id="八指针">八、指针</h2>
+<p>指针是一种特殊的变量，本身不包含值，而是其他IDL变量（这个变量包括标量、数组、结构、其他指针）的一个引用。指针有助于存储复杂的数据集合，尤其是事先不知道数据大小和类型的时候。例如在结构体中使用，那么这个结构体中的指针可以指向不同大小的图像等等。</p>
+<p>下表中为一些常用的与指针相关的过程和函数：</p>
+<table>
+<thead>
+<tr class="header">
+<th>名称</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ptr_new()</td>
+<td>返回一个新指针</td>
+</tr>
+<tr class="even">
+<td>ptrarr()</td>
+<td>返回一个新指针的数组</td>
+</tr>
+<tr class="odd">
+<td>ptr_free</td>
+<td>释放指针引用的空间</td>
+</tr>
+<tr class="even">
+<td>ptr_valid()</td>
+<td>检查指针的合法性</td>
+</tr>
+</tbody>
+</table>
+<h3 id="指针类型">指针类型</h3>
+<p>IDL中指针只有两种存在状态：合法（valid）与不合法（invalid）。</p>
+<ul>
+<li>合法：指向一个IDL变量（可以是一个未定义的变量）的指针是合法的。这些指针可以被访问。</li>
+<li>不合法：指针不指向任何内容（空指针）。空指针的作用在于指向一个目前还不知道存储内容的变量。</li>
+</ul>
+<h3 id="创建指针">创建指针</h3>
+<p>创建指针的主要方法为使用<code>ptr_new()</code>函数，下面为三种创建指针的情况：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">; 参数为一个标量，指针直接指向这个标量</span><br><span class="line">IDL&gt; p &#x3D; ptr_new(1.0)</span><br><span class="line">IDL&gt; help, *p</span><br><span class="line">&lt;PtrHeapVar1&gt;   FLOAT     &#x3D;       1.00000</span><br><span class="line"></span><br><span class="line">; 参数为一个IDL变量，指针指向一个存在的变量</span><br><span class="line">IDL&gt; arr &#x3D; indgen(5)</span><br><span class="line">IDL&gt; ptr1 &#x3D; ptr_new(arr)</span><br><span class="line">IDL&gt; help, *ptr1</span><br><span class="line">&lt;PtrHeapVar2&gt;   INT       &#x3D; Array[5]</span><br><span class="line"></span><br><span class="line">; 创建一个指针，指向一个未定义的变量</span><br><span class="line">IDL&gt; ptr2 &#x3D; ptr_new(&#x2F;allocate_heap)</span><br><span class="line">IDL&gt; help, *ptr2</span><br><span class="line">&lt;PtrHeapVar3&gt;   UNDEFINED &#x3D; !NULL</span><br><span class="line"></span><br><span class="line">; 创建一个空指针</span><br><span class="line">IDL&gt; ptr3 &#x3D; ptr_new()</span><br><span class="line">IDL&gt; help, *ptr3</span><br><span class="line">% Unable to dereference NULL pointer: PTR3.</span><br><span class="line">% Execution halted at: $MAIN$</span><br></pre></td></tr></table></figure>
+<p>创建一个指针数组，可以使用函数<code>ptrarr</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; ptr &#x3D; ptrarr(10, &#x2F;allocate_heap)</span><br><span class="line">IDL&gt; *ptr[0] &#x3D; dist(256)</span><br><span class="line">% Compiled module: DIST.</span><br><span class="line">IDL&gt; *ptr[1] &#x3D; indgen(10)</span><br><span class="line"></span><br><span class="line">; 不能直接获取指针数据的值，一次只能获取一个指针的值</span><br><span class="line">IDL&gt; help, *ptr[0:2]</span><br><span class="line">% Expression must be a scalar in this context: &lt;POINTER   Array[3]&gt;.</span><br><span class="line">% Execution halted at: $MAIN$</span><br></pre></td></tr></table></figure>
+<h3 id="释放指针">释放指针</h3>
+<p>在IDL中，如果一个指针指向的内存空间不再被使用了，那么最好不要再把它放在内存中，而是将那一块内存空间释放掉。</p>
+<p>释放指针指向的内容空间，使用的是<code>ptr_free</code>过程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; ptr &#x3D; ptr_new(10.0)</span><br><span class="line">IDL&gt; ptr_free, ptr</span><br><span class="line"></span><br><span class="line">IDL&gt; help, ptr</span><br><span class="line">PTR             POINTER   &#x3D; &lt;PtrHeapVar14&gt;</span><br><span class="line">IDL&gt; print, *ptr</span><br><span class="line">% Invalid pointer: PTR.</span><br><span class="line">% Execution halted at: $MAIN$</span><br></pre></td></tr></table></figure>
+<p>可以看到，一旦释放了指针指向的内存空间，这个指针就不合法了。意味着，这个指针本身存在，但是不再指向一块内存空间。</p>
+<h3 id="检查指针合法性">检查指针合法性</h3>
+<p>如果我们尝试获取一个不合法的指针的值，此时程序会报错，所以最好我们能够检查一个指针是否合法。IDL提供了<code>ptr_valid</code>函数检查指针的合法性。</p>
+<p>当<code>ptr_valid</code>函数的参数为不合法指针或者其他IDL数据类型时都会返回<code>0</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; ptr &#x3D; ptr_new(10.0)</span><br><span class="line">IDL&gt; print, ptr_valid(ptr)</span><br><span class="line">   1</span><br><span class="line">IDL&gt; ptr_free, ptr</span><br><span class="line">IDL&gt; print, ptr_valid(ptr)</span><br><span class="line">   0</span><br></pre></td></tr></table></figure>
+<h3 id="获取指针值">获取指针值</h3>
+<p>如果指针指向一个数组，那么可以直接用<code>*</code>获取整个数组：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; ptr &#x3D; ptr_new(indgen(4, 4))</span><br><span class="line">IDL&gt; print, *ptr</span><br><span class="line">       0       1       2       3</span><br><span class="line">       4       5       6       7</span><br><span class="line">       8       9      10      11</span><br><span class="line">      12      13      14      15</span><br></pre></td></tr></table></figure>
+<p>如果只想得到一个子数组，那么要加括号再获取子数组：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">; 不加括号会报错</span><br><span class="line">IDL&gt; print, *ptr[0, *]</span><br><span class="line">% Expression must be a scalar in this context: &lt;POINTER   Array[1]&gt;.</span><br><span class="line">% Execution halted at: $MAIN$</span><br><span class="line"></span><br><span class="line">IDL&gt; print, (*ptr)[0, *]</span><br><span class="line">       0</span><br><span class="line">       4</span><br><span class="line">       8</span><br><span class="line">      12</span><br></pre></td></tr></table></figure>
+<p>从一个指针的指针获取值，那么可以叠加使用<code>*</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; ptr_a &#x3D; ptr_new(10.0)</span><br><span class="line">IDL&gt; ptr_b &#x3D; ptr_new(ptr_a)</span><br><span class="line">IDL&gt; print,  **ptr_b</span><br><span class="line">      10.0000</span><br></pre></td></tr></table></figure>
+<p>如果指针在一个结构内，<code>*</code>可以直接加在结构前面：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; rec &#x3D; &#123;flag:1L, data_ptr:ptr_new(indgen(5))&#125;</span><br><span class="line">IDL&gt; print, *rec.data_ptr</span><br><span class="line">       0       1       2       3       4</span><br></pre></td></tr></table></figure>
+<h3 id="避免使用指针时发生的问题">避免使用指针时发生的问题</h3>
+<p>当使用指针而忘记释放指针指向的内存空间时，会发生内存泄漏问题（经过实际实验，发现在IDL8.5版本中，当指针指向新的内存空间时，原来指向的内存空间会被自动释放）。比如下面的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; ptr &#x3D; ptr_new(1.0)</span><br><span class="line">IDL&gt; ptr &#x3D; ptr_new(indgen(10))</span><br></pre></td></tr></table></figure>
+<p>这个例子中，创建了一个指针变量<code>ptr</code>，<code>ptr</code>首先指向了一个浮点型标量，然后又指向了一个整形数组。这种情况下，我们如何去获取浮点型标量的值呢？</p>
+<p>在IDL8.5中，用<code>help, /heap_variables</code>命令查看内存中的变量，发现原来的浮点型标量已经被自动释放了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; help, &#x2F;heap_variables</span><br><span class="line">Heap Variables:</span><br><span class="line">    # Pointer: 1</span><br><span class="line">    # Object : 0</span><br><span class="line"></span><br><span class="line">&lt;PtrHeapVar2&gt;  refcount&#x3D;1</span><br><span class="line">                INT       &#x3D; Array[10]</span><br></pre></td></tr></table></figure>
+<h2 id="九数组性质">九、数组性质</h2>
+<p>下表列出了一些函数用于获取数组的性质：</p>
+<table>
+<thead>
+<tr class="header">
+<th>函数名称</th>
+<th>返回值</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>n_elements()</td>
+<td>数组元素的数量</td>
+</tr>
+<tr class="even">
+<td>size()</td>
+<td>数组的大小和类型</td>
+</tr>
+<tr class="odd">
+<td>min()</td>
+<td>数组中的最小值</td>
+</tr>
+<tr class="even">
+<td>max()</td>
+<td>数组中的最大值</td>
+</tr>
+<tr class="odd">
+<td>mean()</td>
+<td>数组的平均值</td>
+</tr>
+<tr class="even">
+<td>variance()</td>
+<td>数组的方差</td>
+</tr>
+<tr class="odd">
+<td>stddev()</td>
+<td>数组的标准差</td>
+</tr>
+<tr class="even">
+<td>moment()</td>
+<td>均值，方差，偏度（skew），峰度（kurtosis）</td>
+</tr>
+<tr class="odd">
+<td>total()</td>
+<td>数组元素的总和</td>
+</tr>
+</tbody>
+</table>
+<h3 id="数组元素个数">数组元素个数</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; findgen(32, 32)</span><br><span class="line">IDL&gt; help, arr</span><br><span class="line">ARR             FLOAT     &#x3D; Array[32, 32]</span><br><span class="line">IDL&gt; print, n_elements(arr)</span><br><span class="line">        1024</span><br><span class="line"></span><br><span class="line">; 数组没有定义的情况下返回0</span><br><span class="line">IDL&gt; help, foobar</span><br><span class="line">FOOBAR          UNDEFINED &#x3D; &lt;Undefined&gt;</span><br><span class="line">IDL&gt; print, n_elements(foobar)</span><br><span class="line">           0</span><br></pre></td></tr></table></figure>
+<h3 id="数组大小和类型">数组大小和类型</h3>
+<p><code>size</code>函数会返回一个向量，包含了数组的大小和类型信息（分别为：维度数量，每个维度大小，类型码，元素个数）。<code>size</code>函数的参数中可以添加可选参数<code>n_dimensions</code>，<code>dimensions</code>，<code>type</code>，<code>tname</code>和<code>n_elements</code>。</p>
+<p>下表为IDL类型码：</p>
+<table>
+<thead>
+<tr class="header">
+<th>数据类型</th>
+<th>类型码</th>
+<th>类型名称</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Undefined</td>
+<td>1</td>
+<td>'UNDEFINED'</td>
+</tr>
+<tr class="even">
+<td>Byte</td>
+<td>2</td>
+<td>'BYTE'</td>
+</tr>
+<tr class="odd">
+<td>Integer</td>
+<td>3</td>
+<td>'INT'</td>
+</tr>
+<tr class="even">
+<td>Long integer</td>
+<td>4</td>
+<td>'LONG'</td>
+</tr>
+<tr class="odd">
+<td>Float</td>
+<td>5</td>
+<td>'GLOAT'</td>
+</tr>
+<tr class="even">
+<td>Double precision</td>
+<td>6</td>
+<td>'DOUBLE'</td>
+</tr>
+<tr class="odd">
+<td>Complex float</td>
+<td>7</td>
+<td>'COMPLEX'</td>
+</tr>
+<tr class="even">
+<td>String</td>
+<td>8</td>
+<td>'STRING'</td>
+</tr>
+<tr class="odd">
+<td>Structure</td>
+<td>9</td>
+<td>'STRUCT'</td>
+</tr>
+<tr class="even">
+<td>Complex double precision</td>
+<td>10</td>
+<td>'DCOMPLEX'</td>
+</tr>
+<tr class="odd">
+<td>Pointer</td>
+<td>11</td>
+<td>'POINTER'</td>
+</tr>
+<tr class="even">
+<td>Object reference</td>
+<td>12</td>
+<td>'OBJREF'</td>
+</tr>
+<tr class="odd">
+<td>Unsigned integer</td>
+<td>13</td>
+<td>'UINT'</td>
+</tr>
+<tr class="even">
+<td>Unsigned long integer</td>
+<td>14</td>
+<td>'ULONG'</td>
+</tr>
+<tr class="odd">
+<td>64-bit integer</td>
+<td>15</td>
+<td>'LONG64'</td>
+</tr>
+<tr class="even">
+<td>Unsigned 64-bit integer</td>
+<td>16</td>
+<td>'ULONG64'</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; dist(256)</span><br><span class="line">IDL&gt; help, arr</span><br><span class="line">ARR             FLOAT     &#x3D; Array[256, 256]</span><br><span class="line">IDL&gt; print, size(arr)</span><br><span class="line">           2         256         256           4       65536</span><br><span class="line"></span><br><span class="line">; 加入可选参数</span><br><span class="line">IDL&gt; print, size(arr, &#x2F;n_dimensions)</span><br><span class="line">           2</span><br><span class="line">IDL&gt; print, size(arr, &#x2F;dimensions)</span><br><span class="line">         256         256</span><br><span class="line">IDL&gt; print, size(arr, &#x2F;type)</span><br><span class="line">           4</span><br><span class="line">IDL&gt; print, size(arr, &#x2F;tname)</span><br><span class="line">FLOAT</span><br><span class="line">IDL&gt; print, size(arr, &#x2F;n_elements)</span><br><span class="line">       65536</span><br></pre></td></tr></table></figure>
+<h3 id="最大值和最小值">最大值和最小值</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; dist(32)</span><br><span class="line">IDL&gt; print, min(arr), max(arr)</span><br><span class="line">     0.000000      22.6274</span><br></pre></td></tr></table></figure>
+<p>为了避免扫描数组两次，<code>min</code>函数也可以同时返回数组的最大值通过<code>max</code>关键字：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; minval &#x3D; min(arr, max&#x3D;maxval)</span><br><span class="line">IDL&gt; print, minval, maxval</span><br><span class="line">     0.000000      22.6274</span><br></pre></td></tr></table></figure>
+<p><code>max</code>和<code>min</code>函数可以加入可选参数，返回最大值和最小值的索引。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; maxval &#x3D; max(arr, index)</span><br><span class="line">IDL&gt; print, index</span><br><span class="line">         528</span><br></pre></td></tr></table></figure>
+<h3 id="均值方差标准差">均值、方差、标准差</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; findgen(10) * 100.0</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">     0.000000      100.000      200.000      300.000      400.000      500.000</span><br><span class="line">      600.000      700.000      800.000      900.000</span><br><span class="line">IDL&gt; print, mean(arr), variance(arr), stddev(arr)</span><br><span class="line">      450.000      91666.7      302.765</span><br><span class="line"></span><br><span class="line">; moment返回数组的均值，方差，偏度（skew），峰度（kurtosis）</span><br><span class="line">IDL&gt; print, moment(arr)</span><br><span class="line">      450.000      91666.7 2.88252e-008     -1.56164</span><br></pre></td></tr></table></figure>
+<h3 id="总和">总和</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; indgen(3, 3)</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">       0       1       2</span><br><span class="line">       3       4       5</span><br><span class="line">       6       7       8</span><br><span class="line">IDL&gt; print, total(arr)</span><br><span class="line">      36.0000</span><br></pre></td></tr></table></figure>
+<p><code>total</code>可以通过指定维度，来对数组的某一维度求和：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; print, total(arr, 1)</span><br><span class="line">      3.00000      12.0000      21.0000</span><br><span class="line">IDL&gt;</span><br><span class="line">IDL&gt; print, total(arr, 2)</span><br><span class="line">      9.00000      12.0000      15.0000</span><br></pre></td></tr></table></figure>
+<p>如果加入可选参数<code>cumulative</code>，那么可以对数组累计求和：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; indgen(9)</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">       0       1       2       3       4       5       6       7       8</span><br><span class="line">IDL&gt; print, total(arr, &#x2F;cumulative)</span><br><span class="line">     0.000000      1.00000      3.00000      6.00000      10.0000      15.0000</span><br><span class="line">      21.0000      28.0000      36.0000</span><br></pre></td></tr></table></figure>
+<h2 id="十定位数组中元素的位置">十、定位数组中元素的位置</h2>
+<p>使用数组时，最常见的任务之一是查找满足特定条件的元素，例如大于某一个阈值的值。IDL中，<code>where</code>函数可以完成这一任务，并且是它是IDL中最有用的与数组相关的函数之一。</p>
+<h3 id="找到符合规则的值">找到符合规则的值</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; indgen(9) * 10</span><br><span class="line">IDL&gt; index &#x3D; where(arr gt 35)</span><br><span class="line">IDL&gt; print, arr[index]</span><br><span class="line">      40      50      60      70      80</span><br></pre></td></tr></table></figure>
+<p>上面的例子中，展示了如何使用<code>where</code>函数找到大于某一个阈值的元素。</p>
+<p><code>where</code>函数的作用是返回数组中非零元素的下标，从下面的例子可以看出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">; result结果为上面例子中where的参数</span><br><span class="line">IDL&gt; result &#x3D; arr gt 35</span><br><span class="line">IDL&gt; print, result</span><br><span class="line">   0   0   0   0   1   1   1   1   1</span><br><span class="line"></span><br><span class="line">; 使用where函数，返回了result数组中，非零元素的下标</span><br><span class="line">IDL&gt; index &#x3D; where(result)</span><br><span class="line">IDL&gt; print, index</span><br><span class="line">           4           5           6           7           8</span><br></pre></td></tr></table></figure>
+<p><code>where</code>函数的参数可以用复杂的表达式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; index &#x3D; where((arr gt 35) and ((arr mod 4) eq 0))</span><br><span class="line">IDL&gt; print, arr[index]</span><br><span class="line">      40      60      80</span><br></pre></td></tr></table></figure>
+<p>当<code>where</code>的参数中没有非零值时，<code>where</code>的返回值为-1：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; index &#x3D; where(arr lt -10000.0)</span><br><span class="line">IDL&gt; help, index</span><br><span class="line">INDEX           LONG      &#x3D;           -1</span><br></pre></td></tr></table></figure>
+<p><code>where</code>函数中，可以加入<code>count</code>参数，返回非零元素的个数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; dist(16)</span><br><span class="line">IDL&gt; print, min(arr), max(arr)</span><br><span class="line">     0.000000      11.3137</span><br><span class="line">IDL&gt; index &#x3D; where(arr lt -10.0, count)</span><br><span class="line">IDL&gt; print, count</span><br><span class="line">           0</span><br><span class="line">IDL&gt; index &#x3D; where(arr gt 9.0, count)</span><br><span class="line">IDL&gt; print, count</span><br><span class="line">          25</span><br></pre></td></tr></table></figure>
+<p><strong>注：在使用<code>where</code>推荐加入<code>count</code>可选参数。</strong></p>
+<h3 id="输入数组为多维数组">输入数组为多维数组</h3>
+<p>当<code>where</code>的参数为二维或更高维的数组是，返回的索引值始终时一维的。当时仍然可以找到索引对应的值，因为多维数组可以看作一维的去索引。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; dist(250, 500)</span><br><span class="line">IDL&gt; help, arr</span><br><span class="line">ARR             FLOAT     &#x3D; Array[250, 500]</span><br><span class="line">IDL&gt; index &#x3D; where(arr gt 150.0)</span><br><span class="line">IDL&gt; help, index</span><br><span class="line">INDEX           LONG      &#x3D; Array[59942]</span><br><span class="line">IDL&gt; print, arr[index[0]]</span><br><span class="line">      150.047</span><br></pre></td></tr></table></figure>
+<h2 id="十一数组重排序">十一、数组重排序</h2>
+<p>下表数组重排序的相关函数：</p>
+<table>
+<thead>
+<tr class="header">
+<th>函数名称</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>reform()</td>
+<td>改变数组维度</td>
+</tr>
+<tr class="even">
+<td>reverse()</td>
+<td>数组逆序</td>
+</tr>
+<tr class="odd">
+<td>rotate()</td>
+<td>数组旋转或转置</td>
+</tr>
+<tr class="even">
+<td>transpose()</td>
+<td>数组转置</td>
+</tr>
+<tr class="odd">
+<td>shift()</td>
+<td>数字偏移</td>
+</tr>
+<tr class="even">
+<td>sort()</td>
+<td>数组排序</td>
+</tr>
+<tr class="odd">
+<td>uniq()</td>
+<td>在排序后数组中，获取唯一值组成的数组</td>
+</tr>
+</tbody>
+</table>
+<h3 id="改变数组维度">改变数组维度</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; [0, 20, 40, 60, 80, 100]</span><br><span class="line">IDL&gt; arr &#x3D; reform(arr, 3, 2)</span><br><span class="line">IDL&gt; help, arr</span><br><span class="line">ARR             INT       &#x3D; Array[3, 2]</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">       0      20      40</span><br><span class="line">      60      80     100</span><br></pre></td></tr></table></figure>
+<p>当<code>reform</code>函数中输入的数组某一个维度为1时，可以自动删除这一个维度。例如：当从数组提取列向量时，可以把它变成一行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; indgen(5, 5)</span><br><span class="line">IDL&gt; col &#x3D; arr[0, *]</span><br><span class="line">IDL&gt; help, col</span><br><span class="line">COL             INT       &#x3D; Array[1, 5]</span><br><span class="line">IDL&gt; col &#x3D; reform(col)</span><br><span class="line">IDL&gt; help, col</span><br><span class="line">COL             INT       &#x3D; Array[5]</span><br></pre></td></tr></table></figure>
+<p>为了节约内存，使用<code>overwrite</code>关键字，可以让<code>reform</code>操作原地执行，而不是在复制出来的副本上执行。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; dist(32)</span><br><span class="line">IDL&gt; help, arr</span><br><span class="line">ARR             FLOAT     &#x3D; Array[32, 32]</span><br><span class="line">IDL&gt; arr &#x3D; reform(arr, 32L * 32L, &#x2F;overwrite)</span><br><span class="line">IDL&gt; help, arr</span><br><span class="line">ARR             FLOAT     &#x3D; Array[1024]</span><br></pre></td></tr></table></figure>
+<h3 id="数组逆序">数组逆序</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; indgen(5)</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">       0       1       2       3       4</span><br><span class="line">IDL&gt; print, reverse(arr)</span><br><span class="line">       4       3       2       1       0</span><br></pre></td></tr></table></figure>
+<p>当数组是二维或三维时，<code>reverse</code>函数可以添加可选参数，指定沿某一个维度逆序。默认为第一个维度。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; indgen(3, 3)</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">       0       1       2</span><br><span class="line">       3       4       5</span><br><span class="line">       6       7       8</span><br><span class="line">IDL&gt; print, reverse(arr)</span><br><span class="line">       2       1       0</span><br><span class="line">       5       4       3</span><br><span class="line">       8       7       6</span><br><span class="line">IDL&gt; print, reverse(arr, 1)</span><br><span class="line">       2       1       0</span><br><span class="line">       5       4       3</span><br><span class="line">       8       7       6</span><br><span class="line">IDL&gt; print, reverse(arr, 2)</span><br><span class="line">       6       7       8</span><br><span class="line">       3       4       5</span><br><span class="line">       0       1       2</span><br></pre></td></tr></table></figure>
+<h3 id="数组旋转">数组旋转</h3>
+<p>参数0，1，2，3表示旋转的角度为0，90，180，270。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; indgen(4, 3)</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">       0       1       2       3</span><br><span class="line">       4       5       6       7</span><br><span class="line">       8       9      10      11</span><br><span class="line">IDL&gt; print, rotate(arr, 1)</span><br><span class="line">       8       4       0</span><br><span class="line">       9       5       1</span><br><span class="line">      10       6       2</span><br><span class="line">      11       7       3</span><br><span class="line">IDL&gt; print, rotate(arr, 2)</span><br><span class="line">      11      10       9       8</span><br><span class="line">       7       6       5       4</span><br><span class="line">       3       2       1       0</span><br><span class="line">IDL&gt; print, rotate(arr, 3)</span><br><span class="line">       3       7      11</span><br><span class="line">       2       6      10</span><br><span class="line">       1       5       9</span><br><span class="line">       0       4       8</span><br></pre></td></tr></table></figure>
+<h3 id="数组转置">数组转置</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; indgen(4, 3)</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">       0       1       2       3</span><br><span class="line">       4       5       6       7</span><br><span class="line">       8       9      10      11</span><br><span class="line">IDL&gt; help, transpose(arr)</span><br><span class="line">&lt;Expression&gt;    INT       &#x3D; Array[3, 4]</span><br><span class="line">IDL&gt; print, transpose(arr)</span><br><span class="line">       0       4       8</span><br><span class="line">       1       5       9</span><br><span class="line">       2       6      10</span><br><span class="line">       3       7      11</span><br></pre></td></tr></table></figure>
+<h3 id="数组偏移">数组偏移</h3>
+<p><code>shift</code>函数的第二个参数表示偏移值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; indgen(5)</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">       0       1       2       3       4</span><br><span class="line">IDL&gt; print, shift(arr, 1)</span><br><span class="line">       4       0       1       2       3</span><br><span class="line">IDL&gt; print, shift(arr, -2)</span><br><span class="line">       2       3       4       0       1</span><br></pre></td></tr></table></figure>
+<h3 id="数组排序">数组排序</h3>
+<p><code>sort</code>函数可以将数组升序排序，返回所有数组值都按升序排序的数组的索引。<code>sort</code>函数的用法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; [50, 30, 60, 40, 10, 20]</span><br><span class="line">IDL&gt; arr &#x3D; arr[sort(arr)]</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">      10      20      30      40      50      60</span><br></pre></td></tr></table></figure>
+<h3 id="找到数组中唯一的值">找到数组中唯一的值</h3>
+<p><code>uniq</code>函数返回已排序数组中唯一值的索引。 因此，要从数组中提取唯一值，必须首先对其进行排序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IDL&gt; arr &#x3D; [20, 30, 20, 40, 40, 30, 50, 60, 10]</span><br><span class="line">IDL&gt; arr &#x3D; arr[sort(arr)]</span><br><span class="line">IDL&gt; arr &#x3D; arr[uniq(arr)]</span><br><span class="line">IDL&gt; print, arr</span><br><span class="line">      10      20      30      40      50      60</span><br></pre></td></tr></table></figure>
+<h2 id="十二改变数组大小">十二、改变数组大小</h2>
+<p>数组大小调整是指更改数组中元素数量的操作。</p>
+<p>这意味着必须选择一种方法来填充新数组中空缺的位置。 在IDL中，这两种方法是最近邻和插值。</p>
+<p>改变数组大小的相关函数：</p>
+<table>
+<thead>
+<tr class="header">
+<th>函数名称</th>
+<th>作用</th>
+<th>算法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>rebin()</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>congrid()</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>interploate()</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
     </div>
 
@@ -739,7 +1147,10 @@
     <a href="/2020/08/07/VSCode%E7%BC%96%E5%86%99LaTeX%E9%85%8D%E7%BD%AE/" rel="prev" title="VSCode编写LaTeX配置">
       <i class="fa fa-chevron-left"></i> VSCode编写LaTeX配置
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/09/14/%E7%BC%96%E5%86%99IDL%E7%A8%8B%E5%BA%8F/" rel="next" title="编写IDL程序">
+      编写IDL程序 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -799,7 +1210,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#idl基础语法"><span class="nav-text">IDL基础语法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一idl两种工作模式"><span class="nav-text">一、IDL两种工作模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#交互模式interactive-mode"><span class="nav-text">交互模式（interactive mode）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编译模式compiled-mode"><span class="nav-text">编译模式（compiled mode）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二变量"><span class="nav-text">二、变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据类型"><span class="nav-text">数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量类型跟踪"><span class="nav-text">变量类型跟踪</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量类型转换"><span class="nav-text">变量类型转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#浮点型转换为整型"><span class="nav-text">浮点型转换为整型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符类型和数值类型相互转换"><span class="nav-text">字符类型和数值类型相互转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量命名"><span class="nav-text">变量命名</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三数组"><span class="nav-text">三、数组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建数组"><span class="nav-text">创建数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数组存储格式"><span class="nav-text">数组存储格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建数组的函数"><span class="nav-text">创建数组的函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#浮点型网格数组"><span class="nav-text">浮点型网格数组</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四数组索引"><span class="nav-text">四、数组索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数组索引的例子"><span class="nav-text">数组索引的例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多维数组索引的例子"><span class="nav-text">多维数组索引的例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一维索引"><span class="nav-text">一维索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#索引采样"><span class="nav-text">索引采样</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五表达式和运算符"><span class="nav-text">五、表达式和运算符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#表达式中的数据类型转换"><span class="nav-text">表达式中的数据类型转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#idl运算符"><span class="nav-text">IDL运算符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六关系运算符和布尔运算符"><span class="nav-text">六、关系运算符和布尔运算符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#关系运算符"><span class="nav-text">关系运算符</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#idl基础语法"><span class="nav-text">IDL基础语法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一idl两种工作模式"><span class="nav-text">一、IDL两种工作模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#交互模式interactive-mode"><span class="nav-text">交互模式（interactive mode）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编译模式compiled-mode"><span class="nav-text">编译模式（compiled mode）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二变量"><span class="nav-text">二、变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据类型"><span class="nav-text">数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量类型跟踪"><span class="nav-text">变量类型跟踪</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量类型转换"><span class="nav-text">变量类型转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#浮点型转换为整型"><span class="nav-text">浮点型转换为整型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符类型和数值类型相互转换"><span class="nav-text">字符类型和数值类型相互转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量命名"><span class="nav-text">变量命名</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三数组"><span class="nav-text">三、数组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建数组"><span class="nav-text">创建数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数组存储格式"><span class="nav-text">数组存储格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建数组的函数"><span class="nav-text">创建数组的函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#浮点型网格数组"><span class="nav-text">浮点型网格数组</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四数组索引"><span class="nav-text">四、数组索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数组索引的例子"><span class="nav-text">数组索引的例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多维数组索引的例子"><span class="nav-text">多维数组索引的例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一维索引"><span class="nav-text">一维索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#索引采样"><span class="nav-text">索引采样</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五表达式和运算符"><span class="nav-text">五、表达式和运算符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#表达式中的数据类型转换"><span class="nav-text">表达式中的数据类型转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#idl运算符"><span class="nav-text">IDL运算符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六关系运算符和布尔运算符"><span class="nav-text">六、关系运算符和布尔运算符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#关系运算符"><span class="nav-text">关系运算符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#布尔运算符"><span class="nav-text">布尔运算符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三元运算符"><span class="nav-text">三元运算符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#七结构"><span class="nav-text">七、结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#匿名结构"><span class="nav-text">匿名结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#命名结构"><span class="nav-text">命名结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结构的相关函数"><span class="nav-text">结构的相关函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#八指针"><span class="nav-text">八、指针</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#指针类型"><span class="nav-text">指针类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建指针"><span class="nav-text">创建指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#释放指针"><span class="nav-text">释放指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#检查指针合法性"><span class="nav-text">检查指针合法性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取指针值"><span class="nav-text">获取指针值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#避免使用指针时发生的问题"><span class="nav-text">避免使用指针时发生的问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#九数组性质"><span class="nav-text">九、数组性质</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数组元素个数"><span class="nav-text">数组元素个数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数组大小和类型"><span class="nav-text">数组大小和类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最大值和最小值"><span class="nav-text">最大值和最小值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#均值方差标准差"><span class="nav-text">均值、方差、标准差</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总和"><span class="nav-text">总和</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#十定位数组中元素的位置"><span class="nav-text">十、定位数组中元素的位置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#找到符合规则的值"><span class="nav-text">找到符合规则的值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输入数组为多维数组"><span class="nav-text">输入数组为多维数组</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#十一数组重排序"><span class="nav-text">十一、数组重排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#改变数组维度"><span class="nav-text">改变数组维度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数组逆序"><span class="nav-text">数组逆序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数组旋转"><span class="nav-text">数组旋转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数组转置"><span class="nav-text">数组转置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数组偏移"><span class="nav-text">数组偏移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数组排序"><span class="nav-text">数组排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#找到数组中唯一的值"><span class="nav-text">找到数组中唯一的值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#十二改变数组大小"><span class="nav-text">十二、改变数组大小</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -815,7 +1226,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">30</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
