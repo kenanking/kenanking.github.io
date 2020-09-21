@@ -444,8 +444,8 @@
 </ol>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nmake -f makefile.vc MSVC_VER&#x3D;1920 WIN64&#x3D;1 ANALYZE&#x3D;1 WITH_PDB&#x3D;1</span><br><span class="line">nmake -f makefile.vc MSVC_VER&#x3D;1910 WIN64&#x3D;1 install</span><br><span class="line">nmake -f makefile.vs MSVC_VER&#x3D;1910 WIN64&#x3D;1 devinstall</span><br></pre></td></tr></table></figure>
 <p>第一行命令用于编译GDAL库；</p>
-<p>第二行命令用于编译GDAL库，并将生成的dll和exe等文件复制到C:；</p>
-<p>第三行命令用于编译GDAL库，并将开发用的include和lib文件夹复制到C:。</p>
+<p>第二行命令用于编译GDAL库，并将生成的dll和exe等文件复制到<code>C:\warmerda\bld</code>；</p>
+<p>第三行命令用于编译GDAL库，并将开发用的include和lib文件夹复制到<code>C:\warmerda\bld</code>。</p>
 <p>至此，GDAL3.1.3编译完毕。</p>
 
       
