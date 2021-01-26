@@ -30,11 +30,13 @@
 <meta property="og:site_name" content="额呵呵的博客">
 <meta property="og:description" content="作业1中主要通过（And、Not、Or）进行芯片（逻辑门）的设计，并通过硬件描述语言（HDL）进行仿真实现。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210126170245982.png">
 <meta property="article:published_time" content="2021-01-26T08:00:30.000Z">
-<meta property="article:modified_time" content="2021-01-26T08:00:30.000Z">
+<meta property="article:modified_time" content="2021-01-26T08:06:09.000Z">
 <meta property="article:author" content="汤焱">
 <meta property="article:tag" content="Nand2Tetris">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210126170245982.png">
 
 <link rel="canonical" href="https://kenanking.github.io/2021/01/26/Nand2Tetris-Project-1/">
 
@@ -198,6 +200,13 @@
 
               <time title="创建时间：2021-01-26 16:00:30" itemprop="dateCreated datePublished" datetime="2021-01-26T16:00:30+08:00">2021-01-26</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-26 16:06:09" itemprop="dateModified" datetime="2021-01-26T16:06:09+08:00">2021-01-26</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -263,8 +272,103 @@
 </tbody>
 </table>
 <h2 id="not门">2. Not门</h2>
+<p>Not门使用Nand门实现，当输入为0时，Nand(0, b) = 1，当输入为1时，Nand(1, b) = 0。从而可以判断b始终为1。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * Not gate:</span><br><span class="line"> * out &#x3D; not in</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">CHIP Not &#123;</span><br><span class="line">    IN in;</span><br><span class="line">    OUT out;</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Nand(a&#x3D;in, b&#x3D;true, out&#x3D;out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="and门">3. And门</h2>
+<p>只有当输入都是1时，And门输出为1，否则都为0。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * And gate: </span><br><span class="line"> * out &#x3D; 1 if (a &#x3D;&#x3D; 1 and b &#x3D;&#x3D; 1)</span><br><span class="line"> *       0 otherwise</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">CHIP And &#123;</span><br><span class="line">    IN a, b;</span><br><span class="line">    OUT out;</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Nand(a&#x3D;a, b&#x3D;b, out&#x3D;nandab);</span><br><span class="line">    Not(in&#x3D;nandab, out&#x3D;out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="or门">4. Or门</h2>
+<p>由De Morgan定律可以得到：<code>a Or b = Not(Not(a) And Not(b))</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> &#x2F;**</span><br><span class="line"> * Or gate:</span><br><span class="line"> * out &#x3D; 1 if (a &#x3D;&#x3D; 1 or b &#x3D;&#x3D; 1)</span><br><span class="line"> *       0 otherwise</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">CHIP Or &#123;</span><br><span class="line">    IN a, b;</span><br><span class="line">    OUT out;</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Not(in&#x3D;a, out&#x3D;nota);</span><br><span class="line">    Not(in&#x3D;b, out&#x3D;notb);</span><br><span class="line">    And(a&#x3D;nota, b&#x3D;notb, out&#x3D;notaAndNotb);</span><br><span class="line">    Not(in&#x3D;notaAndNotb, out&#x3D;out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="xor门">5. Xor门</h2>
+<p>当两个输入值相反时，Xor门输出1，其他情况返回0。</p>
+<p><code>Xor(a, b) = Or(And(a, Not(b)), And(Not(a), b))</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * Exclusive-or gate:</span><br><span class="line"> * out &#x3D; not (a &#x3D;&#x3D; b)</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">CHIP Xor &#123;</span><br><span class="line">    IN a, b;</span><br><span class="line">    OUT out;</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Not (in&#x3D;a, out&#x3D;nota);</span><br><span class="line">    Not (in&#x3D;b, out&#x3D;notb);</span><br><span class="line">    And (a&#x3D;a, b&#x3D;notb, out&#x3D;aAndNotb);</span><br><span class="line">    And (a&#x3D;nota, b&#x3D;b, out&#x3D;notaAndb);</span><br><span class="line">    Or (a&#x3D;aAndNotb, b&#x3D;notaAndb, out&#x3D;out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="mux门">6. Mux门</h2>
+<p>Multiplexor是三输入变量的门电路，其中两个为数据位（a和b)，另一个为选择位（sel）。</p>
+<p>Mux门的真值表：</p>
+<table>
+<thead>
+<tr class="header">
+<th>a</th>
+<th>b</th>
+<th>sel</th>
+<th>out</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>其简化版本为：</p>
+<table>
+<thead>
+<tr class="header">
+<th>sel</th>
+<th>out</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>a</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>b</td>
+</tr>
+</tbody>
+</table>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210126170245982.png" alt="卡诺图化简法表示Mux" /></p>
+<p>所以可以得到：<code>Mux(a, b, sel) = Or(And(b, sel) + And(a, Not(sel)))</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;** </span><br><span class="line"> * Multiplexor:</span><br><span class="line"> * out &#x3D; a if sel &#x3D;&#x3D; 0</span><br><span class="line"> *       b otherwise</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">CHIP Mux &#123;</span><br><span class="line">    IN a, b, sel;</span><br><span class="line">    OUT out;</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    And(a&#x3D;b, b&#x3D;sel, out&#x3D;out1);</span><br><span class="line">    </span><br><span class="line">    Not(in&#x3D;sel, out&#x3D;notsel);</span><br><span class="line">    And(a&#x3D;a, b&#x3D;notsel, out&#x3D;out2);</span><br><span class="line"></span><br><span class="line">    Or(a&#x3D;out1, b&#x3D;out2, out&#x3D;out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -347,7 +451,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#nand门"><span class="nav-text">1. Nand门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#not门"><span class="nav-text">2. Not门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#and门"><span class="nav-text">3. And门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#or门"><span class="nav-text">4. Or门</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#nand门"><span class="nav-text">1. Nand门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#not门"><span class="nav-text">2. Not门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#and门"><span class="nav-text">3. And门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#or门"><span class="nav-text">4. Or门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xor门"><span class="nav-text">5. Xor门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mux门"><span class="nav-text">6. Mux门</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
