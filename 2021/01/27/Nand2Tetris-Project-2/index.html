@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="作业2的主线是制作一个CPU中的核心部件ALU（Arithmetic-Logic Unit&#x2F;算术逻辑单元）。在这一次的作业中可以感受到作业1中制作的各种简单的门电路是如何发挥作用的。这次的作业不算难，在视频中有很多的提示。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nand2Tetris Project 2">
+<meta property="og:url" content="https://kenanking.github.io/2021/01/27/Nand2Tetris-Project-2/index.html">
+<meta property="og:site_name" content="额呵呵的博客">
+<meta property="og:description" content="作业2的主线是制作一个CPU中的核心部件ALU（Arithmetic-Logic Unit&#x2F;算术逻辑单元）。在这一次的作业中可以感受到作业1中制作的各种简单的门电路是如何发挥作用的。这次的作业不算难，在视频中有很多的提示。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210127110510072.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210127112022848.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210127102706659.png">
+<meta property="article:published_time" content="2021-01-27T03:29:56.000Z">
+<meta property="article:modified_time" content="2021-01-27T03:29:56.000Z">
+<meta property="article:author" content="汤焱">
+<meta property="article:tag" content="Nand2Tetris">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210127110510072.png">
+
+<link rel="canonical" href="https://kenanking.github.io/2021/01/27/Nand2Tetris-Project-2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Nand2Tetris Project 2 | 额呵呵的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">额呵呵的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2021/01/27/Nand2Tetris-Project-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="汤焱">
+      <meta itemprop="description" content="记录学习和生活（遇到Latex公式加载异常可以刷新网页）">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="额呵呵的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Nand2Tetris Project 2
+        </h1>
+
+        <div class="post-meta">
+
+              
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-27 11:29:56" itemprop="dateCreated datePublished" datetime="2021-01-27T11:29:56+08:00">2021-01-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">计算机系统</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/01/27/Nand2Tetris-Project-2/" class="post-meta-item leancloud_visitors" data-flag-title="Nand2Tetris Project 2" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>作业2的主线是制作一个CPU中的核心部件ALU（Arithmetic-Logic Unit/算术逻辑单元）。在这一次的作业中可以感受到作业1中制作的各种简单的门电路是如何发挥作用的。这次的作业不算难，在视频中有很多的提示。</p>
+<a id="more"></a>
+<p>这一课中还介绍了如何表示有符号的二进制数——使用<strong>补码</strong>的编码方式，通过补码既可以表示正数也可以表示负数。<strong>在补码中，负数<span class="math inline">\(-x\)</span>使用正数<span class="math inline">\(2^n-x\)</span>表示</strong>。</p>
+<p>对于4位二进制数来说，0xxx表示正数，1xxx表示负数。</p>
+<table>
+<thead>
+<tr class="header">
+<th>正数</th>
+<th>负数</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0 0000</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>1 0001</td>
+<td>-1 1111（15）</td>
+</tr>
+<tr class="odd">
+<td>2 0010</td>
+<td>-2 1110（14）</td>
+</tr>
+<tr class="even">
+<td>3 0011</td>
+<td>-3 1101（13）</td>
+</tr>
+<tr class="odd">
+<td>4 0100</td>
+<td>-4 1100（12）</td>
+</tr>
+<tr class="even">
+<td>5 0101</td>
+<td>-5 1011（11）</td>
+</tr>
+<tr class="odd">
+<td>6 0110</td>
+<td>-6 1010（10）</td>
+</tr>
+<tr class="even">
+<td>7 0111</td>
+<td>-7 1001（9）</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>-8 1000（8）</td>
+</tr>
+</tbody>
+</table>
+<p>对于n位的二进制系统，正数的范围为<span class="math inline">\(0...2^{n-1}-1\)</span>，负数的范围为<span class="math inline">\(-1...-2^{n-1}\)</span>。</p>
+<p>通过使用补码的方式，我们可以直接使用加法来实现减法（即：加上一个负数）。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210127110510072.png" alt="使用补码实现相减" /></p>
+<p>通过补码也可以将一个正数变为对应的负数。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210127112022848.png" alt="使用补码将正数变为负数" /></p>
+<h2 id="halfadder">HalfAdder</h2>
+<p>HalfAdder用来进行两位加法，即不包含前一步产生的进位（Carry）。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210127102706659.png" alt="HalfAdder和Fullder作用" /></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * Computes the sum of two bits.</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">CHIP HalfAdder &#123;</span><br><span class="line">    IN a, b;    &#x2F;&#x2F; 1-bit inputs</span><br><span class="line">    OUT sum,    &#x2F;&#x2F; Right bit of a + b </span><br><span class="line">        carry;  &#x2F;&#x2F; Left bit of a + b</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Xor(a&#x3D;a, b&#x3D;b, out&#x3D;sum);</span><br><span class="line"></span><br><span class="line">    And(a&#x3D;a, b&#x3D;b, out&#x3D;carry);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="fulladder">FullAdder</h2>
+<p>FullAdder是三位的加法，包含了一个进位。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * Computes the sum of three bits.</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">CHIP FullAdder &#123;</span><br><span class="line">    IN a, b, c;  &#x2F;&#x2F; 1-bit inputs</span><br><span class="line">    OUT sum,     &#x2F;&#x2F; Right bit of a + b + c</span><br><span class="line">        carry;   &#x2F;&#x2F; Left bit of a + b + c</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    HalfAdder(a&#x3D;a, b&#x3D;b, sum&#x3D;sum1, carry&#x3D;carry1);</span><br><span class="line">    HalfAdder(a&#x3D;sum1, b&#x3D;c, sum&#x3D;sum, carry&#x3D;carry2);</span><br><span class="line">    Xor(a&#x3D;carry1, b&#x3D;carry2, out&#x3D;carry);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="add16">Add16</h2>
+<p>Add16用于两个16位二进制数的相加（这里虽然只是相加，但其实也实现了相减（即：加上一个负数））。由于HDL中没有循环语句，Add16的实现方式就是16个FullAdder的连续使用，实现每一位对应相加。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * Adds two 16-bit values.</span><br><span class="line"> * The most significant carry bit is ignored.</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">CHIP Add16 &#123;</span><br><span class="line">    IN a[16], b[16];</span><br><span class="line">    OUT out[16];</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    FullAdder(a&#x3D;a[0], b&#x3D;b[0], c&#x3D;false, sum&#x3D;out[0], carry&#x3D;carry0);</span><br><span class="line">    FullAdder(a&#x3D;a[1], b&#x3D;b[1], c&#x3D;carry0, sum&#x3D;out[1], carry&#x3D;carry1);</span><br><span class="line">    FullAdder(a&#x3D;a[2], b&#x3D;b[2], c&#x3D;carry1, sum&#x3D;out[2], carry&#x3D;carry2);</span><br><span class="line">    FullAdder(a&#x3D;a[3], b&#x3D;b[3], c&#x3D;carry2, sum&#x3D;out[3], carry&#x3D;carry3);</span><br><span class="line">    FullAdder(a&#x3D;a[4], b&#x3D;b[4], c&#x3D;carry3, sum&#x3D;out[4], carry&#x3D;carry4);</span><br><span class="line">    FullAdder(a&#x3D;a[5], b&#x3D;b[5], c&#x3D;carry4, sum&#x3D;out[5], carry&#x3D;carry5);</span><br><span class="line">    FullAdder(a&#x3D;a[6], b&#x3D;b[6], c&#x3D;carry5, sum&#x3D;out[6], carry&#x3D;carry6);</span><br><span class="line">    FullAdder(a&#x3D;a[7], b&#x3D;b[7], c&#x3D;carry6, sum&#x3D;out[7], carry&#x3D;carry7);</span><br><span class="line">    FullAdder(a&#x3D;a[8], b&#x3D;b[8], c&#x3D;carry7, sum&#x3D;out[8], carry&#x3D;carry8);</span><br><span class="line">    FullAdder(a&#x3D;a[9], b&#x3D;b[9], c&#x3D;carry8, sum&#x3D;out[9], carry&#x3D;carry9);</span><br><span class="line">    FullAdder(a&#x3D;a[10], b&#x3D;b[10], c&#x3D;carry9, sum&#x3D;out[10], carry&#x3D;carry10);</span><br><span class="line">    FullAdder(a&#x3D;a[11], b&#x3D;b[11], c&#x3D;carry10, sum&#x3D;out[11], carry&#x3D;carry11);</span><br><span class="line">    FullAdder(a&#x3D;a[12], b&#x3D;b[12], c&#x3D;carry11, sum&#x3D;out[12], carry&#x3D;carry12);</span><br><span class="line">    FullAdder(a&#x3D;a[13], b&#x3D;b[13], c&#x3D;carry12, sum&#x3D;out[13], carry&#x3D;carry13);</span><br><span class="line">    FullAdder(a&#x3D;a[14], b&#x3D;b[14], c&#x3D;carry13, sum&#x3D;out[14], carry&#x3D;carry14);</span><br><span class="line">    FullAdder(a&#x3D;a[15], b&#x3D;b[15], c&#x3D;carry14, sum&#x3D;out[15], carry&#x3D;carry15);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="inc16">Inc16</h2>
+<p>Inc16就是调用已经写好的FullAdder，实现加1的功能，主要用于将正数变为对应的负数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * 16-bit incrementer:</span><br><span class="line"> * out &#x3D; in + 1 (arithmetic addition)</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">CHIP Inc16 &#123;</span><br><span class="line">    IN in[16];</span><br><span class="line">    OUT out[16];</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Add16(a&#x3D;in, b[0]&#x3D;true, b[1..15]&#x3D;false, out&#x3D;out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="alu">ALU</h2>
+<p>在ALU的实现中，使用Mux16门进行实现二选一操作，其他操作都可以利用之前实现好的芯片进行。</p>
+<p>其中，最后需要两个符号判断<code>zr</code>和<code>ng</code>。</p>
+<p>对于<code>ng</code>的判断比较方便，由于通过补码方式表示，只需要看二进制数的第一位，在这里是<code>out[15]</code>是否为1，如果是1那就是负数，所以只需要让<code>out[15]=ng</code>就可以。</p>
+<p>对于<code>zr</code>的判断，需要判断二进制数的每一位是否都为零。对于每一位是否为零，可以借助作业1中的八通道Or门（Or8Way），把数据分成两部分，最后对两个部分进行一次Or运算后取反。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * The ALU (Arithmetic Logic Unit).</span><br><span class="line"> * Computes one of the following functions:</span><br><span class="line"> * x+y, x-y, y-x, 0, 1, -1, x, y, -x, -y, !x, !y,</span><br><span class="line"> * x+1, y+1, x-1, y-1, x&amp;y, x|y on two 16-bit inputs, </span><br><span class="line"> * according to 6 input bits denoted zx,nx,zy,ny,f,no.</span><br><span class="line"> * In addition, the ALU computes two 1-bit outputs:</span><br><span class="line"> * if the ALU output &#x3D;&#x3D; 0, zr is set to 1; otherwise zr is set to 0;</span><br><span class="line"> * if the ALU output &lt; 0, ng is set to 1; otherwise ng is set to 0.</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; Implementation: the ALU logic manipulates the x and y inputs</span><br><span class="line">&#x2F;&#x2F; and operates on the resulting values, as follows:</span><br><span class="line">&#x2F;&#x2F; if (zx &#x3D;&#x3D; 1) set x &#x3D; 0        &#x2F;&#x2F; 16-bit constant</span><br><span class="line">&#x2F;&#x2F; if (nx &#x3D;&#x3D; 1) set x &#x3D; !x       &#x2F;&#x2F; bitwise not</span><br><span class="line">&#x2F;&#x2F; if (zy &#x3D;&#x3D; 1) set y &#x3D; 0        &#x2F;&#x2F; 16-bit constant</span><br><span class="line">&#x2F;&#x2F; if (ny &#x3D;&#x3D; 1) set y &#x3D; !y       &#x2F;&#x2F; bitwise not</span><br><span class="line">&#x2F;&#x2F; if (f &#x3D;&#x3D; 1)  set out &#x3D; x + y  &#x2F;&#x2F; integer 2&#39;s complement addition</span><br><span class="line">&#x2F;&#x2F; if (f &#x3D;&#x3D; 0)  set out &#x3D; x &amp; y  &#x2F;&#x2F; bitwise and</span><br><span class="line">&#x2F;&#x2F; if (no &#x3D;&#x3D; 1) set out &#x3D; !out   &#x2F;&#x2F; bitwise not</span><br><span class="line">&#x2F;&#x2F; if (out &#x3D;&#x3D; 0) set zr &#x3D; 1</span><br><span class="line">&#x2F;&#x2F; if (out &lt; 0) set ng &#x3D; 1</span><br><span class="line"></span><br><span class="line">CHIP ALU &#123;</span><br><span class="line">    IN  </span><br><span class="line">        x[16], y[16],  &#x2F;&#x2F; 16-bit inputs        </span><br><span class="line">        zx, &#x2F;&#x2F; zero the x input?</span><br><span class="line">        nx, &#x2F;&#x2F; negate the x input?</span><br><span class="line">        zy, &#x2F;&#x2F; zero the y input?</span><br><span class="line">        ny, &#x2F;&#x2F; negate the y input?</span><br><span class="line">        f,  &#x2F;&#x2F; compute out &#x3D; x + y (if 1) or x &amp; y (if 0)</span><br><span class="line">        no; &#x2F;&#x2F; negate the out output?</span><br><span class="line"></span><br><span class="line">    OUT </span><br><span class="line">        out[16], &#x2F;&#x2F; 16-bit output</span><br><span class="line">        zr, &#x2F;&#x2F; 1 if (out &#x3D;&#x3D; 0), 0 otherwise</span><br><span class="line">        ng; &#x2F;&#x2F; 1 if (out &lt; 0),  0 otherwise</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Mux16(a&#x3D;x, b&#x3D;false, sel&#x3D;zx, out&#x3D;x1);</span><br><span class="line"></span><br><span class="line">    Not16(in&#x3D;x1, out&#x3D;x2);</span><br><span class="line">    Mux16(a&#x3D;x1, b&#x3D;x2, sel&#x3D;nx, out&#x3D;x3);</span><br><span class="line"></span><br><span class="line">    Mux16(a&#x3D;y, b&#x3D;false, sel&#x3D;zy, out&#x3D;y1);</span><br><span class="line"></span><br><span class="line">    Not16(in&#x3D;y1, out&#x3D;y2);</span><br><span class="line">    Mux16(a&#x3D;y1, b&#x3D;y2, sel&#x3D;ny, out&#x3D;y3);</span><br><span class="line"></span><br><span class="line">    Add16(a&#x3D;x3, b&#x3D;y3, out&#x3D;addx3y3);</span><br><span class="line">    And16(a&#x3D;x3, b&#x3D;y3, out&#x3D;andx3y3);</span><br><span class="line">    Mux16(a&#x3D;andx3y3, b&#x3D;addx3y3, sel&#x3D;f, out&#x3D;muxf);</span><br><span class="line"></span><br><span class="line">    Not16(in&#x3D;muxf, out&#x3D;notmuxf);</span><br><span class="line">    Mux16(a&#x3D;muxf, b&#x3D;notmuxf, sel&#x3D;no, out&#x3D;out, out[15]&#x3D;ng, out[0..7]&#x3D;out1, out[8..15]&#x3D;out2);</span><br><span class="line"></span><br><span class="line">    Or8Way(in&#x3D;out1, out&#x3D;orout1);</span><br><span class="line">    Or8Way(in&#x3D;out2, out&#x3D;orout2);</span><br><span class="line">    Or(a&#x3D;orout1, b&#x3D;orout2, out&#x3D;out3);</span><br><span class="line">    Not(in&#x3D;out3, out&#x3D;zr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Nand2Tetris/" rel="tag"><i class="fa fa-tag"></i> Nand2Tetris</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/26/Nand2Tetris-Project-1/" rel="prev" title="Nand2Tetris Project 1">
+      <i class="fa fa-chevron-left"></i> Nand2Tetris Project 1
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#halfadder"><span class="nav-text">HalfAdder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fulladder"><span class="nav-text">FullAdder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#add16"><span class="nav-text">Add16</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#inc16"><span class="nav-text">Inc16</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#alu"><span class="nav-text">ALU</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="汤焱"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">汤焱</p>
+  <div class="site-description" itemprop="description">记录学习和生活（遇到Latex公式加载异常可以刷新网页）</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">汤焱</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"800gFBV2IVxOwTNRC7pRH9Bk-gzGzoHsz","app_key":"nXJfgYp5gB1D7lXIfYmotC7A","server_url":"https://xwoxrs5i.lc-cn-n1-shared.com","security":false};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+          load: ['[tex]/mhchem'],
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+          packages: {'[+]': ['mhchem']},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '2404a7f127de388e6dd6',
+      clientSecret: '0814196865cc60c2897ffaf2cc6618d38ebfc6d5',
+      repo        : 'kenanking.github.io',
+      owner       : 'kenanking',
+      admin       : ['kenanking'],
+      id          : 'b0168dbe329146db04a41ab413e8576b',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
