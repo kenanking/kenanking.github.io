@@ -20,13 +20,13 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"kenanking.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"ehehe.cn","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="线性基函数模型  偏差-方差分解  贝叶斯线性回归  贝叶斯模型比较  证据近似  固定基函数的局限性">
 <meta property="og:type" content="article">
 <meta property="og:title" content="模式识别与机器学习_ch3-Linear Models for Regression">
-<meta property="og:url" content="https://kenanking.github.io/2020/07/27/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch3-Linear-Models-for-Regression/index.html">
+<meta property="og:url" content="https://ehehe.cn/2020/07/27/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch3-Linear-Models-for-Regression/index.html">
 <meta property="og:site_name" content="额呵呵的博客">
 <meta property="og:description" content="线性基函数模型  偏差-方差分解  贝叶斯线性回归  贝叶斯模型比较  证据近似  固定基函数的局限性">
 <meta property="og:locale" content="zh_CN">
@@ -36,7 +36,7 @@
 <meta property="article:tag" content="PRML">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://kenanking.github.io/2020/07/27/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch3-Linear-Models-for-Regression/">
+<link rel="canonical" href="https://ehehe.cn/2020/07/27/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch3-Linear-Models-for-Regression/">
 
 
 <script id="page-configurations">
@@ -171,7 +171,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://kenanking.github.io/2020/07/27/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch3-Linear-Models-for-Regression/">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2020/07/27/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch3-Linear-Models-for-Regression/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpeg">
@@ -271,13 +271,13 @@
 <p>一般地，从概率的观点来看，可以对预测分布<span class="math inline">\(p(t \mid \mathbf{x})\)</span>进行建模，它表达了对于每个<span class="math inline">\(\mathbf{x}\)</span>的值，<span class="math inline">\(t\)</span>的不确定西。从这个条件分布中，我们可以对于新的输入<span class="math inline">\(\mathbf{x}\)</span>，对<span class="math inline">\(t\)</span>做出预测。这种方法等价于最小化一个恰当选择的损失函数的期望值。</p>
 <p>虽然线性模型在实际应用中由很大的局限，但它是构成更加复杂模型的基础。</p>
 <h2 id="线性基函数模型">3.1 线性基函数模型</h2>
-<p>具体文章内容在<a href="https://kenanking.github.io/2020/07/28/ch3-3-1-%E7%BA%BF%E6%80%A7%E5%9F%BA%E5%87%BD%E6%95%B0%E6%A8%A1%E5%9E%8B/" title="ch3-3.1 线性基函数模型">ch3-3.1 线性基函数模型</a></p>
+<p>具体文章内容在<a href="https://kenanking.github.io/2020/07/28/ch3-3-1-%E7%BA%BF%E6%80%A7%E5%9F%BA%E5%87%BD%E6%95%B0%E6%A8%A1%E5%9E%8B/" target="_blank" rel="noopener" title="ch3-3.1 线性基函数模型">ch3-3.1 线性基函数模型</a></p>
 <h2 id="偏差-方差分解">3.2 偏差-方差分解</h2>
-<p>具体文章内容在<a href="https://kenanking.github.io/2020/07/29/ch3-3-2-%E5%81%8F%E5%B7%AE-%E6%96%B9%E5%B7%AE%E5%88%86%E8%A7%A3/" title="ch3-3.2 偏差-方差分解">ch3-3.2 偏差-方差分解</a></p>
+<p>具体文章内容在<a href="https://kenanking.github.io/2020/07/29/ch3-3-2-%E5%81%8F%E5%B7%AE-%E6%96%B9%E5%B7%AE%E5%88%86%E8%A7%A3/" target="_blank" rel="noopener" title="ch3-3.2 偏差-方差分解">ch3-3.2 偏差-方差分解</a></p>
 <h2 id="贝叶斯线性回归">3.3 贝叶斯线性回归</h2>
-<p>具体文章内容在<a href="https://kenanking.github.io/2020/07/30/ch3-3-3-%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" title="ch3-3.3 贝叶斯线性回归">ch3-3.3 贝叶斯线性回归</a></p>
+<p>具体文章内容在<a href="https://kenanking.github.io/2020/07/30/ch3-3-3-%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" target="_blank" rel="noopener" title="ch3-3.3 贝叶斯线性回归">ch3-3.3 贝叶斯线性回归</a></p>
 <h2 id="贝叶斯模型比较">3.4 贝叶斯模型比较</h2>
-<p>具体文章内容在<a href="https://kenanking.github.io/2020/07/31/ch3-3-4-%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A8%A1%E5%9E%8B%E6%AF%94%E8%BE%83/" title="ch3-3.4 贝叶斯模型比较">ch3-3.4 贝叶斯模型比较</a></p>
+<p>具体文章内容在<a href="https://kenanking.github.io/2020/07/31/ch3-3-4-%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A8%A1%E5%9E%8B%E6%AF%94%E8%BE%83/" target="_blank" rel="noopener" title="ch3-3.4 贝叶斯模型比较">ch3-3.4 贝叶斯模型比较</a></p>
 <h2 id="证据近似">3.5 证据近似</h2>
 <p>具体文章内容在<a href="http://localhost:4000/2020/07/31/ch3-3-5-%E8%AF%81%E6%8D%AE%E8%BF%91%E4%BC%BC/" target="_blank" rel="noopener" title="ch3-3.5 证据近似">ch3-3.5 证据近似</a></p>
 <h2 id="固定基函数的局限性">3.6 固定基函数的局限性</h2>
