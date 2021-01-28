@@ -167,6 +167,102 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2021/01/28/Nand2Tetris-Project-4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="汤焱">
+      <meta itemprop="description" content="记录学习和生活（遇到Latex公式加载异常可以刷新网页）">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="额呵呵的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/01/28/Nand2Tetris-Project-4/" class="post-title-link" itemprop="url">Nand2Tetris Project 4</a>
+        </h2>
+
+        <div class="post-meta">
+
+              
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-28 21:01:05" itemprop="dateCreated datePublished" datetime="2021-01-28T21:01:05+08:00">2021-01-28</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">计算机系统</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/01/28/Nand2Tetris-Project-4/" class="post-meta-item leancloud_visitors" data-flag-title="Nand2Tetris Project 4" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/01/28/Nand2Tetris-Project-4/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/28/Nand2Tetris-Project-4/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>作业4是通过编写Hack机器语言实现两个小功能，乘法程序和I/O处理程序。课后作业不是特别麻烦，看完关于Hack Programming的三个视频后，基本上就能掌握Hack及其语言的语法了。</p>
+<h2 id="mult">Mult</h2>
+<p>由于ALU中只有加法，所以实现乘法的方式就是一个乘数用来做加法，另一个乘数用来做循环条件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Multiplies R0 and R1 and stores the result in R2.</span><br><span class="line">&#x2F;&#x2F; (R0, R1, R2 refer to RAM[0], RAM[1], and RAM[2], respectively.)</span><br><span class="line">&#x2F;&#x2F;</span><br><span class="line">&#x2F;&#x2F; This program only needs to handle arguments that satisfy</span><br><span class="line">&#x2F;&#x2F; R0 &gt;&#x3D; 0, R1 &gt;&#x3D; 0, and R0*R1 &lt; 32768.</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; Initialize some variables</span><br><span class="line">@res        &#x2F;&#x2F; Store the result of the multiplication</span><br><span class="line">M&#x3D;0</span><br><span class="line">@R1</span><br><span class="line">D&#x3D;M</span><br><span class="line">@n          &#x2F;&#x2F; Let RAM[1] be the loop variable</span><br><span class="line">M&#x3D;D</span><br><span class="line"></span><br><span class="line">(LOOP)</span><br><span class="line">@n</span><br><span class="line">D&#x3D;M</span><br><span class="line">@STOP</span><br><span class="line">D;JEQ       &#x2F;&#x2F; If n &#x3D; 0 then break the loop</span><br><span class="line"></span><br><span class="line">@R0</span><br><span class="line">D&#x3D;M</span><br><span class="line">@res</span><br><span class="line">M&#x3D;D+M</span><br><span class="line"></span><br><span class="line">@n          &#x2F;&#x2F; n &#x3D; n - 1</span><br><span class="line">M&#x3D;M-1</span><br><span class="line"></span><br><span class="line">@LOOP</span><br><span class="line">0;JMP</span><br><span class="line"></span><br><span class="line">(STOP)</span><br><span class="line">@res        &#x2F;&#x2F; Store the result to RAM[2]</span><br><span class="line">D&#x3D;M</span><br><span class="line">@R2</span><br><span class="line">M&#x3D;D</span><br><span class="line"></span><br><span class="line">(END)       &#x2F;&#x2F; End of the program</span><br><span class="line">@END</span><br><span class="line">0;JMP</span><br></pre></td></tr></table></figure>
+<h2 id="fill">Fill</h2>
+<p>这个程序整体是一个循环，循环中首先判断当前键盘有没有输入值，根据输入值的情况运行填充屏幕还是清空屏幕的代码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Runs an infinite loop that listens to the keyboard input.</span><br><span class="line">&#x2F;&#x2F; When a key is pressed (any key), the program blackens the screen,</span><br><span class="line">&#x2F;&#x2F; i.e. writes &quot;black&quot; in every pixel;</span><br><span class="line">&#x2F;&#x2F; the screen should remain fully black as long as the key is pressed. </span><br><span class="line">&#x2F;&#x2F; When no key is pressed, the program clears the screen, i.e. writes</span><br><span class="line">&#x2F;&#x2F; &quot;white&quot; in every pixel;</span><br><span class="line">&#x2F;&#x2F; the screen should remain fully clear as long as no key is pressed.</span><br><span class="line"></span><br><span class="line">@i          &#x2F;&#x2F; Record the number of black blocks</span><br><span class="line">M&#x3D;0;</span><br><span class="line"></span><br><span class="line">(LOOP)</span><br><span class="line">@KBD        &#x2F;&#x2F; Get the value of the keyboard</span><br><span class="line">D&#x3D;M</span><br><span class="line"></span><br><span class="line">@TOBLACK    &#x2F;&#x2F; If key !&#x3D; 0 then turn black</span><br><span class="line">D;JNE</span><br><span class="line">@TOWHITE    &#x2F;&#x2F; else turn white</span><br><span class="line">D;JMP</span><br><span class="line"></span><br><span class="line">(TOBLACK)</span><br><span class="line">@i</span><br><span class="line">D&#x3D;M</span><br><span class="line">@8192       &#x2F;&#x2F; 8 * 1024</span><br><span class="line">D&#x3D;D-A</span><br><span class="line">@LOOP</span><br><span class="line">D;JEQ</span><br><span class="line">@i</span><br><span class="line">D&#x3D;M </span><br><span class="line">@SCREEN</span><br><span class="line">A&#x3D;A+D</span><br><span class="line">M&#x3D;-1        &#x2F;&#x2F; All 1</span><br><span class="line">@i</span><br><span class="line">M&#x3D;M+1       &#x2F;&#x2F; Black blocks plus 1</span><br><span class="line">@LOOP</span><br><span class="line">0;JMP</span><br><span class="line"></span><br><span class="line">(TOWHITE)</span><br><span class="line">@i</span><br><span class="line">D&#x3D;M</span><br><span class="line">@LOOP</span><br><span class="line">D;JLT</span><br><span class="line">@i</span><br><span class="line">D&#x3D;M </span><br><span class="line">@SCREEN</span><br><span class="line">A&#x3D;A+D</span><br><span class="line">M&#x3D;0         &#x2F;&#x2F; All 0</span><br><span class="line">@i</span><br><span class="line">M&#x3D;M-1       &#x2F;&#x2F; Black blocks minus 1</span><br><span class="line">@LOOP</span><br><span class="line">0;JMP</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2021/01/27/Nand2Tetris-Project-3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1103,100 +1199,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2020/07/31/ch3-3-6-%E5%9B%BA%E5%AE%9A%E5%9F%BA%E5%87%BD%E6%95%B0%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="汤焱">
-      <meta itemprop="description" content="记录学习和生活（遇到Latex公式加载异常可以刷新网页）">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="额呵呵的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/31/ch3-3-6-%E5%9B%BA%E5%AE%9A%E5%9F%BA%E5%87%BD%E6%95%B0%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7/" class="post-title-link" itemprop="url">ch3-3.6 固定基函数的局限性</a>
-        </h2>
-
-        <div class="post-meta">
-
-              
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-07-31 22:09:00" itemprop="dateCreated datePublished" datetime="2020-07-31T22:09:00+08:00">2020-07-31</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2020/07/31/ch3-3-6-%E5%9B%BA%E5%AE%9A%E5%9F%BA%E5%87%BD%E6%95%B0%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7/" class="post-meta-item leancloud_visitors" data-flag-title="ch3-3.6 固定基函数的局限性" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2020/07/31/ch3-3-6-%E5%9B%BA%E5%AE%9A%E5%9F%BA%E5%87%BD%E6%95%B0%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/07/31/ch3-3-6-%E5%9B%BA%E5%AE%9A%E5%9F%BA%E5%87%BD%E6%95%B0%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="固定基函数的局限性">3.6 固定基函数的局限性</h2>
-<p>在本章中，我们关注了由固定的非线性基函数的线性组合组成的模型。</p>
-<p>我们已经看到对于参数的线性性质的假设产生了一系列有用的性质，包括最小平方问题的解析解，以及从贝叶斯角度看待线性回归问题的方法。</p>
-<p>此外，对于一个合适的基函数的选择，我们可以建立输入向量到目标值之间的任意非线性映射。</p>
-<p>但是，线性模型有一些重要的局限性，例如：基函数的数量随着输入空间的维度迅速增长，通常是指数方式的增长。这使得我们在后续的章节中要关注更加复杂的模型。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1268,7 +1270,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
