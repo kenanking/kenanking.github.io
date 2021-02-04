@@ -167,6 +167,191 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2021/02/04/Algorithms-Part1-Queues/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="汤焱">
+      <meta itemprop="description" content="记录学习和生活（遇到Latex公式加载异常可以刷新网页）">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="额呵呵的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/04/Algorithms-Part1-Queues/" class="post-title-link" itemprop="url">Algorithms, Part1 - Queues</a>
+        </h2>
+
+        <div class="post-meta">
+
+              
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-04 19:53:28" itemprop="dateCreated datePublished" datetime="2021-02-04T19:53:28+08:00">2021-02-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">数据结构与算法</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/02/04/Algorithms-Part1-Queues/" class="post-meta-item leancloud_visitors" data-flag-title="Algorithms, Part1 - Queues" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/02/04/Algorithms-Part1-Queues/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/02/04/Algorithms-Part1-Queues/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <a id="more"></a>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* *****************************************************************************</span></span><br><span class="line"><span class="comment"> *  Name:              Yan Tang</span></span><br><span class="line"><span class="comment"> *  Coursera User ID:  汤焱</span></span><br><span class="line"><span class="comment"> *  Last modified:     2021/2/4</span></span><br><span class="line"><span class="comment"> **************************************************************************** */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.StdOut;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Iterator;</span><br><span class="line"><span class="keyword">import</span> java.util.NoSuchElementException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Deque</span>&lt;<span class="title">Item</span>&gt; <span class="keyword">implements</span> <span class="title">Iterable</span>&lt;<span class="title">Item</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Node&lt;Item&gt; first;    <span class="comment">// first of deque</span></span><br><span class="line">    <span class="keyword">private</span> Node&lt;Item&gt; last;    <span class="comment">// last of deque</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> n;              <span class="comment">// number of elements on deque</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span>&lt;<span class="title">Item</span>&gt; </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> Item item;</span><br><span class="line">        <span class="keyword">private</span> Node&lt;Item&gt; prev;</span><br><span class="line">        <span class="keyword">private</span> Node&lt;Item&gt; next;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// construct an empty deque</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Deque</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        first = <span class="keyword">null</span>;</span><br><span class="line">        last = <span class="keyword">null</span>;</span><br><span class="line">        n = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// is the deque empty?</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (first == <span class="keyword">null</span>) || (last == <span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// return the number of items on the deque</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">size</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> n;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// add the item to the front</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addFirst</span><span class="params">(Item item)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (item == <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"AddFirst with null argument."</span>);</span><br><span class="line"></span><br><span class="line">        Node&lt;Item&gt; oldfirst = first;</span><br><span class="line">        first = <span class="keyword">new</span> Node&lt;Item&gt;();</span><br><span class="line">        first.item = item;</span><br><span class="line">        first.prev = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (isEmpty()) &#123;</span><br><span class="line">            first.next = <span class="keyword">null</span>;</span><br><span class="line">            last = first;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            first.next = oldfirst;</span><br><span class="line">            oldfirst.prev = first;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        n++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// add the item to the back</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addLast</span><span class="params">(Item item)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (item == <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"addLast with null argument."</span>);</span><br><span class="line"></span><br><span class="line">        Node&lt;Item&gt; oldlast = last;</span><br><span class="line">        last = <span class="keyword">new</span> Node&lt;Item&gt;();</span><br><span class="line">        last.item = item;</span><br><span class="line">        last.next = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (isEmpty()) &#123;</span><br><span class="line">            last.prev = <span class="keyword">null</span>;</span><br><span class="line">            first = last;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            last.prev = oldlast;</span><br><span class="line">            oldlast.next = last;</span><br><span class="line">        &#125;</span><br><span class="line">        n++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// remove and return the item from the front</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Item <span class="title">removeFirst</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (isEmpty()) <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchElementException(<span class="string">"Deque is empty."</span>);</span><br><span class="line"></span><br><span class="line">        Item item = first.item;</span><br><span class="line">        first = first.next;</span><br><span class="line">        <span class="keyword">if</span> (isEmpty()) last = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">else</span> first.prev = <span class="keyword">null</span>;</span><br><span class="line">        n--;</span><br><span class="line">        <span class="keyword">return</span> item;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// remove and return the item from the back</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Item <span class="title">removeLast</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (isEmpty()) <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchElementException(<span class="string">"Deque is empty."</span>);</span><br><span class="line"></span><br><span class="line">        Item item = last.item;</span><br><span class="line">        last = last.prev;</span><br><span class="line">        <span class="keyword">if</span> (isEmpty()) first = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">else</span> last.next = <span class="keyword">null</span>;</span><br><span class="line">        n--;</span><br><span class="line">        <span class="keyword">return</span> item;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// return an iterator over items in order from front to back</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Iterator&lt;Item&gt; <span class="title">iterator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> DequeIterator();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">DequeIterator</span> <span class="keyword">implements</span> <span class="title">Iterator</span>&lt;<span class="title">Item</span>&gt; </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> Node&lt;Item&gt; current = first;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasNext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> current != <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> UnsupportedOperationException(<span class="string">"Unsupported method: remove."</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Item <span class="title">next</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (!hasNext())</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchElementException(<span class="string">"No more items to return."</span>);</span><br><span class="line"></span><br><span class="line">            Item item = current.item;</span><br><span class="line">            current = current.next;</span><br><span class="line">            <span class="keyword">return</span> item;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// unit testing (required)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Deque&lt;String&gt; deque = <span class="keyword">new</span> Deque&lt;String&gt;();</span><br><span class="line">        deque.addFirst(<span class="string">"Add First 1"</span>);</span><br><span class="line">        deque.addFirst(<span class="string">"Add First 2"</span>);</span><br><span class="line">        deque.addLast(<span class="string">"Add Last 1"</span>);</span><br><span class="line">        deque.addLast(<span class="string">"Add Last 2"</span>);</span><br><span class="line">        deque.addFirst(<span class="string">"Add First 3"</span>);</span><br><span class="line">        <span class="keyword">for</span> (String s : deque)</span><br><span class="line">            StdOut.println(s);</span><br><span class="line">        StdOut.println(deque.size());</span><br><span class="line">        StdOut.println(<span class="string">"Removed: "</span> + deque.removeFirst());</span><br><span class="line">        StdOut.println(<span class="string">"Removed: "</span> + deque.removeLast());</span><br><span class="line">        deque.addFirst(<span class="string">"Add First 4"</span>);</span><br><span class="line">        deque.addFirst(<span class="string">"Add First 5"</span>);</span><br><span class="line">        deque.addLast(<span class="string">"Add Last 3"</span>);</span><br><span class="line">        <span class="keyword">for</span> (String s : deque)</span><br><span class="line">            StdOut.println(s);</span><br><span class="line">        StdOut.println(deque.size());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* *****************************************************************************</span></span><br><span class="line"><span class="comment"> *  Name:              Yan Tang</span></span><br><span class="line"><span class="comment"> *  Coursera User ID:  汤焱</span></span><br><span class="line"><span class="comment"> *  Last modified:     2021/2/4</span></span><br><span class="line"><span class="comment"> **************************************************************************** */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.StdOut;</span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.StdRandom;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Iterator;</span><br><span class="line"><span class="keyword">import</span> java.util.NoSuchElementException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RandomizedQueue</span>&lt;<span class="title">Item</span>&gt; <span class="keyword">implements</span> <span class="title">Iterable</span>&lt;<span class="title">Item</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Item[] a;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> n;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// construct an empty randomized queue</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RandomizedQueue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        a = (Item[]) <span class="keyword">new</span> Object[<span class="number">2</span>];</span><br><span class="line">        n = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">resize</span><span class="params">(<span class="keyword">int</span> max)</span> </span>&#123;</span><br><span class="line">        Item[] temp = (Item[]) <span class="keyword">new</span> Object[max];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">            temp[i] = a[i];</span><br><span class="line">        a = temp;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// is the randomized queue empty?</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> n == <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// return the number of items on the randomized queue</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">size</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> n;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// add the item</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">enqueue</span><span class="params">(Item item)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (item == <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"AddFirst with null argument."</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (n == a.length) resize(<span class="number">2</span> * a.length);</span><br><span class="line">        a[n++] = item;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// remove and return a random item</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Item <span class="title">dequeue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (isEmpty()) <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchElementException(<span class="string">"Queue is empty."</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> pos = StdRandom.uniform(<span class="number">0</span>, n);</span><br><span class="line">        Item item = a[pos];</span><br><span class="line">        a[pos] = a[--n];</span><br><span class="line">        a[n] = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (n &gt; <span class="number">0</span> &amp;&amp; n == a.length / <span class="number">4</span>) resize(a.length / <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> item;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// return a random item (but do not remove it)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Item <span class="title">sample</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (isEmpty()) <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchElementException(<span class="string">"Queue is empty."</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> pos = StdRandom.uniform(<span class="number">0</span>, n);</span><br><span class="line">        <span class="keyword">return</span> a[pos];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// return an independent iterator over items in random order</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Iterator&lt;Item&gt; <span class="title">iterator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> RandomizedQueueIterator(n);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">RandomizedQueueIterator</span> <span class="keyword">implements</span> <span class="title">Iterator</span>&lt;<span class="title">Item</span>&gt; </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> current;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span>[] randomPos;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">RandomizedQueueIterator</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">            current = n;</span><br><span class="line">            randomPos = StdRandom.permutation(n);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasNext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> current != <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> UnsupportedOperationException(<span class="string">"Unsupported method: remove."</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Item <span class="title">next</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (!hasNext())</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchElementException(<span class="string">"No more items to return."</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> a[randomPos[--current]];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// unit testing (required)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        RandomizedQueue&lt;String&gt; randomizedQueue = <span class="keyword">new</span> RandomizedQueue&lt;String&gt;();</span><br><span class="line">        randomizedQueue.enqueue(<span class="string">"Add 1"</span>);</span><br><span class="line">        randomizedQueue.enqueue(<span class="string">"Add 2"</span>);</span><br><span class="line">        randomizedQueue.enqueue(<span class="string">"Add 3"</span>);</span><br><span class="line">        randomizedQueue.enqueue(<span class="string">"Add 4"</span>);</span><br><span class="line">        randomizedQueue.enqueue(<span class="string">"Add 5"</span>);</span><br><span class="line">        randomizedQueue.enqueue(<span class="string">"Add 6"</span>);</span><br><span class="line">        randomizedQueue.enqueue(<span class="string">"Add 7"</span>);</span><br><span class="line">        randomizedQueue.enqueue(<span class="string">"Add 8"</span>);</span><br><span class="line">        randomizedQueue.enqueue(<span class="string">"Add 9"</span>);</span><br><span class="line">        randomizedQueue.enqueue(<span class="string">"Add 10"</span>);</span><br><span class="line">        randomizedQueue.enqueue(<span class="string">"Add 11"</span>);</span><br><span class="line">        StdOut.println(<span class="string">"Size: "</span> + randomizedQueue.size());</span><br><span class="line">        StdOut.println(<span class="string">"Dequeue: "</span> + randomizedQueue.dequeue());</span><br><span class="line">        StdOut.println(<span class="string">"Size: "</span> + randomizedQueue.size());</span><br><span class="line">        StdOut.println(<span class="string">"Sample: "</span> + randomizedQueue.sample());</span><br><span class="line">        StdOut.println(<span class="string">"Size: "</span> + randomizedQueue.size());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (String s : randomizedQueue)</span><br><span class="line">            StdOut.println(s);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* *****************************************************************************</span></span><br><span class="line"><span class="comment"> *  Name:              Yan Tang</span></span><br><span class="line"><span class="comment"> *  Coursera User ID:  汤焱</span></span><br><span class="line"><span class="comment"> *  Last modified:     2021/2/4</span></span><br><span class="line"><span class="comment"> **************************************************************************** */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.StdIn;</span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.StdOut;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Permutation</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> k = Integer.parseInt(args[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">        RandomizedQueue&lt;String&gt; randomizedQueue = <span class="keyword">new</span> RandomizedQueue&lt;String&gt;();</span><br><span class="line">        <span class="keyword">while</span> (!StdIn.isEmpty())</span><br><span class="line">            randomizedQueue.enqueue(StdIn.readString());</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; k; i++)</span><br><span class="line">            StdOut.println(randomizedQueue.dequeue());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2021/02/04/Algorithms-Part1-Percolation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="汤焱">
+      <meta itemprop="description" content="记录学习和生活（遇到Latex公式加载异常可以刷新网页）">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="额呵呵的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/04/Algorithms-Part1-Percolation/" class="post-title-link" itemprop="url">Algorithms, Part1 - Percolation</a>
+        </h2>
+
+        <div class="post-meta">
+
+              
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-04 19:53:20" itemprop="dateCreated datePublished" datetime="2021-02-04T19:53:20+08:00">2021-02-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">数据结构与算法</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/02/04/Algorithms-Part1-Percolation/" class="post-meta-item leancloud_visitors" data-flag-title="Algorithms, Part1 - Percolation" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/02/04/Algorithms-Part1-Percolation/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/02/04/Algorithms-Part1-Percolation/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <a id="more"></a>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* *****************************************************************************</span></span><br><span class="line"><span class="comment"> *  Name:              Yan Tang</span></span><br><span class="line"><span class="comment"> *  Coursera User ID:  汤焱</span></span><br><span class="line"><span class="comment"> *  Last modified:     2021/2/3</span></span><br><span class="line"><span class="comment"> **************************************************************************** */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.WeightedQuickUnionUF;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Percolation</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WeightedQuickUnionUF ufTopAndBottom;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WeightedQuickUnionUF ufTop;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span>[] status;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> count;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> numberOfOpen = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// creates n-by-n grid, with all sites initially blocked</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Percolation</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (n &lt;= <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"input "</span> + n + <span class="string">" must be greater then 0."</span>);</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">         *  0</span></span><br><span class="line"><span class="comment">         *  1           2           3           ...         n</span></span><br><span class="line"><span class="comment">         *  n+1         n+2         n+3         ...         2n</span></span><br><span class="line"><span class="comment">         *  2n+1        2n+2        2n+3        ...         3n</span></span><br><span class="line"><span class="comment">         *  ...         ...         ...         ...         ...</span></span><br><span class="line"><span class="comment">         *  (n-1)n+1    (n-1)n+2    (n-1)n+3    ...         n^2</span></span><br><span class="line"><span class="comment">         *  n^2+1</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        count = n;</span><br><span class="line">        ufTopAndBottom = <span class="keyword">new</span> WeightedQuickUnionUF(n * n + <span class="number">2</span>);</span><br><span class="line">        ufTop = <span class="keyword">new</span> WeightedQuickUnionUF(n * n + <span class="number">1</span>);</span><br><span class="line">        status = <span class="keyword">new</span> <span class="keyword">boolean</span>[n * n];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// opens the site (row, col) if it is not open already</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">open</span><span class="params">(<span class="keyword">int</span> row, <span class="keyword">int</span> col)</span> </span>&#123;</span><br><span class="line">        validate(row, col);</span><br><span class="line">        <span class="keyword">if</span> (isOpen(row, col)) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">        status[(row - <span class="number">1</span>) * count + col - <span class="number">1</span>] = <span class="keyword">true</span>;</span><br><span class="line">        numberOfOpen++;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (row == <span class="number">1</span>) &#123;</span><br><span class="line">            ufTopAndBottom.union(<span class="number">0</span>, (row - <span class="number">1</span>) * count + col);</span><br><span class="line">            ufTop.union(<span class="number">0</span>, (row - <span class="number">1</span>) * count + col);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (row == count) ufTopAndBottom.union((row - <span class="number">1</span>) * count + col, count * count + <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span>[] rowShift = &#123; -<span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span> &#125;;</span><br><span class="line">        <span class="keyword">int</span>[] colShift = &#123; <span class="number">0</span>, <span class="number">0</span>, -<span class="number">1</span>, <span class="number">1</span> &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; rowShift.length; i++) &#123;</span><br><span class="line">            <span class="keyword">int</span> tmpRow = row + rowShift[i];</span><br><span class="line">            <span class="keyword">int</span> tmpCol = col + colShift[i];</span><br><span class="line">            <span class="keyword">if</span> (!checkOutOfIndex(tmpRow) &amp;&amp; !checkOutOfIndex(tmpCol))</span><br><span class="line">                <span class="keyword">if</span> (isOpen(tmpRow, tmpCol)) &#123;</span><br><span class="line">                    ufTopAndBottom.union((row - <span class="number">1</span>) * count + col, (tmpRow - <span class="number">1</span>) * count + tmpCol);</span><br><span class="line">                    ufTop.union((row - <span class="number">1</span>) * count + col, (tmpRow - <span class="number">1</span>) * count + tmpCol);</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// is the site (row, col) open?</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isOpen</span><span class="params">(<span class="keyword">int</span> row, <span class="keyword">int</span> col)</span> </span>&#123;</span><br><span class="line">        validate(row, col);</span><br><span class="line">        <span class="keyword">return</span> status[(row - <span class="number">1</span>) * count + col - <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// is the site (row, col) full?</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isFull</span><span class="params">(<span class="keyword">int</span> row, <span class="keyword">int</span> col)</span> </span>&#123;</span><br><span class="line">        validate(row, col);</span><br><span class="line">        <span class="keyword">return</span> ufTop.find(<span class="number">0</span>) == ufTop.find((row - <span class="number">1</span>) * count + col);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// returns the number of open sites</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">numberOfOpenSites</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> numberOfOpen;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// does the system percolate?</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">percolates</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ufTopAndBottom.find(<span class="number">0</span>) == ufTopAndBottom.find(count * count + <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// check if row/col is out of index</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">checkOutOfIndex</span><span class="params">(<span class="keyword">int</span> p)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (p &lt; <span class="number">1</span> || p &gt; count)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// validate that (row, col) is a valid index</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">validate</span><span class="params">(<span class="keyword">int</span> row, <span class="keyword">int</span> col)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (checkOutOfIndex(row))</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(</span><br><span class="line">                    <span class="string">"row index "</span> + row + <span class="string">" is not between 1 and "</span> + count + <span class="string">"."</span>);</span><br><span class="line">        <span class="keyword">if</span> (checkOutOfIndex(col))</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(</span><br><span class="line">                    <span class="string">"col index "</span> + col + <span class="string">" is not between 1 and "</span> + count + <span class="string">"."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* *****************************************************************************</span></span><br><span class="line"><span class="comment"> *  Name:              Yan Tang</span></span><br><span class="line"><span class="comment"> *  Coursera User ID:  汤焱</span></span><br><span class="line"><span class="comment"> *  Last modified:     2021/2/3</span></span><br><span class="line"><span class="comment"> **************************************************************************** */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.StdOut;</span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.StdRandom;</span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.StdStats;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PercolationStats</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">double</span> mean;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">double</span> stddev;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">double</span> confidenceLo;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">double</span> confidenceHi;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// perform independent trials on an n-by-n grid</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PercolationStats</span><span class="params">(<span class="keyword">int</span> n, <span class="keyword">int</span> trials)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (n &lt;= <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"input n = "</span> + n + <span class="string">" must be greater then 0."</span>);</span><br><span class="line">        <span class="keyword">if</span> (trials &lt;= <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(</span><br><span class="line">                    <span class="string">"input trails = "</span> + trials + <span class="string">" must be greater then 0."</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">double</span>[] threshold = <span class="keyword">new</span> <span class="keyword">double</span>[trials];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; trials; i++) &#123;</span><br><span class="line">            Percolation perc = <span class="keyword">new</span> Percolation(n);</span><br><span class="line">            <span class="keyword">while</span> (!perc.percolates()) &#123;</span><br><span class="line">                <span class="keyword">int</span> row = StdRandom.uniform(<span class="number">1</span>, n + <span class="number">1</span>);</span><br><span class="line">                <span class="keyword">int</span> col = StdRandom.uniform(<span class="number">1</span>, n + <span class="number">1</span>);</span><br><span class="line">                <span class="keyword">if</span> (!perc.isOpen(row, col))</span><br><span class="line">                    perc.open(row, col);</span><br><span class="line">            &#125;</span><br><span class="line">            threshold[i] = (<span class="keyword">double</span>) perc.numberOfOpenSites() / (<span class="keyword">double</span>) (n * n);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        mean = StdStats.mean(threshold);</span><br><span class="line">        stddev = StdStats.stddev(threshold);</span><br><span class="line">        confidenceLo = mean - (<span class="number">1.96</span> * stddev) / Math.sqrt(trials);</span><br><span class="line">        confidenceHi = mean + (<span class="number">1.96</span> * stddev) / Math.sqrt(trials);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// sample mean of percolation threshold</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">mean</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mean;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// sample standard deviation of percolation threshold</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">stddev</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> stddev;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// low endpoint of 95% confidence interval</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">confidenceLo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> confidenceLo;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// high endpoint of 95% confidence interval</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">confidenceHi</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> confidenceHi;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// test client (see below)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n = Integer.parseInt(args[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">int</span> trails = Integer.parseInt(args[<span class="number">1</span>]);</span><br><span class="line">        PercolationStats percStats = <span class="keyword">new</span> PercolationStats(n, trails);</span><br><span class="line">        StdOut.println(<span class="string">"mean\t\t\t= "</span> + percStats.mean());</span><br><span class="line">        StdOut.println(<span class="string">"stddev\t\t\t= "</span> + percStats.stddev);</span><br><span class="line">        StdOut.println(</span><br><span class="line">                <span class="string">"95% confidence interval\t= ["</span> + percStats.confidenceLo() + <span class="string">", "</span> + percStats</span><br><span class="line">                        .confidenceHi() + <span class="string">"]"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2021/01/28/Nand2Tetris-Project-4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -980,226 +1165,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2020/08/01/ch4-4-1-%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="汤焱">
-      <meta itemprop="description" content="记录学习和生活（遇到Latex公式加载异常可以刷新网页）">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="额呵呵的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/01/ch4-4-1-%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0/" class="post-title-link" itemprop="url">ch4-4.1 判别函数</a>
-        </h2>
-
-        <div class="post-meta">
-
-              
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-01 22:52:21" itemprop="dateCreated datePublished" datetime="2020-08-01T22:52:21+08:00">2020-08-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-05 15:21:37" itemprop="dateModified" datetime="2020-08-05T15:21:37+08:00">2020-08-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2020/08/01/ch4-4-1-%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0/" class="post-meta-item leancloud_visitors" data-flag-title="ch4-4.1 判别函数" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2020/08/01/ch4-4-1-%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/08/01/ch4-4-1-%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="判别函数">4.1 判别函数</h2>
-<p>判别函数是一个以向量<span class="math inline">\(\mathbf{x}\)</span>为输⼊，把它分配到<span class="math inline">\(K\)</span>个类别中的某⼀个类别（记作<span class="math inline">\(C_k\)</span>）的函数。这一章中，我们仍然探讨<strong>线性判别函数（linear discriminant function）</strong>，即那些决策面是超平面的判别函数。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/08/01/ch4-4-1-%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2020/08/01/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch4-Linear-Models-for-Classification/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpeg">
-      <meta itemprop="name" content="汤焱">
-      <meta itemprop="description" content="记录学习和生活（遇到Latex公式加载异常可以刷新网页）">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="额呵呵的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/01/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch4-Linear-Models-for-Classification/" class="post-title-link" itemprop="url">模式识别与机器学习_ch4-Linear Models for Classification</a>
-        </h2>
-
-        <div class="post-meta">
-
-              
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-01 18:46:45" itemprop="dateCreated datePublished" datetime="2020-08-01T18:46:45+08:00">2020-08-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-08-05 15:25:31" itemprop="dateModified" datetime="2020-08-05T15:25:31+08:00">2020-08-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/2020/08/01/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch4-Linear-Models-for-Classification/" class="post-meta-item leancloud_visitors" data-flag-title="模式识别与机器学习_ch4-Linear Models for Classification" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2020/08/01/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch4-Linear-Models-for-Classification/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/08/01/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch4-Linear-Models-for-Classification/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ul class="task-list">
-<li><input type="checkbox" disabled="" checked="" />
-判别函数</li>
-<li><input type="checkbox" disabled="" />
-概率生成式模型</li>
-<li><input type="checkbox" disabled="" />
-概率判别式模型</li>
-<li><input type="checkbox" disabled="" />
-拉普拉斯近似</li>
-<li><input type="checkbox" disabled="" />
-贝叶斯logistic回归</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/08/01/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-ch4-Linear-Models-for-Classification/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1271,20 +1236,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-count">37</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
