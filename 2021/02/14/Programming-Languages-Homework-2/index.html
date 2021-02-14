@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ehehe.cn","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="作业2中使用了在这部分课程中介绍的很多有用的概念。  利用编程语言中自带的基本类型创建的复合类型可以分为三类：Each-of：相当于一个类，每个成员变量都需要赋值；One-of：我觉得相当于枚举类型；Self-reference：在实现链表、树等数据结构时需要对类型自身进行引用。 通过Records可以可以创建Each-of类型。 语法糖（Syntactic Sugar）的作用：通过语法糖">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Programming Languages Homework 2">
+<meta property="og:url" content="https://ehehe.cn/2021/02/14/Programming-Languages-Homework-2/index.html">
+<meta property="og:site_name" content="额呵呵的博客">
+<meta property="og:description" content="作业2中使用了在这部分课程中介绍的很多有用的概念。  利用编程语言中自带的基本类型创建的复合类型可以分为三类：Each-of：相当于一个类，每个成员变量都需要赋值；One-of：我觉得相当于枚举类型；Self-reference：在实现链表、树等数据结构时需要对类型自身进行引用。 通过Records可以可以创建Each-of类型。 语法糖（Syntactic Sugar）的作用：通过语法糖">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-14T07:00:53.000Z">
+<meta property="article:modified_time" content="2021-02-14T07:00:53.000Z">
+<meta property="article:author" content="汤焱">
+<meta property="article:tag" content="Coursera">
+<meta property="article:tag" content="Programming Languages">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ehehe.cn/2021/02/14/Programming-Languages-Homework-2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Programming Languages Homework 2 | 额呵呵的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">额呵呵的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2021/02/14/Programming-Languages-Homework-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="汤焱">
+      <meta itemprop="description" content="记录学习和生活（遇到Latex公式加载异常可以刷新网页）">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="额呵呵的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Programming Languages Homework 2
+        </h1>
+
+        <div class="post-meta">
+
+              
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-14 15:00:53" itemprop="dateCreated datePublished" datetime="2021-02-14T15:00:53+08:00">2021-02-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/02/14/Programming-Languages-Homework-2/" class="post-meta-item leancloud_visitors" data-flag-title="Programming Languages Homework 2" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/02/14/Programming-Languages-Homework-2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/02/14/Programming-Languages-Homework-2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>作业2中使用了在这部分课程中介绍的很多有用的概念。</p>
+<ul>
+<li><p>利用编程语言中自带的基本类型创建的复合类型可以分为三类：<code>Each-of</code>：相当于一个类，每个成员变量都需要赋值；<code>One-of</code>：我觉得相当于枚举类型；<code>Self-reference</code>：在实现链表、树等数据结构时需要对类型自身进行引用。</p></li>
+<li><p>通过<code>Records</code>可以可以创建<code>Each-of</code>类型。</p></li>
+<li><p>语法糖（<code>Syntactic Sugar</code>）的作用：通过语法糖可以简化编程语言中实现某一功能所需的代码。</p></li>
+<li><p>介绍了等号的第三种（第一次课程中介绍过：<code>Value Binding</code>和<code>Function Binding</code>）作用：<code>Datatype Binding</code>。</p></li>
+<li><p><code>case</code>表达式：<code>case</code>表达式的作用非常强大，通过<code>case</code>表达式，可以实现模式匹匹配（<code>Pattern-Matching</code>），模式匹配是这一次课程的重点。</p></li>
+<li><p>尾递归（<code>Tail Recursion</code>）和累加器（<code>Accumulator</code>）：在递归的过程中，由于需要使用下一状态的值，需要存储大量递归函数的中间状态，大量的递归会造成栈的溢出。尾递归就是通过把递归函数的结果作为参数传给下一次调用，从而节省了栈的开销。需要注意不是所有递归都能改成尾递归，并且不是所有尾递归都能节省栈的开销。</p></li>
+</ul>
+<a id="more"></a>
+<h2 id="problem-1">Problem 1</h2>
+<h3 id="a">1-a</h3>
+<p>Write a function <code>remove_option</code>, which takes a string and a string list. Return NONE if the string is not in the list, else return SOME xs where xs is identical to the argument list except the string is not in it. You may assume the string is in the list at most once. Use same_string, provided to you, to compare strings. Sample solution is around 8 lines.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">fun same_string(s1 : string, s2 : string) &#x3D;</span><br><span class="line">    s1 &#x3D; s2</span><br><span class="line"></span><br><span class="line">(* Problem 1-a *)</span><br><span class="line">fun remove_option(str, str_list) &#x3D;</span><br><span class="line">    let</span><br><span class="line">	fun remove_option_helper(strs) &#x3D;</span><br><span class="line">	    case strs of</span><br><span class="line">		[] &#x3D;&gt; []</span><br><span class="line">	      | x::xs&#39; &#x3D;&gt; if same_string(x, str) then xs&#39; else x::remove_option_helper(xs&#39;)</span><br><span class="line">	val ans &#x3D; remove_option_helper(str_list)</span><br><span class="line">    in</span><br><span class="line">	if ans &#x3D; str_list then NONE else SOME ans</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+<h3 id="b">1-b</h3>
+<p>Write a function <code>all_substitutions1</code>, which takes a string list list (a list of list of strings, the substitutions) and a string s and returns a string list. The result has all the strings that are in some list in substitutions that also has s, but s itself should not be in the result.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 1-b *)</span><br><span class="line">fun all_substitutions1(substitutions, str) &#x3D;</span><br><span class="line">    case substitutions of</span><br><span class="line">	[] &#x3D;&gt; []</span><br><span class="line">      | x::xs&#39; &#x3D;&gt; case remove_option(str, x) of</span><br><span class="line">		      NONE &#x3D;&gt; all_substitutions1(xs&#39;, str)</span><br><span class="line">		    | SOME d &#x3D;&gt; d @ all_substitutions1(xs&#39;, str)</span><br></pre></td></tr></table></figure>
+<h3 id="c">1-c</h3>
+<p>Write a function <code>all_substitutions2</code>, which is like all_substitutions1 except it uses a tail-recursive local helper function.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 1-c *)</span><br><span class="line">fun all_substitutions2(substitutions, str) &#x3D;</span><br><span class="line">    let</span><br><span class="line">	fun all_substitutions2_helper(sub, acc) &#x3D;</span><br><span class="line">	    case sub of</span><br><span class="line">		[] &#x3D;&gt; acc</span><br><span class="line">	      | x::xs&#39; &#x3D;&gt; case remove_option(str, x) of</span><br><span class="line">			      NONE &#x3D;&gt; all_substitutions2_helper(xs&#39;, acc)</span><br><span class="line">			    | SOME d &#x3D;&gt; all_substitutions2_helper(xs&#39;, acc @ d) </span><br><span class="line">    in</span><br><span class="line">	all_substitutions2_helper(substitutions, [])</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+<h3 id="d">1-d</h3>
+<p>Write a function similar_names, which takes a string list list of substitutions (as in parts (b) and (c)) and a full name of type {first:string, middle:string, last:string} and returns a list of full names (type {first:string, middle:string, last:string} list). The result is all the full names you can produce by substituting for the rst name (and only the rst name) using substitutions and parts (b) or (c). The answer should begin with the original name (then have 0 or more other names).</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 1-d *)</span><br><span class="line">fun similar_names(substitutions, full_name) &#x3D;</span><br><span class="line">    let</span><br><span class="line">	val &#123;first&#x3D;fir, middle&#x3D;mid, last&#x3D;las&#125; &#x3D; full_name</span><br><span class="line">	val sub_first_names &#x3D; all_substitutions2(substitutions, fir)</span><br><span class="line">	fun similar_names_helper(first_names) &#x3D;</span><br><span class="line">	    case first_names of</span><br><span class="line">		[] &#x3D;&gt; []</span><br><span class="line">	      | x::xs&#39; &#x3D;&gt; &#123;first&#x3D;x, middle&#x3D;mid, last&#x3D;las&#125;::similar_names_helper(xs&#39;)</span><br><span class="line">    in</span><br><span class="line">	full_name::similar_names_helper(sub_first_names)</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+<h2 id="problem-2">Problem 2</h2>
+<h3 id="a-1">2-a</h3>
+<ol type="a">
+<li>Write a function <code>card_color</code>, which takes a card and returns its color (spades and clubs are black, diamonds and hearts are red). Note: One case-expression is enough.</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">datatype suit &#x3D; Clubs | Diamonds | Hearts | Spades</span><br><span class="line">datatype rank &#x3D; Jack | Queen | King | Ace | Num of int </span><br><span class="line">type card &#x3D; rank * suit</span><br><span class="line"></span><br><span class="line">datatype color &#x3D; Red | Black</span><br><span class="line">datatype move &#x3D; Discard of card | Draw </span><br><span class="line"></span><br><span class="line">exception IllegalMove</span><br><span class="line"></span><br><span class="line">(* Problem 2-a *)</span><br><span class="line">fun card_color c &#x3D;</span><br><span class="line">    case c of</span><br><span class="line">	(_, Spades) &#x3D;&gt; Black</span><br><span class="line">      | (_, Clubs) &#x3D;&gt; Black</span><br><span class="line">      | _ &#x3D;&gt; Red</span><br></pre></td></tr></table></figure>
+<h3 id="b-1">2-b</h3>
+<p>Write a function <code>card_value</code>, which takes a card and returns its value (numbered cards have their number as the value, aces are 11, everything else is 10). Note: One case-expression is enough.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 2-b *)</span><br><span class="line">fun card_value c &#x3D;</span><br><span class="line">    case c of</span><br><span class="line">	(Num i, _) &#x3D;&gt; i</span><br><span class="line">      | (Ace, _) &#x3D;&gt; 11</span><br><span class="line">      | _ &#x3D;&gt; 10</span><br></pre></td></tr></table></figure>
+<h3 id="c-1">2-c</h3>
+<p>Write a function <code>remove_card</code>, which takes a list of cards cs, a card c, and an exception e. It returns a list that has all the elements of cs except c. If c is in the list more than once, remove only the rst one. If c is not in the list, raise the exception e. You can compare cards with =.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 2-c *)</span><br><span class="line">fun remove_card(cs, c, e) &#x3D;</span><br><span class="line">    case cs of</span><br><span class="line">	[] &#x3D;&gt; raise e</span><br><span class="line">      | x::xs&#39; &#x3D;&gt; if x &#x3D; c</span><br><span class="line">		  then xs&#39;</span><br><span class="line">		  else x::remove_card(xs&#39;, c, e)</span><br></pre></td></tr></table></figure>
+<h3 id="d-1">2-d</h3>
+<p>Write a function <code>all_same_color</code>, which takes a list of cards and returns true if all the cards in the list are the same color. Hint: An elegant solution is very similar to one of the functions using nested pattern-matching in the lectures.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 2-d *)</span><br><span class="line">fun all_same_color cs &#x3D;</span><br><span class="line">    case cs of</span><br><span class="line">	[] &#x3D;&gt; true</span><br><span class="line">      | _::[] &#x3D;&gt; true</span><br><span class="line">      | head::(neck::rest) &#x3D;&gt; (card_color head &#x3D; card_color neck andalso all_same_color(neck::rest))</span><br></pre></td></tr></table></figure>
+<h3 id="e">2-e</h3>
+<p>Write a function <code>sum_cards</code>, which takes a list of cards and returns the sum of their values. Use a locally defined helper function that is tail recursive.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 2-e *)</span><br><span class="line">fun sum_cards cs &#x3D;</span><br><span class="line">    let</span><br><span class="line">	fun sum_cards_helper(rest_cs, acc) &#x3D;</span><br><span class="line">	    case rest_cs of</span><br><span class="line">		[] &#x3D;&gt; acc</span><br><span class="line">		   | x::xs&#39; &#x3D;&gt; sum_cards_helper(xs&#39;, card_value x + acc) </span><br><span class="line">    in</span><br><span class="line">	sum_cards_helper(cs, 0)</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+<h3 id="f">2-f</h3>
+<p>Write a function <code>score</code>, which takes a card list (the held-cards) and an int (the goal) and computes the score as described above.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 2-f *)</span><br><span class="line">fun score(cs, goal) &#x3D;</span><br><span class="line">    let</span><br><span class="line">	val pre_scrore &#x3D; abs((sum_cards cs) - goal)</span><br><span class="line">    in</span><br><span class="line">	if all_same_color(cs)</span><br><span class="line">	then pre_scrore div 2</span><br><span class="line">	else pre_scrore</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+<h3 id="g">2-g</h3>
+<p>Write a function <code>officiate</code>, which "runs a game." It takes a card list (the card-list) a move list (what the player "does" at each point), and an int (the goal) and returns the score at the end of the game after processing (some or all of) the moves in the move list in order. Use a locally defined recursive helper function that takes several arguments that together represent the current state of the game. As described above:</p>
+<ul>
+<li>The game starts with the held-cards being the empty list.</li>
+<li>The game ends if there are no more moves. (The player chose to stop since the move list is empty.)</li>
+<li>If the player discards some card c, play continues (i.e., make a recursive call) with the held-cards not having c and the card-list unchanged. If c is not in the held-cards, raise the <code>IllegalMove</code> exception.</li>
+<li>If the player draws and the card-list is (already) empty, the game is over. Else if drawing causes the sum of the held-cards to exceed the goal, the game is over (after drawing). Else play continues with a larger held-cards and a smaller card-list.</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 2-g *)</span><br><span class="line">fun officiate(cs, ms, goal) &#x3D;</span><br><span class="line">    let</span><br><span class="line">	fun officiate_helper(cards, moves, helds) &#x3D; </span><br><span class="line">	    case moves of</span><br><span class="line">		[] &#x3D;&gt; score(helds, goal)</span><br><span class="line">	      | (Discard c)::tl_moves &#x3D;&gt; officiate_helper(cards, tl_moves, remove_card(cards, c, IllegalMove)) </span><br><span class="line">	      | Draw::tl_moves &#x3D;&gt; case cards of</span><br><span class="line">				      [] &#x3D;&gt; score(helds, goal)</span><br><span class="line">				    | c::tl_cards &#x3D;&gt; if sum_cards(c::helds) &gt; goal</span><br><span class="line">						then score(c::helds, goal)</span><br><span class="line">						else officiate_helper(tl_cards, tl_moves, c::helds)</span><br><span class="line">    in</span><br><span class="line">	officiate_helper(cs, ms, [])</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Coursera/" rel="tag"><i class="fa fa-tag"></i> Coursera</a>
+              <a href="/tags/Programming-Languages/" rel="tag"><i class="fa fa-tag"></i> Programming Languages</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/09/Programming-Languages-Homework-1/" rel="prev" title="Programming Languages Homework 1">
+      <i class="fa fa-chevron-left"></i> Programming Languages Homework 1
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-1"><span class="nav-text">Problem 1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a"><span class="nav-text">1-a</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#b"><span class="nav-text">1-b</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#c"><span class="nav-text">1-c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#d"><span class="nav-text">1-d</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-2"><span class="nav-text">Problem 2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a-1"><span class="nav-text">2-a</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#b-1"><span class="nav-text">2-b</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#c-1"><span class="nav-text">2-c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#d-1"><span class="nav-text">2-d</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#e"><span class="nav-text">2-e</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#f"><span class="nav-text">2-f</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#g"><span class="nav-text">2-g</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="汤焱"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">汤焱</p>
+  <div class="site-description" itemprop="description">记录学习和生活（遇到Latex公式加载异常可以刷新网页）</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">汤焱</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"800gFBV2IVxOwTNRC7pRH9Bk-gzGzoHsz","app_key":"nXJfgYp5gB1D7lXIfYmotC7A","server_url":"https://xwoxrs5i.lc-cn-n1-shared.com","security":false};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+          load: ['[tex]/mhchem'],
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+          packages: {'[+]': ['mhchem']},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : true,
+      notify     : false,
+      appId      : 'Dv2dJ9WEH0HU79vUrWsSHLKi-gzGzoHsz',
+      appKey     : 'CwFExLm0NUuoBWF8ae4Nj4di',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
