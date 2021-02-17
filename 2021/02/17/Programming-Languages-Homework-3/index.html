@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-material.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ehehe.cn","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":"default","style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Programming Languages作业3。总结后面再写。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Programming Languages Homework 3">
+<meta property="og:url" content="https://ehehe.cn/2021/02/17/Programming-Languages-Homework-3/index.html">
+<meta property="og:site_name" content="额呵呵的博客">
+<meta property="og:description" content="Programming Languages作业3。总结后面再写。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-17T03:23:44.000Z">
+<meta property="article:modified_time" content="2021-02-17T03:23:44.000Z">
+<meta property="article:author" content="汤焱">
+<meta property="article:tag" content="Coursera">
+<meta property="article:tag" content="Programming Languages">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ehehe.cn/2021/02/17/Programming-Languages-Homework-3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Programming Languages Homework 3 | 额呵呵的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">额呵呵的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2021/02/17/Programming-Languages-Homework-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="汤焱">
+      <meta itemprop="description" content="记录学习和生活（遇到Latex公式加载异常可以刷新网页）">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="额呵呵的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Programming Languages Homework 3
+        </h1>
+
+        <div class="post-meta">
+
+              
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-17 11:23:44" itemprop="dateCreated datePublished" datetime="2021-02-17T11:23:44+08:00">2021-02-17</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2021/02/17/Programming-Languages-Homework-3/" class="post-meta-item leancloud_visitors" data-flag-title="Programming Languages Homework 3" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/02/17/Programming-Languages-Homework-3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/02/17/Programming-Languages-Homework-3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Programming Languages作业3。总结后面再写。</p>
+<a id="more"></a>
+<h2 id="problem-1">Problem 1</h2>
+<p>Write a function <code>only_lowercase</code> that takes a string list and returns a string list that has only the strings in the argument that start with an lowercase letter. Assume all strings have at least 1 character. Use List.filter, Char.isLower, and String.sub to make a 1-2 line solution.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 1 *)</span><br><span class="line">val only_lowercase &#x3D; List.filter (fn str &#x3D;&gt; Char.isLower(String.sub(str, 0)))</span><br></pre></td></tr></table></figure>
+<h2 id="problem-2">Problem 2</h2>
+<p>Write a function <code>longest_string1</code> that takes a string list and returns the longest string in the list. If the list is empty, return "". In the case of a tie, return the string closest to the beginning of the list. Use foldl, String.size, and no recursion (other than the implementation of foldl is recursive).</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 2 *)</span><br><span class="line">val longest_string1 &#x3D; foldl (fn (str1, str2) &#x3D;&gt; if String.size str1 &gt; String.size str2 then str1 else str2) &quot;&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="problem-3">Problem 3</h2>
+<p>Write a function <code>longest_string2</code> that is exactly like longest_string1 except in the case of ties it returns the string closest to the end of the list. Your solution should be almost an exact copy of longest_string1. Still use foldl and String.size.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 3 *)</span><br><span class="line">val longest_string2 &#x3D; foldl (fn (str1, str2) &#x3D;&gt; if String.size str1 &gt;&#x3D; String.size str2 then str1 else str2) &quot;&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="problem-4">Problem 4</h2>
+<p>Write functions <code>longest_string_helper</code>, <code>longest_string3</code>, and <code>longest_string4</code> such that:</p>
+<ul>
+<li><code>longest_string3</code> has the same behavior as <code>longest_string1</code> and <code>longest_string4</code> has the same behavior as <code>longest_string2</code>.</li>
+<li><code>longest_string_helper</code> has type (int * int -&gt; bool) -&gt; string list -&gt; string (notice the currying). This function will look a lot like <code>longest_string1</code> and <code>longest_string2</code> but is more general because it takes a function as an argument.</li>
+<li>If <code>longest_string_helper</code> is passed a function that behaves like &gt; (so it returns true exactly when its rst argument is stricly greater than its second), then the function returned has the same behavior as <code>longest_string1</code>.</li>
+<li><code>longest_string3</code> and <code>longest_string4</code> are defined with val-bindings and partial applications of <code>longest_string_helper</code>.</li>
+</ul>
+<h3 id="problem-4-1">Problem 4-1</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 4-1 *)</span><br><span class="line">fun longest_string_helper compare_fn strs &#x3D; foldl (fn (str1, str2) &#x3D;&gt; if compare_fn(String.size str1, String.size str2) then str1 else str2) &quot;&quot; strs</span><br></pre></td></tr></table></figure>
+<h3 id="problem-4-2">Problem 4-2</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 4-2 *)</span><br><span class="line">val longest_string3 &#x3D; longest_string_helper (fn (x, y) &#x3D;&gt; x &gt; y)</span><br></pre></td></tr></table></figure>
+<h3 id="problem-4-3">Problem 4-3</h3>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 4-3 *)</span><br><span class="line">val longest_string4 &#x3D; longest_string_helper (fn (x, y) &#x3D;&gt; x &gt;&#x3D; y)</span><br></pre></td></tr></table></figure>
+<h2 id="problem-5">Problem 5</h2>
+<p>Write a function <code>longest_lowercase</code> that takes a string list and returns the longest string in the list that begins with an lowercase letter, or "" if there are no such strings. Assume all strings have at least 1 character. Use a val-binding and the ML library's o operator for composing functions. Resolve ties like in problem 2.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 5 *)</span><br><span class="line">val longest_lowercase &#x3D; longest_string1 o only_lowercase</span><br></pre></td></tr></table></figure>
+<h2 id="problem-6">Problem 6</h2>
+<p>Write a function <code>rev_string</code> that takes a string and returns the string that is the same characters in reverse order and every letter capitalized (e.g., "foo" becomes "OOF"). Use ML's o operator, the library function rev for reversing lists, and three library functions in the String module, one of which is String.map. (Browse the module documentation to find the most useful functions.)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 6 *)</span><br><span class="line">val rev_string &#x3D; String.map Char.toUpper o String.implode o rev o String.explode</span><br></pre></td></tr></table></figure>
+<h2 id="problem-7">Problem 7</h2>
+<p>Write a function <code>first_answer</code> of type ('a -&gt; 'b option) -&gt; 'a list -&gt; 'b (notice the 2 arguments are curried). The rst argument should be applied to elements of the second argument in order until the rst time it returns SOME v for some v and then v is the result of the call to first_answer. If the rst argument returns NONE for all list elements, then first_answer should raise the exception NoAnswer. Hints: Sample solution is 5 lines and does nothing fancy.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">exception NoAnswer</span><br><span class="line">							      </span><br><span class="line">(* Problem 7 *)</span><br><span class="line">fun first_answer f xs &#x3D;</span><br><span class="line">    case xs of</span><br><span class="line">	[]     &#x3D;&gt; raise NoAnswer</span><br><span class="line">      | x::xs&#39; &#x3D;&gt; case f x of</span><br><span class="line">		      NONE  &#x3D;&gt; first_answer f xs&#39;</span><br><span class="line">		   | SOME v &#x3D;&gt; v</span><br></pre></td></tr></table></figure>
+<h2 id="problem-8">Problem 8</h2>
+<p>Write a function <code>all_answers</code> of type ('a -&gt; 'b list option) -&gt; 'a list -&gt; 'b list option (notice the 2 arguments are curried). The rst argument should be applied to elements of the second argument. If it returns NONE for any element, then the result for all_answers is NONE. Else the calls to the rst argument will have produced SOME lst1, SOME lst2, ... SOME lstn and the result of all_answers is SOME lst where lst is lst1, lst2, ..., lstn appended together (order doesn't matter). Hints: The sample solution is 8 lines. It uses a helper function with an accumulator and uses @. Note all_answers f [] should evaluate to SOME [].</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 8 *)</span><br><span class="line">fun all_answers f xs &#x3D;</span><br><span class="line">    let</span><br><span class="line">	fun all_answers_helper xs acc &#x3D;</span><br><span class="line">	    case xs of</span><br><span class="line">		[]     &#x3D;&gt; SOME acc</span><br><span class="line">	      | x::xs&#39; &#x3D;&gt; case f x of</span><br><span class="line">			      NONE   &#x3D;&gt; NONE</span><br><span class="line">			    | SOME v &#x3D;&gt; all_answers_helper xs&#39; (acc @ v)</span><br><span class="line">    in</span><br><span class="line">	all_answers_helper xs []</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+<h2 id="problem-9">Problem 9</h2>
+<p>(This problem uses the pattern datatype but is not really about pattern-matching.) A function <code>g</code> has been provided to you.</p>
+<ul>
+<li><strong>(a)</strong> In an ML comment, describe in a few English sentences the arguments that <code>g</code> takes and what <code>g</code> computes (not how <code>g</code> computes it, though you will have to understand that to determine what <code>g</code> computes). Note you write no code for this subproblem.</li>
+<li><strong>(b)</strong> Use <code>g</code> to define a function <code>count_wildcards</code> that takes a pattern and returns how many WildcardP patterns it contains.</li>
+<li><strong>(c)</strong> Use <code>g</code> to define a function <code>count_wild_and_variable_lengths</code> that takes a pattern and returns the number of Wildcard patterns it contains plus the sum of the string lengths of all the variables in the variable patterns it contains. (Use String.size. We care only about variable names; the constructor names are not relevant.)</li>
+<li><strong>(d)</strong> Use <code>g</code> to define a function <code>count_a_var</code> that takes a string and a pattern (as a pair) and returns the number of times the string appears as a variable in the pattern. We care only about variable names; the constructor names are not relevant.</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">datatype pattern &#x3D; WildcardP</span><br><span class="line">		 | VariableP of string</span><br><span class="line">		 | UnitP</span><br><span class="line">		 | ConstantP of int</span><br><span class="line">		 | ConstructorP of string * pattern</span><br><span class="line">		 | TupleP of pattern list</span><br><span class="line"></span><br><span class="line">datatype valu &#x3D; Constant of int</span><br><span class="line">	      | Unit</span><br><span class="line">	      | Constructor of string * valu</span><br><span class="line">	      | Tuple of valu list     </span><br><span class="line">			      </span><br><span class="line">fun g f1 f2 p &#x3D;</span><br><span class="line">    let </span><br><span class="line">	val r &#x3D; g f1 f2 </span><br><span class="line">    in</span><br><span class="line">	case p of</span><br><span class="line">	    WildcardP         &#x3D;&gt; f1 ()</span><br><span class="line">	  | VariableP x       &#x3D;&gt; f2 x</span><br><span class="line">	  | ConstructorP(_,p) &#x3D;&gt; r p</span><br><span class="line">	  | TupleP ps         &#x3D;&gt; List.foldl (fn (p,i) &#x3D;&gt; (r p) + i) 0 ps</span><br><span class="line">	  | _                 &#x3D;&gt; 0</span><br><span class="line">    end</span><br><span class="line">	</span><br><span class="line">(* Problem 9-b *)</span><br><span class="line">val count_wildcards &#x3D; g (fn () &#x3D;&gt; 1) (fn x &#x3D;&gt; 0)</span><br><span class="line"></span><br><span class="line">(* Problem 9-c *)</span><br><span class="line">val count_wild_and_variable_lengths &#x3D; g (fn () &#x3D;&gt; 1) String.size</span><br><span class="line"></span><br><span class="line">(* Problem 9-d *)</span><br><span class="line">fun count_a_var(str, p) &#x3D; g (fn () &#x3D;&gt; 0) (fn x &#x3D;&gt; if x &#x3D; str then 1 else 0) p</span><br></pre></td></tr></table></figure>
+<h2 id="problem-10">Problem 10</h2>
+<p>Write a function <code>check_pat</code> that takes a pattern and returns true if and only if all the variables appearing in the pattern are distinct from each other (i.e., use different strings). The constructor names are not relevant. Hints: The sample solution uses two helper functions. The rst takes a pattern and returns a list of all the strings it uses for variables. Using foldl with a function that uses @ is useful in one case. The second takes a list of strings and decides if it has repeats. List.exists may be useful. Sample solution is 15 lines. These are hints: We are not requiring foldl and List.exists here, but they make it easier.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 10 *)</span><br><span class="line">fun check_pat p &#x3D;</span><br><span class="line">    let</span><br><span class="line">	fun check_pat_helper1 p &#x3D;</span><br><span class="line">	    case p of</span><br><span class="line">		VariableP s       &#x3D;&gt; [s]</span><br><span class="line">	      | ConstructorP(_,p) &#x3D;&gt; check_pat_helper1 p</span><br><span class="line">	      | TupleP ps         &#x3D;&gt; foldl (fn (p, i) &#x3D;&gt; (check_pat_helper1 p) @ i) [] ps</span><br><span class="line">	      | _                 &#x3D;&gt; []</span><br><span class="line"></span><br><span class="line">	fun check_pat_helper2 strs &#x3D;</span><br><span class="line">	    case strs of</span><br><span class="line">		[] &#x3D;&gt; false</span><br><span class="line">		   | x::xs&#39; &#x3D;&gt; if List.exists (fn str &#x3D;&gt; x &#x3D; str) xs&#39; then true else check_pat_helper2 xs&#39;</span><br><span class="line">    in</span><br><span class="line">	check_pat_helper2(check_pat_helper1 p)</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+<h2 id="problem-11">Problem 11</h2>
+<p>Write a function <code>match</code> that takes a valu * pattern and returns a (string * valu) list option, namely NONE if the pattern does not match and SOME lst where lst is the list of bindings if it does. Note that if the value matches but the pattern has no patterns of the form Variable s, then the result is SOME []. Hints: Sample solution has one case expression with 7 branches. The branch for tuples uses all_answers and ListPair.zip. Sample solution is 13 lines. Remember to look above for the rules for what patterns match what values, and what bindings they produce. These are hints: We are not requiring all_answers and ListPair.zip here, but they make it easier.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 11 *)</span><br><span class="line">fun match(v, p) &#x3D;</span><br><span class="line">    case (v, p) of</span><br><span class="line">	(_, WildcardP)                            &#x3D;&gt; SOME []</span><br><span class="line">      | (_, VariableP s)                          &#x3D;&gt; SOME [(s, v)]</span><br><span class="line">      | (Unit, UnitP)                             &#x3D;&gt; SOME []</span><br><span class="line">      | (Constant i1, ConstantP i2)               &#x3D;&gt; if i1 &#x3D; i2 then SOME [] else NONE</span><br><span class="line">      | (Constructor(s2, v), ConstructorP(s1, p)) &#x3D;&gt; if s1 &#x3D; s2 then match(v, p) else NONE</span><br><span class="line">      | (Tuple vs, TupleP ps)                     &#x3D;&gt; if List.length vs &#x3D; List.length ps</span><br><span class="line">						     then all_answers match (ListPair.zip(vs, ps))</span><br><span class="line">						     else NONE</span><br></pre></td></tr></table></figure>
+<h2 id="problem-12">Problem 12</h2>
+<p>Write a function <code>first_match</code> that takes a value and a list of patterns and returns a (string * valu) list option, namely NONE if no pattern in the list matches or SOME lst where lst is the list of bindings for the rst pattern in the list that matches. Use first_answer and a handle-expression. Hints: Sample solution is 3 lines.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 12 *)</span><br><span class="line">fun first_match v plst &#x3D; SOME (first_answer (fn p &#x3D;&gt; match(v, p)) plst) handle NoAnswer &#x3D;&gt; NONE</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Coursera/" rel="tag"><i class="fa fa-tag"></i> Coursera</a>
+              <a href="/tags/Programming-Languages/" rel="tag"><i class="fa fa-tag"></i> Programming Languages</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/14/Programming-Languages-Homework-2/" rel="prev" title="Programming Languages Homework 2">
+      <i class="fa fa-chevron-left"></i> Programming Languages Homework 2
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-1"><span class="nav-text">Problem 1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-2"><span class="nav-text">Problem 2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-3"><span class="nav-text">Problem 3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-4"><span class="nav-text">Problem 4</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#problem-4-1"><span class="nav-text">Problem 4-1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#problem-4-2"><span class="nav-text">Problem 4-2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#problem-4-3"><span class="nav-text">Problem 4-3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-5"><span class="nav-text">Problem 5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-6"><span class="nav-text">Problem 6</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-7"><span class="nav-text">Problem 7</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-8"><span class="nav-text">Problem 8</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-9"><span class="nav-text">Problem 9</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-10"><span class="nav-text">Problem 10</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-11"><span class="nav-text">Problem 11</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-12"><span class="nav-text">Problem 12</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="汤焱"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">汤焱</p>
+  <div class="site-description" itemprop="description">记录学习和生活（遇到Latex公式加载异常可以刷新网页）</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">汤焱</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script data-pjax>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"800gFBV2IVxOwTNRC7pRH9Bk-gzGzoHsz","app_key":"nXJfgYp5gB1D7lXIfYmotC7A","server_url":"https://xwoxrs5i.lc-cn-n1-shared.com","security":false};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+          load: ['[tex]/mhchem'],
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+          packages: {'[+]': ['mhchem']},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : true,
+      notify     : false,
+      appId      : 'Dv2dJ9WEH0HU79vUrWsSHLKi-gzGzoHsz',
+      appKey     : 'CwFExLm0NUuoBWF8ae4Nj4di',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
