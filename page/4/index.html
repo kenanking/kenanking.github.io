@@ -1153,7 +1153,7 @@ p(x=1 \mid \mu)=\mu
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-01 10:01:46" itemprop="dateModified" datetime="2020-07-01T10:01:46+08:00">2020-07-01</time>
+                <time title="修改时间：2021-02-25 21:14:59" itemprop="dateModified" datetime="2021-02-25T21:14:59+08:00">2021-02-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1197,15 +1197,18 @@ p(x=1 \mid \mu)=\mu
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="wsl访问宿主机网络代理设置">WSL访问宿主机网络代理设置</h1>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/30/WSL%E8%AE%BF%E9%97%AE%E5%AE%BF%E4%B8%BB%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BB%A3%E7%90%86%E8%AE%BE%E7%BD%AE/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+          <h2 id="wsl1">WSL1</h2>
+<p>WSL1和宿主机本来就在同一网络下，直接访问就可以。</p>
+<p>比如代理端口在7890，那么在<code>.bashrc</code>中添加如下内容后更新即可。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> HTTP_PROXY=http://127.0.0.1:7890</span><br><span class="line"><span class="built_in">export</span> HTTPS_PROXY=http://127.0.0.1:7890</span><br></pre></td></tr></table></figure>
+<h2 id="wsl2">WSL2</h2>
+<p>WSL2使用的虚拟技术和WSL1不一样，和宿主机不在同一个网络内。</p>
+<p>下面设置不是一劳永逸的，因为宿主机IP会发生变化，发现不能访问代理时，需要更新<code>.bashrc</code>，重新获取宿主机IP。</p>
+<p>此外，需要在Windows代理软件中开启<strong>允许局域网连接（Allow LAN）</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#获取宿主机的IP</span></span><br><span class="line"><span class="built_in">export</span> windows_host=$(cat /etc/resolv.conf | grep nameserver | awk <span class="string">'&#123; print $2 &#125;'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#假设宿主机代理端口是7890</span></span><br><span class="line"><span class="built_in">export</span> ALL_PROXY=http://<span class="variable">$windows_host</span>:7890</span><br><span class="line"><span class="built_in">export</span> http_proxy=<span class="variable">$ALL_PROXY</span></span><br><span class="line"><span class="built_in">export</span> https_proxy=<span class="variable">$ALL_PROXY</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#设置git的代理</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"`git config --global --get https.proxy`"</span> != <span class="string">"http://<span class="variable">$windows_host</span>:7890"</span> ]; <span class="keyword">then</span></span><br><span class="line">	git config --global https.proxy http://<span class="variable">$windows_host</span>:7890</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"`git config --global --get http.proxy`"</span> != <span class="string">"http://<span class="variable">$windows_host</span>:7890"</span> ]; <span class="keyword">then</span></span><br><span class="line">	git config --global http.proxy http://<span class="variable">$windows_host</span>:7890</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+<h2 id="其他">其他</h2>
+<p>重装系统后，发现修改用户目录下的<code>.bashrc</code>文件，然后使用<code>source ~/.bashrc</code>无法更新<code>.bashrc</code>中的内容，然后修改了<code>\etc\bash.bashrc</code>文件，在最后添加了上面的内容就可以正常使用了。很奇怪🧐，不知道发生了什么。</p>
+
       
     </div>
 
