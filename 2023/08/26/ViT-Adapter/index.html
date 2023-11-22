@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Zhe Chen, Yuchen Duan, Wenhai Wang, Junjun He, Tong Lu, Jifeng Dai, Yu Qiao ViT-Adapter 与其他的ViT变体（Swin、PVT等）相比，普通ViT由于缺乏图像的先验信息，在密集预测任务上的性能较差。为了解决这一问题，文中提出了 ViT-Adapter，使普通的 ViT 能够在视觉特定的 Transforme">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] Vision Transformer Adapter for Dense Predictions (ICLR 2023)">
+<meta property="og:url" content="https://ehehe.cn/2023/08/26/ViT-Adapter/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Zhe Chen, Yuchen Duan, Wenhai Wang, Junjun He, Tong Lu, Jifeng Dai, Yu Qiao ViT-Adapter 与其他的ViT变体（Swin、PVT等）相比，普通ViT由于缺乏图像的先验信息，在密集预测任务上的性能较差。为了解决这一问题，文中提出了 ViT-Adapter，使普通的 ViT 能够在视觉特定的 Transforme">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/previous%20paradigm%20vs.%20vit-adapter%20paradigm.png">
+<meta property="article:published_time" content="2023-08-26T15:23:21.000Z">
+<meta property="article:modified_time" content="2023-08-27T06:36:01.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="图像分割">
+<meta property="article:tag" content="Transformer">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/previous%20paradigm%20vs.%20vit-adapter%20paradigm.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/08/26/ViT-Adapter/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/08/26/ViT-Adapter/","path":"2023/08/26/ViT-Adapter/","title":"[Note] Vision Transformer Adapter for Dense Predictions (ICLR 2023)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] Vision Transformer Adapter for Dense Predictions (ICLR 2023) | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#vit-adapter"><span class="nav-text">ViT-Adapter</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-text">方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A9%BA%E9%97%B4%E5%85%88%E9%AA%8C%E6%A8%A1%E5%9D%97spatial-prior-module"><span class="nav-text">1. 空间先验模块（Spatial Prior
+Module）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A9%BA%E9%97%B4%E7%89%B9%E5%BE%81%E6%B3%A8%E5%85%A5%E5%99%A8spatial-feature-injector"><span class="nav-text">2.
+空间特征注入器（Spatial Feature Injector）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%B0%BA%E5%BA%A6%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96%E5%99%A8multi-scale-feature-extractor"><span class="nav-text">3.
+多尺度特征提取器（Multi-Scale Feature Extractor）</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/08/26/ViT-Adapter/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] Vision Transformer Adapter for Dense Predictions (ICLR 2023) | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] Vision Transformer Adapter for Dense Predictions (ICLR 2023)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-08-26 23:23:21" itemprop="dateCreated datePublished" datetime="2023-08-26T23:23:21+08:00">2023-08-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-27 14:36:01" itemprop="dateModified" datetime="2023-08-27T14:36:01+08:00">2023-08-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>956</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Zhe Chen, Yuchen Duan, Wenhai Wang, Junjun He, Tong Lu, Jifeng
+Dai, Yu Qiao</p>
+<h1 id="vit-adapter">ViT-Adapter</h1>
+<p>与其他的ViT变体（Swin、PVT等）相比，普通ViT由于缺乏图像的先验信息，在密集预测任务上的性能较差。为了解决这一问题，文中提出了
+ViT-Adapter，使普通的 ViT 能够在视觉特定的 Transformer
+上取得可比较的性能。具体来说，该框架的主干网络是一个普通的
+ViT，可以从大规模多模态数据中学习强大的表示。在迁移到下游任务时，<strong>使用一个无需预训练的适配器将与图像相关的归纳偏置引入模型</strong>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/previous%20paradigm%20vs.%20vit-adapter%20paradigm.png" alt="previous paradigm vs. vit-adapter paradigm" style="zoom:30%;" /></p>
+<span id="more"></span>
+<h2 id="方法">方法</h2>
+<p>ViT-Adapter包括三个主要模块：</p>
+<ul>
+<li>空间先验模块，用于从输入图像中捕获局部语义（空间先验）；</li>
+<li>空间特征注入器，用于将空间先验融入ViT；</li>
+<li>多尺度特征提取器，用于重建密集预测任务所需的多尺度特征。</li>
+</ul>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Overall%20architecture%20of%20ViT-Adapter.png"
+alt="Overall architecture of ViT-Adapter" />
+<figcaption aria-hidden="true">Overall architecture of
+ViT-Adapter</figcaption>
+</figure>
+<h3 id="空间先验模块spatial-prior-module">1. 空间先验模块（Spatial Prior
+Module）</h3>
+<p>使用重叠的滑动窗口卷积操作能够获取更好的输入图像局部连续特征。因此，文中提出了<strong>空间先验模块</strong>，这个模块是<strong>为了构建输入图像局部的空间信息</strong>。</p>
+<p>输入图像经过Stem网络和三个卷积操作来获取不同分辨率大小的特征图。其中：</p>
+<ul>
+<li>Stem网络是一个来自ResNet的标准卷积Stem，由三个卷积和一个maxpool组成；</li>
+<li>使用一组步长为<span class="math inline">\(2\)</span>的<span
+class="math inline">\(3 \times
+3\)</span>卷积，减少特征分辨率，同时将通道数增加一倍；</li>
+<li>在三个特征图后使用<span class="math inline">\(1 \times
+1\)</span>卷积，将通道维度投影到<span
+class="math inline">\(D\)</span>维，得到特征金字塔<span
+class="math inline">\(\left\{\mathcal{F}_1, \mathcal{F}_2,
+\mathcal{F}_3\right\}\)</span>；</li>
+<li>将特征展平后拼接，得到特征序列<span
+class="math inline">\(\mathcal{F}_{\mathrm{sp}}^1 \in
+\mathbb{R}^{\left(\frac{H W}{8^2}+\frac{H W}{16^2}+\frac{H
+W}{32^2}\right) \times D}\)</span>。</li>
+</ul>
+<h3 id="空间特征注入器spatial-feature-injector">2.
+空间特征注入器（Spatial Feature Injector）</h3>
+<p>由于ViT较弱的归纳偏置，与其他ViT变体相比，普通ViT在密集的预测任务中表现不佳。为了缓解这一问题，问题提出两个特征交互模块，这两个模型主要基于交叉注意力机制。</p>
+<p>空间特征注入器用于将空间先验信息加入ViT中。具体来说，对于第<span
+class="math inline">\(i\)</span>个ViT block，将输入的特征<span
+class="math inline">\(\mathcal{F}_{\mathrm{vit}}^i \in
+\mathbb{R}^{\frac{H W}{16^2} \times
+D}\)</span>作为query，将空间特征<span
+class="math inline">\(\mathcal{F}_{\mathrm{sp}}^i \in
+\mathbb{R}^{\left(\frac{H W}{8^2}+\frac{H W}{16^2}+\frac{H
+W}{32^2}\right) \times D}\)</span>作为key和value。计算公式如下： <span
+class="math display">\[
+\hat{\mathcal{F}}_{\mathrm{vit}}^i=\mathcal{F}_{\mathrm{vit}}^i+\gamma^i
+\operatorname{Attention}\left(\operatorname{norm}\left(\mathcal{F}_{\mathrm{vit}}^i\right),
+\operatorname{norm}\left(\mathcal{F}_{\mathrm{sp}}^i\right)\right)
+\]</span> 其中，<span class="math inline">\(\gamma^i \in
+\mathbb{R}^D\)</span>是一个可学习的向量，来调整两项的权重。</p>
+<h3 id="多尺度特征提取器multi-scale-feature-extractor">3.
+多尺度特征提取器（Multi-Scale Feature Extractor）</h3>
+<p>将注入后的空间特征<span
+class="math inline">\(\hat{\mathcal{F}}_{\mathrm{vit}}^i\)</span>输入到第<span
+class="math inline">\(i\)</span>个ViT block，得到<span
+class="math inline">\(\mathcal{F}_{\mathrm{vit}}^{i+1}\)</span>。</p>
+<p>在这之后，将空间特征<span
+class="math inline">\(\mathcal{F}_{\mathrm{sp}}^i \in
+\mathbb{R}^{\left(\frac{H W}{8^2}+\frac{H W}{16^2}+\frac{H
+W}{32^2}\right) \times D}\)</span>作为query，将<span
+class="math inline">\(\mathcal{F}_{\mathrm{vit}}^{i+1}\)</span>作为key和value。计算如下：
+<span class="math display">\[
+\begin{gathered}
+\mathcal{F}_{\mathrm{sp}}^{i+1}=\hat{\mathcal{F}}_{\mathrm{sp}}^i+\operatorname{FFN}\left(\operatorname{norm}\left(\hat{\mathcal{F}}_{\mathrm{sp}}^i\right)\right)
+\\
+\hat{\mathcal{F}}_{\mathrm{sp}}^i=\mathcal{F}_{\mathrm{sp}}^i+\operatorname{Attention}\left(\operatorname{norm}\left(\mathcal{F}_{\mathrm{sp}}^i\right),
+\operatorname{norm}\left(\mathcal{F}_{\mathrm{vit}}^{i+1}\right)\right)
+\end{gathered}
+\]</span> 这样，就得到了新的<span
+class="math inline">\(\mathcal{F}_{\mathrm{sp}}^{i+1}\)</span>，可以用于下一个空间特征注入器模块。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/08/26/ViT-Adapter/" title="[Note] Vision Transformer Adapter for Dense Predictions (ICLR 2023)">https://ehehe.cn/2023/08/26/ViT-Adapter/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/" rel="tag"># 图像分割</a>
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/08/22/K-Net/" rel="prev" title="[Note] K-Net: Towards Unified Image Segmentation (NeurIPS 2021)">
+                  <i class="fa fa-angle-left"></i> [Note] K-Net: Towards Unified Image Segmentation (NeurIPS 2021)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/09/08/DETR/" rel="next" title="[Note] End-to-End Object Detection with Transformers (ECCV 2020)">
+                  [Note] End-to-End Object Detection with Transformers (ECCV 2020) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作业1和作业2中构建的芯片都是组合芯片（combinatorial chips），组合芯片的输出结果只依赖于输入变量的函数。然而在现实中，我们需要考虑时间的问题，例如使用相同的硬件实现循环功能、存储前几步的运行结果等。作业3中开始构建时序芯片（sequential chips）。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nand2Tetris Project 3">
+<meta property="og:url" content="https://ehehe.cn/2021/01/27/Nand2Tetris-Project-3/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作业1和作业2中构建的芯片都是组合芯片（combinatorial chips），组合芯片的输出结果只依赖于输入变量的函数。然而在现实中，我们需要考虑时间的问题，例如使用相同的硬件实现循环功能、存储前几步的运行结果等。作业3中开始构建时序芯片（sequential chips）。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-27T08:49:24.000Z">
+<meta property="article:modified_time" content="2021-01-27T14:20:30.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="Nand2Tetris">
+<meta property="article:tag" content="Coursera">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ehehe.cn/2021/01/27/Nand2Tetris-Project-3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2021/01/27/Nand2Tetris-Project-3/","path":"2021/01/27/Nand2Tetris-Project-3/","title":"Nand2Tetris Project 3"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Nand2Tetris Project 3 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#dff"><span class="nav-text">DFF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bit"><span class="nav-text">Bit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#register"><span class="nav-text">Register</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ram8"><span class="nav-text">RAM8</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ram64"><span class="nav-text">RAM64</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ram512"><span class="nav-text">RAM512</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ram4k"><span class="nav-text">RAM4K</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ram16k"><span class="nav-text">RAM16K</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pc"><span class="nav-text">PC</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2021/01/27/Nand2Tetris-Project-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Nand2Tetris Project 3 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Nand2Tetris Project 3
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-01-27 16:49:24 / 修改时间：22:20:30" itemprop="dateCreated datePublished" datetime="2021-01-27T16:49:24+08:00">2021-01-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">计算机系统</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作业1和作业2中构建的芯片都是<strong>组合芯片（combinatorial
+chips）</strong>，组合芯片的输出结果只依赖于输入变量的函数。然而在现实中，我们需要考虑时间的问题，例如使用相同的硬件实现循环功能、存储前几步的运行结果等。作业3中开始构建<strong>时序芯片（sequential
+chips）</strong>。</p>
+<span id="more"></span>
+<p><strong>时序逻辑（Sequential Logic）</strong></p>
+<p>在计算机中，将现实中连续的时间变为离散的时间。</p>
+<p><strong>时钟（Clock）：</strong>在大多数计算机里，时间的流逝是用主时钟（master
+clock）来表示的，它提供连续的交变信号序列。</p>
+<p>时钟的精确硬件实现通常基于振荡器（oscillator），其在两个信号值0-1之间交替变化。两个相邻的上升沿之间的时间间隙称为时钟的<strong>周期（cycle）</strong>。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210127140519839.png"
+alt="时钟 Clock" />
+<figcaption aria-hidden="true">时钟 Clock</figcaption>
+</figure>
+<p>对于组合逻辑：<span class="math inline">\(out[t] =
+function(in[t])\)</span>。例如，对于在作业1中实现的Not门，在不同的时间，每个输入都会对应一个瞬时的输出，如下图所示。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210127141458067.png"
+alt="组合逻辑：Not门" />
+<figcaption aria-hidden="true">组合逻辑：Not门</figcaption>
+</figure>
+<p>对于时序逻辑：<span
+class="math inline">\(out[t]=function([t-1])\)</span>。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210127144545778.png"
+alt="组合逻辑和时序逻辑" />
+<figcaption aria-hidden="true">组合逻辑和时序逻辑</figcaption>
+</figure>
+<h2 id="dff">DFF</h2>
+<p><strong>触发器（Flip-Flops）</strong>是计算机里最基本的时序单元。在这个课程中，使用的是<strong>数据触发器（Data
+Flip-Flop，DFF）</strong>，接受1比特位的输入和1比特位的输出，另外还包含一个时钟输入。</p>
+<p>数据和时钟的输入使得DFF能实现基于时间的行为：<span
+class="math inline">\(out[t]=in([t-1])\)</span>，即将前一个时间周期的输入值作为当前周期的输出，以此来维持自身的状态。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210127151500868.png"
+alt="数据触发器DFF" />
+<figcaption aria-hidden="true">数据触发器DFF</figcaption>
+</figure>
+<p>DFF作为一个基本的时序单元，不需要手动实现。通过DFF，可以构建其他的时序芯片。</p>
+<h2 id="bit">Bit</h2>
+<p>1位寄存器，可以实现用于存储1位数据。1位寄存器在设计中使用了多路转化器（Mux），其选择位（sel）赋予寄存器芯片的加载位（load）。</p>
+<p>当希望寄存器开始存储一个新值时，把这个值至于<code>in</code>输入口，<code>load</code>位设为<code>1</code>。</p>
+<p>当希望寄存器一直存储它内部的值，直到新的指令到来时，可以将<code>load</code>位设为<code>0</code>。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210127164842229.png"
+alt="1位寄存器" />
+<figcaption aria-hidden="true">1位寄存器</figcaption>
+</figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 1-bit register:</span><br><span class="line"> * If load[t] == 1 then out[t+1] = in[t]</span><br><span class="line"> *                 else out does not change (out[t+1] = out[t])</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP Bit &#123;</span><br><span class="line">    IN in, load;</span><br><span class="line">    OUT out;</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Mux(a=out1, b=in, sel=load, out=out2);</span><br><span class="line">    DFF(in=out2, out=out, out=out1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="register">Register</h2>
+<p>一旦实现了Bit——保持1比特位的基本单元，就可以轻松构建任意位宽的寄存器（通过由多个1比特位的寄存器构成阵列来实现），如16、32或64位的寄存器。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210127170821702.png"
+alt="w位寄存器" />
+<figcaption aria-hidden="true">w位寄存器</figcaption>
+</figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 16-bit register:</span><br><span class="line"> * If load[t] == 1 then out[t+1] = in[t]</span><br><span class="line"> * else out does not change</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP Register &#123;</span><br><span class="line">    IN in[16], load;</span><br><span class="line">    OUT out[16];</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Bit(in=in[0], load=load, out=out[0]);</span><br><span class="line">    Bit(in=in[1], load=load, out=out[1]);</span><br><span class="line">    Bit(in=in[2], load=load, out=out[2]);</span><br><span class="line">    Bit(in=in[3], load=load, out=out[3]);</span><br><span class="line">    Bit(in=in[4], load=load, out=out[4]);</span><br><span class="line">    Bit(in=in[5], load=load, out=out[5]);</span><br><span class="line">    Bit(in=in[6], load=load, out=out[6]);</span><br><span class="line">    Bit(in=in[7], load=load, out=out[7]);</span><br><span class="line">    Bit(in=in[8], load=load, out=out[8]);</span><br><span class="line">    Bit(in=in[9], load=load, out=out[9]);</span><br><span class="line">    Bit(in=in[10], load=load, out=out[10]);</span><br><span class="line">    Bit(in=in[11], load=load, out=out[11]);</span><br><span class="line">    Bit(in=in[12], load=load, out=out[12]);</span><br><span class="line">    Bit(in=in[13], load=load, out=out[13]);</span><br><span class="line">    Bit(in=in[14], load=load, out=out[14]);</span><br><span class="line">    Bit(in=in[15], load=load, out=out[15]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ram8">RAM8</h2>
+<p>RAM可以看作可寻址寄存器的序列，RAM由一系列寄存器组成。首先对于输入address，使用<code>Dmux8Way</code>门电路找到对应的寄存器。由于不知道具体是哪个寄存器，所以对于每个寄存器都进行同样的操作。最后使用<code>Mux8Way16</code>输出对应寄存器上的数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Memory of 8 registers, each 16 bit-wide. Out holds the value</span><br><span class="line"> * stored at the memory location specified by address. If load==1, then </span><br><span class="line"> * the in value is loaded into the memory location specified by address </span><br><span class="line"> * (the loaded value will be emitted to out from the next time step onward).</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP RAM8 &#123;</span><br><span class="line">    IN in[16], load, address[3];</span><br><span class="line">    OUT out[16];</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    DMux8Way(in=load, sel=address[0..2], a=outa, b=outb, c=outc, d=outd, e=oute, f=outf, g=outg, h=outh);</span><br><span class="line"></span><br><span class="line">    Register(in=in, load=outa, out=a);</span><br><span class="line">    Register(in=in, load=outb, out=b);</span><br><span class="line">    Register(in=in, load=outc, out=c);</span><br><span class="line">    Register(in=in, load=outd, out=d);</span><br><span class="line">    Register(in=in, load=oute, out=e);</span><br><span class="line">    Register(in=in, load=outf, out=f);</span><br><span class="line">    Register(in=in, load=outg, out=g);</span><br><span class="line">    Register(in=in, load=outh, out=h);</span><br><span class="line"></span><br><span class="line">    Mux8Way16(a=a, b=b, c=c, d=d, e=e, f=f, g=g, h=h, sel=address, out=out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ram64">RAM64</h2>
+<p>RAM64由64个寄存器组成，可以看作是8组RAM。通过address的最后三位筛选出哪一组RAM，然后在这组RAM中进行数据存取操作，最后进行同样的输出。后续使用更多寄存器时，设计的思路都是这样。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Memory of 64 registers, each 16 bit-wide. Out holds the value</span><br><span class="line"> * stored at the memory location specified by address. If load==1, then </span><br><span class="line"> * the in value is loaded into the memory location specified by address </span><br><span class="line"> * (the loaded value will be emitted to out from the next time step onward).</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP RAM64 &#123;</span><br><span class="line">    IN in[16], load, address[6];</span><br><span class="line">    OUT out[16];</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    DMux8Way(in=load, sel=address[3..5], a=outa, b=outb, c=outc, d=outd, e=oute, f=outf, g=outg, h=outh);</span><br><span class="line"></span><br><span class="line">    RAM8(in=in, load=outa,address=address[0..2], out=a);</span><br><span class="line">    RAM8(in=in, load=outb,address=address[0..2], out=b);</span><br><span class="line">    RAM8(in=in, load=outc,address=address[0..2], out=c);</span><br><span class="line">    RAM8(in=in, load=outd,address=address[0..2], out=d);</span><br><span class="line">    RAM8(in=in, load=oute,address=address[0..2], out=e);</span><br><span class="line">    RAM8(in=in, load=outf,address=address[0..2], out=f);</span><br><span class="line">    RAM8(in=in, load=outg,address=address[0..2], out=g);</span><br><span class="line">    RAM8(in=in, load=outh,address=address[0..2], out=h);</span><br><span class="line"></span><br><span class="line">    Mux8Way16(a=a, b=b, c=c, d=d, e=e, f=f, g=g, h=h, sel=address[3..5], out=out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ram512">RAM512</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Memory of 512 registers, each 16 bit-wide. Out holds the value</span><br><span class="line"> * stored at the memory location specified by address. If load==1, then </span><br><span class="line"> * the in value is loaded into the memory location specified by address </span><br><span class="line"> * (the loaded value will be emitted to out from the next time step onward).</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP RAM512 &#123;</span><br><span class="line">    IN in[16], load, address[9];</span><br><span class="line">    OUT out[16];</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    DMux8Way(in=load, sel=address[6..8], a=outa, b=outb, c=outc, d=outd, e=oute, f=outf, g=outg, h=outh);</span><br><span class="line"></span><br><span class="line">    RAM64(in=in, load=outa,address=address[0..5], out=a);</span><br><span class="line">    RAM64(in=in, load=outb,address=address[0..5], out=b);</span><br><span class="line">    RAM64(in=in, load=outc,address=address[0..5], out=c);</span><br><span class="line">    RAM64(in=in, load=outd,address=address[0..5], out=d);</span><br><span class="line">    RAM64(in=in, load=oute,address=address[0..5], out=e);</span><br><span class="line">    RAM64(in=in, load=outf,address=address[0..5], out=f);</span><br><span class="line">    RAM64(in=in, load=outg,address=address[0..5], out=g);</span><br><span class="line">    RAM64(in=in, load=outh,address=address[0..5], out=h);</span><br><span class="line"></span><br><span class="line">    Mux8Way16(a=a, b=b, c=c, d=d, e=e, f=f, g=g, h=h, sel=address[6..8], out=out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ram4k">RAM4K</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Memory of 4K registers, each 16 bit-wide. Out holds the value</span><br><span class="line"> * stored at the memory location specified by address. If load==1, then </span><br><span class="line"> * the in value is loaded into the memory location specified by address </span><br><span class="line"> * (the loaded value will be emitted to out from the next time step onward).</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP RAM4K &#123;</span><br><span class="line">    IN in[16], load, address[12];</span><br><span class="line">    OUT out[16];</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    DMux8Way(in=load, sel=address[9..11], a=outa, b=outb, c=outc, d=outd, e=oute, f=outf, g=outg, h=outh);</span><br><span class="line"></span><br><span class="line">    RAM512(in=in, load=outa,address=address[0..8], out=a);</span><br><span class="line">    RAM512(in=in, load=outb,address=address[0..8], out=b);</span><br><span class="line">    RAM512(in=in, load=outc,address=address[0..8], out=c);</span><br><span class="line">    RAM512(in=in, load=outd,address=address[0..8], out=d);</span><br><span class="line">    RAM512(in=in, load=oute,address=address[0..8], out=e);</span><br><span class="line">    RAM512(in=in, load=outf,address=address[0..8], out=f);</span><br><span class="line">    RAM512(in=in, load=outg,address=address[0..8], out=g);</span><br><span class="line">    RAM512(in=in, load=outh,address=address[0..8], out=h);</span><br><span class="line"></span><br><span class="line">    Mux8Way16(a=a, b=b, c=c, d=d, e=e, f=f, g=g, h=h, sel=address[9..11], out=out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ram16k">RAM16K</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">CHIP RAM16K &#123;</span><br><span class="line">    IN in[16], load, address[14];</span><br><span class="line">    OUT out[16];</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    DMux4Way(in=load, sel=address[12..13], a=outa, b=outb, c=outc, d=outd);</span><br><span class="line"></span><br><span class="line">    RAM4K(in=in, load=outa,address=address[0..11], out=a);</span><br><span class="line">    RAM4K(in=in, load=outb,address=address[0..11], out=b);</span><br><span class="line">    RAM4K(in=in, load=outc,address=address[0..11], out=c);</span><br><span class="line">    RAM4K(in=in, load=outd,address=address[0..11], out=d);</span><br><span class="line"></span><br><span class="line">    Mux4Way16(a=a, b=b, c=c, d=d, sel=address[12..13], out=out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="pc">PC</h2>
+<p>计数器的实现相比较前面几种略微麻烦，其核心是实现自增（+1），然后根据输入的3种不同命令值，进行相应正确的操作，最后通过寄存器在将当前值的状态保存到下一时刻进行操作。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * A 16-bit counter with load and reset control bits.</span><br><span class="line"> * if      (reset[t] == 1) out[t+1] = 0</span><br><span class="line"> * else if (load[t] == 1)  out[t+1] = in[t]</span><br><span class="line"> * else if (inc[t] == 1)   out[t+1] = out[t] + 1  (integer addition)</span><br><span class="line"> * else                    out[t+1] = out[t]</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP PC &#123;</span><br><span class="line">    IN in[16],load,inc,reset;</span><br><span class="line">    OUT out[16];</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Inc16(in=outLast, out=incoutLast);</span><br><span class="line"></span><br><span class="line">    Mux16(a=outLast, b=incoutLast, sel=inc, out=outinc);</span><br><span class="line">    </span><br><span class="line">    Mux16(a=outinc, b=in, sel=load, out=outload);</span><br><span class="line">    </span><br><span class="line">    Mux16(a=outload, b=false, sel=reset, out=outreset);</span><br><span class="line"></span><br><span class="line">    Register(in=outreset, load=true, out=out, out=outLast);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2021/01/27/Nand2Tetris-Project-3/" title="Nand2Tetris Project 3">https://ehehe.cn/2021/01/27/Nand2Tetris-Project-3/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Nand2Tetris/" rel="tag"># Nand2Tetris</a>
+              <a href="/tags/Coursera/" rel="tag"># Coursera</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/01/27/Nand2Tetris-Project-2/" rel="prev" title="Nand2Tetris Project 2">
+                  <i class="fa fa-angle-left"></i> Nand2Tetris Project 2
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/01/28/Nand2Tetris-Project-4/" rel="next" title="Nand2Tetris Project 4">
+                  Nand2Tetris Project 4 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

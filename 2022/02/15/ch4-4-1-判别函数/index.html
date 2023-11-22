@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="4.1 判别函数 判别函数是以一个向量\(\mathbf{x}\)作为输⼊，把它分配到\(K\)个类别中的某⼀个类别（记作\(C_k\)）的函数。这一章中，我们仍然探讨线性判别函数（linear discriminant function），即那些决策面是超平面的判别函数。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch4-4.1 判别函数">
+<meta property="og:url" content="https://ehehe.cn/2022/02/15/ch4-4-1-%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="4.1 判别函数 判别函数是以一个向量\(\mathbf{x}\)作为输⼊，把它分配到\(K\)个类别中的某⼀个类别（记作\(C_k\)）的函数。这一章中，我们仍然探讨线性判别函数（linear discriminant function），即那些决策面是超平面的判别函数。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0%E5%87%A0%E4%BD%95%E8%A7%A3%E9%87%8A.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%B8%80%E5%AF%B9%E5%85%B6%E4%BB%96%E5%92%8C%E4%B8%80%E5%AF%B9%E4%B8%80%E5%86%B3%E7%AD%96%E8%BE%B9%E7%95%8C.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/K%E7%B1%BB%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0%E5%86%B3%E7%AD%96%E8%BE%B9%E7%95%8C.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%96%B9%E6%B3%95%E5%88%86%E7%B1%BB.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%96%B9%E6%B3%95%E5%88%86%E7%B1%BB_%E6%9C%89%E7%B2%97%E5%B7%AE.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E4%B8%8Elogistic%E5%9B%9E%E5%BD%92%E7%9A%84%E5%86%B3%E7%AD%96%E8%BE%B9%E7%95%8C.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E4%B8%8Elogistic%E5%9B%9E%E5%BD%92.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0%E8%A7%A3%E9%87%8A.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E7%B1%BB%E5%88%AB%E5%86%85%E9%83%A8%E6%96%B9%E5%B7%AE%E5%A4%A7%E5%B0%8F%E7%9A%84%E5%BD%B1%E5%93%8D.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E6%84%9F%E7%9F%A5%E6%9C%BA%E5%88%86%E7%B1%BB.jpg">
+<meta property="article:published_time" content="2022-02-15T05:45:30.000Z">
+<meta property="article:modified_time" content="2022-02-15T05:45:30.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="PRML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0%E5%87%A0%E4%BD%95%E8%A7%A3%E9%87%8A.jpg">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/02/15/ch4-4-1-%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/02/15/ch4-4-1-%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0/","path":"2022/02/15/ch4-4-1-判别函数/","title":"ch4-4.1 判别函数"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch4-4.1 判别函数 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0"><span class="nav-text">4.1 判别函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%88%86%E7%B1%BB"><span class="nav-text">4.1.1 二分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%88%86%E7%B1%BB"><span class="nav-text">4.1.2 多分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E5%AF%B9%E5%85%B6%E4%BB%96%E5%92%8C%E4%B8%80%E5%AF%B9%E4%B8%80%E5%88%86%E7%B1%BB%E5%99%A8%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">“一对其他”和“一对一”分类器的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#k%E7%B1%BB%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0"><span class="nav-text">\(K\)类判别函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E4%BA%8E%E5%88%86%E7%B1%BB%E7%9A%84%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%96%B9%E6%B3%95"><span class="nav-text">4.1.3 用于分类的最小二乘方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3"><span class="nav-text">问题求解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E4%B8%80%E6%AD%A5%E5%88%86%E6%9E%90"><span class="nav-text">进一步分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fisher%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90"><span class="nav-text">4.1.4
+Fisher线性判别函数（线性判别分析）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-text">4.1.5 与最小二乘的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%88%86%E7%B1%BB%E7%9A%84fisher%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0"><span class="nav-text">4.1.6 多分类的Fisher判别函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%84%9F%E7%9F%A5%E6%9C%BA%E7%AE%97%E6%B3%95"><span class="nav-text">4.1.7 感知机算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%84%9F%E7%9F%A5%E6%9C%BA%E7%AE%97%E6%B3%95%E5%BD%A2%E5%BC%8F"><span class="nav-text">感知机算法形式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%84%9F%E7%9F%A5%E6%9C%BA%E7%AE%97%E6%B3%95%E7%BC%BA%E7%82%B9"><span class="nav-text">感知机算法缺点</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/02/15/ch4-4-1-%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch4-4.1 判别函数 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch4-4.1 判别函数
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-15 13:45:30" itemprop="dateCreated datePublished" datetime="2022-02-15T13:45:30+08:00">2022-02-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>20 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="判别函数">4.1 判别函数</h2>
+<p>判别函数是以一个向量<span
+class="math inline">\(\mathbf{x}\)</span>作为输⼊，把它分配到<span
+class="math inline">\(K\)</span>个类别中的某⼀个类别（记作<span
+class="math inline">\(C_k\)</span>）的函数。这一章中，我们仍然探讨<strong>线性判别函数（linear
+discriminant function）</strong>，即那些决策面是超平面的判别函数。</p>
+<span id="more"></span>
+<h3 id="二分类">4.1.1 二分类</h3>
+<p>线性判别函数最简单的形式是输入向量的线性函数： <span
+class="math display">\[
+y(\mathbf{x})=\mathbf{w}^{\mathrm{T}} \mathbf{x}+w_{0}
+\]</span></p>
+<p>其中：<span
+class="math inline">\(\mathbf{w}\)</span>称为<strong>权向量（weight
+vector）</strong>，<span
+class="math inline">\(w_0\)</span>为<strong>偏置（bias）</strong>，偏置的相反数有时被称为<strong>阈值（threshold）</strong>。</p>
+<p>对于一个输入向量<span
+class="math inline">\(\mathbf{x}\)</span>，如果<span
+class="math inline">\(y(\mathbf{x}) \geqslant
+0\)</span>，则它被分到<span
+class="math inline">\(C_{1}\)</span>中，否则分到<span
+class="math inline">\(C_{2}\)</span>中。因此，决策边界由<span
+class="math inline">\(y(\mathbf{x}) = 0\)</span>确定，它对应于<span
+class="math inline">\(D\)</span>维空间中的一个<span
+class="math inline">\((D-1)\)</span>维的超平面。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/线性判别函数几何解释.jpg" alt="线性判别函数几何解释" style="zoom:20%;" /></p>
+<p>当我们从决策面上选取两个点<span
+class="math inline">\(\mathbf{x}_A\)</span>和<span
+class="math inline">\(\mathbf{x}_B\)</span>时，由于两个点都位于决策面上，我们可以得到<span
+class="math inline">\(y(\mathbf{x}_A) = y(\mathbf{x}_B) =
+0\)</span>。于是，我们有<span
+class="math inline">\(\mathbf{w}^{\mathrm{T}}\left(\mathbf{x}_{\mathrm{A}}-\mathbf{x}_{\mathrm{B}}\right)=0\)</span>。也就是说<strong>向量<span
+class="math inline">\(\mathbf{w}\)</span>与决策面内任意向量都正交</strong>。我们可以看到，<strong><span
+class="math inline">\(\mathbf{w}\)</span>决定了决策面的方向</strong>。</p>
+<p>在此基础上，我们可以得到原点到决策面的距离<span
+class="math inline">\(d\)</span>（也就是决策面上一个点<span
+class="math inline">\(\mathbf{x}\)</span>对应的向量在<span
+class="math inline">\(\mathbf{w}\)</span>上的投影）： <span
+class="math display">\[
+\mathrm{d} = \frac{\mathbf{w}^{\mathrm{T}}
+\mathbf{x}}{\|\mathbf{w}\|}=-\frac{w_{0}}{\|\mathbf{w}\|}
+\]</span></p>
+<p>此外，我们也可以得出，<span
+class="math inline">\(y(\mathbf{x})\)</span>的值给出了点<span
+class="math inline">\(\mathbf{x}\)</span>到决策面的垂直距离<span
+class="math inline">\(r\)</span>的一个<strong>有符号</strong>的度量。<span
+class="math inline">\(r\)</span>的表示形式为： <span
+class="math display">\[
+r=\frac{y(\mathbf{x})}{\|\mathbf{w}\|}
+\]</span> 可以看到，<strong><span
+class="math inline">\(r\)</span>的符号会随点<span
+class="math inline">\(\mathbf{x}\)</span>在决策边界的哪一边而变化</strong>。</p>
+<p>最后，有时候为了简单起见，我们会额外增加<span
+class="math inline">\(x_0=1\)</span>，从而把<span
+class="math inline">\(w_0\)</span>并入<span
+class="math inline">\(\mathbf{w}\)</span>。例如，我们可以定义<span
+class="math inline">\(\widetilde{\mathbf{w}}=\left(w_{0},
+\mathbf{w}\right)\)</span>和<span
+class="math inline">\(\widetilde{\mathbf{x}}=\left(x_{0},
+\mathbf{x}\right)\)</span>，从而： <span class="math display">\[
+y(\mathbf{x})=\widetilde{\mathbf{w}}^{\mathrm{T}} \widetilde{\mathbf{x}}
+\]</span></p>
+<h3 id="多分类">4.1.2 多分类</h3>
+<h4
+id="一对其他和一对一分类器的问题">“一对其他”和“一对一”分类器的问题</h4>
+<p>考虑将二分类线性判别函数推广到多分类问题上时，我们可能会尝试把多个二分类判别函数结合起来，构造一个<span
+class="math inline">\(K\)</span>类判别函数。但是，这样的做法实际上是行不通的。</p>
+<p>具体来说，一般有两种构造方法：</p>
+<ol type="1">
+<li>引入<span
+class="math inline">\(K-1\)</span>个二分类分类器，把属于类别<span
+class="math inline">\(C_k\)</span>和不属于这个类别的点分开，称为<strong>“一对其他”（one-versus-the-rest）分类器</strong>。</li>
+<li>引入<span
+class="math inline">\(K(K-1)/2\)</span>个二分类分类器，对每一对类别都设置一个判别函数，这被称为<strong>“一对一”（one-versus-one）分类器</strong>。</li>
+</ol>
+<p>但是，这两种分类器都存在问题——<strong>存在分类不明确的区域</strong>。下图以<span
+class="math inline">\(K=3\)</span>的情况，说明了这个问题。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/一对其他和一对一决策边界.jpg" alt="一对其他和一对一决策边界" style="zoom:20%;" /></p>
+<h4 id="k类判别函数"><span
+class="math inline">\(K\)</span>类判别函数</h4>
+<p>通过引入一个<span
+class="math inline">\(K\)</span>类判别函数，我们可以避免上面这些问题。这个<span
+class="math inline">\(K\)</span>类判别函数由<span
+class="math inline">\(K\)</span>个线性函数组成，形式为： <span
+class="math display">\[
+y_{k}(\mathbf{x})=\mathbf{w}_{k}^{\mathrm{T}} \mathbf{x}+w_{k 0}
+\]</span></p>
+<p>对于点<span
+class="math inline">\(\mathbf{x}\)</span>，如果对任意的<span
+class="math inline">\(j\ne k\)</span>，都有<span
+class="math inline">\(y_{k}(\mathbf{x}) &gt;
+y_{j}(\mathbf{x})\)</span>，那么<span
+class="math inline">\(\mathbf{x}\)</span>的类别就为<span
+class="math inline">\(C_{k}\)</span>。</p>
+<p>这样的判别函数的决策区域<strong>总是单连通（connected）的，并且是凸的（convex）</strong>。</p>
+<p>证明如下：</p>
+<p>对于任意两个位于决策区域<span
+class="math inline">\(\mathcal{R}_k\)</span>中的点<span
+class="math inline">\(\mathbf{x}_A\)</span>和<span
+class="math inline">\(\mathbf{x}_B\)</span>，则位于连接点<span
+class="math inline">\(\mathbf{x}_A\)</span>和<span
+class="math inline">\(\mathbf{x}_B\)</span>线段上的点（如图）都可以表示为：
+<span class="math display">\[
+\widehat{\mathrm{x}}=\lambda \mathrm{x}_{\mathrm{A}}+(1-\lambda)
+\mathrm{x}_{\mathrm{B}}
+\]</span></p>
+<p>其中：<span class="math inline">\(0 \leqslant \lambda \leqslant
+1\)</span>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/K类判别函数决策边界.jpg" alt="K类判别函数决策边界" style="zoom:20%;" /></p>
+<p>根据判别函数的线性性质，我们可以得到： <span class="math display">\[
+y_{k}(\widehat{\mathrm{x}})=\lambda
+y_{k}\left(\mathrm{x}_{\mathrm{A}}\right)+(1-\lambda)
+y_{k}\left(\mathrm{x}_{\mathrm{B}}\right)
+\]</span></p>
+<p>由于<span
+class="math inline">\(y_{k}\left(\mathbf{x}_{\mathrm{A}}\right)&gt;y_{j}\left(\mathbf{x}_{\mathrm{A}}\right)\)</span>，并且<span
+class="math inline">\(y_{k}\left(\mathbf{x}_{\mathrm{B}}\right)&gt;y_{j}\left(\mathbf{x}_{\mathrm{B}}\right)\)</span>，于是可以得到：<span
+class="math inline">\(y_{k}(\widehat{\mathbf{x}})&gt;y_{j}(\widehat{\mathbf{x}})\)</span>。</p>
+<p>综上，可以看出<span
+class="math inline">\(\widehat{\mathrm{x}}\)</span>位于<span
+class="math inline">\(\mathcal{R}_k\)</span>内部，即<span
+class="math inline">\(\mathcal{R}_k\)</span>是单连通并且是凸的。</p>
+<p>下面介绍三种学习线性判别函数参数的方法，分别是<strong>基于最小二乘的方法</strong>、<strong>Fisher线性判别函数</strong>以及<strong>感知机算法</strong>。</p>
+<h3 id="用于分类的最小二乘方法">4.1.3 用于分类的最小二乘方法</h3>
+<h4 id="问题求解">问题求解</h4>
+<p>之前我们提到过，对于<span
+class="math inline">\(K\)</span>类判别函数，每个类别可以用下面的线性模型表示：
+<span class="math display">\[
+y_{k}(\mathbf{x})=\mathbf{w}_{k}^{\mathrm{T}} \mathbf{x}+w_{k 0}
+\]</span></p>
+<p>下面，我们把这<span
+class="math inline">\(K\)</span>个类别的模型用矩阵组合到一起表示： <span
+class="math display">\[
+\mathbf{y}(\mathbf{x})=\widetilde{\mathbf{W}}^{\mathrm{T}}
+\widetilde{\mathbf{x}}
+\]</span></p>
+<p>其中：<span
+class="math inline">\(\widetilde{\mathbf{W}}\)</span>是一个<span
+class="math inline">\((D+1)\times K\)</span>维的矩阵，第<span
+class="math inline">\(k\)</span>列为向量<span
+class="math inline">\(\widetilde{\mathbf{w}}_{k}=\left(w_{k 0},
+\mathbf{w}_{k}^{\mathrm{T}}\right)^{\mathrm{T}}\)</span>。<span
+class="math inline">\(\widetilde{\mathbf{x}}=\left(1,
+\mathbf{x}^{\mathrm{T}}\right)^{\mathrm{T}}\)</span>，对应于增广的输入向量。</p>
+<p>如果有训练集<span class="math inline">\(\widetilde{\mathbf{X}}
+=[\widetilde{\mathbf{x}}_1,...,\widetilde{\mathbf{x}}_N]^\mathrm{T}\)</span>，和对应的目标<span
+class="math inline">\(\mathbf{T} =
+[\mathbf{t}_{1},...,\mathbf{t}_{N}]^{\mathrm{T}}\)</span>，则对应的平方和误差函数为：
+<span class="math display">\[
+E_{D}(\widetilde{\mathbf{W}})=\frac{1}{2}
+\operatorname{Tr}\left\{(\widetilde{\mathbf{X}}
+\widetilde{\mathbf{W}}-\mathbf{T})^{\mathrm{T}}(\widetilde{\mathbf{X}}
+\widetilde{\mathbf{W}}-\mathbf{T})\right\}
+\]</span></p>
+<p>令上式关于<span
+class="math inline">\(\widetilde{\mathbf{W}}\)</span>的导数为零可以得到：
+<span class="math display">\[
+\widetilde{\mathbf{W}}=\left(\widetilde{\mathbf{X}}^{\mathrm{T}}
+\widetilde{\mathbf{X}}\right)^{-1} \widetilde{\mathbf{X}}^{\mathrm{T}}
+\mathbf{T}=\widetilde{\mathbf{X}}^{\dagger} \mathbf{T}
+\]</span> 于是，判别函数为： <span class="math display">\[
+\mathbf{y}(\mathbf{x})=\widetilde{\mathbf{W}}^{\mathrm{T}}
+\widetilde{\mathbf{x}}=\mathbf{T}^{\mathrm{T}}\left(\widetilde{\mathbf{X}}^{\dagger}\right)^{\mathrm{T}}
+\widetilde{\mathbf{x}}
+\]</span></p>
+<h4 id="进一步分析">进一步分析</h4>
+<p>最小二乘方法的优点在于<strong>对判别函数的参数给出了精确的解析解</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">np.random.seed(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">one_of_k_encoding</span>(<span class="params">x, k</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    one-of-k encoding of x with k classes</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        x: 1D array of shape (n,)</span></span><br><span class="line"><span class="string">        k: number of classes</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        one-of-k encoded x, a 2D array of shape (n, k)</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">type</span>(x) == <span class="built_in">list</span>:</span><br><span class="line">        x = np.array(x)</span><br><span class="line">    <span class="keyword">return</span> np.eye(k)[x]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">x_1 = np.random.normal(<span class="number">1</span>, <span class="number">1.5</span>, (<span class="number">50</span>, <span class="number">2</span>)) + np.array([-<span class="number">2</span>, <span class="number">1</span>])</span><br><span class="line">x_2 = np.random.normal(<span class="number">0</span>, <span class="number">1.5</span>, (<span class="number">50</span>, <span class="number">2</span>)) + np.array([<span class="number">2</span>, -<span class="number">2</span>])</span><br><span class="line"></span><br><span class="line">X_train = np.vstack([x_1, x_2])</span><br><span class="line">X_train = np.hstack([np.ones((<span class="number">100</span>, <span class="number">1</span>)), X_train])</span><br><span class="line">Y_train = one_of_k_encoding(np.hstack([np.zeros(<span class="number">50</span>, dtype=np.int32),</span><br><span class="line">                                       np.ones(<span class="number">50</span>, dtype=np.int32)]), <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#　最小二乘求解</span></span><br><span class="line">w = np.linalg.pinv(X_train) @ Y_train</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算决策边界</span></span><br><span class="line"><span class="comment"># w = [[w_i0, w_i1, w_i2], [w_j0, w_j1, w_j2]]</span></span><br><span class="line"><span class="comment"># 决策边界 -&gt; w_i0 + w_i1 * x_1 + w_i2 * x_2 = w_j0 + w_j1 * x_1 + w_j2 * x_2</span></span><br><span class="line"><span class="comment"># -&gt; (w_i2 - w_j2) * x_2 = -(w_i1 - w_j1) * x_1 - (w_i0 - w_j0)</span></span><br><span class="line"><span class="comment"># -&gt; x_2 = -(w_i1 - w_j1) / (w_i2 - w_j2) * x_1 - (w_i0 - w_j0) / (w_i2 - w_j2)</span></span><br><span class="line">w = w[:, <span class="number">0</span>] - w[:, <span class="number">1</span>]</span><br><span class="line">x = np.linspace(-<span class="number">5</span>, <span class="number">5</span>, <span class="number">100</span>)</span><br><span class="line">y = -(w[<span class="number">1</span>] / w[<span class="number">2</span>]) * x - (w[<span class="number">0</span>] / w[<span class="number">2</span>])</span><br><span class="line"></span><br><span class="line">plt.scatter(x_1[:, <span class="number">0</span>], x_1[:, <span class="number">1</span>], marker=<span class="string">&#x27;x&#x27;</span>, color=<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">plt.scatter(x_2[:, <span class="number">0</span>], x_2[:, <span class="number">1</span>], marker=<span class="string">&#x27;o&#x27;</span>, color=<span class="string">&#x27;b&#x27;</span>)</span><br><span class="line">plt.plot(x, y, color=<span class="string">&#x27;g&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;x1&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;x2&#x27;</span>)</span><br><span class="line">plt.xlim(-<span class="number">5</span>, <span class="number">5</span>)</span><br><span class="line">plt.ylim(-<span class="number">5</span>, <span class="number">5</span>)</span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/最小二乘方法分类.png" alt="最小二乘方法分类" style="zoom:33%;" /></p>
+<p>但是，最小二乘方法的缺点也很明显——<strong>缺少鲁棒性</strong>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/最小二乘方法分类_有粗差.png" alt="最小二乘方法分类_有粗差" style="zoom:33%;" /></p>
+<p>最小二乘方法的缺点来源也是很明显的。<strong>最小二乘方法是高斯条件分布假设下的最大似然方法</strong>，而二值目标向量的概率分布显然不是高斯分布。而<strong>logistic回归模型（虽然名字里说是回归，但做的其实是分类问题🤣）是伯努利分布假设下的最大似然方法</strong>，所以在这里具有更好的表现。</p>
+<p>下图中的紫色直线为最小二乘方法找到的决策边界，绿色直线为logistic回归找到的决策边界。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/最小二乘与logistic回归的决策边界.png" alt="最小二乘与logistic回归的决策边界" style="zoom:80%;" /></p>
+<p>下图左侧为最小二乘方法，右侧为logistic回归方法，将这两种方法用在多分类问题中，最小二乘方法很明显了出现分类不准确的问题。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/最小二乘与logistic回归.png" alt="最小二乘与logistic回归" style="zoom:80%;" /></p>
+<h3 id="fisher线性判别函数线性判别分析">4.1.4
+Fisher线性判别函数（线性判别分析）</h3>
+<p>我们可以从<strong>维度降低</strong>的角度考察线性分类模型。我们可以把线性判别函数看作一个投影函数，它把输入向量<span
+class="math inline">\(\mathbf{x}\)</span>投影到一维： <span
+class="math display">\[
+y=\mathbf{w}^{\mathrm{T}} \mathbf{x}
+\]</span></p>
+<p>然后，我们可以设置一个阈值，如果<span class="math inline">\(y
+\geqslant-w_{0}\)</span>，就分到<span
+class="math inline">\(\mathcal{C}_1\)</span>类中，否则就分到<span
+class="math inline">\(\mathcal{C}_2\)</span>类中，通过这种方式，我们就得到了一个线性分类器，示意图如下。</p>
+<p>通常来说，向一维投影会损失相当多的信息。原本在<span
+class="math inline">\(D\)</span>维空间能够完美分离的样本，在一维空间可能会相互重叠（如下图中绿色直线所表示的）。所以我们想要通过调整权向量<span
+class="math inline">\(\mathbf{w}\)</span>，选择一个让类别之间分类最大的一个投影。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/线性判别函数解释.jpg" alt="线性判别函数解释" style="zoom:20%;" /></p>
+<p>我们假设这个二分类问题中，有<span
+class="math inline">\(N_1\)</span>个点属于<span
+class="math inline">\(C_1\)</span>类，<span
+class="math inline">\(N_2\)</span>个点属于<span
+class="math inline">\(C_2\)</span>类，两类的均值向量为： <span
+class="math display">\[
+\mathbf{m}_{1}=\frac{1}{N_{1}} \sum_{n \in \mathcal{C}_{1}}
+\mathbf{x}_{n}, \quad \mathbf{m}_{2}=\frac{1}{N_{2}} \sum_{n \in
+\mathcal{C}_{2}} \mathbf{x}_{n}
+\]</span></p>
+<p>如果把两个类都投影到一维，那么最简单的衡量两个类别之间分开程度的方式，就是<strong>类别均值投影之后的距离</strong>。也就是说，我们可以选择使得下式取最大值的<span
+class="math inline">\(\mathbf{w}\)</span>：</p>
+<p><span class="math display">\[
+m_{2}-m_{1} = \mathbf{w}^{\mathrm{T}}
+\left(\mathbf{m}_{2}-\mathbf{m}_{1}\right)
+\]</span></p>
+<p>其中，<span class="math inline">\(m_{k} =
+\mathbf{w}^{\mathrm{T}}\mathbf{m}_{k}\)</span>，表示<span
+class="math inline">\(\mathcal{C}_{k}\)</span>中的数据投影后的均值。</p>
+<p>上式中，我们可以限制<span
+class="math inline">\(\mathbf{w}^{\mathrm{T}}\mathbf{w}=1\)</span>，否则通过增大<span
+class="math inline">\(\mathbf{w}\)</span>的模，这个表达式可以无限大。因为这个问题中，我们<strong>主要在于确定<span
+class="math inline">\(\mathbf{w}\)</span>的方向</strong>。</p>
+<p>此外，还有一个问题，在类别均值的投影分开较大的情况下，我们不希望类别之间出现重叠。如下图所示：</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/类别内部方差大小的影响.png" alt="类别内部方差大小的影响" style="zoom:80%;" /></p>
+<p><strong>Fisher
+提出的思想</strong>是最大化⼀个函数，这个函数能够让类均值的投影分开得较大，同时让每个类别内部的方差较小，从而最小化了类别的重叠。总结来说：核心思想是<strong>类内小，类间大</strong>。
+<span class="math display">\[
+J(\mathbf{w})=\frac{\left(m_{2}-m_{1}\right)^{2}}{s_{1}^{2}+s_{2}^{2}}
+\equiv  \frac{\text{类间方差}}{\text{类内方差}}
+\]</span></p>
+<p>其中类内方差为： <span class="math display">\[
+s_{k}^{2}=\sum_{n \in \mathcal{C}_{k}}\left(y_{n}-m_{k}\right)^{2},\quad
+k=1,2
+\]</span></p>
+<p>上式可以进一步写为： <span class="math display">\[
+\begin{align}
+J(\mathbf{w})&amp;=\frac{\left(m_{2}-m_{1}\right)^{2}}{s_{1}^{2}+s_{2}^{2}}
+\\
+&amp;=\frac{\mathbf{w}^{\mathrm{T}}\left(\mathbf{m}_{2}-\mathbf{m}_{1}\right)\left(\mathbf{m}_{2}-\mathbf{m}_{1}\right)^{\mathrm{T}}\mathbf{w}}{\sum_{n
+\in \mathcal{C}_{1}}\left(\mathbf{w}^{\mathrm{T}}
+\mathbf{x}_n-\mathbf{w}^{\mathrm{T}} \mathbf{m}_{1}\right)^2 + \sum_{n
+\in \mathcal{C}_{2}}\left(\mathbf{w}^{\mathrm{T}}
+\mathbf{x}_n-\mathbf{w}^{\mathrm{T}} \mathbf{m}_{2}\right)^2} \\
+&amp;=\frac{\mathbf{w}^{\mathrm{T}}\left(\mathbf{m}_{2}-\mathbf{m}_{1}\right)\left(\mathbf{m}_{2}-\mathbf{m}_{1}\right)^{\mathrm{T}}\mathbf{w}}{\mathbf{w}^\mathrm{T}\left[\sum_{n
+\in
+\mathcal{C}_{1}}\left(\mathbf{x}_{n}-\mathbf{m}_{1}\right)\left(\mathbf{x}_{n}-\mathbf{m}_{1}\right)^{\mathrm{T}}+\sum_{n
+\in
+\mathcal{C}_{2}}\left(\mathbf{x}_{n}-\mathbf{m}_{2}\right)\left(\mathbf{x}_{n}-\mathbf{m}_{2}\right)^{\mathrm{T}}\right]\mathbf{w}}
+\\
+&amp;\equiv \frac{\mathbf{w}^{\mathrm{T}} \mathbf{S}_{\mathrm{B}}
+\mathbf{w}}{\mathbf{w}^{\mathrm{T}} \mathbf{S}_{\mathrm{W}} \mathbf{w}}
+\end{align}
+\]</span></p>
+<p>其中：<span
+class="math inline">\(\mathbf{S}_{\mathrm{B}}\)</span>称为<strong>类间（between-class）协方差矩阵</strong>，<span
+class="math inline">\(\mathbf{S}_{\mathrm{W}}\)</span>称为<strong>类内（within-class）协方差矩阵</strong>。</p>
+<p>对<span class="math inline">\(\mathbf{w}\)</span>求导，我们发现<span
+class="math inline">\(J(\mathbf{w})\)</span>取得最大值的条件为： <span
+class="math display">\[
+\left(\mathbf{w}^{\mathrm{T}} \mathbf{S}_{\mathrm{B}} \mathbf{w}\right)
+\mathbf{S}_{\mathrm{W}} \mathbf{w}=\left(\mathbf{w}^{\mathrm{T}}
+\mathbf{S}_{\mathrm{W}} \mathbf{w}\right) \mathbf{S}_\mathrm{B}
+\mathbf{w}
+\]</span></p>
+<p>其中：<span class="math inline">\(\left(\mathbf{w}^{\mathrm{T}}
+\mathbf{S}_{\mathrm{B}} \mathbf{w}\right)\)</span>和<span
+class="math inline">\(\left(\mathbf{w}^{\mathrm{T}}
+\mathbf{S}_{\mathrm{W}}
+\mathbf{w}\right)\)</span>为标量。因为这里我们不关心<span
+class="math inline">\(\mathbf{w}\)</span>的大小，只关心它的方向，所以我们可以忽略这两个标量。最终，我们有：
+<span class="math display">\[
+\begin{align}
+\mathbf{w} &amp;\propto
+\mathbf{S}_{\mathrm{W}}^{-1}\mathbf{S}_\mathrm{B} \mathbf{w} \\
+&amp;=\mathbf{S}_{\mathrm{W}}^{-1}
+\left(\mathbf{m}_{2}-\mathbf{m}_{1}\right)\left(\mathbf{m}_{2}-\mathbf{m}_{1}\right)^{\mathrm{T}}\mathbf{w}
+\\
+&amp;\propto \mathbf{S}_{\mathrm{W}}^{-1}
+(\mathbf{m}_{2}-\mathbf{m}_{1})
+\end{align}
+\]</span></p>
+<p>其中，因为<span
+class="math inline">\((\mathbf{m}_{2}-\mathbf{m}_{1})^{\mathrm{T}}\mathbf{w}\)</span>为标量，所以我们可以忽略掉它。这里也可以看出，<strong><span
+class="math inline">\(\mathbf{S}_\mathrm{B}
+\mathbf{w}\)</span>的方向总是和<span
+class="math inline">\((\mathbf{m}_{2}-\mathbf{m}_{1})\)</span>的方向相同</strong>，这个结论后面还会用到。</p>
+<p>上面的结果称为<strong>Fisher线性判别函数（Fisher linear
+discriminant）</strong>。注意到，当类内协方差是各向同性时，<span
+class="math inline">\(\mathbf{w}\)</span>的方向就和类内均值的差相同。</p>
+<p>通过上面的步骤，我们只是得到了数据向一维投影的一个选择，而不是得到了一个判别函数。我们需要通过选择一个阈值<span
+class="math inline">\(y_0\)</span>，继续把数据点分类。</p>
+<h3 id="与最小二乘的关系">4.1.5 与最小二乘的关系</h3>
+<p>在这一小节证明了，在二分类问题中<strong>Fisher方法可以看成是最小二乘方法的一个特例</strong>。</p>
+<p>首先，我们改变使用<span class="math inline">\(0\)</span>、<span
+class="math inline">\(1\)</span>表示目标变量值的方式，令属于<span
+class="math inline">\(\mathcal{C}_1\)</span>的目标变量值为<span
+class="math inline">\(N/N_1\)</span>，其中<span
+class="math inline">\(N_1\)</span>表示类别<span
+class="math inline">\(\mathcal{C}_1\)</span>的数量，<span
+class="math inline">\(N\)</span>为总的数量。令类别<span
+class="math inline">\(\mathcal{C}_2\)</span>的值为<span
+class="math inline">\(-N/N_2\)</span>，需要注意的是，这里有一个<strong>负号</strong>。于是，很容易得到下面的关系：
+<span class="math display">\[
+\sum_{n=1}^{N} t_{n}=N_{1} \frac{N}{N_{1}}-N_{2} \frac{N}{N_{2}}=0
+\]</span></p>
+<p>回顾一下<strong>平方和误差函数</strong>，我们有下面的式子： <span
+class="math display">\[
+E=\frac{1}{2} \sum_{n=1}^{N}\left(\mathbf{w}^{\mathrm{T}}
+\mathbf{x}_{n}+w_{0}-t_{n}\right)^{2}
+\]</span></p>
+<p>分别令<span class="math inline">\(E\)</span>关于<span
+class="math inline">\(w_0\)</span>和<span
+class="math inline">\(\mathbf{w}\)</span>的导数为零，我们可以得到：
+<span class="math display">\[
+\begin{eqnarray}
+\sum_{n = 1}^{N}\left(\mathrm{w}^{\mathrm{T}}
+\mathrm{x}_{n}+w_{0}-t_{n}\right) &amp; &amp; = &amp; 0  \tag{1} \\
+\sum_{n = 1}^{N}\left(\mathrm{w}^{\mathrm{T}}
+\mathrm{x}_{n}+w_{0}-t_{n}\right) \mathrm{x}_{n} &amp; &amp; = &amp; 0
+\tag{2}
+\end{eqnarray}
+\]</span></p>
+<p>对于（1）式，我们有： <span class="math display">\[
+w_{0}= -\frac{1}{N}\sum_{n=1}^{N}\left(\mathbf{w}^{\mathrm{T}}
+\mathbf{x}_{n}\right) = -\mathbf{w}^{\mathrm{T}} \mathbf{m}
+\]</span></p>
+<p>其中，<span
+class="math inline">\(\mathbf{m}\)</span>为所有数据的均值： <span
+class="math display">\[
+\mathbf{m}=\frac{1}{N} \sum_{n=1}^{N}
+\mathbf{x}_{n}=\frac{1}{N}\left(N_{1} \mathbf{m}_{1}+N_{2}
+\mathbf{m}_{2}\right)
+\]</span></p>
+<p>对于（2）式，经过计算，可以得到（这是书上的结果，我没算过）： <span
+class="math display">\[
+\left(\mathrm{S}_{\mathrm{W}}+\frac{N_{1} N_{2}}{N}
+\mathrm{S}_{\mathrm{B}}\right)
+\mathbf{w}=N\left(\mathbf{m}_{1}-\mathbf{m}_{2}\right)
+\]</span></p>
+<p>由于<span class="math inline">\(\mathbf{S}_\mathrm{B}
+\mathbf{w}\)</span>的方向总是和<span
+class="math inline">\((\mathbf{m}_{2}-\mathbf{m}_{1})\)</span>的方向相同，通过上式，我们有：
+<span class="math display">\[
+\mathbf{w} \propto
+\mathbf{S}_{\mathrm{W}}^{-1}\left(\mathbf{m}_{2}-\mathbf{m}_{1}\right)
+\]</span></p>
+<p>可以看到，通过这种方式得到的权向量和Fisher判别准则得到的结果相同。</p>
+<p>此外，通过这种方式，我们还得到了偏置项<span
+class="math inline">\(w_0\)</span>的一个计算公式：<span
+class="math inline">\(w_{0}= -\mathbf{w}^{\mathrm{T}}
+\mathbf{m}\)</span>。</p>
+<h3 id="多分类的fisher判别函数">4.1.6 多分类的Fisher判别函数</h3>
+<p>我们下面考虑Fisher判别函数在<span
+class="math inline">\(K&gt;2\)</span>情况下的推广。我们假设输入空间的维度<span
+class="math inline">\(D\)</span>大于类别数量<span
+class="math inline">\(K\)</span>。</p>
+<p>下一步，我们引入<span
+class="math inline">\(D^{\prime}&gt;1\)</span>个线性“特征”：<span
+class="math inline">\(y_{k}=\mathbf{w}_{k}^{\mathrm{T}}
+\mathbf{x}\)</span>，其中<span
+class="math inline">\(k=1,\dots,D^{\prime}\)</span>。为了方便，这些特征可以聚合起来组成向量<span
+class="math inline">\(\mathbf{y}\)</span>，权向量<span
+class="math inline">\(\{\mathbf{w}_k\}\)</span>可以看出权重矩阵<span
+class="math inline">\(\mathbf{W}\)</span>的列：</p>
+<p><span class="math display">\[
+\mathbf{y}=\mathbf{W}^{\mathrm{T}} \mathbf{x}
+\]</span></p>
+<p>与二分类问题一样，在<span
+class="math inline">\(\mathbf{y}\)</span>的定义中，也没有偏置项。</p>
+<p>类内协方差矩阵可以做如下的推广： <span class="math display">\[
+\mathbf{S}_{\mathrm{W}}=\sum_{k=1}^{K} \mathbf{S}_{k} =
+\sum_{k=1}^{K}\sum_{n \in
+\mathcal{C}_{k}}\left(\mathbf{x}_{n}-\mathbf{m}_{k}\right)\left(\mathbf{x}_{n}-\mathbf{m}_{k}\right)^{\mathrm{T}}
+\]</span></p>
+<p>其中： <span class="math display">\[
+\mathbf{m}_{k}=\frac{1}{N_{k}} \sum_{n \in \mathcal{C}_{k}}
+\mathbf{x}_{n}
+\]</span></p>
+<p>为了找到类间协方差矩阵的推广，我们首先考虑整体的协方差矩阵： <span
+class="math display">\[
+\mathbf{S}_{\mathrm{T}}=\sum_{n=1}^{N}\left(\mathbf{x}_{n}-\mathbf{m}\right)\left(\mathbf{x}_{n}-\mathbf{m}\right)^{\mathrm{T}}
+\]</span></p>
+<p>其中：<span class="math inline">\(\mathbf{m}\)</span>为整体的均值。
+<span class="math display">\[
+\mathbf{m}=\frac{1}{N} \sum_{n=1}^{N} \mathbf{x}_{n}=\frac{1}{N}
+\sum_{k=1}^{K} N_{k} \mathbf{m}_{k}
+\]</span></p>
+<p>整体的协方差矩阵可以分解为： <span class="math display">\[
+\mathbf{S}_{\mathrm{T}}=\mathbf{S}_{\mathrm{W}}+\mathbf{S}_{\mathrm{B}}
+\]</span></p>
+<p>于是，可以得到： <span class="math display">\[
+\begin{align}
+\mathbf{S}_{\mathrm{B}} &amp;=\mathbf{S}_{\mathrm{T}} -
+\mathbf{S}_{\mathrm{W}} \\
+&amp;= \sum_{k=1}^{K} \sum_{n \in
+\mathcal{C}_k}\left(\mathbf{x}_{n}-\mathbf{m}\right)\left(\mathbf{x}_{n}-\mathbf{m}\right)^{\mathrm{T}}  -
+\sum_{k=1}^{K}\sum_{n \in
+\mathcal{C}_{k}}\left(\mathbf{x}_{n}-\mathbf{m}_{k}\right)\left(\mathbf{x}_{n}-\mathbf{m}_{k}\right)^{\mathrm{T}}
+\\
+&amp;= \sum_{k=1}^{K} \sum_{n \in \mathcal{C}_k} \left(
+\mathbf{x}_{n}\mathbf{x}_{n}^\mathrm{T} -
+\mathbf{m}\mathbf{x}_{n}^\mathrm{T} -
+\mathbf{x}_{n}\mathbf{m}^\mathrm{T} + \mathbf{m}\mathbf{m}^\mathrm{T}
+- \mathbf{x}_{n}\mathbf{x}_{n}^\mathrm{T} +
+\mathbf{m}_k\mathbf{x}_{n}^\mathrm{T} +
+\mathbf{x}_{n}\mathbf{m}_k^\mathrm{T} -
+\mathbf{m}_k\mathbf{m}_k^\mathrm{T} \right) \\
+&amp;= \sum_{k=1}^{K} \sum_{n \in \mathcal{C}_k} \left(  -
+\mathbf{m}\mathbf{x}_{n}^\mathrm{T} -
+\mathbf{x}_{n}\mathbf{m}^\mathrm{T} + \mathbf{m}\mathbf{m}^\mathrm{T}
++ \mathbf{m}_k\mathbf{x}_{n}^\mathrm{T} +
+\mathbf{x}_{n}\mathbf{m}_k^\mathrm{T} -
+\mathbf{m}_k\mathbf{m}_k^\mathrm{T} \right) \\
+&amp;= \sum_{k=1}^{K} N_k \left(  - \mathbf{m}\mathbf{m}_k^\mathrm{T} -
+\mathbf{m}_k\mathbf{m}^\mathrm{T} + \mathbf{m}\mathbf{m}^\mathrm{T}
++ \mathbf{m}_k\mathbf{m}_k^\mathrm{T} \right) \notag
+\\ &amp;= \sum_{k=1}^{K}
+N_{k}\left(\mathbf{m}_{k}-\mathbf{m}\right)\left(\mathbf{m}_{k}-\mathbf{m}\right)^{\mathrm{T}}
+\end{align}
+\]</span></p>
+<p>最后，我们选择<span
+class="math inline">\(J(\mathbf{W})\)</span>的形式为： <span
+class="math display">\[
+J(\mathbf{W})=\operatorname{Tr}\left\{\left(\mathbf{W}
+\mathbf{S}_{\mathrm{W}}
+\mathbf{W}^{\mathrm{T}}\right)^{-1}\left(\mathbf{W}
+\mathbf{S}_{\mathrm{B}} \mathbf{W}^{\mathrm{T}}\right)\right\}
+\]</span></p>
+<p>从这个式子中，我们可以看到，<strong>权值由<span
+class="math inline">\(\mathbf{S}_{\mathrm{W}}^{-1}
+\mathbf{S}_{\mathrm{B}}\)</span>的的特征向量决定</strong>。</p>
+<p>同时，我们也可以发现，通过这种方法，我们最多只能找到<span
+class="math inline">\((K-1)\)</span>个独立的线性特征，因为<span
+class="math inline">\(\mathbf{S}_\mathrm{B}\)</span>的秩最大等于<span
+class="math inline">\((K-1)\)</span>。</p>
+<p>在这种方法中，我们只是当数据投影到一个<span
+class="math inline">\(D^{\prime}\)</span>平面上，但是同样没有确定一个阈值来区分不同数据点。</p>
+<h3 id="感知机算法">4.1.7 感知机算法</h3>
+<h4 id="感知机算法形式">感知机算法形式</h4>
+<p>感知机算法比较简单，但在模式识别的历史上有非常重要的地位。感知机算法是一个二分类模型，首先将输入向量<span
+class="math inline">\(\mathbf{x}\)</span>使用一个固定的非线性变化得到特征向量<span
+class="math inline">\(\boldsymbol{\phi}(\mathbf{x})\)</span>，特征向量中通常包含一个偏置分量<span
+class="math inline">\(\phi_0(\mathbf{x})=1\)</span>，然后构造一个线性模型。模型形式为：</p>
+<p><span class="math display">\[
+y(\mathbf{x})=f\left(\mathbf{w}^{\mathrm{T}}
+\boldsymbol{\phi}(\mathbf{x})\right)
+\]</span></p>
+<p>其中，<span
+class="math inline">\(f(\cdot)\)</span>为一个非线性激活函数，形式为：
+<span class="math display">\[
+f(a)=\left\{\begin{array}{ll}
++1, &amp; a \geqslant 0 \\
+-1, &amp; a&lt;0
+\end{array}\right.
+\]</span></p>
+<p>为了和激活函数的选择相符，我们使用<span
+class="math inline">\(t=+1\)</span>表示类<span
+class="math inline">\(\mathcal{C}_1\)</span>，<span
+class="math inline">\(t=-1\)</span>表示类<span
+class="math inline">\(\mathcal{C}_2\)</span>。</p>
+<p>对于感知机参数<span
+class="math inline">\(\mathbf{w}\)</span>的确定，我们使用<strong>最小化误差函数的思想</strong>。一种很自然的想法就是使用误分类的总数作为误差函数，但是这样的选择对于参数学习是不合适的。因为误差函数为<span
+class="math inline">\(\mathbf{w}\)</span>的分段常函数，并且在几乎所有地方导数都为零。</p>
+<p>因此，我们考虑另一种误差函数，称为<strong>感知机准则（perceptron
+criterion）</strong>。我们注意到，满足正确分类时，满足<span
+class="math inline">\(\mathbf{w}^{\mathrm{T}}
+\boldsymbol{\phi}_{n}\left(\mathbf{x}\right)t_n&gt;0\)</span>。在感知机准则下，对于正确分类的数据，我们赋予误差为<span
+class="math inline">\(0\)</span>，对于误分类的数据，我们试着最小化<span
+class="math inline">\(-\mathbf{w}^{\mathrm{T}}
+\boldsymbol{\phi}_{n}\left(\mathbf{x}\right)t_n\)</span>。</p>
+<p>最终，误差函数的形式为： <span class="math display">\[
+E_{\mathrm{P}}(\mathbf{w})=-\sum_{n \in \mathcal{M}}
+\mathbf{w}^{\mathrm{T}} \phi_{n}\left(\mathbf{x}\right) t_{n}
+\]</span></p>
+<p>其中，<span
+class="math inline">\(\mathcal{M}\)</span>为误分类数据的集合。</p>
+<p>对于这个算法，我们使用随机梯度下降的方法找到权值。 <span
+class="math display">\[
+\mathbf{w}^{(\tau+1)}=\mathbf{w}^{(\tau)}-\eta \nabla
+E_{\mathrm{P}}(\mathbf{w})=\mathbf{w}^{(\tau)}+\eta
+\boldsymbol{\phi}(\mathbf{x}_{n}) t_{n}
+\]</span></p>
+<p>其中，<span class="math inline">\(\eta\)</span>为学习率。</p>
+<p>感知机算法会循环迭代每一个数据点，进行判断，如果没有正确分类，就使用梯度下降修改权值，直到所有数据点都被正确分类。</p>
+<p>根据<strong>感知机收敛定理（perceptron convergence
+theorem）</strong>，如果训练数据线性可分，那么感知器算法可以保证在有限步骤内找到一个精确解。</p>
+<h4 id="感知机算法缺点">感知机算法缺点</h4>
+<ul>
+<li>对于线性可分数据集，<strong>可能存在多个解</strong>（取决于参数的初始化和数据点出现的顺序）。对于线性不可分数据集，感知机算法不会收敛。</li>
+<li>无法提供概率形式的输出。</li>
+<li>无法直接推广到<span
+class="math inline">\(K&gt;2\)</span>的情形。</li>
+<li>基于固定基函数的线性组合。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">np.random.seed(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">perceptron</span>(<span class="params">X, Y, lr=<span class="number">0.1</span>, max_iter=<span class="number">100</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    Perceptron algorithm</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        X: input data, 2D array, each row is a sample</span></span><br><span class="line"><span class="string">        Y: labels, 1D array</span></span><br><span class="line"><span class="string">        max_iter: maximum number of iterations</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        w: weights, 1D array</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    n_samples, n_features = X.shape</span><br><span class="line">    w = np.zeros(n_features + <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    X = np.hstack([np.ones((n_samples, <span class="number">1</span>)), X])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(max_iter):</span><br><span class="line">        misclassified_count = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(n_samples):</span><br><span class="line">            <span class="keyword">if</span> Y[j] * np.dot(w, X[j]) &lt;= <span class="number">0</span>:</span><br><span class="line">                w += lr * Y[j] * X[j]</span><br><span class="line">                misclassified_count += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> misclassified_count == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> w</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">x_1 = np.random.normal(<span class="number">1</span>, <span class="number">1.5</span>, (<span class="number">50</span>, <span class="number">2</span>)) + np.array([-<span class="number">2</span>, <span class="number">1</span>])</span><br><span class="line">x_2 = np.random.normal(<span class="number">0</span>, <span class="number">1.5</span>, (<span class="number">50</span>, <span class="number">2</span>)) + np.array([<span class="number">4</span>, -<span class="number">3</span>])</span><br><span class="line">X_train = np.vstack([x_1, x_2])</span><br><span class="line">Y_train = np.hstack([np.ones(<span class="number">50</span>, dtype=np.int32),</span><br><span class="line">                     np.ones(<span class="number">50</span>, dtype=np.int32) * -<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">w = perceptron(X_train, Y_train)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 决策边界</span></span><br><span class="line">x = np.linspace(-<span class="number">6</span>, <span class="number">8</span>, <span class="number">100</span>)</span><br><span class="line">y = -(w[<span class="number">1</span>] * x + w[<span class="number">0</span>]) / w[<span class="number">2</span>]</span><br><span class="line"></span><br><span class="line">plt.scatter(x_1[:, <span class="number">0</span>], x_1[:, <span class="number">1</span>], marker=<span class="string">&#x27;x&#x27;</span>, color=<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">plt.scatter(x_2[:, <span class="number">0</span>], x_2[:, <span class="number">1</span>], marker=<span class="string">&#x27;o&#x27;</span>, color=<span class="string">&#x27;b&#x27;</span>)</span><br><span class="line">plt.plot(x, y, color=<span class="string">&#x27;g&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;x1&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;x2&#x27;</span>)</span><br><span class="line">plt.xlim(-<span class="number">6</span>, <span class="number">8</span>)</span><br><span class="line">plt.ylim(-<span class="number">7</span>, <span class="number">7</span>)</span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/感知机分类.jpg" alt="感知机分类" style="zoom:33%;" /></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/02/15/ch4-4-1-%E5%88%A4%E5%88%AB%E5%87%BD%E6%95%B0/" title="ch4-4.1 判别函数">https://ehehe.cn/2022/02/15/ch4-4-1-判别函数/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PRML/" rel="tag"># PRML</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch3-3-6-%E5%9B%BA%E5%AE%9A%E5%9F%BA%E5%87%BD%E6%95%B0%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7/" rel="prev" title="ch3-3.6 固定基函数的局限性">
+                  <i class="fa fa-angle-left"></i> ch3-3.6 固定基函数的局限性
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch4-4-2-%E6%A6%82%E7%8E%87%E7%94%9F%E6%88%90%E5%BC%8F%E6%A8%A1%E5%9E%8B/" rel="next" title="ch4-4.2 概率生成式模型">
+                  ch4-4.2 概率生成式模型 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

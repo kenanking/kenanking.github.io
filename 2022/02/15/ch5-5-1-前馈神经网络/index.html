@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="5.1 前馈神经网络 线性模型扩展 在回归和分类问题中，我们使用的线性模型由固定的非线性基函数\(\phi_{j}(\mathbf{x})\)线性组合构成，形如： \[ y(\mathbf{x}, \mathbf{w}) &#x3D; f\left(\sum_{j&#x3D;1}^{M}w_{j}\phi_{j}(\mathbf{x})\right) \] 其中，\(f(\cdot)\)是在分类问题中是一个非线性激活">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch5-5.1 前馈神经网络">
+<meta property="og:url" content="https://ehehe.cn/2022/02/15/ch5-5-1-%E5%89%8D%E9%A6%88%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="5.1 前馈神经网络 线性模型扩展 在回归和分类问题中，我们使用的线性模型由固定的非线性基函数\(\phi_{j}(\mathbf{x})\)线性组合构成，形如： \[ y(\mathbf{x}, \mathbf{w}) &#x3D; f\left(\sum_{j&#x3D;1}^{M}w_{j}\phi_{j}(\mathbf{x})\right) \] 其中，\(f(\cdot)\)是在分类问题中是一个非线性激活">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E7%BD%91%E7%BB%9C%E5%9B%BE.png">
+<meta property="article:published_time" content="2022-02-15T06:08:31.000Z">
+<meta property="article:modified_time" content="2022-02-15T06:08:31.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="PRML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E7%BD%91%E7%BB%9C%E5%9B%BE.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/02/15/ch5-5-1-%E5%89%8D%E9%A6%88%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/02/15/ch5-5-1-%E5%89%8D%E9%A6%88%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/","path":"2022/02/15/ch5-5-1-前馈神经网络/","title":"ch5-5.1 前馈神经网络"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch5-5.1 前馈神经网络 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E9%A6%88%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="nav-text">5.1 前馈神经网络</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B%E6%89%A9%E5%B1%95"><span class="nav-text">线性模型扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%83%E9%87%8D%E7%A9%BA%E9%97%B4%E5%AF%B9%E7%A7%B0%E6%80%A7"><span class="nav-text">5.1.1 权重空间对称性</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/02/15/ch5-5-1-%E5%89%8D%E9%A6%88%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch5-5.1 前馈神经网络 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch5-5.1 前馈神经网络
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-15 14:08:31" itemprop="dateCreated datePublished" datetime="2022-02-15T14:08:31+08:00">2022-02-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="前馈神经网络">5.1 前馈神经网络</h2>
+<h3 id="线性模型扩展">线性模型扩展</h3>
+<p>在回归和分类问题中，我们使用的线性模型由固定的非线性基函数<span
+class="math inline">\(\phi_{j}(\mathbf{x})\)</span>线性组合构成，形如：
+<span class="math display">\[
+y(\mathbf{x}, \mathbf{w}) =
+f\left(\sum_{j=1}^{M}w_{j}\phi_{j}(\mathbf{x})\right)
+\]</span></p>
+<p>其中，<span
+class="math inline">\(f(\cdot)\)</span>是在分类问题中是一个非线性激活函数，在回归问题中为一个恒等函数。</p>
+<p>我们的目标是<strong>扩展上面的线性模型，使得它的基函数<span
+class="math inline">\(\phi_{j}(\mathbf{x})\)</span>依赖于一些参数，并且允许这些参数和系数<span
+class="math inline">\(\{w_{j}\}\)</span>在训练过程中能自适应调节</strong>。</p>
+<p>神经网络的想法是使用和上式一样的基函数，每个基函数都是输入的线性组合再加上一个非线性函数，线性组合的系数都是可调节的参数。</p>
+<p>上面的想法引出了基本的神经网络模型，可以看做是一系列的函数变换。</p>
+<p>首先，我们构造输入变量<span class="math inline">\(x_{1}, \dots,
+x_{D}\)</span>的<span
+class="math inline">\(M\)</span>个线性组合，形式如下： <span
+class="math display">\[
+a_{j} = \sum_{i=1}^{D}w_{j i}^{(1)}x_{i} + w_{j 0}^{(1)}
+\]</span></p>
+<p>其中：<span class="math inline">\(j=1, \dots,
+M\)</span>，并且上标<span
+class="math inline">\((1)\)</span>表示相应的参数在网络的第一层。我们把参数<span
+class="math inline">\(w_{j
+i}^{(1)}\)</span>称为<strong>权重（weights）</strong>，参数<span
+class="math inline">\(w_{j
+0}^{(1)}\)</span>称为<strong>偏置（biases）</strong>。<span
+class="math inline">\(a_{j}\)</span>称为<strong>活性值（activations）</strong>，每个活性值都由一个可微的非线性激活函数<span
+class="math inline">\(h(\cdot)\)</span>进行变换： <span
+class="math display">\[
+z_{j} = h(a_{j})
+\]</span></p>
+<p>这些量在神经网络中被称为<strong>隐藏单元（hidden
+units）</strong>。非线性函数通常选用S型函数，如logistic
+sigmoid函数或者tanh函数。</p>
+<p>我们再次将第一层的输出结果进行线性组合，可以得到第二层的输出单元：
+<span class="math display">\[
+a_{k} = \sum_{j=1}^{M}w_{k j}^{(2)}z_{j} + w_{k 0}^{2}
+\]</span></p>
+<p>其中：<span class="math inline">\(k=1,\dots,K\)</span>，<span
+class="math inline">\(K\)</span>为输出的数量。</p>
+<p>输出单元通过合适的激活函数变换得到网络的输出<span
+class="math inline">\(y_{k}\)</span>，激活函数由数据本身及目标变换的分布确定。</p>
+<p>对于回归问题，激活函数采用恒等函数：<span class="math inline">\(y_{k}
+= a_{k}\)</span>。</p>
+<p>对于二分类问题，激活函数采用logistic sigmoid函数：<span
+class="math inline">\(y_{k} = \sigma(a_{k})\)</span>。</p>
+<p>对于多分类问题，激活函数采用softmax函数。</p>
+<p>我们可以把上述两部计算合并到一个公式中： <span
+class="math display">\[
+y_{k}(\mathbf{x}, \mathbf{w}) = \sigma \left(\sum_{j=1}^{M}w_{k
+j}^{(2)}h \left(\sum_{i=1}^{D}w_{j i}^{(1)}x_{i}+w_{j
+0}^{(1)}\right)+w_{k 0}^{(2)}\right)
+\]</span> 其中，所有的权重参数和偏置参数组成了向量<span
+class="math inline">\(\mathbf{w}\)</span>。因此，神经网络可以简单地看作一个从输入变量<span
+class="math inline">\(\{x_{i}\}\)</span>到输出变量<span
+class="math inline">\(\{y_{k}\}\)</span>的非线性函数，这个函数由参数<span
+class="math inline">\(\mathbf{w}\)</span>控制。</p>
+<p>上式也可以用下面的神经网络图表示。计算上式的过程称为信息的<strong>前向传播（forward
+propagation）</strong>。需要注意的是，这种形式的图不是概率图，因为图中<strong>每个节点的参数都是一个确定（deterministic）的值</strong>，而不是一个随机（stochastic）变量。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/网络图.png" alt="网络图" style="zoom:50%;" /></p>
+<span id="more"></span>
+<p>像之前3.1节（[[ch3-3-1-线性基函数模型]]）中那样，我们可以额外定义一个输入变量<span
+class="math inline">\(x_{0}\)</span>，<span
+class="math inline">\(x_{0}\)</span>的值固定为<span
+class="math inline">\(1\)</span>。于是，我们可以把偏置项包含到神经网络函数中：
+<span class="math display">\[
+a_{j} = \sum_{i=0}^{D}w_{j i}^{(1)}x_{i}
+\]</span>
+类似地，我们可以把第二层的偏置项包含到第二层的权重中。于是整个神经网络函数为：
+<span class="math display">\[
+y_{k}(\mathbf{x}, \mathbf{w}) = \sigma \left(\sum_{j=0}^{M}w_{k
+j}^{(2)}h \left(\sum_{i=0}^{D}w_{j i}^{(1)}x_{i}\right)\right)
+\]</span></p>
+<p>正如图5.1中看到的，神经网络模型由两个处理阶段组成，每个阶段为一个4.1.7节中的感知机模型（[[ch4-4-1-判别函数#4
+1 7 感知机算法]]），因此神经网络也被称为<strong>多层感知机（multilayer
+perception，MLP）</strong>。</p>
+<p>然而，神经网络与感知机的重要区别在于，<strong>神经网络中的隐藏单元使用连续的S形非线性函数，而不是阶梯函数</strong>。这意味神经网络函数的<strong>参数都是可微的</strong>，这个性质对神经网络的训练起着重要作用。</p>
+<p>另外，如果神经网络中<strong>所有隐藏单元的激活函数都取线性函数</strong>，由于连续的线性变换的组合也是是一个线性变换，所以对于这种网络，我们<strong>总可以找到一个等价的无隐藏单元的网络</strong>。</p>
+<p>上面给出网络结构是实际中最常用的一个。但是，它可以轻松的扩展到复杂的网络。例如可以<strong>增加一个额外的处理层</strong>或者<strong>引入跨层（skip-layer）连接</strong>。</p>
+<p>此外，网络可以是稀疏的。稀疏的网络中，并不是<strong>所有有可能的连接方式都被连接上</strong>。</p>
+<p>由于在网络结构图和它的数学函数式之间有一个直接的对应关系，我们可以通过考虑更复杂的网络结构图来构造更一般的网络映射。然而，这些网络必须被限制为<strong>前馈（feed-forward）</strong>结构，也就是说，网络中<strong>不能存在有向环，从而确保了输出是输入的确定函数</strong>。</p>
+<p>前馈神经网络的<strong>近似性质（approximately
+properities）</strong>被广泛研究，并且这些性质被发现是通用的。因此，神经网络被称为<strong>通用的近似器（universal
+approximator）</strong>。例如，一个带有线性输出的两层神经网络，只要隐藏单元数量足够大，就可以近似任何连续函数。如图所示。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">torch.manual_seed(<span class="number">1234</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MLP</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, n_in, n_hidden, n_out</span>):</span><br><span class="line">        <span class="built_in">super</span>(MLP, self).__init__()</span><br><span class="line">        self.net = nn.Sequential(</span><br><span class="line">            nn.Linear(n_in, n_hidden),</span><br><span class="line">            nn.Tanh(),</span><br><span class="line">            nn.Linear(n_hidden, n_out),</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">return</span> self.net(x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create_toy_data</span>(<span class="params">func, num_samples=<span class="number">50</span></span>):</span><br><span class="line">    x = torch.linspace(-<span class="number">1</span>, <span class="number">1</span>, num_samples)[:, <span class="literal">None</span>]</span><br><span class="line">    <span class="keyword">return</span> x, func(x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sinusoidal</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> torch.sin(torch.pi * x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">heaviside</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0.5</span> * (<span class="number">1</span> + torch.sign(x))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">func_list = [torch.square, sinusoidal, torch.<span class="built_in">abs</span>, heaviside]</span><br><span class="line">x = torch.linspace(-<span class="number">1</span>, <span class="number">1</span>, <span class="number">1000</span>)[:, <span class="literal">None</span>]</span><br><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">12</span>, <span class="number">8</span>))</span><br><span class="line"><span class="keyword">for</span> i, func, lr <span class="keyword">in</span> <span class="built_in">zip</span>(<span class="built_in">range</span>(<span class="number">1</span>, <span class="number">5</span>), func_list, [<span class="number">0.2</span>, <span class="number">0.2</span>, <span class="number">0.5</span>, <span class="number">0.5</span>]):</span><br><span class="line">    plt.subplot(<span class="number">2</span>, <span class="number">2</span>, i)</span><br><span class="line">    x_train, y_train = create_toy_data(func)</span><br><span class="line"></span><br><span class="line">    model = MLP(<span class="number">1</span>, <span class="number">3</span>, <span class="number">1</span>)    <span class="comment"># 3 hidden units</span></span><br><span class="line">    loss_func = nn.MSELoss()    <span class="comment"># mean squared error</span></span><br><span class="line">    optimizer = torch.optim.Adam(model.parameters(), lr=lr)</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10000</span>):</span><br><span class="line">        y_pred = model(x_train)</span><br><span class="line">        loss = loss_func(y_pred, y_train)</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line">    y_pred = model(x)</span><br><span class="line"></span><br><span class="line">    plt.scatter(x_train.detach().numpy(), y_train.detach().numpy(), c=<span class="string">&#x27;b&#x27;</span>)</span><br><span class="line">    plt.plot(x.numpy(), y_pred.detach().numpy(), c=<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/多层感知机近似.gif"
+alt="多层感知机近似" />
+<figcaption aria-hidden="true">多层感知机近似</figcaption>
+</figure>
+<h3 id="权重空间对称性">5.1.1 权重空间对称性</h3>
+<p>神经网络的一个性质是<strong>对于多个不同的权重向量<span
+class="math inline">\(\mathbf{w}\)</span>，可以产生同样的从输入到输出的映射函数</strong>。在我们考虑贝叶斯模型比较时，这个性质会起重要作用。</p>
+<p>考虑上面的两层神经网络，包含<span
+class="math inline">\(M\)</span>个隐藏单元，激活函数为tanh函数，两层之间完全连接。如果我们把某个隐藏单元的权重变为负，根据tanh函数的奇函数性质，我们仍然可以得到完全相同的映射函数。因此，对于<span
+class="math inline">\(M\)</span>个隐藏单元，会存在<span
+class="math inline">\(M\)</span>个“符号改变”的对称性，任何一个权重向量都是<span
+class="math inline">\(2^{M}\)</span>个等价的权重向量中的一个。</p>
+<p>另外，如果我们交换同一层中两个隐藏单元对应的权重，那么输入和输出的映射函数也不会被改变。对于<span
+class="math inline">\(M\)</span>个隐藏单元，任何一个权重向量属于<span
+class="math inline">\(M!\)</span>个等价的权重向量的集合。</p>
+<p>因此，对于上面这个网络，它的整体的权重空间对称性因子为<span
+class="math inline">\(M!2^{M}\)</span>。在多层的网络中，它的对称性总数为每个隐藏层的对称性因子的乘积。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/02/15/ch5-5-1-%E5%89%8D%E9%A6%88%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" title="ch5-5.1 前馈神经网络">https://ehehe.cn/2022/02/15/ch5-5-1-前馈神经网络/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PRML/" rel="tag"># PRML</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch4-4-5-%E8%B4%9D%E5%8F%B6%E6%96%AFlogistic%E5%9B%9E%E5%BD%92/" rel="prev" title="ch4-4.5 贝叶斯logistic回归">
+                  <i class="fa fa-angle-left"></i> ch4-4.5 贝叶斯logistic回归
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch5-5-2-%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83/" rel="next" title="ch5-5.2 网络训练">
+                  ch5-5.2 网络训练 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

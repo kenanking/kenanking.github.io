@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="1.5 决策论 概率论为我们提供一个数学框架来定量计算不确定性，而决策论帮助我们在得到不确定性后做出最优决策。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch1-1.5 决策论">
+<meta property="og:url" content="https://ehehe.cn/2022/02/14/ch1-1-5-%E5%86%B3%E7%AD%96%E8%AE%BA/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="1.5 决策论 概率论为我们提供一个数学框架来定量计算不确定性，而决策论帮助我们在得到不确定性后做出最优决策。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/q%E5%8F%96%E4%B8%8D%E5%90%8C%E5%80%BC%E6%97%B6%E7%9A%84%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0.jpg">
+<meta property="article:published_time" content="2022-02-14T14:40:23.000Z">
+<meta property="article:modified_time" content="2022-02-14T14:40:23.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="PRML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/q%E5%8F%96%E4%B8%8D%E5%90%8C%E5%80%BC%E6%97%B6%E7%9A%84%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0.jpg">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/02/14/ch1-1-5-%E5%86%B3%E7%AD%96%E8%AE%BA/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/02/14/ch1-1-5-%E5%86%B3%E7%AD%96%E8%AE%BA/","path":"2022/02/14/ch1-1-5-决策论/","title":"ch1-1.5 决策论"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch1-1.5 决策论 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%B3%E7%AD%96%E8%AE%BA"><span class="nav-text">1.5 决策论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E5%8C%96%E9%94%99%E8%AF%AF%E5%88%86%E7%B1%BB%E7%8E%87"><span class="nav-text">1.5.1 最小化错误分类率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E5%8C%96%E6%9C%9F%E6%9C%9B%E6%8D%9F%E5%A4%B1"><span class="nav-text">1.5.2 最小化期望损失</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%92%E7%BB%9D%E9%80%89%E9%A1%B9"><span class="nav-text">1.5.3 拒绝选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A8%E6%96%AD%E5%92%8C%E5%86%B3%E7%AD%96"><span class="nav-text">1.5.4 推断和决策</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E5%BD%92%E9%97%AE%E9%A2%98%E7%9A%84%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-text">1.5.5 回归问题的损失函数</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/02/14/ch1-1-5-%E5%86%B3%E7%AD%96%E8%AE%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch1-1.5 决策论 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch1-1.5 决策论
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-14 22:40:23" itemprop="dateCreated datePublished" datetime="2022-02-14T22:40:23+08:00">2022-02-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="决策论">1.5 决策论</h2>
+<p>概率论为我们提供一个数学框架来定量计算不确定性，而决策论帮助我们在得到不确定性后做出最优决策。</p>
+<span id="more"></span>
+<h3 id="最小化错误分类率">1.5.1 最小化错误分类率</h3>
+<p>最小化错误分类率的目标就是尽可能少地做出错误分类。</p>
+<p>在一个分类问题中，我们寻找一种规则，赋予每一个输入变量<span
+class="math inline">\(x\)</span>一个类别。这个规则将输入空间划分为不同的区域<span
+class="math inline">\(\mathcal{R}_k\)</span>，每个区域被叫做<strong>决策区域（decision
+region）</strong>，对应于一个类别<span
+class="math inline">\(\mathcal{C}_{k}\)</span>。决策区域间的边界被叫做<strong>决策边界（decision
+boundary）</strong>或者<strong>决策⾯（decision surface）</strong>。</p>
+<p>以在二分类问题为例，下面是错误发生的概率：</p>
+<p><span class="math display">\[
+\begin{align}
+p(\mathrm{mistake})
+&amp; = p(\mathbf{x} \in \mathcal{R}_{1}, \mathcal{C}_{2}) +
+p(\mathbf{x} \in \mathcal{R}_{2}, \mathcal{C}_{1}) \\
+&amp; = \int_{\mathcal{R}_{1}} p(\mathbf{x}, \mathcal{C}_{2}) \mathrm{d}
+\mathbf{x} + \int_{\mathcal{R}_{2}} p(\mathbf{x}, \mathcal{C}_{1})
+\mathrm{d} \mathbf{x}
+\end{align}
+\]</span></p>
+<p>显然，为了让<span
+class="math inline">\(p(\mathrm{mistake})\)</span>最小，我们希望让上面的积分最小。因此，如果给定<span
+class="math inline">\(\mathbf{x}\)</span>存在<span
+class="math inline">\(p(\mathbf{x}, \mathcal{C}_{1}) \gt p(\mathbf{x},
+\mathcal{C}_{2})\)</span>，那么<span
+class="math inline">\(\mathbf{x}\)</span>应该属于类别<span
+class="math inline">\(\mathcal{C}_{1}\)</span>。</p>
+<p>根据概率乘法法则，<span class="math inline">\(p(\mathbf{x},
+\mathbf{C}_{k}) = p(\mathcal{C}_{k} \mid \mathbf{x})
+p(\mathbf{x})\)</span>。对于每个类别，<span
+class="math inline">\(p(\mathbf{x}\)</span>是相同的，因此，我们也可以认为==最小化错误分类率等价于选择后验概率<span
+class="math inline">\(p(\mathcal{C}_{k} \mid
+\mathbf{x})\)</span>最大的类别==。</p>
+<h3 id="最小化期望损失">1.5.2 最小化期望损失</h3>
+<p>在某些应用下，最小化错误分类率是不够的。在癌症诊断的例子中，误判主要有两类，正常患者诊断为癌症以及癌症患者诊断为正常。这两类造成的后果是不同的，很明显，我们希望第二种情况发生的尽可能少。</p>
+<p>这种情况下，我们用<strong>损失函数（loss
+function）</strong>，也叫做<strong>代价函数（cost
+function）</strong>来描述这个问题，用来度量所有可能决策或动作产生的后果。</p>
+<p>在癌症诊断的例子中，我们可以定义损失函数为<span
+class="math inline">\(L_{kj}\)</span>（<span
+class="math inline">\(k\)</span>表示实际类别，<span
+class="math inline">\(j\)</span>表示判断得出的类别），损失函数以<strong>损失矩阵（loss
+matrix）</strong>形式可以表示为（行表示真实类别，列表示预测结果）：</p>
+<p><span class="math display">\[
+\begin{array}{lcc}
+&amp; \text { 癌症 } &amp; \text { 正常 } \\
+\text { 癌症 } &amp; 0 &amp; 1000 \\
+\text { 正常 } &amp; 1 &amp; 0
+\end{array}
+\]</span></p>
+<p>上面这个损失函数意味着，当做出正确判断时，损失值为<span
+class="math inline">\(0\)</span>，当将癌症判断为正常时，损失值为<span
+class="math inline">\(1000\)</span>，当将正常判断为癌症时，损失值为<span
+class="math inline">\(1\)</span>。</p>
+<p>于是我们可以得到损失函数关于联合分布<span
+class="math inline">\(p\left(\mathbf{x},
+\mathcal{C}_{k}\right)\)</span>的平均损失：</p>
+<p><span class="math display">\[
+\mathbb{E}[L]=\sum_{k} \sum_{j} \int_{\mathcal{R}_{j}} L_{k j}
+p\left(\mathbf{x}, \mathcal{C}_{k}\right) \mathrm{d} \mathbf{x}
+\]</span></p>
+<p>使上式最小化，等价于对于每个<span
+class="math inline">\(\mathbf{x}\)</span>，我们要最小化<span
+class="math inline">\(\sum_{k} L_{k j} p\left(\mathcal{C}_{k} \mid
+\mathrm{x}\right)\)</span>。</p>
+<p>于是，最小化期望损失等价于选择使<span class="math inline">\(\sum_{k}
+L_{k j} p\left(\mathcal{C}_{k} \mid
+\mathrm{x}\right)\)</span>最小的第<span
+class="math inline">\(j\)</span>类。</p>
+<h3 id="拒绝选项">1.5.3 拒绝选项</h3>
+<p>当后验概率<span class="math inline">\(p\left(\mathcal{C}_{k} \mid
+\mathbf{x}\right)\)</span>远小于<span
+class="math inline">\(1\)</span>时，做出错误分类的概率就会提升。在某些应用中，对于决策困难的情况，我们需要避免做出决策，这种情况称为<strong>拒绝选项（reject
+option）</strong>。</p>
+<p>做法是设定一个阈值<span
+class="math inline">\(\theta\)</span>，拒绝后验概率<span
+class="math inline">\(p(\mathcal{C}_{k} \mid
+\mathbf{x})\)</span>小于等于<span
+class="math inline">\(\theta\)</span>的输入。</p>
+<h3 id="推断和决策">1.5.4 推断和决策</h3>
+<p>分类问题可以分为两个阶段：<strong>推断（inference）</strong>阶段和<strong>决策（decision）</strong>阶段。</p>
+<p>一种方法是：在推断阶段，使⽤训练数据学习<span
+class="math inline">\(p\left(\mathcal{C}_{k} \mid
+\mathrm{x}\right)\)</span>的模型。在决策阶段，使⽤后验概率进行最优的分类。</p>
+<p>另⼀种⽅法是：同时解决两个问题，即学习一个函数，直接将输入映射为决策，这个函数称为<strong>判别函数（discriminant
+function）</strong>。</p>
+<p>事实上在决策问题中有三个模型，复杂度由高到低为：</p>
+<ol type="1">
+<li><p><strong>生成模型（generative model）</strong>
+显式地或隐式地对输⼊以及输出的分布进行建模的⽅法。</p></li>
+<li><p><strong>判别模型（discriminative model）</strong>
+直接对后验概率建模的方法。</p></li>
+<li><p>找到⼀个函数<span
+class="math inline">\(f(\mathrm{x})\)</span>，称为<strong>判别函数（discriminant
+function）</strong>。这个函数把每个输入<span
+class="math inline">\(\mathbb{E}[L]=\iint L(t, y(\mathbf{x}))
+p(\mathbf{x}, t) \mathrm{d} \mathbf{x} \mathrm{d}
+t\)</span>直接映射为类别标签。</p></li>
+</ol>
+<p>使用方法3看起来比较方便，因为我们不再需要计算后验概率<span
+class="math inline">\(p(\mathcal{C}_{k} \mid
+\mathbf{x})\)</span>。但是，作者认为计算后验概率是需要的，基于以下四个理由：</p>
+<ol type="1">
+<li><p><strong>期望风险最小化。</strong>
+对于一个损失函数变化（可能在金融应用上）的问题，如果知道后验概率，我们可以直接使用公式<span
+class="math inline">\(\sum_{k} L_{k j} p\left(\mathcal{C}_{k} \mid
+\mathrm{x}\right)\)</span>计算最优分类。如果仅有判别函数，我们还需要使用训练数据重新训练新的判别函数。</p></li>
+<li><p><strong>拒绝选项。</strong>
+后验概率让我们可以确定一个能最小化错误分类的拒绝准则。</p></li>
+<li><p><strong>补偿类别先验。</strong>
+在使用X光线影像对癌症分类的例子中，通常癌症的数据要远少于正常的数据，数据集极不均衡。如果直接用于训练，会导致准确率异常的偏高。在这种情况下，我们需要人工平衡数据集后进行训练。此时我们需要引入类别的先验概率来补偿我们对数据集的修改。</p></li>
+<li><p><strong>模型组合。</strong>
+对于复杂的应用，我们可能希望将问题分解成若干较小的子问题，每个子问题都可以由一个单独的模块来解决。在上面医疗诊断的例子中，我们想要同时使用X光线影像和血液检查数据作为输入特征。简单起见，假设影像的分布<span
+class="math inline">\(\mathbf{x}_{I}\)</span>和血液数据的分布<span
+class="math inline">\(\mathbf{x}_{B}\)</span>相互独立，即： <span
+class="math display">\[
+p(\mathbf{x}_{I}, \mathbf{x}_{B} \mid \mathcal{C}_{k}) =
+p(\mathbf{x}_{I} \mid \mathcal{C}_{k}) p(\mathbf{x}_{B} \mid
+\mathcal{C}_{k})
+\]</span> 上面的例子表示<strong>条件独立（conditional
+independence）</strong>。 于是，后验概率分布为： <span
+class="math display">\[
+\begin{align}
+p(\mathcal{C}_{k} \mid \mathbf{x}_{I}, \mathbf{x}_{B})
+&amp; \propto p(\mathbf{x}_{I}, \mathbf{x}_{B} \mid \mathcal{C}_{k})
+p(\mathcal{C}_{k}) \\
+&amp; \propto p(\mathbf{x}_{I} \mid \mathcal{C}_{k}) p(\mathbf{x}_{B}
+\mid \mathcal{C}_{k}) p(\mathcal{C}_{k}) \\
+&amp; \propto \frac{p(\mathcal{C}_{k} \mid
+\mathbf{x}_{I})p(\mathcal{C}_{k} \mid
+\mathbf{x}_{B})}{p(\mathcal{C}_{k})}
+\end{align}
+\]</span></p></li>
+</ol>
+<h3 id="回归问题的损失函数">1.5.5 回归问题的损失函数</h3>
+<p>在回归问题中，对于每一个输入<span
+class="math inline">\(\mathrm{x}\)</span>及其对应的<span
+class="math inline">\(t\)</span>，估计一个函数<span
+class="math inline">\(y(\mathrm{x})\)</span>，对应的损失函数为<span
+class="math inline">\(L(t,
+y(\mathbf{x}))\)</span>。可以得到期望损失为：</p>
+<p><span class="math display">\[
+\mathbb{E}[L]=\iint L(t, y(\mathbf{x})) p(\mathbf{x}, t) \mathrm{d}
+\mathbf{x} \mathrm{d} t
+\]</span></p>
+<p>在回归问题中，常用的损失函数是平方损失函数：<span
+class="math inline">\(L(t,
+y(\mathbf{x}))=\{y(\mathbf{x})-t\}^{2}\)</span>。对应期望损失可以写为：
+<span class="math display">\[
+\mathbb{E}[L]=\iint\{y(\mathbf{x})-t\}^{2} p(\mathbf{x}, t) \mathrm{d}
+\mathbf{x} \mathrm{d} t
+\]</span></p>
+<p>目标是使得期望损失最小，对上式求导并令其为零：</p>
+<p><span class="math display">\[
+\frac{\delta \mathbb{E}[L]}{\delta y(\mathbf{x})}=2
+\int\{y(\mathbf{x})-t\} p(\mathbf{x}, t) \mathrm{d} t=0
+\]</span></p>
+<p>求解得到<span class="math inline">\(y(\mathrm{x})\)</span>： <span
+class="math display">\[
+y(\mathrm{x})=\frac{\int t p(\mathrm{x}, t) \mathrm{d}
+t}{p(\mathrm{x})}=\int t p(t \mid \mathrm{x}) \mathrm{d}
+t=\mathbb{E}_{t}[t \mid \mathrm{x}]
+\]</span></p>
+<p><span class="math inline">\(y(\mathrm{x})\)</span>是目标变量<span
+class="math inline">\(t\)</span>在条件<span
+class="math inline">\(\mathrm{x}\)</span>下的条件均值，这个函数称为<strong>回归函数（regression
+function）</strong>。</p>
+<p>这个结果也可以通过一种稍微不同的方式推出。在知道最优解是条件期望的情况下，我们可以把期望损失中的平方项按照下面的方式展开：</p>
+<p><span class="math display">\[
+\begin{array}{l}
+\left\{y(\mathbf{x})-t\}^{2} = \{y(\mathbf{x})-\mathbb{E}[t \mid
+\mathbf{x}]+\mathbb{E}[t \mid \mathbf{x}]-t\right\}^{2} \\
+\quad = \{y(\mathbf{x})-\mathbb{E}[t \mid \mathbf{x}]\}^{2}+2
+\left\{y(\mathbf{x})-\mathbb{E}[t \mid \mathbf{x}] \right\}
+\left\{\mathbb{E}[t \mid \mathbf{x}]-t\}+\{\mathbb{E}[t \mid
+\mathbf{x}]-t \right\}^{2}
+\end{array}
+\]</span></p>
+<p>当计算期望损失时，中间的交叉项消失<strong>（暂时没有证明）</strong>：
+<span class="math display">\[
+\mathbb{E}[L]=\int\{y(\mathbf{x})-\mathbb{E}[t \mid \mathbf{x}]\}^{2}
+p(\mathbf{x}) \mathrm{d} \mathbf{x}+\int\{\mathbb{E}[t \mid
+\mathbf{x}]-t\}^{2} p(\mathbf{x}) \mathrm{d} \mathbf{x}
+\]</span></p>
+<p>上式中，<strong>第一项最小等价于最小二乘的最优解为条件均值</strong>，这个结论与之前得出的是一样的。第二项是<span
+class="math inline">\(t\)</span>的分布的方差在<span
+class="math inline">\(p(\mathbf{x})\)</span>上的均值，可以看作噪声。</p>
+<p>在回归问题中，平方损失函数不是唯一的选择。在某些情况下会用到<strong>闵可夫斯基损失函数（Minkowski
+loss）</strong>，它是平方损失函数的推广。对应期望损失为： <span
+class="math display">\[
+\mathbb{E}\left[L_{q}\right]=\iint|y(\mathbf{x})-t|^{q} p(\mathbf{x}, t)
+\mathrm{d} \mathbf{x} \mathrm{d} t
+\]</span></p>
+<p>当<span class="math inline">\(q =
+2\)</span>时，这个函数就变成了平⽅损失函数的期望损失。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">x, q</span>):</span><br><span class="line">	<span class="keyword">return</span> np.power(np.<span class="built_in">abs</span>(x), q)</span><br><span class="line"></span><br><span class="line">x = np.linspace(-<span class="number">2</span>, <span class="number">2</span>, <span class="number">1000</span>)</span><br><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">8</span>, <span class="number">6</span>))</span><br><span class="line"><span class="keyword">for</span> i, q <span class="keyword">in</span> <span class="built_in">enumerate</span>([<span class="number">0.3</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">10</span>]):</span><br><span class="line">	y = func(x, q)</span><br><span class="line">	plt.subplot(<span class="number">2</span>, <span class="number">2</span>, i + <span class="number">1</span>)</span><br><span class="line">	plt.plot(x, y, color=<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">	plt.xlim((-<span class="number">2</span>, <span class="number">2</span>))</span><br><span class="line">	plt.ylim((<span class="number">0</span>, <span class="number">2</span>))</span><br><span class="line">	plt.title(<span class="string">f&#x27;$q=<span class="subst">&#123;q&#125;</span>$&#x27;</span>)</span><br><span class="line">	plt.xlabel(<span class="string">&#x27;$y-t$&#x27;</span>)</span><br><span class="line">	plt.ylabel(<span class="string">&#x27;$|y-t|^&#123;q&#125;$&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/q取不同值时的损失函数.jpg" alt="q取不同值时的损失函数" style="zoom:60%;" /></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/02/14/ch1-1-5-%E5%86%B3%E7%AD%96%E8%AE%BA/" title="ch1-1.5 决策论">https://ehehe.cn/2022/02/14/ch1-1-5-决策论/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PRML/" rel="tag"># PRML</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/14/ch1-1-4-%E7%BB%B4%E5%BA%A6%E7%81%BE%E9%9A%BE/" rel="prev" title="ch1-1.4 维度灾难">
+                  <i class="fa fa-angle-left"></i> ch1-1.4 维度灾难
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/14/ch1-1-6-%E4%BF%A1%E6%81%AF%E8%AE%BA/" rel="next" title="ch1-1.6 信息论">
+                  ch1-1.6 信息论 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

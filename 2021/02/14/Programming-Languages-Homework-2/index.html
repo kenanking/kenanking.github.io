@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作业2中使用了在这部分课程中介绍的很多有用的概念。  利用编程语言中自带的基本类型创建的复合类型可以分为三类：Each-of：相当于一个类，每个成员变量都需要赋值；One-of：我觉得相当于枚举类型；Self-reference：在实现链表、树等数据结构时需要对类型自身进行引用。 通过Records可以可以创建Each-of类型。 语法糖（Syntactic Sugar）的作用：通过语法糖可以简化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Programming Languages Homework 2">
+<meta property="og:url" content="https://ehehe.cn/2021/02/14/Programming-Languages-Homework-2/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作业2中使用了在这部分课程中介绍的很多有用的概念。  利用编程语言中自带的基本类型创建的复合类型可以分为三类：Each-of：相当于一个类，每个成员变量都需要赋值；One-of：我觉得相当于枚举类型；Self-reference：在实现链表、树等数据结构时需要对类型自身进行引用。 通过Records可以可以创建Each-of类型。 语法糖（Syntactic Sugar）的作用：通过语法糖可以简化">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-14T07:00:53.000Z">
+<meta property="article:modified_time" content="2021-02-15T03:27:05.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="Coursera">
+<meta property="article:tag" content="Programming Languages">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ehehe.cn/2021/02/14/Programming-Languages-Homework-2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2021/02/14/Programming-Languages-Homework-2/","path":"2021/02/14/Programming-Languages-Homework-2/","title":"Programming Languages Homework 2"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Programming Languages Homework 2 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-1"><span class="nav-text">Problem 1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a"><span class="nav-text">1-a</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#b"><span class="nav-text">1-b</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#c"><span class="nav-text">1-c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#d"><span class="nav-text">1-d</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-2"><span class="nav-text">Problem 2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a-1"><span class="nav-text">2-a</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#b-1"><span class="nav-text">2-b</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#c-1"><span class="nav-text">2-c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#d-1"><span class="nav-text">2-d</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#e"><span class="nav-text">2-e</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#f"><span class="nav-text">2-f</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#g"><span class="nav-text">2-g</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2021/02/14/Programming-Languages-Homework-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Programming Languages Homework 2 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Programming Languages Homework 2
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-02-14 15:00:53" itemprop="dateCreated datePublished" datetime="2021-02-14T15:00:53+08:00">2021-02-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-02-15 11:27:05" itemprop="dateModified" datetime="2021-02-15T11:27:05+08:00">2021-02-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作业2中使用了在这部分课程中介绍的很多有用的概念。</p>
+<ul>
+<li><p>利用编程语言中自带的基本类型创建的复合类型可以分为三类：<code>Each-of</code>：相当于一个类，每个成员变量都需要赋值；<code>One-of</code>：我觉得相当于枚举类型；<code>Self-reference</code>：在实现链表、树等数据结构时需要对类型自身进行引用。</p></li>
+<li><p>通过<code>Records</code>可以可以创建<code>Each-of</code>类型。</p></li>
+<li><p>语法糖（<code>Syntactic Sugar</code>）的作用：通过语法糖可以简化编程语言中实现某一功能所需的代码。</p></li>
+<li><p>介绍了等号的第三种（第一次课程中介绍过：<code>Value Binding</code>和<code>Function Binding</code>）作用：<code>Datatype Binding</code>。</p></li>
+<li><p><code>case</code>表达式：<code>case</code>表达式的作用非常强大，通过<code>case</code>表达式，可以实现模式匹匹配（<code>Pattern-Matching</code>），模式匹配是这一次课程的重点。</p></li>
+<li><p>尾递归（<code>Tail Recursion</code>）和累加器（<code>Accumulator</code>）：在递归的过程中，由于需要使用下一状态的值，需要存储大量递归函数的中间状态，大量的递归会造成栈的溢出。尾递归就是通过把递归函数的结果作为参数传给下一次调用，从而节省了栈的开销。需要注意不是所有递归都能改成尾递归，并且不是所有尾递归都能节省栈的开销。</p></li>
+</ul>
+<span id="more"></span>
+<h2 id="problem-1">Problem 1</h2>
+<h3 id="a">1-a</h3>
+<p>Write a function <code>remove_option</code>, which takes a string and
+a string list. Return NONE if the string is not in the list, else return
+SOME xs where xs is identical to the argument list except the string is
+not in it. You may assume the string is in the list at most once. Use
+same_string, provided to you, to compare strings. Sample solution is
+around 8 lines.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">fun same_string(s1 : string, s2 : string) =</span><br><span class="line">    s1 = s2</span><br><span class="line"></span><br><span class="line">(* Problem 1-a *)</span><br><span class="line">fun remove_option(str, str_list) =</span><br><span class="line">    let</span><br><span class="line">	fun remove_option_helper(strs) =</span><br><span class="line">	    case strs of</span><br><span class="line">		[] =&gt; []</span><br><span class="line">	      | x::xs&#x27; =&gt; if same_string(x, str) then xs&#x27; else x::remove_option_helper(xs&#x27;)</span><br><span class="line">	val ans = remove_option_helper(str_list)</span><br><span class="line">    in</span><br><span class="line">	if ans = str_list then NONE else SOME ans</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+<h3 id="b">1-b</h3>
+<p>Write a function <code>all_substitutions1</code>, which takes a
+string list list (a list of list of strings, the substitutions) and a
+string s and returns a string list. The result has all the strings that
+are in some list in substitutions that also has s, but s itself should
+not be in the result.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 1-b *)</span><br><span class="line">fun all_substitutions1(substitutions, str) =</span><br><span class="line">    case substitutions of</span><br><span class="line">	[] =&gt; []</span><br><span class="line">      | x::xs&#x27; =&gt; case remove_option(str, x) of</span><br><span class="line">		      NONE =&gt; all_substitutions1(xs&#x27;, str)</span><br><span class="line">		    | SOME d =&gt; d @ all_substitutions1(xs&#x27;, str)</span><br></pre></td></tr></table></figure>
+<h3 id="c">1-c</h3>
+<p>Write a function <code>all_substitutions2</code>, which is like
+all_substitutions1 except it uses a tail-recursive local helper
+function.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 1-c *)</span><br><span class="line">fun all_substitutions2(substitutions, str) =</span><br><span class="line">    let</span><br><span class="line">	fun all_substitutions2_helper(sub, acc) =</span><br><span class="line">	    case sub of</span><br><span class="line">		[] =&gt; acc</span><br><span class="line">	      | x::xs&#x27; =&gt; case remove_option(str, x) of</span><br><span class="line">			      NONE =&gt; all_substitutions2_helper(xs&#x27;, acc)</span><br><span class="line">			    | SOME d =&gt; all_substitutions2_helper(xs&#x27;, acc @ d) </span><br><span class="line">    in</span><br><span class="line">	all_substitutions2_helper(substitutions, [])</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+<h3 id="d">1-d</h3>
+<p>Write a function similar_names, which takes a string list list of
+substitutions (as in parts (b) and (c)) and a full name of type
+{first:string, middle:string, last:string} and returns a list of full
+names (type {first:string, middle:string, last:string} list). The result
+is all the full names you can produce by substituting for the rst name
+(and only the rst name) using substitutions and parts (b) or (c). The
+answer should begin with the original name (then have 0 or more other
+names).</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 1-d *)</span><br><span class="line">fun similar_names(substitutions, full_name) =</span><br><span class="line">    let</span><br><span class="line">	val &#123;first=fir, middle=mid, last=las&#125; = full_name</span><br><span class="line">	val sub_first_names = all_substitutions2(substitutions, fir)</span><br><span class="line">	fun similar_names_helper(first_names) =</span><br><span class="line">	    case first_names of</span><br><span class="line">		[] =&gt; []</span><br><span class="line">	      | x::xs&#x27; =&gt; &#123;first=x, middle=mid, last=las&#125;::similar_names_helper(xs&#x27;)</span><br><span class="line">    in</span><br><span class="line">	full_name::similar_names_helper(sub_first_names)</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+<h2 id="problem-2">Problem 2</h2>
+<h3 id="a-1">2-a</h3>
+<ol type="a">
+<li>Write a function <code>card_color</code>, which takes a card and
+returns its color (spades and clubs are black, diamonds and hearts are
+red). Note: One case-expression is enough.</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">datatype suit = Clubs | Diamonds | Hearts | Spades</span><br><span class="line">datatype rank = Jack | Queen | King | Ace | Num of int </span><br><span class="line">type card = rank * suit</span><br><span class="line"></span><br><span class="line">datatype color = Red | Black</span><br><span class="line">datatype move = Discard of card | Draw </span><br><span class="line"></span><br><span class="line">exception IllegalMove</span><br><span class="line"></span><br><span class="line">(* Problem 2-a *)</span><br><span class="line">fun card_color c =</span><br><span class="line">    case c of</span><br><span class="line">	(_, Spades) =&gt; Black</span><br><span class="line">      | (_, Clubs) =&gt; Black</span><br><span class="line">      | _ =&gt; Red</span><br></pre></td></tr></table></figure>
+<h3 id="b-1">2-b</h3>
+<p>Write a function <code>card_value</code>, which takes a card and
+returns its value (numbered cards have their number as the value, aces
+are 11, everything else is 10). Note: One case-expression is enough.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 2-b *)</span><br><span class="line">fun card_value c =</span><br><span class="line">    case c of</span><br><span class="line">	(Num i, _) =&gt; i</span><br><span class="line">      | (Ace, _) =&gt; 11</span><br><span class="line">      | _ =&gt; 10 </span><br></pre></td></tr></table></figure>
+<h3 id="c-1">2-c</h3>
+<p>Write a function <code>remove_card</code>, which takes a list of
+cards cs, a card c, and an exception e. It returns a list that has all
+the elements of cs except c. If c is in the list more than once, remove
+only the rst one. If c is not in the list, raise the exception e. You
+can compare cards with =.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 2-c *)</span><br><span class="line">fun remove_card(cs, c, e) =</span><br><span class="line">    case cs of</span><br><span class="line">	[] =&gt; raise e</span><br><span class="line">      | x::xs&#x27; =&gt; if x = c</span><br><span class="line">		  then xs&#x27;</span><br><span class="line">		  else x::remove_card(xs&#x27;, c, e)</span><br></pre></td></tr></table></figure>
+<h3 id="d-1">2-d</h3>
+<p>Write a function <code>all_same_color</code>, which takes a list of
+cards and returns true if all the cards in the list are the same color.
+Hint: An elegant solution is very similar to one of the functions using
+nested pattern-matching in the lectures.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 2-d *)</span><br><span class="line">fun all_same_color cs =</span><br><span class="line">    case cs of</span><br><span class="line">	[] =&gt; true</span><br><span class="line">      | _::[] =&gt; true</span><br><span class="line">      | head::(neck::rest) =&gt; (card_color head = card_color neck andalso all_same_color(neck::rest))</span><br></pre></td></tr></table></figure>
+<h3 id="e">2-e</h3>
+<p>Write a function <code>sum_cards</code>, which takes a list of cards
+and returns the sum of their values. Use a locally defined helper
+function that is tail recursive.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 2-e *)</span><br><span class="line">fun sum_cards cs =</span><br><span class="line">    let</span><br><span class="line">	fun sum_cards_helper(rest_cs, acc) =</span><br><span class="line">	    case rest_cs of</span><br><span class="line">		[] =&gt; acc</span><br><span class="line">		   | x::xs&#x27; =&gt; sum_cards_helper(xs&#x27;, card_value x + acc) </span><br><span class="line">    in</span><br><span class="line">	sum_cards_helper(cs, 0)</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+<h3 id="f">2-f</h3>
+<p>Write a function <code>score</code>, which takes a card list (the
+held-cards) and an int (the goal) and computes the score as described
+above.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 2-f *)</span><br><span class="line">fun score(cs, goal) =</span><br><span class="line">    let</span><br><span class="line">	val sum = sum_cards cs</span><br><span class="line">	val pre_scrore = if sum &gt; goal then 3 * (sum - goal) else goal - sum</span><br><span class="line">    in</span><br><span class="line">	if all_same_color(cs)</span><br><span class="line">	then pre_scrore div 2</span><br><span class="line">	else pre_scrore</span><br><span class="line">    end</span><br></pre></td></tr></table></figure>
+<h3 id="g">2-g</h3>
+<p>Write a function <code>officiate</code>, which "runs a game." It
+takes a card list (the card-list) a move list (what the player "does" at
+each point), and an int (the goal) and returns the score at the end of
+the game after processing (some or all of) the moves in the move list in
+order. Use a locally defined recursive helper function that takes
+several arguments that together represent the current state of the game.
+As described above:</p>
+<ul>
+<li>The game starts with the held-cards being the empty list.</li>
+<li>The game ends if there are no more moves. (The player chose to stop
+since the move list is empty.)</li>
+<li>If the player discards some card c, play continues (i.e., make a
+recursive call) with the held-cards not having c and the card-list
+unchanged. If c is not in the held-cards, raise the
+<code>IllegalMove</code> exception.</li>
+<li>If the player draws and the card-list is (already) empty, the game
+is over. Else if drawing causes the sum of the held-cards to exceed the
+goal, the game is over (after drawing). Else play continues with a
+larger held-cards and a smaller card-list.</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">(* Problem 2-g *)</span><br><span class="line">fun officiate(cs, ms, goal) =</span><br><span class="line">    let</span><br><span class="line">	fun officiate_helper(cards, moves, helds) = </span><br><span class="line">	    case moves of</span><br><span class="line">		[] =&gt; score(helds, goal)</span><br><span class="line">	      | (Discard c)::tl_moves =&gt; officiate_helper(cards, tl_moves, remove_card(cards, c, IllegalMove)) </span><br><span class="line">	      | Draw::tl_moves =&gt; case cards of</span><br><span class="line">				      [] =&gt; score(helds, goal)</span><br><span class="line">				    | c::tl_cards =&gt; if sum_cards(c::helds) &gt; goal</span><br><span class="line">						then score(c::helds, goal)</span><br><span class="line">						else officiate_helper(tl_cards, tl_moves, c::helds)</span><br><span class="line">    in</span><br><span class="line">	officiate_helper(cs, ms, [])</span><br><span class="line">    end</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2021/02/14/Programming-Languages-Homework-2/" title="Programming Languages Homework 2">https://ehehe.cn/2021/02/14/Programming-Languages-Homework-2/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Coursera/" rel="tag"># Coursera</a>
+              <a href="/tags/Programming-Languages/" rel="tag"># Programming Languages</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/02/09/Programming-Languages-Homework-1/" rel="prev" title="Programming Languages Homework 1">
+                  <i class="fa fa-angle-left"></i> Programming Languages Homework 1
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/02/17/Programming-Languages-Homework-3/" rel="next" title="Programming Languages Homework 3">
+                  Programming Languages Homework 3 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

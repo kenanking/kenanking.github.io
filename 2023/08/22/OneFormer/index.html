@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Jitesh Jain, Jiachen Li, MangTik Chiu, Ali Hassani, Nikita Orlov, Humphrey Shi OneFormer 传统的图像分割方法需要使用不同的架构、模型或者数据集来处理不同的分割任务（语义分割、实例分割和全景分割），这篇文章介绍了一个通用的图像分割框架——OneFormer。OneFormer通过引入了任务输出（task t">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] OneFormer: One Transformer to Rule Universal Image Segmentation (CVPR 2023)">
+<meta property="og:url" content="https://ehehe.cn/2023/08/22/OneFormer/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Jitesh Jain, Jiachen Li, MangTik Chiu, Ali Hassani, Nikita Orlov, Humphrey Shi OneFormer 传统的图像分割方法需要使用不同的架构、模型或者数据集来处理不同的分割任务（语义分割、实例分割和全景分割），这篇文章介绍了一个通用的图像分割框架——OneFormer。OneFormer通过引入了任务输出（task t">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/text_mapper.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/oneformer_ablation_on_components.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/oneformer_ablation_on_loss.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/oneformer_ablation_on_input_text_templates.png">
+<meta property="article:published_time" content="2023-08-22T02:27:48.000Z">
+<meta property="article:modified_time" content="2023-08-26T14:40:53.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="图像分割">
+<meta property="article:tag" content="Transformer">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/text_mapper.jpg">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/08/22/OneFormer/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/08/22/OneFormer/","path":"2023/08/22/OneFormer/","title":"[Note] OneFormer: One Transformer to Rule Universal Image Segmentation (CVPR 2023)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] OneFormer: One Transformer to Rule Universal Image Segmentation (CVPR 2023) | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#oneformer"><span class="nav-text">OneFormer</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-text">方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E6%8C%87%E5%AF%BC%E7%9A%84%E8%81%94%E5%90%88%E8%AE%AD%E7%BB%83%E7%AD%96%E7%95%A5"><span class="nav-text">1. 任务指导的联合训练策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E8%A1%A8%E5%BE%81"><span class="nav-text">2. 查询表征</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E5%BC%95%E5%AF%BC%E7%9A%84%E5%AF%B9%E6%AF%94%E6%8D%9F%E5%A4%B1"><span class="nav-text">3. 任务引导的对比损失</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1"><span class="nav-text">4. 损失</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="nav-text">实验结果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B2%BE%E5%BA%A6%E5%AF%B9%E6%AF%94"><span class="nav-text">1. 精度对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C"><span class="nav-text">2. 消融实验</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/08/22/OneFormer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] OneFormer: One Transformer to Rule Universal Image Segmentation (CVPR 2023) | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] OneFormer: One Transformer to Rule Universal Image Segmentation (CVPR 2023)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-08-22 10:27:48" itemprop="dateCreated datePublished" datetime="2023-08-22T10:27:48+08:00">2023-08-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-26 22:40:53" itemprop="dateModified" datetime="2023-08-26T22:40:53+08:00">2023-08-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Jitesh Jain, Jiachen Li, MangTik Chiu, Ali Hassani, Nikita
+Orlov, Humphrey Shi</p>
+<h1 id="oneformer">OneFormer</h1>
+<p>传统的图像分割方法需要使用不同的架构、模型或者数据集来处理不同的分割任务（语义分割、实例分割和全景分割），这篇文章介绍了一个通用的图像分割框架——OneFormer。OneFormer通过引入了任务输出（task
+token），使得同一个模型在训练时具有任务导向性，同时在推理时可以根据任务动态调整。</p>
+<p>OneFormer中提出了以下两个问题：</p>
+<ul>
+<li>为什么现有的全景分割架构（如：Mask2Former）无法用单一训练过程或模型处理所有的图像分割任务？</li>
+</ul>
+<p>作者认为现有方法需要每个任务独立训练的原因在于这些架构没有加入任务指导（task
+guidance）。因此在联合训练或使用单一模型时，难以学习不同任务之间的差异。为此，OneFormer架构中引入了task
+token，以指导模型区分不同的任务。这个task token就是一段文本：“the task
+is
+{task}”，其中的<code>task</code>可以从<code>panoptic</code>、<code>instance</code>和<code>semantic</code>中选取。</p>
+<ul>
+<li>在单次联合训练过程中，如何使模型更好地建模不同任务之间以及不同类别之间的差异？</li>
+</ul>
+<p>作者认为计算对象查询表征和对应的文本表征之间的对比损失可以帮助模型更好地学习任务之间和类别之间的差异。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Universial%20Image%20Segmentation.png"
+alt="Universial Image Segmentation" />
+<figcaption aria-hidden="true">Universial Image
+Segmentation</figcaption>
+</figure>
+<span id="more"></span>
+<h2 id="方法">方法</h2>
+<p>下图展示了OneFormer的架构总览，包含两部分的输入：图像和任务输入。任务输入的形式为：“the
+task is
+{task}”。在训练过程中，为了模型的无偏，<code>task</code>会从<code>panoptic</code>、<code>instance</code>和<code>semantic</code>中均匀选取。</p>
+<ul>
+<li>使用一个骨干网和像素解码器从输入图像提取多尺度特征。对于任务输入，将其变成task
+token。task token的作用是给对象查询表征<span
+class="math inline">\(\mathbf{Q}\)</span>加入任务指导，从而模型是包含任务信息的。</li>
+<li>OneFormer中还会创建一个文本列表，表示了GT中每个标签的数量，然后将其映射为文本查询表征<span
+class="math inline">\(\mathbf{Q}_{\text{text}}\)</span>。<span
+class="math inline">\(\mathbf{Q}_{\text{text}}\)</span>和<span
+class="math inline">\(\mathbf{Q}\)</span>之间会进一步计算对比损失，以学习任务差异。</li>
+<li>对象查询和多尺度特征被输入到一个Transformer解码器中，以产生最终的预测结果。</li>
+</ul>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/oneformer.svg"
+alt="oneformer" />
+<figcaption aria-hidden="true">oneformer</figcaption>
+</figure>
+<h3 id="任务指导的联合训练策略">1. 任务指导的联合训练策略</h3>
+<p>在训练时，OneFormer会均匀地从<code>panoptic</code>，<code>instance</code>和<code>semantic</code>中采样任务（task）。然后从对应任务的标注中提取标签作为监督。在实际中，只需要全景分割的标注数据，就可以获取每一项输入需要的标注。</p>
+<p>接着，对于每一个标注，根据其不同的任务，会生成对应的二进制掩膜和对应的文本列表<span
+class="math inline">\(\mathbf{T}_{\text{list}}\)</span>。该文本列表中的每一项使用下面的模板生成：”a
+photo with a
+{CLS}“，CLS表示该标注的类别。为了使文本列表的长度固定为<span
+class="math inline">\(\mathbf{N}_{\text{text}}\)</span>，剩下的元素使用”a
+{task} photo“填充，得到<span
+class="math inline">\(\mathbf{T}_{\text{pad}}\)</span>。</p>
+<p>任务输入根据模板”the task is {task}“生成，并映射为task token <span
+class="math inline">\(\mathbf{Q}_{\text{task}}\)</span>。<span
+class="math inline">\(\mathbf{Q}_{\text{task}}\)</span>给了模型任务相关信息。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/text_gen.svg"
+alt="text_gen" />
+<figcaption aria-hidden="true">text_gen</figcaption>
+</figure>
+<h3 id="查询表征">2. 查询表征</h3>
+<p>OneFormer在训练中会存在两组查询：对象查询<span
+class="math inline">\(\mathbf{Q}\)</span>和文本查询<span
+class="math inline">\(\mathbf{Q}_{\text{text}}\)</span>，前者是来自图像的表征，后者是来自文字的表征。</p>
+<p>首先是生成文本查询<span
+class="math inline">\(\mathbf{Q}_{\text{text}}\)</span>。先将文本列表<span
+class="math inline">\(\mathbf{T}_{\text{pad}}\)</span>变成token，然后经过Text
+Encoder（一个6层的Transformer编码器）变成<span
+class="math inline">\(N_{\text{text}}\)</span>个文本嵌入。文中进一步在文本嵌入上拼接了<span
+class="math inline">\(N_{\text{ctx}}\)</span>个可学习的嵌入<span
+class="math inline">\(\mathbf{Q}_{\text{ctx}}\)</span>，得到最终的<span
+class="math inline">\(N\)</span>个文本查询<span
+class="math inline">\(\mathbf{Q}_{\text{text}}\)</span>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/text_mapper.jpg" alt="text_mapper" style="zoom: 20%;" /></p>
+<p>下面是生成对象查询<span
+class="math inline">\(\mathbf{Q}\)</span>。先将task token <span
+class="math inline">\(\mathbf{Q}_{\text{task}}\)</span>重复<span
+class="math inline">\(N-1\)</span>次，得到<span
+class="math inline">\(\mathbf{Q}^{\prime}\)</span>。将<span
+class="math inline">\(\mathbf{Q}^{\prime}\)</span>和输入图像的1/4大小的特征图作为一个两层的Transformer的输入，得到更新后的<span
+class="math inline">\(\mathbf{Q}^{\prime}\)</span>。最后将<span
+class="math inline">\(\mathbf{Q}^{\prime}\)</span>和<span
+class="math inline">\(\mathbf{Q}_{\text{task}}\)</span>拼接，得到<span
+class="math inline">\(\mathbf{Q}\)</span>。此时的<span
+class="math inline">\(\mathbf{Q}\)</span>包含的任务信息。</p>
+<p>具体来说，这个两层的Transformer包含了一个编码器层和一个解码器层。编码器的输入为图像特征，解码器部分的Query为<span
+class="math inline">\(\mathbf{Q}^{\prime}\)</span>，Key和Value都来自编码器的输出。</p>
+<h3 id="任务引导的对比损失">3. 任务引导的对比损失</h3>
+<p>由于三种分割任务之间固有的差异，使用单一模型进行所有的分割任务是具有一定难度的。对象查询<span
+class="math inline">\(\mathbf{Q}\)</span>的含义取决于特定任务，例如：查询应该集中于物体（实例）还是类别（语义），还是两个兼顾。</p>
+<p>文中，使用GT的文本与对象<span
+class="math inline">\(\mathbf{Q}\)</span>计算对比损失，即使用目标的文本描述来增加一种额外的监督信息，让模型学习到任务之间的差异。</p>
+<p>此外，在生成<span
+class="math inline">\(\mathbf{T}_{\text{pad}}\)</span>的模板中使用了类别标签，也可以让模型关注类别之间的差异。
+<span class="math display">\[
+\begin{aligned}
+&amp; \mathcal{L}_{\mathbf{Q} \rightarrow \mathbf{Q}_{\text {text
+}}}=-\frac{1}{B} \sum_{i=1}^B \log \frac{\exp \left(q_i^{o b j} \odot
+q_i^{t x t} / \tau\right)}{\sum_{j=1}^B \exp \left(q_i^{o b j} \odot
+q_j^{t x t} / \tau\right)} \\
+&amp; \mathcal{L}_{\mathbf{Q}_{\text {text } \rightarrow
+\mathbf{Q}}}=-\frac{1}{B} \sum_{i=1}^B \log \frac{\exp \left(q_i^{t x t}
+\odot q_i^{o b j} / \tau\right)}{\sum_{j=1}^B \exp \left(q_i^{t x t}
+\odot q_j^{o b j} / \tau\right)} \\
+&amp; \mathcal{L}_{\mathbf{Q} \leftrightarrow \mathbf{Q}_{\text {text
+}}}=\mathcal{L}_{\mathbf{Q} \rightarrow \mathbf{Q}_{\text {text
+}}}+\mathcal{L}_{\mathbf{Q}_{\text {text } \rightarrow \mathbf{Q}}}
+\end{aligned}
+\]</span></p>
+<h3 id="损失">4. 损失</h3>
+<p>除了对查询的对比损失，在分割头部分计算了类别预测的交叉熵损失<span
+class="math inline">\(\mathcal{L}_{cls}\)</span>，以及掩膜预测的二元交叉熵损失<span
+class="math inline">\(\mathcal{L}_{bce}\)</span>和Dice损失<span
+class="math inline">\(\mathcal{L}_{dice}\)</span>。预测结果与真值的匹配也采用了二分图匹配的方法。
+<span class="math display">\[
+\begin{aligned}
+\mathcal{L}_{\text {final }} &amp; =\lambda_{\mathbf{Q} \leftrightarrow
+\mathbf{Q}_{\text {text }}} \mathcal{L}_{\mathbf{Q} \leftrightarrow
+\mathbf{Q}_{\text {text }}}+\lambda_{\text {cls }} \mathcal{L}_{cls} \\
+&amp; +\lambda_{\text {bce }} \mathcal{L}_{\text {bce }}+\lambda_{\text
+{dice }} \mathcal{L}_{\text {dice }}
+\end{aligned}
+\]</span></p>
+<h2 id="实验结果">实验结果</h2>
+<h3 id="精度对比">1. 精度对比</h3>
+<p>在三个数据集上进行实验：COCO、Cityscapes和ADE20K，这些数据集都支持语义分割、实例分割和全景分割任务。OneFormer仅训练一次，在所有三个分割任务上均优于单独训练的Mask2Former以及之前的单一架构的最好模型。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/oneformer_results.svg"
+alt="oneformer_results" />
+<figcaption aria-hidden="true">oneformer_results</figcaption>
+</figure>
+<h3 id="消融实验">2. 消融实验</h3>
+<ul>
+<li>验证了<span
+class="math inline">\(\mathbf{Q}_{\text{task}}\)</span>、<span
+class="math inline">\(\mathbf{Q}_{\text{ctx}}\)</span>和<span
+class="math inline">\(\mathbf{Q}^{\prime}\)</span>的初始化方式（将<span
+class="math inline">\(\mathbf{Q}_{\text{task}}\)</span>重复<span
+class="math inline">\(N-1\)</span>次和全零初始化）的有效性。</li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/oneformer_ablation_on_components.png" alt="oneformer_ablation_on_components" style="zoom:35%;" /></p>
+<ul>
+<li>验证了使用对比损失的有效性。</li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/oneformer_ablation_on_loss.png" alt="oneformer_ablation_on_loss" style="zoom:35%;" /></p>
+<ul>
+<li>验证了<span
+class="math inline">\(\mathbf{T}_{\text{list}}\)</span>中模板选择的重要性。这里只是验证了不同的文本模板会产生不同的效果，但原因不明确。</li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/oneformer_ablation_on_input_text_templates.png" alt="oneformer_ablation_on_input_text_templates" style="zoom:35%;" /></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/08/22/OneFormer/" title="[Note] OneFormer: One Transformer to Rule Universal Image Segmentation (CVPR 2023)">https://ehehe.cn/2023/08/22/OneFormer/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/" rel="tag"># 图像分割</a>
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/08/19/Compressed-DNNs-forget/" rel="prev" title="[Note] What Do Compressed Deep Neural Networks Forget?">
+                  <i class="fa fa-angle-left"></i> [Note] What Do Compressed Deep Neural Networks Forget?
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/08/22/K-Net/" rel="next" title="[Note] K-Net: Towards Unified Image Segmentation (NeurIPS 2021)">
+                  [Note] K-Net: Towards Unified Image Segmentation (NeurIPS 2021) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

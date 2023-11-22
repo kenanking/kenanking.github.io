@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Eduardo Romera, José M. Álvarez, Luis M. Bergasa, Roberto Arroyo ERFNet 本文介绍了一种高效的语义分割模型（ERFNet），ERFNet（Efficient Residual Factorized Network）是一种用于实时和准确的语义分割的卷积神经网络。该网络的核心是一个由残差连接和1D卷积核组成的全新层设计。跨层连">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] ERFNet: Efficient Residual Factorized ConvNet for Real-Time Semantic Segmentation (TITS 2017)">
+<meta property="og:url" content="https://ehehe.cn/2023/07/10/ERFNet/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Eduardo Romera, José M. Álvarez, Luis M. Bergasa, Roberto Arroyo ERFNet 本文介绍了一种高效的语义分割模型（ERFNet），ERFNet（Efficient Residual Factorized Network）是一种用于实时和准确的语义分割的卷积神经网络。该网络的核心是一个由残差连接和1D卷积核组成的全新层设计。跨层连">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/ERFNet_diagram.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/ERFNet_non_bottleneck_1D.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/decomposition_of_filters.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/ERFNet_model_architecture.png">
+<meta property="article:published_time" content="2023-07-10T15:39:34.000Z">
+<meta property="article:modified_time" content="2023-07-14T11:09:09.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="图像分割">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/ERFNet_diagram.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/07/10/ERFNet/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/07/10/ERFNet/","path":"2023/07/10/ERFNet/","title":"[Note] ERFNet: Efficient Residual Factorized ConvNet for Real-Time Semantic Segmentation (TITS 2017)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] ERFNet: Efficient Residual Factorized ConvNet for Real-Time Semantic Segmentation (TITS 2017) | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#erfnet"><span class="nav-text">ERFNet</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E8%A7%A3%E7%9A%84%E6%AE%8B%E5%B7%AE%E5%B1%82factorized-residual-layers"><span class="nav-text">1.
+分解的残差层（Factorized Residual Layers）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%B7%E7%A7%AF%E6%A0%B8%E7%9A%84%E8%BF%91%E4%BC%BC"><span class="nav-text">卷积核的近似</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-text">2. 网络结构</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/07/10/ERFNet/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] ERFNet: Efficient Residual Factorized ConvNet for Real-Time Semantic Segmentation (TITS 2017) | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] ERFNet: Efficient Residual Factorized ConvNet for Real-Time Semantic Segmentation (TITS 2017)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-07-10 23:39:34" itemprop="dateCreated datePublished" datetime="2023-07-10T23:39:34+08:00">2023-07-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-07-14 19:09:09" itemprop="dateModified" datetime="2023-07-14T19:09:09+08:00">2023-07-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Eduardo Romera, José M. Álvarez, Luis M. Bergasa, Roberto
+Arroyo</p>
+<h1 id="erfnet">ERFNet</h1>
+<p>本文介绍了一种<strong>高效的语义分割模型（ERFNet）</strong>，ERFNet（Efficient
+Residual Factorized
+Network）是一种用于实时和准确的语义分割的卷积神经网络。该网络的核心是一个由<strong>残差连接</strong>和<strong>1D卷积核</strong>组成的全新层设计。跨层连接有助于网络学习，1D卷积核在与2D卷积核具有相似准确性的同时显著降低了计算成本。ERFNet在单个Titan
+X上达到超过83FPS，在Jetson TX1上达到7FPS。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/ERFNet_diagram.png" alt="ERFNet示意图" style="zoom:33%;" /></p>
+<span id="more"></span>
+<h2 id="分解的残差层factorized-residual-layers">1.
+分解的残差层（Factorized Residual Layers）</h2>
+<p>原始的残差结构设计中，存在两个版本：<strong>non-bottleneck</strong>（下图a）和<strong>bottleneck</strong>（下图b）。两种设计具有相似的参数量和准确率。但是，bottleneck的设计需要更少的计算资源，因而ResNet中使用了这种方式。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/ERFNet_non_bottleneck_1D.png" alt="Non-bottleneck-1D" style="zoom:25%;" /></p>
+<p>然而，有研究表明在网络深度增加时，non-bottleneck的网络具有更高的准确性。因此本文中作者提出基于non-bottleneck的残差结构（<code>non-bt-1D</code>），并将2D卷积使用一对1D卷积替换（上图c），实现精度与速度的权衡。</p>
+<p>将2D卷积核<span class="math inline">\(\mathbf{W}_{2D} \in
+\mathbb{R}^{C \times d \times d \times
+F}\)</span>替换为一对1D卷积核<span class="math inline">\(\mathbf{W}_{1D}
+\in \mathbb{R}^{C \times d \times F}\)</span>降低了<span
+class="math inline">\(33\%\)</span>的参数量（<span
+class="math inline">\(3 \times 3\)</span>卷积），并提升了计算效率。</p>
+<h3 id="卷积核的近似">卷积核的近似</h3>
+<p>卷积神经网络的滤波器（卷积核）可以通过在空间域上分解为<strong>低质（Low-Rank）的滤波器</strong>来近似。<a
+href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a></p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Approximation_of_convolution.jpg"
+alt="卷积核近似的两种方案" />
+<figcaption aria-hidden="true">卷积核近似的两种方案</figcaption>
+</figure>
+<ul>
+<li><p><strong>普通卷积</strong>：对于一个输入特征<span
+class="math inline">\(\mathbf{z}_{i} \in \mathbb{R}^{H \times W \times
+C}\)</span>，输出的新特征图为<span
+class="math inline">\(\mathbf{z}_{i+1} \in \mathbb{R}^{H^{\prime} \times
+W^{\prime} \times N}\)</span>。对于普通卷积来说，需要<span
+class="math inline">\(N\)</span>个滤波器<span class="math inline">\(W_n
+\in \mathbb{R}^{d \times d \times C}\)</span>。因此，需要的计算量为<span
+class="math inline">\(\mathcal{O}\left(C N d^2 H^{\prime}
+W^{\prime}\right)\)</span>。</p></li>
+<li><p><strong>近似方案1</strong>：方案1利用了<strong>不同输出通道的特征之间的冗余性</strong>，使用<span
+class="math inline">\(M(M &lt; N)\)</span>组滤波器<span
+class="math inline">\(\mathbf{s}_m \in \mathbb{R}^{d \times d \times
+C}\)</span>的线性组合来近似原来的<span
+class="math inline">\(N\)</span>个滤波器：<span
+class="math inline">\(W_n^c \simeq \sum_{m=1}^M a_n^{c m}
+s_m^c\)</span>。通过这种近似，计算量可以降低为：<span
+class="math inline">\(\mathcal{O}\left(C M (d^2 + N) H^{\prime}
+W^{\prime}\right)\)</span>。另外，进一步将<span
+class="math inline">\(\mathbf{s}_m\)</span>分解为两个秩为<span
+class="math inline">\(1\)</span>的1D滤波器，计算量可进一步降低为：<span
+class="math inline">\(\mathcal{O}\left(C M (d + N) H^{\prime}
+W^{\prime}\right)\)</span>。</p></li>
+<li><p><strong>近似方案2</strong>：方案2同时利用了输入和输出特征的冗余性，<strong>将每个卷积层都被分解成两个1D滤波器卷积层的序列</strong>。当<span
+class="math inline">\(W \approx
+W^{\prime}\)</span>时，这种方案下，整体的计算量为：<span
+class="math inline">\(\mathcal{O}(K(N+C)d H^{\prime}
+W^{\prime})\)</span>。</p></li>
+</ul>
+<p><strong>通常，使用普通卷积构建模型进行训练，然后使用低秩近似作为后处理来压缩模型。</strong></p>
+<p>在论文DecomposeMe<a href="#fn2" class="footnote-ref" id="fnref2"
+role="doc-noteref"><sup>2</sup></a>中提出，将低秩近似作为后处理，可能会<strong>存在某些滤波器不能低秩分解的情况</strong>，并且这些算法需要<strong>额外的微调来避免精度降低</strong>。因此，在DecomposeMe中强制将2D滤波器分解为两个1D滤波器，并直接从数据中进行学习。从实验证明，这种分解不仅模拟了原始网络的行为，而且在更紧凑和计算成本更低的情况下，经常超过原始网络的性能。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/decomposition_of_filters.png" alt="滤波器的低秩分解" style="zoom:25%;" /></p>
+<ul>
+<li><strong>更低的计算量</strong>：低秩分解后的卷积，使用更少的参数进行表示。对于较大的卷积核，计算量的降低会更明显。</li>
+<li><strong>更简单的结构</strong>：低秩分解后的模型架构是更深但更简单的结构。将2D卷积分解成两个1D卷积会导致更平滑（更简单）的2D等效滤波器，这在训练过程中起到了正则化的作用。</li>
+</ul>
+<h2 id="网络结构">2. 网络结构</h2>
+<p>ERFNet网络结构以non-bottleneck的残差结构为核心元素进行设计，采用编码器-解码器的架构。不同的是，本文中没有使用跨层连接（skip-connection），因为作者提到根据他们经验，跨层连接没有提升精度。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/ERFNet_model_architecture.png" alt="ERFNet网络结构" style="zoom:25%;" /></p>
+<aside id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Jaderberg, Max et al. “Speeding up Convolutional Neural
+Networks with Low Rank Expansions.” <em>ArXiv</em> abs/1405.3866 (2014):
+n. pag.<a href="#fnref1" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Álvarez, José Manuel and Lars Petersson. “DecomposeMe:
+Simplifying ConvNets for End-to-End Learning.” <em>ArXiv</em>
+abs/1606.05426 (2016): n. pag.<a href="#fnref2" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+</ol>
+</aside>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/07/10/ERFNet/" title="[Note] ERFNet: Efficient Residual Factorized ConvNet for Real-Time Semantic Segmentation (TITS 2017)">https://ehehe.cn/2023/07/10/ERFNet/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/" rel="tag"># 图像分割</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/07/06/PSPNet/" rel="prev" title="[Note] Pyramid Scene Parsing Network (CVPR 2017)">
+                  <i class="fa fa-angle-left"></i> [Note] Pyramid Scene Parsing Network (CVPR 2017)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/07/14/UPerNet/" rel="next" title="[Note] Unified Perceptual Parsing for Scene Understanding (ECCV 2018)">
+                  [Note] Unified Perceptual Parsing for Scene Understanding (ECCV 2018) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

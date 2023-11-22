@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="1.2 概率论 在模式识别中的一个关键概念就是不确定性，这是由于测量误差和数据集大小的有限性引起的。概率论为量化和计算这种不确定性提供了一个一致性的框架，并构成了模式识别的核心基础。 这一部分首先介绍了概率论中的两个基本法则： \[ \begin{eqnarray} \text { 加法原理 } \quad\quad &amp; p(X) &amp; &#x3D; &amp; \sum_{Y} p(X, Y">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch1-1.2 概率论">
+<meta property="og:url" content="https://ehehe.cn/2022/02/14/ch1-1-2-%E6%A6%82%E7%8E%87%E8%AE%BA/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="1.2 概率论 在模式识别中的一个关键概念就是不确定性，这是由于测量误差和数据集大小的有限性引起的。概率论为量化和计算这种不确定性提供了一个一致性的框架，并构成了模式识别的核心基础。 这一部分首先介绍了概率论中的两个基本法则： \[ \begin{eqnarray} \text { 加法原理 } \quad\quad &amp; p(X) &amp; &#x3D; &amp; \sum_{Y} p(X, Y">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E6%A0%87%E5%87%86%E6%AD%A3%E6%80%81%E5%88%86%E5%B8%83%E5%9B%BE%E5%83%8F.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E5%9B%9E%E9%A1%BE%E6%9B%B2%E7%BA%BF%E6%8B%9F%E5%90%88%E9%97%AE%E9%A2%98.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Bayesian%20Regression.jpg">
+<meta property="article:published_time" content="2022-02-14T14:29:35.000Z">
+<meta property="article:modified_time" content="2022-02-14T14:29:35.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="PRML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E6%A0%87%E5%87%86%E6%AD%A3%E6%80%81%E5%88%86%E5%B8%83%E5%9B%BE%E5%83%8F.jpg">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/02/14/ch1-1-2-%E6%A6%82%E7%8E%87%E8%AE%BA/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/02/14/ch1-1-2-%E6%A6%82%E7%8E%87%E8%AE%BA/","path":"2022/02/14/ch1-1-2-概率论/","title":"ch1-1.2 概率论"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch1-1.2 概率论 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E7%8E%87%E8%AE%BA"><span class="nav-text">1.2 概率论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E7%8E%87%E5%AF%86%E5%BA%A6"><span class="nav-text">1.2.1 概率密度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%9F%E6%9C%9B%E5%92%8C%E5%8D%8F%E6%96%B9%E5%B7%AE"><span class="nav-text">1.2.2 期望和协方差</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%9F%E6%9C%9B"><span class="nav-text">期望</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E5%B7%AE"><span class="nav-text">方差</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%8F%E6%96%B9%E5%B7%AE"><span class="nav-text">协方差</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A6%82%E7%8E%87"><span class="nav-text">1.2.3 贝叶斯概率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83"><span class="nav-text">1.2.4 高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E9%A1%BE%E6%9B%B2%E7%BA%BF%E6%8B%9F%E5%90%88%E9%97%AE%E9%A2%98"><span class="nav-text">1.2.5 回顾曲线拟合问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E6%96%B9%E6%B3%95"><span class="nav-text">最大似然方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%96%B9%E6%B3%95bayesian-view-of-linear-regression"><span class="nav-text">贝叶斯方法（Bayesian
+view of Linear Regression）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%9B%B2%E7%BA%BF%E6%8B%9F%E5%90%88full-bayesian-approach"><span class="nav-text">1.2.6 贝叶斯曲线拟合（Full
+Bayesian Approach）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">其他参考资料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/02/14/ch1-1-2-%E6%A6%82%E7%8E%87%E8%AE%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch1-1.2 概率论 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch1-1.2 概率论
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-14 22:29:35" itemprop="dateCreated datePublished" datetime="2022-02-14T22:29:35+08:00">2022-02-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>15 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="概率论">1.2 概率论</h2>
+<p>在模式识别中的一个关键概念就是不确定性，这是由于<strong>测量误差</strong>和<strong>数据集大小的有限性</strong>引起的。概率论为量化和计算这种不确定性提供了一个一致性的框架，并构成了模式识别的核心基础。</p>
+<p>这一部分首先介绍了概率论中的两个基本法则： <span
+class="math display">\[
+\begin{eqnarray}
+\text { 加法原理 } \quad\quad &amp; p(X) &amp; = &amp; \sum_{Y} p(X, Y)
+\\
+\text { 乘法原理 }\quad\quad &amp; p(X, Y) &amp; = &amp; p(Y \mid X)
+p(X)
+\end{eqnarray}
+\]</span></p>
+<span id="more"></span>
+<p>然后介绍了<strong>贝叶斯定理（Bayes’
+theorem）</strong>，这个定理在模式识别和机器学习中具有重要地位。 <span
+class="math display">\[
+p(Y \mid X)=\frac{p(X \mid Y) p(Y)}{p(X)}
+\]</span></p>
+<p><span
+class="math inline">\(p(X)\)</span>可以由全概率公式求得，即：<span
+class="math inline">\(p(X)=\sum_{Y} p(X \mid Y)
+p(Y)\)</span>。这一项可以看做一个归一化项，为了确保左侧的条件概率积分为1。</p>
+<p>在这个公式中，<span
+class="math inline">\(p(Y)\)</span>为<strong>先验概率（prior
+probability）</strong>，因为这个概率值在事件还没发生之前我们就知道。</p>
+<p><span class="math inline">\(p(Y \mid
+X)\)</span>为<strong>后验概率（posterior
+probability）</strong>，因为这个概率是在我们通过实验产生了结果<span
+class="math inline">\(X\)</span>后才计算出来的。</p>
+<h3 id="概率密度">1.2.1 概率密度</h3>
+<p>对于连续变量<span class="math inline">\(x\)</span>，当<span
+class="math inline">\(\delta x \rightarrow 0\)</span>时，在区间<span
+class="math inline">\((x, x+\delta x)\)</span>上的概率为<span
+class="math inline">\(p(x)\delta x\)</span>，这里的<span
+class="math inline">\(p(x)\)</span>为变量<span
+class="math inline">\(x\)</span>的<strong>概率密度（probability
+density）</strong>。</p>
+<p>变量<span class="math inline">\(x\)</span>落在在区间<span
+class="math inline">\((a,b)\)</span>上的概率为： <span
+class="math display">\[
+p(x \in (a,b)) = \int_{a}^{b} p(x) \mathrm{d}x
+\]</span></p>
+<p>概率密度满足下面两个性质： <span class="math display">\[
+\begin{eqnarray}
+\mathsf{非负性} \quad\quad &amp; p(x) \mathrm{d} x &amp; \ge  &amp; 1 \\
+\mathsf{规范性} \quad\quad &amp; \int_{-\infty}^{\infty} p(x) \mathrm{d}
+x &amp; = &amp; 1
+\end{eqnarray}
+\]</span></p>
+<p>在对变量做非线性变换时，概率密度函数的变换和普通函数变换不同，需要通过Jacobian因子进行转换。</p>
+<p>假设有两个变量关系为<span
+class="math inline">\(x=g(y)\)</span>，如果对于一个函数<span
+class="math inline">\(f(x)\)</span>，经过变换可以得到：<span
+class="math inline">\(\widetilde{f}(y) = f(g(y))\)</span>。</p>
+<p>如果考虑概率密度函数<span
+class="math inline">\(p_x(x)\)</span>，对应变换后的概率密度函数为<span
+class="math inline">\(p_{y}(y)\)</span>。对于区间<span
+class="math inline">\((x, x + \delta
+x)\)</span>上的观测会变换到对应的区间<span class="math inline">\((y, y +
+\delta y)\)</span>上，并且<span class="math inline">\(p_{x}(x) \delta x
+\simeq p_{y}(y) \delta y\)</span>。于是，可以得到：</p>
+<p><span class="math display">\[
+\begin{align}
+p_{y}(y) &amp;  =  p_{x}(x)\left|\frac{\mathrm{d} x}{\mathrm{d}
+y}\right| \\
+&amp;  = p_{x}(g(y))\left|g^{\prime}(y)\right|
+\end{align}
+\]</span></p>
+<p>变量<span class="math inline">\(x\)</span>落在区间<span
+class="math inline">\((-\infty,
+z)\)</span>的概率由<strong>累积分布函数(cumulative distribution
+function)</strong>给出： <span class="math display">\[
+P(z)=\int_{-\infty}^{z} p(x) \mathrm{d} x
+\]</span></p>
+<p>概率的加法原理、乘法原理，贝叶斯定理对于离散型随机变量和连续型随机变量，以及它们的组合都成立。</p>
+<h3 id="期望和协方差">1.2.2 期望和协方差</h3>
+<h4 id="期望">期望</h4>
+<p><strong>期望（expectation）</strong>就是函数的加权平均值。对于函数<span
+class="math inline">\(f(x)\)</span>在概率分布<span
+class="math inline">\(p(x)\)</span>下的平均值叫做期望，记作<span
+class="math inline">\(\mathbb{E}[f]\)</span>。</p>
+<p>在离散情况下： <span class="math display">\[
+\mathbb{E}[f]=\sum_{x} p(x) f(x)
+\]</span> 在连续情况下： <span class="math display">\[
+\mathbb{E}[f]=\int p(x) f(x) \mathrm{d} x
+\]</span></p>
+<p>在任何一种情况下，如果给定有限数量的<span
+class="math inline">\(N\)</span>个点，可以通过求和的方式来估计期望：
+<span class="math display">\[
+\mathbb{E}[f] \simeq \frac{1}{N} \sum_{n=1}^{N} f\left(x_{n}\right)
+\]</span></p>
+<p>此外，在两个随机变量的情况下，<span
+class="math inline">\(\mathbb{E}_{x}[f(x, y)]\)</span>表示函数<span
+class="math inline">\(f(x, y)\)</span>关于<span
+class="math inline">\(x\)</span>的分布的期望，<span
+class="math inline">\(\mathbb{E}_{x}[f(x, y)]\)</span>为关于<span
+class="math inline">\(y\)</span>的一个函数。</p>
+<p>条件分布的<strong>条件期望（conditional expectation）</strong>：</p>
+<p>在离散情况下： <span class="math display">\[
+\mathbb{E}_{x}[f \mid y]=\sum_{x} p(x \mid y) f(x)
+\]</span></p>
+<h4 id="方差">方差</h4>
+<p>函数<span
+class="math inline">\(f(x)\)</span>的<strong>方差（variance）</strong>为：
+<span class="math display">\[
+\operatorname{var}[f]=\mathbb{E}\left[(f(x)-\mathbb{E}[f(x)])^{2}\right]
+\]</span></p>
+<p>方差衡量了<span
+class="math inline">\(f(x)\)</span>在它的均值附近的变化程度。</p>
+<p>将平方项展开，也可以得到： <span class="math display">\[
+\operatorname{var}[f]=\mathbb{E}\left[f(x)^{2}\right]-\mathbb{E}[f(x)]^{2}
+\]</span></p>
+<p>特别的，对于变量<span class="math inline">\(x\)</span>本身的方差为：
+<span class="math display">\[
+\operatorname{var}[x]=\mathbb{E}\left[x^{2}\right]-\mathbb{E}[x]^{2}
+\]</span></p>
+<h4 id="协方差">协方差</h4>
+<p>对于两个随机变量<span class="math inline">\(x\)</span>和<span
+class="math inline">\(y\)</span>，它们的<strong>协方差（covariance）</strong>为：
+<span class="math display">\[
+\begin{aligned}
+\operatorname{cov}[x, y] &amp;=\mathbb{E}_{x,
+y}[\{x-\mathbb{E}[x]\}\{y-\mathbb{E}[y]\}] \notag \\
+&amp;=\mathbb{E}_{x, y}[x y]-\mathbb{E}[x] \mathbb{E}[y]  \notag
+\end{aligned}
+\]</span></p>
+<p>协方差表示了两个变量变化情况相同的程度。当变量<span
+class="math inline">\(x\)</span>和<span
+class="math inline">\(y\)</span>相互独立时，协方差为<span
+class="math inline">\(0\)</span>。</p>
+<p>在<span class="math inline">\(\mathbf{x}\)</span>和<span
+class="math inline">\(\mathbf{y}\)</span>都是<span
+class="math inline">\(n\)</span>维向量的情况下，协方差变成一个矩阵——<strong>互协方差阵</strong>：
+<span class="math display">\[
+\begin{aligned}
+\operatorname{cov}[\mathbf{x}, \mathbf{y}] &amp;=\mathbb{E}_{\mathbf{x},
+\mathbf{y}}\left[\{\mathbf{x}-\mathbb{E}[\mathbf{x}]\}\left\{\mathbf{y}^{\mathrm{T}}-\mathbb{E}\left[\mathbf{y}^{\mathrm{T}}\right]\right\}\right]
+\notag \\
+&amp;=\mathbb{E}_{\mathbf{x}, \mathbf{y}}\left[\mathbf{x}
+\mathbf{y}^{\mathrm{T}}\right]-\mathbb{E}[\mathbf{x}]
+\mathbb{E}\left[\mathbf{y}^{\mathrm{T}}\right] \notag
+\end{aligned}
+\]</span></p>
+<p>如果考虑向量<span
+class="math inline">\(\mathbf{x}\)</span>各个分量之间的协方差，那么可以得到随机向量<span
+class="math inline">\(\mathbf{x}\)</span>的<strong>方差—协方差阵</strong>，记为：<span
+class="math inline">\(\operatorname{cov}[\mathrm{x}] \equiv
+\operatorname{cov}[\mathrm{x}, \mathrm{x}]\)</span>。</p>
+<h3 id="贝叶斯概率">1.2.3 贝叶斯概率</h3>
+<p>在<strong>经典（classical）概率论</strong>或<strong>频率派（frequentist）</strong>观点中：概率是重复事件随机发生的频率。</p>
+<blockquote>
+<p>frequencies of random, repeatable events</p>
+</blockquote>
+<p>在<strong>贝叶斯派（Bayesian）</strong>的观点中：概率提供了不确定性的一个定量描述。</p>
+<blockquote>
+<p>a quantification of uncertainty</p>
+</blockquote>
+<p>之前曲线拟合的例子中，在得到观测数据前，我们有了对参数<span
+class="math inline">\(\mathbf{w}\)</span>的假设，作为先验概率<span
+class="math inline">\(p(\mathbf{w})\)</span>。得到观测数据<span
+class="math inline">\(\mathcal{D}=\left\{t_{1}, \ldots,
+t_{N}\right\}\)</span>后，根据贝叶斯定理，参数<span
+class="math inline">\(\mathbf{w}\)</span>的分布可以通过后验概率<span
+class="math inline">\(p(\mathbf{w} \mid \mathcal{D})\)</span>表达。
+<span class="math display">\[
+p(\mathbf{w} \mid \mathcal{D})=\frac{p(\mathcal{D} \mid \mathbf{w})
+p(\mathbf{w})}{p(\mathcal{D})}
+\]</span></p>
+<p>其中，<span class="math inline">\(p(\mathcal{D} \mid
+\mathbf{w})\)</span>被称为<strong>似然函数（likelihood
+function）</strong>。似然函数表示在选择不同参数<span
+class="math inline">\(\mathbf{w}\)</span>时，观测数据出现的可能性。分母<span
+class="math inline">\(p(\mathcal{D})\)</span>可以由全概率公式计算：<span
+class="math inline">\(p(\mathcal{D})=\int p(\mathcal{D} \mid \mathbf{w})
+p(\mathbf{w}) \mathrm{d} \mathbf{w}\)</span>。</p>
+<p>贝叶斯定理用文字表达： <span class="math display">\[
+\mathrm{posterior} \propto \mathrm{likelihood}   \times \mathrm{prior}
+\]</span></p>
+<p>在贝叶斯派和频率派的观点中，似然函数<span
+class="math inline">\(p(\mathcal{D} \mid
+\mathbf{w})\)</span>都有着重要意义，然而在两种观点中，对待似然函数的方法有着本质的区别。</p>
+<p>在频率派观点中，参数<span
+class="math inline">\(\mathbf{w}\)</span>为一个固定的值，根据给定的观测数据，以某种形式的估计来确定参数的值，例如<strong>最大似然（maximum
+likelihood）</strong>估计。</p>
+<p>在贝叶斯派观点中，参数<span
+class="math inline">\(\mathbf{w}\)</span>为一个变量，可以根据给定的观测数据来计算参数<span
+class="math inline">\(\mathbf{w}\)</span>概率分布。</p>
+<h3 id="高斯分布">1.2.4 高斯分布</h3>
+<p><strong>高斯分布（Gaussian
+distribution）</strong>也叫正态分布<strong>（normal
+distribution）</strong>。</p>
+<p>对于一元连续变量<span class="math inline">\(x\)</span>，高斯分布为：
+<span class="math display">\[
+\mathcal{N}\left(x \mid \mu, \sigma^{2}\right)=\frac{1}{\left(2 \pi
+\sigma^{2}\right)^{1 / 2}} \exp \left\{-\frac{1}{2
+\sigma^{2}}(x-\mu)^{2}\right\}
+\]</span> 其中，参数<span
+class="math inline">\(\mu\)</span>叫做<strong>均值（mean）</strong>，<span
+class="math inline">\(\sigma^{2}\)</span>叫做<strong>方差（variance）</strong>。</p>
+<p>方差的算术平方根叫做<strong>标准差（standard
+deviation）</strong>，记为：<span
+class="math inline">\(\sigma\)</span>。方差的倒数叫做<strong>精度（precision）</strong>，记为：<span
+class="math inline">\(\beta=1 / \sigma^{2}\)</span>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">normal_distribution</span>(<span class="params">x, mu, sigma</span>):</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span> / (sigma * np.sqrt(<span class="number">2</span> * np.pi)) * np.exp(-<span class="number">0.5</span> * (x - mu) ** <span class="number">2</span> / sigma ** <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">x = np.linspace(-<span class="number">5</span>, <span class="number">5</span>, <span class="number">100</span>)</span><br><span class="line">y = normal_distribution(x, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 绘制正态分布</span></span><br><span class="line">plt.figure(figsize=(<span class="number">6.5</span>, <span class="number">5</span>))</span><br><span class="line">plt.plot(x, y, label=<span class="string">&quot;正态分布&quot;</span>)</span><br><span class="line">plt.title(<span class="string">&quot;标准正态分布图像&quot;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&quot;x&quot;</span>)</span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/标准正态分布图像.jpg" alt="标准正态分布图像" style="zoom:67%;" /></p>
+<p><span class="math inline">\(D\)</span>维向量<span
+class="math inline">\(\mathbf{x}\)</span>的高斯分布为：</p>
+<p><span class="math display">\[
+\mathcal{N}(\mathbf{x} \mid \boldsymbol{\mu},
+\mathbf{\Sigma})=\frac{1}{(2 \pi)^{D / 2}} \frac{1}{|\mathbf{\Sigma}|^{1
+/ 2}} \exp \left\{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}}
+\mathbf{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})\right\}
+\]</span></p>
+<p>其中，<span class="math inline">\(D \times D\)</span>维矩阵<span
+class="math inline">\(\mathbf{\Sigma}\)</span>称为协方差。</p>
+<p>假定有一个数据集<span class="math inline">\(\mathsf{x} =\left(x_{1},
+\ldots,
+x_{N}\right)^{\mathrm{T}}\)</span>，每个数据点之间是<strong>独立同分布（independent
+and identically
+distributed，缩写为：i.i.d）</strong>的。由于独立事件的联合概率为每个事件边缘概率的乘积，在给定<span
+class="math inline">\(\mu\)</span>和<span
+class="math inline">\(\sigma^{2}\)</span>的情况下，数据集的概率为：
+<span class="math display">\[
+p\left(\mathbf{x} \mid \mu, \sigma^{2}\right)=\prod_{n=1}^{N}
+\mathcal{N}\left(x_{n} \mid \mu, \sigma^{2}\right)
+\]</span></p>
+<p>把上式看成<span class="math inline">\(\mu\)</span>和<span
+class="math inline">\(\sigma^{2}\)</span>的函数时，这就是高斯分布的似然函数。通过最大化似然函数可以确定未知参数<span
+class="math inline">\(\mu\)</span>和<span
+class="math inline">\(\sigma^{2}\)</span>的值。</p>
+<p>在这里，作者提到上面最大化似然函数的准测看上去可能有点奇怪。相比之下，基于给定的数据（<span
+class="math inline">\(\mathsf{x}\)</span>）最大化参数（<span
+class="math inline">\(\mu\)</span>和<span
+class="math inline">\(\sigma^{2}\)</span>）和的概率是一种更自然的想法。事实上，这两种想法是相关的。</p>
+<blockquote>
+<p>This might seem like a strange criterion because, from our foregoing
+discussion of probability theory, it would seem more natural to maximize
+the probability of the parameters given the data, not the probability of
+the data given the parameters. ==In fact, these two criteria are
+related.==</p>
+</blockquote>
+<p>在实际应用中，通常对似然函数取对数。 <span class="math display">\[
+\ln p\left(\mathsf{x} \mid \mu, \sigma^{2}\right)=-\frac{1}{2
+\sigma^{2}} \sum_{n=1}^{N}\left(x_{n}-\mu\right)^{2}-\frac{N}{2} \ln
+\sigma^{2}-\frac{N}{2} \ln (2 \pi)
+\]</span></p>
+<p>分别对<span class="math inline">\(\mu\)</span>和<span
+class="math inline">\(\sigma^{2}\)</span>求最大值，可以得到最大似然解：
+<span class="math display">\[
+\begin{align}
+\mu_{\mathrm{ML}} &amp; =  \frac{1}{N} \sum_{n = 1}^{N} x_{n} \\
+\sigma_{\mathrm{ML}}^{2} &amp; = \frac{1}{N}
+\sum_{n=1}^{N}\left(x_{n}-\mu_{\mathrm{ML}}\right)^{2}
+\end{align}
+\]</span></p>
+<p>这里<span
+class="math inline">\(\mu_{\mathrm{ML}}\)</span>就是<strong>样本均值（sample
+mean）</strong>，<span
+class="math inline">\(\sigma_{\mathrm{ML}}^{2}\)</span>就是<strong>样本方差（sample
+variance）</strong>。</p>
+<p>然而最大似然法存在一定的局限性，会低估分布的方差，因为得到的方差是<strong>有偏（bias）</strong>估计。
+<span class="math display">\[
+\begin{align}
+\mathbb{E}\left[\mu_{\mathrm{ML}}\right] &amp; =  \mu \\
+\mathbb{E}\left[\sigma_{\mathrm{ML}}^{2}\right] &amp;
+=  \left(\frac{N-1}{N}\right) \sigma^{2}
+\end{align}
+\]</span></p>
+<p>下面是样本方差有偏的证明：</p>
+<p><span class="math display">\[
+\begin{align}
+\mathbb{E}\left[\sigma_{\mathrm{ML}}^{2}\right]
+&amp; = \mathbb{E}\left[\frac{1}{N} \sum_{n=1}^{N}
+\left(x_{n}-\mu_{\mathrm{ML}}\right)^{2} \right] \\
+&amp; = \frac{1}{N} \mathbb{E} \left[\sum_{n=1}^{N} \left(x_{n}^{2} -
+2x_{n}\mu_{\mathrm{ML}} + \mu_{\mathrm{ML}}^2 \right) \right] \\
+&amp; = \frac{1}{N} \mathbb{E} \left[\left(\sum_{n=1}^{N}x_{n}^{2} -
+N\mu_{\mathrm{ML}}^{2} \right) \right] \\
+&amp; = \frac{1}{N} \left[N\left(\mu^{2}+\sigma^{2}\right) -
+N\left(\mu^{2}+\frac{\sigma^{2}}{N}\right) \right] \\
+&amp; = \frac{N-1}{N} \sigma^{2}
+\end{align}
+\]</span></p>
+<p>下面是方差的<strong>无偏（unbiased）</strong>估值： <span
+class="math display">\[
+\widetilde{\sigma}^{2}=\frac{N}{N-1}
+\sigma_{\mathrm{ML}}^{2}=\frac{1}{N-1}
+\sum_{n=1}^{N}\left(x_{n}-\mu_{\mathrm{ML}}\right)^{2}
+\]</span></p>
+<p>当<span class="math inline">\(N \rightarrow
+\infty\)</span>时，最大似然方法的得到的方差可以等价为分布的真实方差。</p>
+<h3 id="回顾曲线拟合问题">1.2.5 回顾曲线拟合问题</h3>
+<h4 id="最大似然方法">最大似然方法</h4>
+<p>在之前，多项式曲线拟合的问题是通过最小化误差函数，用最小二乘的方法求解的。这里从概率的角度重新看到这个问题。</p>
+<p>在曲线拟合问题中，目标是根据已知的输入数据<span
+class="math inline">\(\mathsf{x}=\left(x_{1}, \ldots,
+x_{N}\right)^{\mathrm{T}}\)</span>和对应的结果<span
+class="math inline">\(\mathsf{t}=\left(t_{1}, \ldots,
+t_{N}\right)^{\mathrm{T}}\)</span>，对新的输入<span
+class="math inline">\(x\)</span>做出预测。这里可以用概率分布来表示目标变量的值的不确定性。</p>
+<p>假设给定<span
+class="math inline">\(x\)</span>的值，其对应的目标变量<span
+class="math inline">\(t\)</span>的值服从高斯分布，均值为<span
+class="math inline">\(y(x, \mathbf{w})\)</span>。因此可以得到： <span
+class="math display">\[
+p(t \mid x, \mathbf{w}, \beta)=\mathcal{N}\left(t \mid y(x, \mathbf{w}),
+\beta^{-1}\right)
+\]</span> 其中，<span
+class="math inline">\(\beta\)</span>表示精度，对应高斯分布方差的倒数。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/回顾曲线拟合问题.png" alt="回顾曲线拟合问题" style="zoom:40%;" /></p>
+<p>现在可以用训练数据<span class="math inline">\(\{\mathsf{x},
+\mathsf{t}\}\)</span>，通过最大似然估计的方法来确定参数<span
+class="math inline">\(\mathbf{w}\)</span>和<span
+class="math inline">\(\beta\)</span>的值。由于训练数据中的每组数据都是独立同分布的，可以得到似然函数为：</p>
+<p><span class="math display">\[
+p(\mathsf{t} \mid \mathsf{x}, \mathbf{w}, \beta)=\prod_{n=1}^{N}
+\mathcal{N}\left(t_{n} \mid y\left(x_{n}, \mathbf{w}\right),
+\beta^{-1}\right)
+\]</span></p>
+<p>对似然函数取对数可以得到： <span class="math display">\[
+\ln p(\mathsf{t} \mid \mathsf{x}, \mathbf{w}, \beta)=-\frac{\beta}{2}
+\sum_{n=1}^{N}\left\{y\left(x_{n},
+\mathbf{w}\right)-t_{n}\right\}^{2}+\frac{N}{2} \ln \beta-\frac{N}{2}
+\ln (2 \pi)
+\]</span></p>
+<p>首先是确定多项式系数的极大似然解<span
+class="math inline">\(\mathbf{w}_{\mathrm{ML}}\)</span>。在上式中，等式右边的后两项和<span
+class="math inline">\(\mathbf{w}\)</span>无关，而<span
+class="math inline">\(\beta\)</span>不影响最大值的位置。所以最大化似然函数等价于最小化误差函数：</p>
+<p><span class="math display">\[
+E(\mathbf{w})=\frac{1}{2} \sum_{n=1}^{N}\left\{y\left(x_{n},
+\mathbf{w}\right)-t_{n}\right\}^{2}
+\]</span></p>
+<p>同样的用等式后边对<span
+class="math inline">\(\beta\)</span>求导，可以得到精度<span
+class="math inline">\(\beta\)</span>的最大似然解<span
+class="math inline">\(\beta_{\mathrm{ML}}\)</span>：</p>
+<p><span class="math display">\[
+\frac{1}{\beta_{\mathrm{ML}}}=\frac{1}{N}
+\sum_{n=1}^{N}\left\{y\left(x_{n},
+\mathbf{w}_{\mathrm{ML}}\right)-t_{n}\right\}^{2}
+\]</span></p>
+<p>确定参数<span class="math inline">\(\mathbf{w}\)</span>和<span
+class="math inline">\(\beta\)</span>的值后，可以得到一个概率模型，它是一个关于<span
+class="math inline">\(t\)</span>的<strong>预测分布（predictive
+distribution）</strong>，而不是一个简单的点估计：</p>
+<p><span class="math display">\[
+p\left(t \mid x, \mathbf{w}_{\mathrm{ML}},
+\beta_{\mathrm{ML}}\right)=\mathcal{N}\left(t \mid y\left(x,
+\mathbf{w}_{\mathrm{ML}}\right), \beta_{\mathrm{ML}}^{-1}\right)
+\]</span></p>
+<h4
+id="贝叶斯方法bayesian-view-of-linear-regression">贝叶斯方法（Bayesian
+view of Linear Regression）</h4>
+<p>下面向贝叶斯方法迈出一步，我们对多项式系数<span
+class="math inline">\(\mathbf{w}\)</span>引入它的先验分布。简单起见，这里用的是高斯分布的形式：</p>
+<p><span class="math display">\[
+p(\mathbf{w} \mid \alpha)=\mathcal{N}\left(\mathbf{w} \mid \mathbf{0},
+\alpha^{-1} \mathbf{I}\right)=\left(\frac{\alpha}{2 \pi}\right)^{(M+1) /
+2} \exp \left\{-\frac{\alpha}{2} \mathbf{w}^{\mathrm{T}}
+\mathbf{w}\right\}
+\]</span></p>
+<p>其中：<span class="math inline">\(\alpha\)</span>为分布的精度，<span
+class="math inline">\(M+1\)</span>是<span
+class="math inline">\(M\)</span>阶多项式系数的总数。像<span
+class="math inline">\(\alpha\)</span>这样控制模型参数分布的参数，称为<strong>超参数（hyperparameters）</strong>。</p>
+<p>根据贝叶斯定理，<span
+class="math inline">\(\mathbf{w}\)</span>的后验分布正比于先验分布和似然函数的乘积：</p>
+<p><span class="math display">\[
+p(\mathbf{w} \mid \mathsf{x}, \mathsf{t}, \alpha, \beta) \propto
+p(\mathbf{t} \mid \mathbf{x}, \mathbf{w}, \beta) p(\mathbf{w} \mid
+\alpha)
+\]</span></p>
+<p>在给定数据集的情况下，我们可以通过最大化后验分布找到最可能的<span
+class="math inline">\(\mathbf{w}\)</span>的值。这种方法为<strong>最大后验（maximum
+posterior，缩写为：MAP）</strong>。</p>
+<p>结合上面的式子，最大后验等价于最小化下式：</p>
+<p><span class="math display">\[
+\frac{\beta}{2} \sum_{n=1}^{N}\left\{y\left(x_{n},
+\mathbf{w}\right)-t_{n}\right\}^{2}+\frac{\alpha}{2}
+\mathbf{w}^{\mathrm{T}} \mathbf{w}
+\]</span></p>
+<p>上式等价于含正则化项的误差函数，这里正则化的参数为<span
+class="math inline">\(\lambda=\alpha / \beta\)</span>。</p>
+<p>可以看出，从贝叶斯的角度看，正则化项对应于模型的先验概率，简单的模型具有较大的先验概率。</p>
+<h3 id="贝叶斯曲线拟合full-bayesian-approach">1.2.6 贝叶斯曲线拟合（Full
+Bayesian Approach）</h3>
+<p>尽管我们引入了先验分布<span class="math inline">\(p(\mathbf{w} \mid
+\alpha)\)</span>，我们目前为止做的仍然是对参数<span
+class="math inline">\(\mathbf{w}\)</span>的点估计，还没有完全达到贝叶斯处理的方式。在上面的方法中，并没有给出完整的后验概率分布。</p>
+<p>在曲线拟合问题中，给定训练数据<span
+class="math inline">\(\mathsf{x}\)</span>和<span
+class="math inline">\(\mathsf{t}\)</span>，以及一个新的测试点<span
+class="math inline">\(x\)</span>，目标是预测<span
+class="math inline">\(t\)</span>的值。因此要估计预测分布<span
+class="math inline">\(p(t \mid x, \mathbf{x},
+\mathbf{t})\)</span>。这里假设参数<span
+class="math inline">\(\alpha\)</span>和<span
+class="math inline">\(\beta\)</span>固定。</p>
+<p>由贝叶斯方法可以得到： <span class="math display">\[
+p(t \mid x, \mathsf{x}, \mathsf{t})=\int p(t \mid x, \mathbf{w})
+p(\mathbf{w} \mid \mathsf{x}, \mathsf{t}) \mathrm{d} \mathbf{w}
+\]</span></p>
+<p>上式中<span class="math inline">\(p(t \mid x,
+\mathbf{w})\)</span>可以由<span class="math inline">\(p(t \mid x,
+\mathbf{w}, \beta)=\mathcal{N}\left(t \mid y(x, \mathbf{w}),
+\beta^{-1}\right)\)</span>得到。</p>
+<p>而<span class="math inline">\(p(\mathbf{w} \mid \mathbf{x},
+\mathbf{t})\)</span>可以通过归一化<span
+class="math inline">\(p(\mathbf{t} \mid \mathbf{x}, \mathbf{w}, \beta)
+p(\mathbf{w} \mid \alpha)\)</span>得到。</p>
+<p>对于曲线拟合问题，后验分布可以解析求解，并且是一个高斯分布，形式如（这里的证明会在第三章贝叶斯线性回归给出[[ch3-3-3-贝叶斯线性回归#后验分布推断（Inference）]]）：</p>
+<p><span class="math display">\[
+p(t \mid x, \mathsf{x}, \mathsf{t})=\mathcal{N}\left(t \mid m(x),
+s^{2}(x)\right)
+\]</span></p>
+<p>其中：</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+m(x) &amp; = &amp; \beta \phi(x)^{\mathrm{T}} \mathrm{S}
+\sum_{n  =  1}^{N} \phi\left(x_{n}\right) t_{n} \\
+s^{2}(x) &amp; = &amp; \beta^{-1}+\phi(x)^{\mathrm{T}} \mathrm{S}
+\phi(x)
+\end{eqnarray}
+\]</span></p>
+<p>这里的矩阵<span class="math inline">\(S\)</span>为：</p>
+<p><span class="math display">\[
+\mathbf{S}^{-1}=\alpha \mathbf{I}+\beta \sum_{n=1}^{N}
+\phi\left(x_{n}\right) \phi(x)^{\mathrm{T}}
+\]</span></p>
+<p>向量<span class="math inline">\(\phi(x)\)</span>为：</p>
+<p><span class="math display">\[
+\phi_{i}(x)=x^{i} (i=0, \ldots, M)
+\]</span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">function</span>(<span class="params">x</span>):</span><br><span class="line">	<span class="keyword">return</span> np.sin(<span class="number">2</span>*np.pi*x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generateData</span>(<span class="params">func, sampleSize, std</span>):</span><br><span class="line">	x = np.linspace(<span class="number">0</span>, <span class="number">1</span>, sampleSize)</span><br><span class="line">	t = func(x) + np.random.normal(scale=std, size=x.shape)</span><br><span class="line">	<span class="keyword">return</span> x, t</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">BayesianRegression</span>():</span><br><span class="line">	<span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, M, alpha=<span class="number">1.</span>, beta=<span class="number">1.</span></span>):</span><br><span class="line">		self.M = M</span><br><span class="line">		self.alpha = alpha</span><br><span class="line">		self.beta = beta</span><br><span class="line">		self.w_mean = <span class="literal">None</span></span><br><span class="line">		self.w_precision = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">def</span> <span class="title function_">fit</span>(<span class="params">self, x, t</span>):</span><br><span class="line">		N = x.shape[<span class="number">0</span>]</span><br><span class="line">		X = np.ones((N, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, self.M+<span class="number">1</span>):</span><br><span class="line">			X = np.c_[X, np.power(x, i).T]</span><br><span class="line"></span><br><span class="line">		<span class="comment"># 多项式系数的均值和精度（先验）</span></span><br><span class="line">		mean_prev = np.zeros(self.M+<span class="number">1</span>)</span><br><span class="line">		precision_prev = self.alpha * np.eye(self.M+<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">		w_precision = precision_prev + self.beta * np.matmul(X.T, X)</span><br><span class="line">		w_mean = np.linalg.solve(</span><br><span class="line">			w_precision,</span><br><span class="line">			np.matmul(precision_prev, mean_prev) + self.beta * np.matmul(X.T, t)</span><br><span class="line">		)</span><br><span class="line"></span><br><span class="line">		self.w_mean = w_mean</span><br><span class="line">		self.w_precision = w_precision</span><br><span class="line">		self.w_cov = np.linalg.inv(self.w_precision)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">self, x, return_std=<span class="literal">False</span></span>):</span><br><span class="line">		N = x.shape[<span class="number">0</span>]</span><br><span class="line">		X = np.ones((N, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, self.M+<span class="number">1</span>):</span><br><span class="line">			X = np.c_[X, np.power(x, i).T]</span><br><span class="line"></span><br><span class="line">		y = np.matmul(X, self.w_mean)</span><br><span class="line">		<span class="keyword">if</span> return_std:</span><br><span class="line">			y_var = <span class="number">1</span> / self.beta + np.<span class="built_in">sum</span>(np.matmul(X, self.w_cov) * X, axis=<span class="number">1</span>)</span><br><span class="line">			y_std = np.sqrt(y_var)</span><br><span class="line">			<span class="keyword">return</span> y, y_std</span><br><span class="line">		<span class="keyword">return</span> y</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">xTrain, yTrain = generateData(function, <span class="number">10</span>, <span class="number">0.1</span>)</span><br><span class="line">xTest = np.linspace(<span class="number">0</span>, <span class="number">1</span>, <span class="number">100</span>)</span><br><span class="line">yTest = function(xTest)</span><br><span class="line"></span><br><span class="line">model = BayesianRegression(M=<span class="number">9</span>, alpha=<span class="number">2e-3</span>, beta=<span class="number">2</span>)</span><br><span class="line">model.fit(xTrain, yTrain)</span><br><span class="line">y, y_err = model.predict(xTest, return_std=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">8</span>, <span class="number">5</span>))</span><br><span class="line">plt.scatter(xTrain, yTrain, facecolor=<span class="string">&quot;None&quot;</span>, edgecolor=<span class="string">&quot;b&quot;</span>, s=<span class="number">50</span>, label=<span class="string">&quot;training data&quot;</span>)</span><br><span class="line">plt.plot(xTest, yTest, c=<span class="string">&quot;g&quot;</span>, label=<span class="string">&quot;$\sin(2\pi x)$&quot;</span>)</span><br><span class="line">plt.plot(xTest, y, c=<span class="string">&quot;r&quot;</span>, label=<span class="string">&quot;mean&quot;</span>)</span><br><span class="line">plt.fill_between(xTest, y-y_err, y+y_err, color=<span class="string">&quot;pink&quot;</span>, label=<span class="string">&quot;std.&quot;</span>, alpha=<span class="number">0.5</span>)</span><br><span class="line">plt.title(<span class="string">&quot;Bayesian Regression&quot;</span>)</span><br><span class="line">plt.xlim(-<span class="number">0.05</span>, <span class="number">1.05</span>)</span><br><span class="line">plt.ylim(-<span class="number">2.0</span>, <span class="number">2.0</span>)</span><br><span class="line">plt.legend(loc=<span class="number">1</span>)</span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Bayesian Regression.jpg" alt="Bayesian Regression" style="zoom:67%;" /></p>
+<h2 id="其他参考资料">其他参考资料</h2>
+<ol type="1">
+<li><p>贝叶斯定理：<a
+target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1R7411a76r">https://www.bilibili.com/video/BV1R7411a76r</a></p></li>
+<li><p>部分代码参考：https://github.com/ctgk/PRML</p></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/02/14/ch1-1-2-%E6%A6%82%E7%8E%87%E8%AE%BA/" title="ch1-1.2 概率论">https://ehehe.cn/2022/02/14/ch1-1-2-概率论/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PRML/" rel="tag"># PRML</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/14/ch1-1-1-%E4%BE%8B%E5%AD%90%EF%BC%9A%E5%A4%9A%E9%A1%B9%E5%BC%8F%E6%9B%B2%E7%BA%BF%E6%8B%9F%E5%90%88/" rel="prev" title="ch1-1.1 例子：多项式曲线拟合">
+                  <i class="fa fa-angle-left"></i> ch1-1.1 例子：多项式曲线拟合
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/14/ch1-1-3-%E6%A8%A1%E5%9E%8B%E9%80%89%E6%8B%A9/" rel="next" title="ch1-1.3 模型选择">
+                  ch1-1.3 模型选择 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

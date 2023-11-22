@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Yeonguk Yu, Sungho Shin, Seongju Lee, Changhyun Jun, Kyoobin Lee Block Selection Method for Using Feature Norm in Out-of-distribution Detection 检测推理阶段的分布外样本（OOD）对于实际部署神经网络至关重要。过去的方法通常使用神经网络最后的输出来检测">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] Block Selection Method for Using Feature Norm  in Out-of-distribution Detection (CVPR 2023)">
+<meta property="og:url" content="https://ehehe.cn/2023/04/16/block-selection-for-OOD-detection/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Yeonguk Yu, Sungho Shin, Seongju Lee, Changhyun Jun, Kyoobin Lee Block Selection Method for Using Feature Norm in Out-of-distribution Detection 检测推理阶段的分布外样本（OOD）对于实际部署神经网络至关重要。过去的方法通常使用神经网络最后的输出来检测">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/FeatureNorm-OOD_ResNet18%E4%B8%AD%E7%89%B9%E5%BE%81%E5%9B%BE%E8%8C%83%E6%95%B0%E7%9A%84%E7%9B%B4%E6%96%B9%E5%9B%BE.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/FeatureNorm-OOD_OOD%E6%A3%80%E6%B5%8B%E6%A1%86%E6%9E%B6.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/FeatureNorm-%E9%80%9A%E8%BF%87%E8%8C%83%E6%95%B0%E6%AF%94%E5%AF%BB%E6%89%BE%E6%9C%80%E4%BC%98%E5%9D%97%E7%9A%84%E7%AE%97%E6%B3%95.png">
+<meta property="article:published_time" content="2023-04-16T05:15:57.000Z">
+<meta property="article:modified_time" content="2023-04-16T05:15:57.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="模型泛化">
+<meta property="article:tag" content="OOD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/FeatureNorm-OOD_ResNet18%E4%B8%AD%E7%89%B9%E5%BE%81%E5%9B%BE%E8%8C%83%E6%95%B0%E7%9A%84%E7%9B%B4%E6%96%B9%E5%9B%BE.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/04/16/block-selection-for-OOD-detection/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/04/16/block-selection-for-OOD-detection/","path":"2023/04/16/block-selection-for-OOD-detection/","title":"[Note] Block Selection Method for Using Feature Norm  in Out-of-distribution Detection (CVPR 2023)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] Block Selection Method for Using Feature Norm  in Out-of-distribution Detection (CVPR 2023) | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#block-selection-method-for-using-feature-norm-in-out-of-distribution-detection"><span class="nav-text">Block
+Selection Method for Using Feature Norm in Out-of-distribution
+Detection</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8Efeaturenorm%E7%9A%84ood%E6%A3%80%E6%B5%8B%E6%A1%86%E6%9E%B6"><span class="nav-text">基于FeatureNorm的OOD检测框架</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%B9%E5%BE%81%E8%8C%83%E6%95%B0"><span class="nav-text">特征范数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8C%83%E6%95%B0%E6%AF%94"><span class="nav-text">范数比</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/04/16/block-selection-for-OOD-detection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] Block Selection Method for Using Feature Norm  in Out-of-distribution Detection (CVPR 2023) | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] Block Selection Method for Using Feature Norm  in Out-of-distribution Detection (CVPR 2023)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-16 13:15:57" itemprop="dateCreated datePublished" datetime="2023-04-16T13:15:57+08:00">2023-04-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>802</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Yeonguk Yu, Sungho Shin, Seongju Lee, Changhyun Jun, Kyoobin
+Lee</p>
+<h2
+id="block-selection-method-for-using-feature-norm-in-out-of-distribution-detection">Block
+Selection Method for Using Feature Norm in Out-of-distribution
+Detection</h2>
+<p>检测推理阶段的<strong>分布外样本（OOD）</strong>对于实际部署神经网络至关重要。过去的方法通常使用神经网络最后的输出来检测OOD，但本文揭示了与最后一个块不同的块获得的特征图范数可以更好地用于OOD检测。本文提出使用<strong>FeatureNorm</strong>（特征图的范数）和<strong>NormRatio</strong>（分布内样本和分布外样本的特征范数的比率）来和衡量每个块的OOD检测性能。</p>
+<p>从下图可以看到，相比于最后一块的输出，倒数第二块的输出对于ID和OOD具有更高的区分性。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/FeatureNorm-OOD_ResNet18%E4%B8%AD%E7%89%B9%E5%BE%81%E5%9B%BE%E8%8C%83%E6%95%B0%E7%9A%84%E7%9B%B4%E6%96%B9%E5%9B%BE.png" alt="ResNet18中特征图范数的直方图" style="zoom:33%;" /></p>
+<p>为了找到能使ID和OOD之间FeatureNorm差异最大的块，文章从ID训练样本创建拼图图像（Jigsaw
+images）作为伪OOD样本，并计算NormRatio，选择具有最大值的块作为用于OOD检测的块。</p>
+<span id="more"></span>
+<h3 id="基于featurenorm的ood检测框架">基于FeatureNorm的OOD检测框架</h3>
+<blockquote>
+<p><strong>核心思想：</strong>从适当的块中获取的特征图的范数可以作为一个指标用于OOD检测。</p>
+</blockquote>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/FeatureNorm-OOD_OOD%E6%A3%80%E6%B5%8B%E6%A1%86%E6%9E%B6.png" alt="OOD检测框架" style="zoom: 33%;" /></p>
+<p>基于上述的核心思想，在进行OOD检测之前，首要的是选取合适的块：</p>
+<ol type="1">
+<li>首先从ID训练样本中生成拼图图像（把原图打乱）作为伪OOD，并计算训练样本和相应伪OOD的NormRatio。（因为拼图图像破坏了图像原本的对象信息，因此可以看作OOD）</li>
+<li>选取可以令NormRatio最大的块作为用于OOD检测块。</li>
+</ol>
+<h4 id="特征范数">特征范数</h4>
+<p>记模型的某一块输出的特征图为：<span class="math inline">\(z \in
+\mathbb{R}^{M \times W \times H}\)</span>，则特征图每一个通道<span
+class="math inline">\(z_i \in \mathbb{R}^{1 \times W \times
+H}\)</span>的范数为： <span class="math display">\[
+a_i=\sqrt{\sum_w^W \sum_h^H \max \left(z_i(w, h), 0\right)^2}
+\]</span>
+上式为每个通道在经过<code>ReLU</code>激活函数后的Frobenius范数。使用<code>ReLU</code>激活函数的目的是为了去除特征图中负元素的影响。</p>
+<p>对每个通道的范数去平均，即可计算块<span
+class="math inline">\(B\)</span>的特征范数： <span
+class="math display">\[
+f^{\text {FeatureNorm }}(x ; B)=\frac{1}{M} \sum_{m=1}^M a_m
+\]</span> 在推理阶段，给定输入图像<span
+class="math inline">\(x\)</span>和合适的块<span
+class="math inline">\(B_s\)</span>，可以进行OOD检测： <span
+class="math display">\[
+G(x ; \theta)= \begin{cases}\text { ID } &amp; \text { if } f^{\text
+{FeatureNorm }}\left(x ; B_s\right) \geq \gamma \\ \text { OOD } &amp;
+\text { else }\end{cases}
+\]</span> 其中，<span
+class="math inline">\(\gamma\)</span>为阈值，在该阈值下可以确保<span
+class="math inline">\(95\%\)</span>的ID样本都能被正确分类。</p>
+<h4 id="范数比">范数比</h4>
+<p>文中使用NormRatio来选择块以实现最佳的OOD检测结果。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/FeatureNorm-%E9%80%9A%E8%BF%87%E8%8C%83%E6%95%B0%E6%AF%94%E5%AF%BB%E6%89%BE%E6%9C%80%E4%BC%98%E5%9D%97%E7%9A%84%E7%AE%97%E6%B3%95.png" alt="FeatureNorm-通过范数比寻找最优块的算法" style="zoom:33%;" /></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/04/16/block-selection-for-OOD-detection/" title="[Note] Block Selection Method for Using Feature Norm  in Out-of-distribution Detection (CVPR 2023)">https://ehehe.cn/2023/04/16/block-selection-for-OOD-detection/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E6%A8%A1%E5%9E%8B%E6%B3%9B%E5%8C%96/" rel="tag"># 模型泛化</a>
+              <a href="/tags/OOD/" rel="tag"># OOD</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/14/SAM/" rel="prev" title="[Note] Segment Anything">
+                  <i class="fa fa-angle-left"></i> [Note] Segment Anything
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/18/NeRF/" rel="next" title="基于NeRF的三维场景生成">
+                  基于NeRF的三维场景生成 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

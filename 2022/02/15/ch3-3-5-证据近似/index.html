@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="3.5 证据近似 对于线性基函数模型，在完全贝叶斯方法（fully Bayesian）中，我们会引入超参数\(\alpha\)和\(\beta\)的先验分布，然后对超参数和模型参数\(\mathbf{w}\)积分（边缘化）得到预测分布，即： \[ p(t \mid \mathsf{t})&#x3D;\iiint p(t \mid \mathbf{w}, \beta) p(\mathbf{w} \mid \m">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch3-3.5 证据近似">
+<meta property="og:url" content="https://ehehe.cn/2022/02/15/ch3-3-5-%E8%AF%81%E6%8D%AE%E8%BF%91%E4%BC%BC/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="3.5 证据近似 对于线性基函数模型，在完全贝叶斯方法（fully Bayesian）中，我们会引入超参数\(\alpha\)和\(\beta\)的先验分布，然后对超参数和模型参数\(\mathbf{w}\)积分（边缘化）得到预测分布，即： \[ p(t \mid \mathsf{t})&#x3D;\iiint p(t \mid \mathbf{w}, \beta) p(\mathbf{w} \mid \m">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E5%AF%B9%E6%95%B0%E6%A8%A1%E5%9E%8B%E8%AF%81%E6%8D%AE%E4%B8%8E%E5%A4%9A%E9%A1%B9%E5%BC%8F%E6%A8%A1%E5%9E%8B%E5%A4%8D%E6%9D%82%E5%BA%A6%E7%9A%84%E5%85%B3%E7%B3%BB.jpg">
+<meta property="article:published_time" content="2022-02-15T04:43:43.000Z">
+<meta property="article:modified_time" content="2022-02-15T04:43:43.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="PRML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E5%AF%B9%E6%95%B0%E6%A8%A1%E5%9E%8B%E8%AF%81%E6%8D%AE%E4%B8%8E%E5%A4%9A%E9%A1%B9%E5%BC%8F%E6%A8%A1%E5%9E%8B%E5%A4%8D%E6%9D%82%E5%BA%A6%E7%9A%84%E5%85%B3%E7%B3%BB.jpg">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/02/15/ch3-3-5-%E8%AF%81%E6%8D%AE%E8%BF%91%E4%BC%BC/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/02/15/ch3-3-5-%E8%AF%81%E6%8D%AE%E8%BF%91%E4%BC%BC/","path":"2022/02/15/ch3-3-5-证据近似/","title":"ch3-3.5 证据近似"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch3-3.5 证据近似 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%81%E6%8D%AE%E8%BF%91%E4%BC%BC"><span class="nav-text">3.5 证据近似</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E8%AF%81%E6%8D%AE%E5%87%BD%E6%95%B0"><span class="nav-text">3.5.1 计算证据函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E5%8C%96%E8%AF%81%E6%8D%AE%E5%87%BD%E6%95%B0"><span class="nav-text">3.5.2 最大化证据函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a.-%E5%85%B3%E4%BA%8Ealpha%E7%9A%84%E6%9C%80%E5%A4%A7%E5%8C%96"><span class="nav-text">A. 关于\(\alpha\)的最大化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b.-%E5%85%B3%E4%BA%8Ebeta%E7%9A%84%E6%9C%80%E5%A4%A7%E5%8C%96"><span class="nav-text">B. 关于\(\beta\)的最大化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E7%9A%84%E6%9C%89%E6%95%88%E6%95%B0%E9%87%8F"><span class="nav-text">3.5.3 参数的有效数量</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9alpha%E7%9A%84%E7%90%86%E8%A7%A3"><span class="nav-text">对\(\alpha\)的理解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9beta%E7%9A%84%E7%90%86%E8%A7%A3"><span class="nav-text">对\(\beta\)的理解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#alpha%E5%92%8Cbeta%E7%9A%84%E4%BC%B0%E8%AE%A1"><span class="nav-text">\(\alpha\)和\(\beta\)的估计</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">其他参考资料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/02/15/ch3-3-5-%E8%AF%81%E6%8D%AE%E8%BF%91%E4%BC%BC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch3-3.5 证据近似 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch3-3.5 证据近似
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-15 12:43:43" itemprop="dateCreated datePublished" datetime="2022-02-15T12:43:43+08:00">2022-02-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="证据近似">3.5 证据近似</h2>
+<p>对于线性基函数模型，在完全贝叶斯方法（fully
+Bayesian）中，我们会引入超参数<span
+class="math inline">\(\alpha\)</span>和<span
+class="math inline">\(\beta\)</span>的先验分布，然后对超参数和模型参数<span
+class="math inline">\(\mathbf{w}\)</span>积分（边缘化）得到预测分布，即：</p>
+<p><span class="math display">\[
+p(t \mid \mathsf{t})=\iiint p(t \mid \mathbf{w}, \beta) p(\mathbf{w}
+\mid \mathsf{t}, \alpha, \beta) p(\alpha, \beta \mid \mathsf{t})
+\mathrm{d} \mathbf{w} \mathrm{d} \alpha \mathrm{d} \beta
+\]</span></p>
+<p>但是<strong>这个积分是很难计算的，可能也无法计算</strong>。</p>
+<p>所以我们使用一种近似方法，首先对参数<span
+class="math inline">\(\mathbf{w}\)</span>求积分，得到边缘似然函数，然后通过最大化边缘似然函数，确定超参数的值。这种方法在统计学中称为<strong>经验贝叶斯（empirical
+Bayes）</strong>，或者<strong>第⼆类最大似然（type 2 maximum
+likelihood）</strong>，或者<strong>广义最大似然（generalized maximum
+likelihood）</strong>。</p>
+<p>在机器学习中，这种方法也被称为<strong>证据近似（evidence
+approximation）</strong>。</p>
+<span id="more"></span>
+<p>如果我们假设后验分布<span class="math inline">\(p(\alpha, \beta \mid
+\mathsf{t})\)</span>在<span
+class="math inline">\(\widehat{\alpha}\)</span>和<span
+class="math inline">\(\widehat{\beta}\)</span>处为尖峰，则我们可以固定超参数<span
+class="math inline">\(\alpha\)</span>和<span
+class="math inline">\(\beta\)</span>为<span
+class="math inline">\(\widehat{\alpha}\)</span>和<span
+class="math inline">\(\widehat{\beta}\)</span>，计算对<span
+class="math inline">\(\mathbf{w}\)</span>的积分： <span
+class="math display">\[
+p(t \mid \mathsf{t}) \simeq p(t \mid \mathsf{t}, \widehat{\alpha},
+\widehat{\beta})=\int p(t \mid \mathbf{w}, \widehat{\beta}) p(\mathbf{w}
+\mid \mathsf{t}, \widehat{\alpha}, \widehat{\beta}) \mathrm{d}
+\mathbf{w}
+\]</span></p>
+<p>下面我们要做的就是找到<span
+class="math inline">\(\widehat{\alpha}\)</span>和<span
+class="math inline">\(\widehat{\beta}\)</span>，根据贝叶斯定理，<span
+class="math inline">\(\alpha\)</span>和<span
+class="math inline">\(\beta\)</span>的后验分布为： <span
+class="math display">\[
+p(\alpha, \beta \mid \mathsf{t}) \propto p(\mathsf{t} \mid \alpha,
+\beta) p(\alpha, \beta)
+\]</span></p>
+<p>如果我们假设先验分布相对比较平（我的理解就是先验分布的概率值接近一个定值，接近均匀分布），那么我们可以通过最大化边缘似然函数<span
+class="math inline">\(p(\mathsf{t} \mid \alpha,
+\beta)\)</span>来得到<span
+class="math inline">\(\widehat{\alpha}\)</span>和<span
+class="math inline">\(\widehat{\beta}\)</span>。</p>
+<p>这将使我们能够<strong>从训练数据本⾝确定这些超参数的值</strong>，而不需要交叉验证。</p>
+<p>最大化边缘似然函数有两种方法，一种是解析地计算边缘似然函数、求导为零，另一种是<strong>期望最大化（EM）</strong>算法的⽅法。</p>
+<h3 id="计算证据函数">3.5.1 计算证据函数</h3>
+<p>边缘似然函数<span class="math inline">\(p(\mathsf{t} \mid \alpha,
+\beta)\)</span>是通过对权值参数<span
+class="math inline">\(\mathbf{w}\)</span>进行积分得到的，即： <span
+class="math display">\[
+p(\mathsf{t} \mid \alpha, \beta)=\int p(\mathsf{t} \mid \mathbf{w},
+\beta) p(\mathbf{w} \mid \alpha) \mathrm{d} \mathbf{w}
+\]</span></p>
+<p>由： <span class="math display">\[
+\begin{align}
+\ln p(\mathsf{t} \mid \mathbf{w}, \beta) &amp;=\sum_{n=1}^{N} \ln
+\mathcal{N}\left(t_{n} \mid \mathbf{w}^{\mathrm{T}}
+\phi\left(\mathbf{x}_{n}\right), \beta^{-1}\right) \\
+&amp;=\frac{N}{2} \ln \beta-\frac{N}{2} \ln (2 \pi)-\beta
+E_{D}(\mathbf{w})
+\end{align}
+\]</span></p>
+<p><span class="math display">\[
+E_{D}(\mathbf{w})=\frac{1}{2}
+\sum_{n=1}^{N}\left\{t_{n}-\mathbf{w}^{\mathrm{T}}
+\boldsymbol{\phi}\left(\mathbf{x}_{n}\right)\right\}^{2}
+\]</span></p>
+<p><span class="math display">\[
+p(\mathbf{w} \mid \alpha)=\mathcal{N}\left(\mathbf{w} \mid \mathbf{0},
+\alpha^{-1} \mathbf{I}\right)
+\]</span></p>
+<p>可以得到： <span class="math display">\[
+\begin{align}
+&amp; p(\mathbf{t}  \mid \alpha, \beta) \\
+&amp; = \int \exp \left\{\frac{N}{2} \ln \frac{\beta}{2
+\pi}-\frac{\beta}{2} \sum_{i =
+1}^{N}\left\{t_{n}-\mathbf{w}^{\mathrm{T}}
+\boldsymbol{\phi}\left(\mathbf{x}_{n}\right)\right\}^{2}\right\}\left(\frac{\alpha}{2
+\pi}\right)^{\frac{M}{2}} \exp \left\{-\frac{\alpha}{2}
+\mathbf{w}^{2}\right\} \mathrm{d}\mathbf{w} \\
+&amp; = \left(\frac{\beta}{2
+\pi}\right)^{\frac{N}{2}}\left(\frac{\alpha}{2 \pi}\right)^{\frac{M}{2}}
+\int \exp \left\{-\frac{\beta}{2} \sum_{i =
+1}^{N}\left\{t_{n}-\mathbf{w}^{\mathrm{T}}
+\boldsymbol{\phi}\left(\mathbf{x}_{n}\right)\right\}^{2}-\frac{\alpha}{2}
+\mathbf{w}^{2}\right\} \mathrm{d}\mathbf{w} \\
+&amp; = \left(\frac{\beta}{2
+\pi}\right)^{\frac{N}{2}}\left(\frac{\alpha}{2 \pi}\right)^{\frac{M}{2}}
+\int \exp \{-E(\mathbf{w})\} \mathrm{d}\mathbf{w}
+\end{align}
+\]</span></p>
+<p>其中：<span class="math inline">\(M\)</span>是<span
+class="math inline">\(\mathbf{w}\)</span>的维数，并且定义： <span
+class="math display">\[
+\begin{align}
+E(\mathbf{w}) &amp;=\beta E_{D}(\mathbf{w})+\alpha E_{W}(\mathbf{w}) \\
+&amp;=\frac{\beta}{2}\|\mathsf{t}-\Phi \mathbf{w}\|^{2}+\frac{\alpha}{2}
+\mathbf{w}^{\mathrm{T}} \mathbf{w}
+\end{align}
+\]</span></p>
+<p>从上式可以看到，<span
+class="math inline">\(E(\mathbf{w})\)</span>等价于<strong>正则化的平方和误差函数</strong>。对<span
+class="math inline">\(\mathbf{w}\)</span>进行配方可得： <span
+class="math display">\[
+E(\mathbf{w})=E\left(\mathbf{m}_{N}\right)+\frac{1}{2}\left(\mathbf{w}-\mathbf{m}_{N}\right)^{\mathrm{T}}
+\mathbf{A}\left(\mathbf{w}-\mathbf{m}_{N}\right)
+\]</span></p>
+<p>其中： <span class="math display">\[
+\mathbf{A}=\alpha \mathbf{I}+\beta \Phi^{\mathrm{T}} \Phi
+\]</span></p>
+<p><span class="math display">\[
+E\left(\mathbf{m}_{N}\right)=\frac{\beta}{2}\left\|\mathsf{t}-\Phi
+\mathbf{m}_{N}\right\|^{2}+\frac{\alpha}{2} \mathbf{m}_{N}^{\mathrm{T}}
+\mathbf{m}_{N}
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{m}_{N}=\beta \mathbf{A}^{-1} \boldsymbol{\Phi}^{T} \mathsf{t}
+\]</span></p>
+<p>这里的矩阵<span
+class="math inline">\(\mathbf{A}\)</span>对应于平方损失函数的二阶导数：
+<span class="math display">\[
+\mathbf{A}=\nabla \nabla E(\mathbf{w})
+\]</span> 这个矩阵被称为<strong>Hessian矩阵（Hessian
+matrix）</strong>。</p>
+<p>下一步是对<span
+class="math inline">\(\mathbf{w}\)</span>进行积分，积分号可以通过和多元高斯分布进行比较进行求解：
+<span class="math display">\[
+\begin{align}
+\int \exp \{-E(\mathbf{w})\} \mathrm{dw} &amp; = \exp
+\left\{-E\left(\mathbf{m}_{N}\right)\right\} \int \exp
+\left\{-\frac{1}{2}\left(\mathbf{w}-\mathbf{m}_{N}\right)^{\mathrm{T}}
+\mathbf{A}\left(\mathbf{w}-\mathbf{m}_{N}\right)\right\} \mathrm{d}
+\mathbf{w} \\
+&amp; = \exp \left\{-E\left(\mathbf{m}_{N}\right)\right\}(2 \pi)^{M /
+2}|\mathbf{A}|^{-1 / 2}
+\end{align}
+\]</span></p>
+<p>最后把这一部分代回到上面的边缘似然函数中，并求对数： <span
+class="math display">\[
+\ln p(\mathsf{t} \mid \alpha, \beta)=\frac{M}{2} \ln \alpha+\frac{N}{2}
+\ln \beta-E\left(\mathbf{m}_{N}\right)-\frac{1}{2} \ln
+|\mathbf{A}|-\frac{N}{2} \ln (2 \pi)
+\]</span></p>
+<p>这就是的<strong>对数证据函数</strong>的表达式。</p>
+<p>回到多项式回归问题，我们可以绘制出模型证据相对于多项式阶数的图像，如下图所示。从图中，可以明显地看出，模型证据越大时，模型越好。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">np.random.seed(<span class="number">8</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">polynomial_features</span>(<span class="params">x, p</span>):</span><br><span class="line">    x_poly = np.zeros((x.shape[<span class="number">0</span>], p+<span class="number">1</span>))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(p+<span class="number">1</span>):</span><br><span class="line">        x_poly[:, i] = np.power(x, i)</span><br><span class="line">    <span class="keyword">return</span> x_poly</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sinusoidal</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> np.sin(<span class="number">2</span> * np.pi * x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_data</span>(<span class="params">func, sampleSize, std</span>):</span><br><span class="line">    x = np.linspace(<span class="number">0</span>, <span class="number">1</span>, sampleSize)</span><br><span class="line">    t = func(x) + np.random.normal(scale=std, size=x.shape)</span><br><span class="line">    <span class="keyword">return</span> x, t</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">alpha = <span class="number">5e-3</span></span><br><span class="line">beta = <span class="number">100</span></span><br><span class="line">N = <span class="number">500</span></span><br><span class="line">M_list = <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">10</span>))</span><br><span class="line">x_train, y_train = generate_data(sinusoidal, N, np.sqrt(<span class="number">1</span>/beta))</span><br><span class="line"></span><br><span class="line">log_evidences = []</span><br><span class="line"><span class="keyword">for</span> M <span class="keyword">in</span> M_list:</span><br><span class="line">    Phi = polynomial_features(x_train, M)</span><br><span class="line">    A = alpha + beta * Phi.T @ Phi</span><br><span class="line">    mN = beta * np.linalg.inv(A) @ Phi.T @ y_train</span><br><span class="line"></span><br><span class="line">    E_mN = <span class="number">0.5</span> * beta * np.linalg.norm(y_train - Phi @ mN) ** <span class="number">2</span> \</span><br><span class="line">        + <span class="number">0.5</span> * alpha * mN.T @ mN</span><br><span class="line"></span><br><span class="line">    log_evidence = <span class="number">0.5</span> * M * np.log(alpha) + <span class="number">0.5</span> * N * np.log(beta) \</span><br><span class="line">        - E_mN \</span><br><span class="line">        - <span class="number">0.5</span> * np.log(np.linalg.det(A)) \</span><br><span class="line">        - <span class="number">0.5</span> * N * np.log(<span class="number">2</span> * np.pi)</span><br><span class="line"></span><br><span class="line">    log_evidences.append(log_evidence.item())</span><br><span class="line"></span><br><span class="line">    y_pred = Phi @ mN</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">8</span>, <span class="number">6</span>))</span><br><span class="line">plt.plot(M_list, log_evidences)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;M&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;log evidence&#x27;</span>)</span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/对数模型证据与多项式模型复杂度的关系.jpg" alt="对数模型证据与多项式模型复杂度的关系" style="zoom:80%;" /></p>
+<h3 id="最大化证据函数">3.5.2 最大化证据函数</h3>
+<h4 id="a.-关于alpha的最大化">A. 关于<span
+class="math inline">\(\alpha\)</span>的最大化</h4>
+<p>首先定义下面的特征向量： <span class="math display">\[
+\left(\beta \Phi^{\mathrm{T}} \Phi\right) \mathbf{u}_{i}=\lambda_{i}
+\mathbf{u}_{i}
+\]</span></p>
+<p>结合公式：<span class="math inline">\(\mathbf{A}=\alpha
+\mathbf{I}+\beta \Phi^{\mathrm{T}} \Phi\)</span>，可知矩阵<span
+class="math inline">\(\mathbf{A}\)</span>的特征值为<span
+class="math inline">\(\alpha+\lambda_{i}\)</span>。</p>
+<p>下面考虑证据函数中<span class="math inline">\(\ln
+|\mathbf{A}|\)</span>项的关于<span
+class="math inline">\(\alpha\)</span>导数： <span
+class="math display">\[
+\frac{d}{d \alpha} \ln |\mathbf{A}|=\frac{d}{d \alpha} \ln
+\prod_{i}\left(\lambda_{i}+\alpha\right)=\frac{d}{d \alpha} \sum_{i} \ln
+\left(\lambda_{i}+\alpha\right)=\sum_{i} \frac{1}{\lambda_{i}+\alpha}
+\]</span></p>
+<p>因此证据函数关于<span
+class="math inline">\(\alpha\)</span>的驻点满足： <span
+class="math display">\[
+0=\frac{M}{2 \alpha}-\frac{1}{2} \mathrm{m}_{N}^{\mathrm{T}}
+\mathrm{m}_{N}-\frac{1}{2} \sum_{i} \frac{1}{\lambda_{i}+\alpha}
+\]</span></p>
+<p>两边同时乘以<span class="math inline">\(2\alpha\)</span>，可得：
+<span class="math display">\[
+\alpha \mathrm{m}_{N}^{\mathrm{T}} \mathrm{m}_{N}=M-\alpha \sum_{i}
+\frac{1}{\lambda_{i}+\alpha}=\gamma
+\]</span> 其中：<span class="math inline">\(\gamma\)</span>可以写成：
+<span class="math display">\[
+\begin{align}
+\gamma &amp; = M-\alpha \sum_{i} \frac{1}{\lambda_{i}+\alpha}\\
+&amp; = \sum_{i} \left(\frac{\lambda_{i}+\alpha}{\lambda_{i}+\alpha}
+-  \frac{\alpha}{\lambda_{i}+\alpha} \right) \\
+&amp; = \sum_{i} \frac{\lambda_{i}}{\alpha+\lambda_{i}}
+\end{align}
+\]</span></p>
+<p>于是，<span class="math inline">\(\alpha\)</span>满足： <span
+class="math display">\[
+\alpha=\frac{\gamma}{\mathrm{m}_{N}^{\mathrm{T}} \mathrm{m}_{N}}
+\]</span></p>
+<p>这是一个隐式解，因为不仅<span
+class="math inline">\(\gamma\)</span>与<span
+class="math inline">\(\alpha\)</span>相关，<span
+class="math inline">\(\mathrm{m}_{N}\)</span>也与<span
+class="math inline">\(\alpha\)</span>相关。这里<span
+class="math inline">\(\alpha\)</span>可以通过选定一个初始值后迭代求解。</p>
+<h4 id="b.-关于beta的最大化">B. 关于<span
+class="math inline">\(\beta\)</span>的最大化</h4>
+<p>下面考虑证据函数中<span class="math inline">\(\ln
+|\mathbf{A}|\)</span>项的关于<span
+class="math inline">\(\beta\)</span>导数： <span class="math display">\[
+\frac{d}{d \beta} \ln |\mathbf{A}|=\frac{d}{d \beta} \sum_{i} \ln
+\left(\lambda_{i}+\alpha\right)=\frac{1}{\beta} \sum_{i}
+\frac{\lambda_{i}}{\lambda_{i}+\alpha}=\frac{\gamma}{\beta}
+\]</span></p>
+<p>因此证据函数关于<span
+class="math inline">\(\beta\)</span>的驻点满足： <span
+class="math display">\[
+0=\frac{N}{2 \beta}-\frac{1}{2}
+\sum_{n=1}^{N}\left\{t_{n}-\mathbf{m}_{N}^{\mathrm{T}}
+\boldsymbol{\phi}\left(\mathbf{x}_{n}\right)\right\}^{2}-\frac{\gamma}{2
+\beta}
+\]</span></p>
+<p>整理后，可以得到： <span class="math display">\[
+\frac{1}{\beta}=\frac{1}{N-\gamma}
+\sum_{n=1}^{N}\left\{t_{n}-\mathbf{m}_{N}^{\mathrm{T}}
+\phi\left(\mathbf{x}_{n}\right)\right\}^{2}
+\]</span></p>
+<p><span
+class="math inline">\(\beta\)</span>的也是一个隐式解，需要通过选定一个初始值后迭代求解。当然，<span
+class="math inline">\(\alpha\)</span>和<span
+class="math inline">\(\beta\)</span>可以同时迭代求解。</p>
+<h3 id="参数的有效数量">3.5.3 参数的有效数量</h3>
+<p>这一部分也可以参考博客<a
+target="_blank" rel="noopener" href="http://wiljohn.top/2019/03/25/PRML3-5/#insight-from-alpha">(PRML
+Notes)3.5 The Evidence Approximation</a>。</p>
+<h4 id="对alpha的理解">对<span
+class="math inline">\(\alpha\)</span>的理解</h4>
+<p>回顾之前的推导过程，我们得到<span
+class="math inline">\(\mathbf{w}\)</span>的最大后验估计值为： <span
+class="math display">\[
+\mathbf{w}_{\mathrm{MAP}}=\mathbf{m}_{N}=\beta \mathbf{A}^{-1}
+\Phi^{\mathrm{T}} \mathbf{t}=\beta\left(\alpha \mathbf{I}+\beta
+\Phi^{\mathrm{T}} \Phi\right)^{-1} \Phi^{\mathrm{T}} \mathbf{t}
+\]</span></p>
+<p>而<span class="math inline">\(\mathbf{w}\)</span>的最大似然估计值为：
+<span class="math display">\[
+\mathbf{w}_{\mathrm{ML}}=\beta\left(\beta \Phi^{\mathrm{T}}
+\Phi\right)^{-1} \Phi^{\mathrm{T}} \mathbf{t}
+\]</span></p>
+<p>如果我们把参数空间的轴旋转成特征向量<span
+class="math inline">\(\mathbf{u}_{i}\)</span>对齐，然后把向量<span
+class="math inline">\(\Phi^{\mathrm{T}}
+\mathbf{t}\)</span>也投影到该方向上，则： <span class="math display">\[
+\Phi^{\mathrm{T}} \mathbf{t} =\sum_{i}c_i\mathbf{u}_{i}
+\]</span></p>
+<p>然后我们可以得到<span
+class="math inline">\(\mathbf{w}_{\mathrm{MAP}}\)</span>和<span
+class="math inline">\(\mathbf{w}_{\mathrm{ML}}\)</span>的新坐标： <span
+class="math display">\[
+\mathbf{w}_{\mathrm{MAP}} = \beta \sum_{i} c_i \left(\alpha
+\mathbf{I}+\beta \Phi^{\mathrm{T}} \Phi\right)^{-1}\mathbf{u}_{i} =
+\beta \sum_{i} \frac{c_i}{\alpha+\lambda_i}\mathbf{u}_{i}
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{w}_{\mathrm{ML}} = \beta \sum_{i} c_i \left(\beta
+\Phi^{\mathrm{T}} \Phi\right)^{-1}\mathbf{u}_{i} = \beta \sum_{i}
+\frac{c_i}{\lambda_i}\mathbf{u}_{i}
+\]</span></p>
+<p>于是，我们可以发现，<span
+class="math inline">\(\mathbf{w}_{\mathrm{MAP}}\)</span>和<span
+class="math inline">\(\mathbf{w}_{\mathrm{ML}}\)</span>的在每根轴上的坐标值是成比例的，比例系数为<span
+class="math inline">\(\lambda_i /
+(\lambda_i+\alpha)\)</span>。这个比值在<span
+class="math inline">\(0\)</span>和<span
+class="math inline">\(1\)</span>之间，于是我们可以得到<span
+class="math inline">\(0 \leqslant \gamma \leqslant M\)</span>。</p>
+<p>对于<span class="math inline">\(\lambda_i \gg
+\alpha\)</span>的方向，对应参数<span
+class="math inline">\(\mathbf{w}_i\)</span>会接近最大似然值，并且<span
+class="math inline">\(\lambda_i /
+(\lambda_i+\alpha)\)</span>的比值会接近<span
+class="math inline">\(1\)</span>。这些方向上的参数被称为<strong>良好确定的（well
+determined）</strong>。</p>
+<p>相反，对于<span class="math inline">\(\lambda_{i} \ll
+\alpha\)</span>的方法，<span class="math inline">\(\lambda_i /
+(\lambda_i+\alpha) \rightarrow 0\)</span>，对应的参数<span
+class="math inline">\(\mathbf{w}_i\)</span>会接近<span
+class="math inline">\(0\)</span>。可以看出，<strong><span
+class="math inline">\(\gamma\)</span>度量了良好确定的（well
+determined）参数的有效数量</strong>。</p>
+<h4 id="对beta的理解">对<span
+class="math inline">\(\beta\)</span>的理解</h4>
+<p>通过最大似然的方法，我们得到<span
+class="math inline">\(\beta\)</span>的估计为： <span
+class="math display">\[
+\frac{1}{\beta_{\mathrm{ML}}} =\frac{1}{N}
+\sum_{n=1}^{N}\left\{t_{n}-\mathbf{w}_{\mathrm{ML}}^{\mathrm{T}}
+\phi\left(\mathbf{x}_{n}\right)\right\}^{2}
+\]</span></p>
+<p>事实上，我们知道这种估计是有偏的。</p>
+<p>通过贝叶斯的方法，我们修正了最大似然方法带来的偏差，通过因子<span
+class="math inline">\(N-\gamma\)</span>反应出来： <span
+class="math display">\[
+\frac{1}{\beta}=\frac{1}{N-\gamma}
+\sum_{n=1}^{N}\left\{t_{n}-\mathbf{m}_{N}^{\mathrm{T}}
+\phi\left(\mathbf{x}_{n}\right)\right\}^{2}
+\]</span></p>
+<h4 id="alpha和beta的估计"><span
+class="math inline">\(\alpha\)</span>和<span
+class="math inline">\(\beta\)</span>的估计</h4>
+<p>考虑<span class="math inline">\(N \gg
+M\)</span>的情况，我们之前遇到过当数据量趋向无穷时，最大后验的结果会接近最大似然的结果。因为特征值<span
+class="math inline">\(\lambda_i\)</span>随着数据集规模的增加而增大，所以在这种情况下，我们可以令<span
+class="math inline">\(\lambda=M\)</span>，于是我们有： <span
+class="math display">\[
+\begin{align}
+\alpha &amp; = \frac{M}{2 E_{W}\left(\mathbf{m}_{N}\right)} \\
+\beta &amp; = \frac{N}{2 E_{D}\left(\mathbf{m}_{N}\right)}
+\end{align}
+\]</span></p>
+<p>这两个式子可以用来简单的估计<span
+class="math inline">\(\alpha\)</span>和<span
+class="math inline">\(\beta\)</span>的值。</p>
+<h2 id="其他参考资料">其他参考资料</h2>
+<ol type="1">
+<li>(PRML Notes)3.5 The Evidence Approximation. <a
+target="_blank" rel="noopener" href="http://wiljohn.top/2019/03/25/PRML3-5/#insight-from-alpha">http://wiljohn.top/2019/03/25/PRML3-5/#insight-from-alpha</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/02/15/ch3-3-5-%E8%AF%81%E6%8D%AE%E8%BF%91%E4%BC%BC/" title="ch3-3.5 证据近似">https://ehehe.cn/2022/02/15/ch3-3-5-证据近似/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PRML/" rel="tag"># PRML</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch3-3-4-%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A8%A1%E5%9E%8B%E6%AF%94%E8%BE%83/" rel="prev" title="ch3-3.4 贝叶斯模型比较">
+                  <i class="fa fa-angle-left"></i> ch3-3.4 贝叶斯模型比较
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch3-3-6-%E5%9B%BA%E5%AE%9A%E5%9F%BA%E5%87%BD%E6%95%B0%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7/" rel="next" title="ch3-3.6 固定基函数的局限性">
+                  ch3-3.6 固定基函数的局限性 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

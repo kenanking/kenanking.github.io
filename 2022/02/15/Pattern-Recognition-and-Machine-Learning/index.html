@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Pattern Recognition and Machine Learning. Bishop, Christopher M. New York :Springer, 2006.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="模式识别与机器学习">
+<meta property="og:url" content="https://ehehe.cn/2022/02/15/Pattern-Recognition-and-Machine-Learning/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="Pattern Recognition and Machine Learning. Bishop, Christopher M. New York :Springer, 2006.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/PRML.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E6%89%8B%E5%86%99%E4%BD%93%E6%95%B0%E5%AD%97%E8%AF%86%E5%88%AB.png">
+<meta property="article:published_time" content="2022-02-15T01:58:52.000Z">
+<meta property="article:modified_time" content="2022-02-15T01:58:52.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="PRML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/PRML.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/02/15/Pattern-Recognition-and-Machine-Learning/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/02/15/Pattern-Recognition-and-Machine-Learning/","path":"2022/02/15/Pattern-Recognition-and-Machine-Learning/","title":"模式识别与机器学习"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>模式识别与机器学习 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#chapter-1-%E5%AF%BC%E8%A8%80"><span class="nav-text">Chapter 1 导言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chapter-2-%E6%A6%82%E7%8E%87%E5%88%86%E5%B8%83"><span class="nav-text">Chapter 2 概率分布</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chapter-3-%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E6%A8%A1%E5%9E%8B"><span class="nav-text">Chapter 3 线性回归模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chapter-4-%E7%BA%BF%E6%80%A7%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B"><span class="nav-text">Chapter 4 线性分类模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chapter-5-%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="nav-text">Chapter 5 神经网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chapter-6-%E6%A0%B8%E6%96%B9%E6%B3%95"><span class="nav-text">Chapter 6 核方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chapter-7-%E7%A8%80%E7%96%8F%E6%A0%B8%E6%9C%BA"><span class="nav-text">Chapter 7 稀疏核机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chapter-8-%E5%9B%BE%E6%A8%A1%E5%9E%8B"><span class="nav-text">Chapter 8 图模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chapter-9-%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E5%92%8C%E6%9C%9F%E6%9C%9B%E6%9C%80%E5%A4%A7"><span class="nav-text">Chapter 9 混合模型和期望最大</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/02/15/Pattern-Recognition-and-Machine-Learning/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="模式识别与机器学习 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          模式识别与机器学习
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-thumbs-up"></i>
+      </span>
+      <span class="post-meta-item-text">置顶</span>
+    </span>
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-15 09:58:52" itemprop="dateCreated datePublished" datetime="2022-02-15T09:58:52+08:00">2022-02-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>16 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><strong>Pattern Recognition and Machine Learning.</strong> Bishop,
+Christopher M. New York :Springer, 2006.</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/PRML.png" alt="PRML" style="zoom: 50%;" /></p>
+<span id="more"></span>
+<p>😄 For Basic 😊 For Intermediate 😰 For Challenging</p>
+<h2 id="chapter-1-导言">Chapter 1 导言</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />😄 1.1
+多项式曲线拟合</label></li>
+<li><label><input type="checkbox" checked="" />😊 1.2
+概率论</label></li>
+<li><label><input type="checkbox" checked="" />😄 1.3
+模型选择</label></li>
+<li><label><input type="checkbox" checked="" />😄 1.4
+维度灾难</label></li>
+<li><label><input type="checkbox" checked="" />😊 1.5
+决策论</label></li>
+<li><label><input type="checkbox" checked="" />😊 1.6
+信息论</label></li>
+<li><label><input type="checkbox" />习题</label></li>
+</ul>
+<hr />
+<blockquote>
+<p>The field of <strong>pattern recognition</strong> is concerned with
+the ==automatic discovery of regularities in data through the use of
+computer algorithms== and with the use of these regularities to take
+actions such as classifying the data into different categories.</p>
+</blockquote>
+<p>在介绍部分首先引入了模式识别的概念和意义，然后通过手写体数字识别的例子，讲述使用传统编写规则或者提取形状特征的方法效果不好，从而引出了效果更好的方法——<strong>机器学习</strong>的方法。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/手写体数字识别.png" alt="手写体数字识别" style="zoom:33%;" /></p>
+<p>在机器学习方法中，由<span class="math inline">\(N\)</span>个数字<span
+class="math inline">\(\{\mathbf{x}_1,\cdots,\mathbf{x}_N\}\)</span>组成的集合为<strong>训练集（training
+set）</strong>，其对应的数字组成的向量为<strong>目标向量（target
+vector）</strong><span
+class="math inline">\(\mathbf{t}\)</span>。机器学习算法的任务就是找到一个函数<span
+class="math inline">\(y(\mathbf{x})\)</span>，输入一个新的图像<span
+class="math inline">\(\mathbf{x}\)</span>，输出这个图像对应的类别<span
+class="math inline">\(\mathbf{y}\)</span>。</p>
+<p>函数<span
+class="math inline">\(\mathrm{y}(\mathrm{x})\)</span>的具体形式在<strong>训练（training）</strong>阶段（也叫做<strong>学习（learning）</strong>阶段）确定。一旦函数的形式被确定，就可以使用新图像组成的<strong>测试集（test
+set）</strong>，来测试这个函数区分新的样本的能力，这个能力叫做<strong>泛化（generalization）</strong>，也就是训练结果在新数据上的表现。泛化是模式识别中的重要目标。</p>
+<p>在实际应用中，原始输入通常会经过<strong>预处理（preprocessed）</strong>后输入机器学习模型中来简化问题，这个预处理过程有时也叫做<strong>特征提取（feature
+extraction）</strong>。特征提取也可以用在加快计算速度上，不过相对的就会遗弃一些信息，使得系统整体精度下降。</p>
+<p><strong>模式识别问题的分类：</strong></p>
+<ul>
+<li><p><strong>监督学习（supervised learning）</strong></p>
+<p>训练数据中包含输入向量和目标向量。</p>
+<p>如果输出为离散的类别，为<strong>分类（classification）</strong>问题。</p>
+<p>如果输出为连续的变量，为<strong>回归（regression）</strong>问题。</p></li>
+<li><p><strong>无监督学习（unsupervised learning）</strong></p>
+<p>训练数据只包含输入向量。</p>
+<ol type="1">
+<li><strong>聚类（clustering）</strong>：发现相似样本并分组</li>
+<li><strong>密度估计（density
+estimation）</strong>：决定输入空间中数据的分布</li>
+<li><strong>数据可视化（visualization）</strong>：将数据从高维空间投影到二维和三维空间用以呈现</li>
+</ol></li>
+<li><p><strong>强化学习（reinforcement learning）</strong></p>
+<p>在给定<strong>环境（environment）</strong>下，找到一系列合适的<strong>动作（action）</strong>，使得最终<strong>奖赏值（reward）</strong>最大。</p>
+<blockquote>
+<p>The technique of reinforcement learning is concerned with the problem
+of finding suitable actions to take in a given situation in order to
+maximize a reward.</p>
+</blockquote></li>
+</ul>
+<p><br></p>
+<h2 id="chapter-2-概率分布">Chapter 2 概率分布</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />😄 2.1
+二项变量</label></li>
+<li><label><input type="checkbox" checked="" />😊 2.2
+多项式变量</label></li>
+<li><label><input type="checkbox" checked="" />😊 2.3
+高斯分布</label></li>
+<li><label><input type="checkbox" checked="" />😊 2.4
+指数族分布</label></li>
+<li><label><input type="checkbox" checked="" />😄 2.5
+非参数化方法</label></li>
+<li><label><input type="checkbox" />习题</label></li>
+</ul>
+<hr />
+<p>概率论在解决模式识别问题中具有重要作用。这一章里介绍了一些特殊的概率分布，它们是构成复杂模型的基础。</p>
+<p>这一章中介绍的其中一个概率分布的作用是在给定有限次观测<span
+class="math inline">\(\mathbf{x}_{1}, \ldots,
+\mathbf{x}_{N}\)</span>的前提下，对随机变量<span
+class="math inline">\(\mathbf{x}\)</span>的概率分布<span
+class="math inline">\(p(\mathbf{x})\)</span>进行建模，称为<strong>密度估计（density
+estimation）</strong>。对于密度估计的两种方法为：<strong>参数（parametric）估计</strong>和<strong>非参数（nonparametric）估计</strong>。</p>
+<p>参数估计的方法假定分布有一个具体的函数形式，通过参数的调节控制了整个概率分布。参数分布的具体例子有：离散随机变量的二项分布、多项式分布以及连续随机变量的高斯分布。</p>
+<p>非参数估计的方法分布的形式依赖于数据集的规模，模型中的参数控制了模型的复杂度。非参数模型有基于直方图、最近邻和核函数的。</p>
+<p><br></p>
+<h2 id="chapter-3-线性回归模型">Chapter 3 线性回归模型</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />😄 3.1
+线性基函数模型</label></li>
+<li><label><input type="checkbox" checked="" />😄 3.2
+偏差-方差分解</label></li>
+<li><label><input type="checkbox" checked="" />😄 3.3
+贝叶斯线性回归</label></li>
+<li><label><input type="checkbox" checked="" />😊 3.4
+贝叶斯模型比较</label></li>
+<li><label><input type="checkbox" checked="" />😰 3.5
+证据近似</label></li>
+<li><label><input type="checkbox" checked="" />😄 3.6
+固定基函数的局限性</label></li>
+<li><label><input type="checkbox" />习题</label></li>
+</ul>
+<hr />
+<p>回归的目的是在给定输入变量——<span
+class="math inline">\(D\)</span>维向量<span
+class="math inline">\(\mathbf{x}\)</span>，预测一个或多个连续目标变量——<span
+class="math inline">\(t\)</span>。在第一章中已经遇到了一个回归问题的例子：多项式曲线拟合的问题。这是一个典型的线性回归模型。</p>
+<p>线性回归模型的参数具有线性函数的性质。</p>
+<p>线性回归模型最简单的形式是——输入变量的线性函数。但是也可以通过将一组输入变量的非线性函数进行线性组合，得到更有用的函数，这一系列非线性函数称为<strong>基函数（basis
+function）</strong>。</p>
+<p>线性回归模型是参数的线性函数，这样会使得在分析上更简单。但它也可以是输入变量的非线性函数。</p>
+<p>给定一个由<span class="math inline">\(N\)</span>个观测值<span
+class="math inline">\(\{\mathbf{x}_n\}\)</span>组成数据集，其中<span
+class="math inline">\(n=1, \ldots, N\)</span>，以及对应的目标值<span
+class="math inline">\(\left\{t_{n}\right\}\)</span>。我们的目标是在给出新的<span
+class="math inline">\(\mathbf{x}\)</span>时预测<span
+class="math inline">\(t\)</span>的值。</p>
+<p>最简单的方法是建立一个适当的函数关系<span
+class="math inline">\(y(\mathbf{x})\)</span>，对于新的输入<span
+class="math inline">\(\mathbf{x}\)</span>，直接给出对应<span
+class="math inline">\(t\)</span>的预测。</p>
+<p>一般地，从概率的观点来看，可以对预测分布<span
+class="math inline">\(p(t \mid
+\mathbf{x})\)</span>进行建模，它表达了对于每个<span
+class="math inline">\(\mathbf{x}\)</span>的值，<span
+class="math inline">\(t\)</span>的不确定性。从这个条件分布中，我们可以对于新的输入<span
+class="math inline">\(\mathbf{x}\)</span>，对<span
+class="math inline">\(t\)</span>做出预测。这种方法等价于最小化一个恰当选择的损失函数的期望值。</p>
+<p>虽然线性模型在实际应用中有很大的局限，但它是构成更加复杂模型的基础。</p>
+<p><br></p>
+<h2 id="chapter-4-线性分类模型">Chapter 4 线性分类模型</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />😊 4.1
+判别函数</label></li>
+<li><label><input type="checkbox" checked="" />😊 4.2
+概率生成式模型</label></li>
+<li><label><input type="checkbox" checked="" />😊 4.3
+概率判别式模型</label></li>
+<li><label><input type="checkbox" checked="" />😊 4.4
+拉普拉斯近似</label></li>
+<li><label><input type="checkbox" checked="" />😰 4.5
+贝叶斯logistic回归</label></li>
+<li><label><input type="checkbox" />习题</label></li>
+</ul>
+<hr />
+<p>上一章节探讨了简单的回归模型，这一章讨论一类用于解决分类问题的类似模型。分类问题的目的是将输入向量<span
+class="math inline">\(\mathbf{x}\)</span>分配给类别<span
+class="math inline">\(\mathcal{C}_{k}\)</span>，其中<span
+class="math inline">\(k=1, \dots, K\)</span>。</p>
+<p>在正常的情况下，类别之间是不相交的，因此每个输入仅对应于一个类別。因此，输入空间可以被划分为<strong>决策区域（decision
+regions）</strong>，其边界称为<strong>决策边界（decision
+boundaries）</strong>或<strong>决策面（decision
+surfaces）</strong>。</p>
+<p>在本章中，我们考虑用于分类的线性模型，这意味着决策面是输入向量<span
+class="math inline">\(\mathbf{x}\)</span>的线性函数，即由<span
+class="math inline">\(D\)</span>维输入空间内的<span
+class="math inline">\((D−1)\)</span>维超平面。可以被线性的决策面精确分离的数据集被称为<strong>线性可分（linearly
+separable）</strong>数据集。</p>
+<p>对于回归问题，目标变量<span
+class="math inline">\(\mathbf{t}\)</span>是一个实数向量。在分类问题中，目标变量可以使用多种方式去表示类别标签。</p>
+<p>在概率模型中，对于二分类问题，我们使用目标变量<span
+class="math inline">\(t\in\{0,1\}\)</span>表示类别<span
+class="math inline">\(\mathcal{C}_{1}\)</span>和<span
+class="math inline">\(\mathcal{C}_{2}\)</span>。对于<span
+class="math inline">\(K \gt 2\)</span>的情况，使用<span
+class="math inline">\(1-\text{of}-K\)</span>的编码方式表示。</p>
+<p>在第一章中，我们确定了三种不同的解决分类问题的方法（[[ch1-1-5-决策论#1
+5 4
+推断和决策]]）。最简单的方式是构建一个判别函数，直接确定输入向量<span
+class="math inline">\(\mathbf{x}\)</span>对应的类别<span
+class="math inline">\(t\)</span>。另一种更强大的方式是对条件概率分布<span
+class="math inline">\(p(\mathcal{C}_{k} \mid
+\mathbf{x})\)</span>进行建模，然后使用这个分布来做出最佳决策。我们可以使用两种不同的方式对<span
+class="math inline">\(p(\mathcal{C}_{k} \mid
+\mathbf{x})\)</span>进行建模。这一章中将讨论这三种方法的示例。</p>
+<p>在线性回归问题中，模型预测为<span class="math inline">\(y(\mathbf{x})
+=
+\mathbf{w}^{\mathrm{T}}\mathbf{x}+w_{0}\)</span>。而在回归问题中，我们希望模型的预测为离散的类别标签或者是后验概率分布，所以我们使用非线性函数<span
+class="math inline">\(f(\cdot)\)</span>对线性模型进行非线性变化，即：
+<span class="math display">\[
+y(\mathbf{x}) = f(\mathbf{w}^{\mathrm{T}}\mathbf{x}+w_{0})
+\]</span></p>
+<p>在机器学习中，<span
+class="math inline">\(f(\cdot)\)</span>称为<strong>激活函数（activation
+function）</strong>。</p>
+<p><br></p>
+<h2 id="chapter-5-神经网络">Chapter 5 神经网络</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />😄 5.1
+前馈神经网络</label></li>
+<li><label><input type="checkbox" checked="" />😊 5.2
+网络训练</label></li>
+<li><label><input type="checkbox" />5.3 误差后向传播</label></li>
+<li><label><input type="checkbox" />5.4 Hessian矩阵</label></li>
+<li><label><input type="checkbox" />5.5 神经网络中的正则化</label></li>
+<li><label><input type="checkbox" />5.6 混合密度网络</label></li>
+<li><label><input type="checkbox" />5.7 贝叶斯神经网络</label></li>
+<li><label><input type="checkbox" />习题</label></li>
+</ul>
+<hr />
+<p>在第三章和第四章，我们用固定基函数的线性组合构成了我们的回归和分类模型。这些模型具有一些有用的分析和计算性质，但是在实际应用中受到维度灾难问题的限制。为了将这些模型应用于大规模问题，需要使用适应数据的基函数。</p>
+<p><strong>支持向量机（SVM）</strong>通过定义以训练数据为中心的基函数，然后在训练过程中选择其中的一个子集的方式解决这个问题。支持向量机的优点是虽然训练涉及非线性优化，但目标函数是凸函数，因此<strong>优化问题的求解相对简单</strong>。最终模型中的基函数数量通常远小于训练数据的数据，但相对来说仍然是比较大的。</p>
+<p><strong>相关向量机（RVM）</strong>也选择固定基函数集合的一个子集，但是会生成一个更稀疏的模型。与支持向量机不同，相关向量机也产生概率形式的输出，这种结果会以训练阶段的非凸优化为代价。</p>
+<p>另一种方式是先固定基函数的数量，但是允许基函数是<strong>自适应的（adaptive）</strong>。在模式识别的背景下，这种类型最成功的模型是本章讨论的前馈神经网络，也称为<strong>多层感知器（multilayer
+perceptron）</strong>。事实上，使用“多层感知器”一词不不太恰当，因为该模型包含多层logistic回归模型（具有连续非线性）而不是多个感知器（具有不连续非线性）。</p>
+<p>对于许多应用，与具有相同泛化性能的支持向量机相比，前馈神经网络得到的模型更紧凑，因此计算速度更快。与相关向量机一样，为这种紧凑性付出的代价是，构成网络训练基础的似然函数不再是模型参数的凸函数。然而，在实践中，为了获得能够快速处理新数据的紧凑模型，通常值得在训练阶段投入大量计算资源。</p>
+<p><br></p>
+<h2 id="chapter-6-核方法">Chapter 6 核方法</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" />😄 6.1
+对偶表示</label></li>
+<li><label><input type="checkbox" checked="" />😊 6.2
+构造核</label></li>
+<li><label><input type="checkbox" checked="" />😊 6.3
+径向基函数网络</label></li>
+<li><label><input type="checkbox" />😰 6.4 高斯过程</label></li>
+<li><label><input type="checkbox" />习题</label></li>
+</ul>
+<hr />
+<p>在第三章和第四章，我们考虑了用于回归和分类问题的线性模型，通过函数<span
+class="math inline">\(y(\mathbf{x}, \mathbf{w})\)</span>将输入<span
+class="math inline">\(\mathbf{x}\)</span>映射到输出<span
+class="math inline">\(y\)</span>。在学习阶段，我们使用一组数据计算<strong>参数向量<span
+class="math inline">\(\mathbf{w}\)</span>的点估计</strong>或确定它的<strong>后验分布</strong>，然后我们抛弃训练数据，完全基于参数<span
+class="math inline">\(\mathbf{w}\)</span>得到新的预测结果。这种方法也用在非线性模型中，例如第五章中的神经网络。</p>
+<p>然而，有一类模式识别技术，其中的训练数据（或其子集）在预测阶段也被保留和使用，例如：Parzen密度估计和最近邻方法。这些方法为<strong>基于存储（memory-based）</strong>的方法，需要存储整个数据集用来预测新的数据点。这些方法通常需要定义一个<strong>衡量输入空间两个向量之间相似度的度量</strong>。</p>
+<p>许多线性模型可以重新转换为等效的“<strong>对偶表示（dual
+representation）</strong>”，其中预测也是基于由训练数据计算得到的核函数的线性组合。对于基于非线性特征空间映射<span
+class="math inline">\(\boldsymbol{\phi}(\mathbf{x})\)</span>的模型，核函数由下式给出：
+<span class="math display">\[
+k(\mathbf{x}, \mathbf{x}^{\prime}) =
+\boldsymbol{\phi}(\mathbf{x})^{\mathrm{T}}\boldsymbol{\phi}(\mathbf{x}^{\prime})
+\]</span></p>
+<p>考虑特征空间的恒等映射<span
+class="math inline">\(\boldsymbol{\phi}(\mathbf{x})=\mathbf{x}\)</span>，我们可以得到最简单的核函数，此时<span
+class="math inline">\(k(\mathbf{x}, \mathbf{x}^{\prime}) =
+\mathbf{x}^{\mathrm{T}}\mathbf{x}^{\prime}\)</span>。这称为<strong>线性核</strong>。</p>
+<p>将特征空间的内积表示为核使得我们可以通过<strong>核技巧</strong>（也叫<strong>核替换</strong>）对许多著名的算法进行扩展。通用的想法是：<strong>如果的输入向量<span
+class="math inline">\(\mathbf{x}\)</span>以标量积的形式出现，那么可以用一些其他的核来替换这个标量积</strong>。</p>
+<p>常见的核函数有<strong>静止核</strong>：<span
+class="math inline">\(k(\mathbf{x},\mathbf{x}^{\prime})=k(\mathbf{x}-\mathbf{x}^{\prime})\)</span>、<strong>同质核（径向基函数）</strong>：<span
+class="math inline">\(k(\mathbf{x},\mathbf{x}^{\prime})=k(\|\mathbf{x}-\mathbf{x}^{\prime}\|)\)</span>。</p>
+<p><br></p>
+<h2 id="chapter-7-稀疏核机">Chapter 7 稀疏核机</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" />7.1 最大边缘分类器</label></li>
+<li><label><input type="checkbox" />7.2 相关向量机</label></li>
+<li><label><input type="checkbox" />习题</label></li>
+</ul>
+<hr />
+<p>在上一章中，我们探讨了各种基于非线性核的学习算法。这一类算法的最大的局限性是核函数<span
+class="math inline">\(k(\mathbf{x}_{n},
+\mathbf{x}_{m})\)</span>必须在所有可能的训练数据点<span
+class="math inline">\(\mathbf{x}_{n}\)</span>和<span
+class="math inline">\(\mathbf{x}_{m}\)</span>上进行计算，这样的计算量在训练阶段是不可行的，并且在对新数据点进行预测时可能导致过长的计算时间。</p>
+<p>在本章中，我们将研究具有<strong>稀疏（sparse）</strong>解基于核的算法，从而对新数据的预测只依赖于在训练数据点的子集上计算的核函数。</p>
+<p>我们首先详细了解一下<strong>支持向量机（SVM）</strong>，它在几年前开始流行，用于解决<strong>分类、回归和异常检测</strong>方面的问题。支持向量机的一个重要特性是，模型参数的确定对应于一个<strong>凸最优化问题</strong>，因此任何局部解也是全局最优解。</p>
+<p>SVM是一个决策机器，所以不提供后验概率。另一种基于稀疏核的技术为<strong>相关向量机（RVM）</strong>，基于贝叶斯公式，可以提供后验概率结果，并且通常比SVM有更稀疏的解。</p>
+<p><br></p>
+<h2 id="chapter-8-图模型">Chapter 8 图模型</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" />8.1 贝叶斯网络</label></li>
+<li><label><input type="checkbox" />8.2 条件独立性</label></li>
+<li><label><input type="checkbox" />8.3 马尔科夫随机场</label></li>
+<li><label><input type="checkbox" />8.4 图模型推断</label></li>
+<li><label><input type="checkbox" />习题</label></li>
+</ul>
+<hr />
+<p><strong>概率在现代模式识别中起着重要的作用</strong>。在第一章中，我们看到了概率论使用两个简单的等式来表示，分别对应于加法和乘法法则。本书中所有的概率推断和学习算法，无论多么复杂，都是在重复使用这两个等式。因此，我们接下来将完全通过代数计算来对更加复杂的概率模型进行建模和求解。</p>
+<p>然而，我们会发现，使用概率分布的图形表示进行分析很有好处。这种概率分布的图形表示被称为<strong>概率图模型（probabilistic
+graphical models）</strong>。概率图模型具有一下性质：</p>
+<ul>
+<li>它们提供了一种简单的方式将概率模型的结构<strong>可视化</strong>，可以用于设计新的模型；</li>
+<li>通过考察图形，我们可以更深刻地<strong>认识模型的性质</strong>，包括条件独立性质；</li>
+<li>在复杂模型中推理和学习所需的<strong>复杂计算可以使用图形来表达</strong>，图隐式地承载了背后的数学表达式。</li>
+</ul>
+<p>一个图由<strong>结点（nodes）</strong>（也被称为端点（vertices））和它们之间的<strong>链接（links）</strong>（也被称为边（edges）或弧（arcs））组成。</p>
+<p>在概率图模型中，<strong>每个结点表示一个随机变量（或一组随机变量），链接表示这些变量之间的概率关系</strong>。该图描述了所有随机变量的联合分布可以分解为各因素的乘积，每个因素只取决于变量的一个子集。</p>
+<p>我们将首先讨论<strong>贝叶斯网络（Bayesian
+networks）</strong>，也被称为<strong>有向图模型（directed graphical
+models）</strong>，其中图的链接具有特定的方向性，由箭头表示。</p>
+<p>另一类主要的图形模型是<strong>马尔科夫随机场（Markov random
+fields）</strong>，也被称为<strong>无向图模型（undirected graphical
+models）</strong>，其中的链接不带有箭头，也没有方向性意义。</p>
+<p><strong>有向图有助于表达随机变量之间的因果关系</strong>，而<strong>无向图则更适合于表达随机变量之间的软约束</strong>。为了解决推理问题，将有向图和无向图都转换为一种不同的表示方法，即<strong>因子图（factor
+graph）</strong>，往往是很方便的。</p>
+<p>本章中，我们会将注意力集中在那些能够用于模式识别和机器学习应用中的图模型的关键概念。</p>
+<p><br></p>
+<h2 id="chapter-9-混合模型和期望最大">Chapter 9 混合模型和期望最大</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" />9.1 K均值聚类</label></li>
+<li><label><input type="checkbox" />9.2 混合高斯模型</label></li>
+<li><label><input type="checkbox" />9.3 EM的另一种视角</label></li>
+<li><label><input type="checkbox" />9.4 一般的 EM 算法</label></li>
+</ul>
+<hr />
+<p><br></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/02/15/Pattern-Recognition-and-Machine-Learning/" title="模式识别与机器学习">https://ehehe.cn/2022/02/15/Pattern-Recognition-and-Machine-Learning/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PRML/" rel="tag"># PRML</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/14/ch1-1-6-%E4%BF%A1%E6%81%AF%E8%AE%BA/" rel="prev" title="ch1-1.6 信息论">
+                  <i class="fa fa-angle-left"></i> ch1-1.6 信息论
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch2-2-1-%E4%BA%8C%E5%85%83%E5%8F%98%E9%87%8F/" rel="next" title="ch2-2.1 二元变量">
+                  ch2-2.1 二元变量 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

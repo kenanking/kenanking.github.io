@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="5.2 网络训练 回归问题 目前为止，我们把神经网络看成一类参数化的非线性函数，它可以将输入变量\(\mathbf{x}\)映射到输出变量\(\mathbf{y}\)。一种简单的确定网络参数的方式类似于1.1节中多项式曲线拟合的例子（[[ch1-1-1-例子：多项式曲线拟合]]），我们可以最小化平方和误差函数。 给定一个训练集，输入向量为\(\{\mathbf{x}_{n}\}\)，其中\(n&#x3D;1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch5-5.2 网络训练">
+<meta property="og:url" content="https://ehehe.cn/2022/02/15/ch5-5-2-%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="5.2 网络训练 回归问题 目前为止，我们把神经网络看成一类参数化的非线性函数，它可以将输入变量\(\mathbf{x}\)映射到输出变量\(\mathbf{y}\)。一种简单的确定网络参数的方式类似于1.1节中多项式曲线拟合的例子（[[ch1-1-1-例子：多项式曲线拟合]]），我们可以最小化平方和误差函数。 给定一个训练集，输入向量为\(\{\mathbf{x}_{n}\}\)，其中\(n&#x3D;1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E8%AF%AF%E5%B7%AE%E5%87%BD%E6%95%B0%E7%9A%84%E5%87%A0%E4%BD%95%E8%A1%A8%E7%A4%BA.png">
+<meta property="article:published_time" content="2022-02-15T06:09:15.000Z">
+<meta property="article:modified_time" content="2022-02-15T06:09:15.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="PRML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E8%AF%AF%E5%B7%AE%E5%87%BD%E6%95%B0%E7%9A%84%E5%87%A0%E4%BD%95%E8%A1%A8%E7%A4%BA.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/02/15/ch5-5-2-%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/02/15/ch5-5-2-%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83/","path":"2022/02/15/ch5-5-2-网络训练/","title":"ch5-5.2 网络训练"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch5-5.2 网络训练 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83"><span class="nav-text">5.2 网络训练</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E5%BD%92%E9%97%AE%E9%A2%98"><span class="nav-text">回归问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98"><span class="nav-text">分类问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%A4%9A%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98"><span class="nav-text">标准多分类问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E4%BC%98%E5%8C%96"><span class="nav-text">5.2.1 参数优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E4%BA%8C%E6%AC%A1%E8%BF%91%E4%BC%BC"><span class="nav-text">5.2.2 局部二次近似</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%A2%AF%E5%BA%A6%E4%BF%A1%E6%81%AF"><span class="nav-text">5.2.3 使用梯度信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E4%BC%98%E5%8C%96"><span class="nav-text">5.2.4 梯度下降优化</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/02/15/ch5-5-2-%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch5-5.2 网络训练 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch5-5.2 网络训练
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-15 14:09:15" itemprop="dateCreated datePublished" datetime="2022-02-15T14:09:15+08:00">2022-02-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>14 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="网络训练">5.2 网络训练</h2>
+<h3 id="回归问题">回归问题</h3>
+<p>目前为止，我们把神经网络看成一类参数化的非线性函数，它可以将输入变量<span
+class="math inline">\(\mathbf{x}\)</span>映射到输出变量<span
+class="math inline">\(\mathbf{y}\)</span>。一种简单的确定网络参数的方式类似于1.1节中多项式曲线拟合的例子（[[ch1-1-1-例子：多项式曲线拟合]]），我们可以最小化平方和误差函数。</p>
+<p>给定一个训练集，输入向量为<span
+class="math inline">\(\{\mathbf{x}_{n}\}\)</span>，其中<span
+class="math inline">\(n=1,\dots,N\)</span>，对应的目标向量为<span
+class="math inline">\(\{\mathbf{t}_{n}\}\)</span>，我们可以最小化下面的误差函数：
+<span class="math display">\[
+E(\mathbf{w}) =
+\frac{1}{2}\sum_{n=1}^{N}\left\|\mathbf{y}(\mathbf{x}_{n},
+\mathbf{w})-\mathbf{t}_{n} \right\|^{2}
+\]</span></p>
+<p>然而，通过概率的形式表示神经网络的输出，我们可以从更一般的视角看待网络训练。</p>
+<span id="more"></span>
+<p>首先我们考虑一元实数变量<span
+class="math inline">\(t\)</span>的回归问题。我们假定<span
+class="math inline">\(t\)</span>服从高斯分布，均值与<span
+class="math inline">\(\mathbf{x}\)</span>相关并且由神经网络的输出确定：
+<span class="math display">\[
+p(t \mid \mathbf{x}, \mathbf{w}) = \mathcal{N}(t \mid y(\mathbf{x},
+\mathbf{w}), \beta^{-1})
+\]</span> 其中，<span
+class="math inline">\(\beta\)</span>表示高斯噪声的精度。</p>
+<p>给定一个由<span
+class="math inline">\(N\)</span>个独立同分布的观测组成的数据集<span
+class="math inline">\(\mathbf{X} =
+\{\mathbf{x}_{1},\dots,\mathbf{x}_{N}\}\)</span>，以及对应的目标值<span
+class="math inline">\(\boldsymbol{\mathsf{t}}=\{t_{1},\dots,t_{N}\}\)</span>，我们可以构建对于的似然函数：
+<span class="math display">\[
+p(\boldsymbol{\mathsf{t}} \mid \mathbf{X}, \mathbf{w}, \beta) =
+\prod_{n=1}^{N} p(t_{n} \mid \mathbf{x}_{n}, \mathbf{w}, \beta)
+\]</span> 取似然函数的负对数，可以获得误差方程为： <span
+class="math display">\[
+\frac{\beta}{2}\sum_{n=1}^{N}\left\{y(\mathbf{x}_{n}, \mathbf{w}) -
+t_{n}\right\}^{2} - \frac{N}{2}\ln \beta + \frac{N}{2}\ln (2\pi)
+\]</span></p>
+<p>我们可以使用最大似然方法来学习参数<span
+class="math inline">\(\mathbf{w}\)</span>和<span
+class="math inline">\(\beta\)</span>。通常，在神经网络中，我们采用最小化误差函数来求解参数。首先考虑参数<span
+class="math inline">\(\mathbf{w}\)</span>，最大化似然函数等价于最小化平方和误差函数：
+<span class="math display">\[
+E(\mathbf{w}) = \frac{1}{2} \sum_{n=1}^{N}\{y(\mathbf{x}_{n},
+\mathbf{w}) - t_{n}\}^{2}
+\]</span></p>
+<p>通过最小化<span
+class="math inline">\(E(\mathbf{w})\)</span>得到的<span
+class="math inline">\(\mathbf{w}\)</span>的值记作<span
+class="math inline">\(\mathbf{w}_{\text{ML}}\)</span>。在实际中，由于神经网络函数<span
+class="math inline">\(y(\mathbf{x}_{n},
+\mathbf{w})\)</span>的非线性，误差函数<span
+class="math inline">\(E(\mathbf{w})\)</span>通常是非凸函数，因此我们找到的可能是似然函数的一个局部最大值（对应于误差函数的一个局部最小值）。</p>
+<p>得到<span
+class="math inline">\(\mathbf{w}_{\text{ML}}\)</span>之后，通过最小化负对数似然函数，我们可以得到<span
+class="math inline">\(\beta\)</span>为： <span class="math display">\[
+\frac{1}{\beta_{\text{ML}}} = \frac{1}{N}
+\sum_{n=1}^{N}\{y(\mathbf{x}_{n}, \mathbf{w}_{\text{ML}}) - t_{n}\}^{2}
+\]</span></p>
+<p>如果我们有多个目标变量，我们假设这些变量关于<span
+class="math inline">\(\mathbf{x}\)</span>和<span
+class="math inline">\(\mathbf{w}\)</span>条件独立，并且具有相同的噪声精度<span
+class="math inline">\(\beta\)</span>。那么，目标变量的条件分布为： <span
+class="math display">\[
+p(\mathbf{t} \mid \mathbf{x}, \mathbf{w}) = \mathcal{N}(\mathbf{t} \mid
+\mathbf{y}(\mathbf{x}, \mathbf{w}), \beta^{-1}\mathbf{I})
+\]</span>
+与一元目标变量的情况相同，权重向量的最大似然解可以通过最小化平方和误差函数确定。噪声的精度为：
+<span class="math display">\[
+\frac{1}{\beta_{\text{ML}}} =
+\frac{1}{NK}\sum_{n=1}^{N}\left\|\mathbf{y}(\mathbf{x}_{n},
+\mathbf{w}_{\text{ML}}) - \mathbf{t}_{n} \right\|^{2}
+\]</span> 其中，<span
+class="math inline">\(K\)</span>表示目标变量的数量。</p>
+<p>在回归问题中，我们可以把神经网络输出的激活函数看作一个恒等函数<span
+class="math inline">\(y_{k}=a_{k}\)</span>。于是，对应的平方和误差函数具有下面的性质：
+<span class="math display">\[
+\begin{align}
+\frac{\partial E}{\partial a_{k}}
+&amp;= \frac{\partial E}{\partial y_{k}} \frac{\partial y_{k}}{\partial
+a_{k}} \\
+&amp;= y_{k} - t_{k}
+\end{align}
+\]</span>
+在讨论<strong>误差反向传播</strong>的时候，我们会用到这个结果。</p>
+<h3 id="分类问题">分类问题</h3>
+<p>现在考虑二分类问题，我们有一元目标变量<span
+class="math inline">\(t\)</span>，且<span
+class="math inline">\(t=1\)</span>表示类别<span
+class="math inline">\(\mathcal{C}_{1}\)</span>，<span
+class="math inline">\(t=0\)</span>表示类别<span
+class="math inline">\(\mathcal{C}_{2}\)</span>。神经网络具有一个输出，以logistic
+sigmoid函数作为输出的激活函数，即： <span class="math display">\[
+y = \sigma(a) = \frac{1}{1 + \exp(a)}
+\]</span></p>
+<p>所以<span class="math inline">\(0 \leqslant y(\mathbf{x}, \mathbf{w})
+\leqslant 1\)</span>。我们可以把<span
+class="math inline">\(y(\mathbf{x},
+\mathbf{w})\)</span>解释为条件概率<span
+class="math inline">\(p(\mathcal{C}_{1} \mid
+\mathbf{x})\)</span>，那么<span class="math inline">\(p(\mathcal{C}_{2}
+\mid \mathbf{x})\)</span>为<span class="math inline">\(1-y(\mathbf{x},
+\mathbf{w})\)</span>。于是，目标变量的条件概率分布是一个伯努利分布，形式为：
+<span class="math display">\[
+p(t \mid \mathbf{x}, \mathbf{w}) = y(\mathbf{x},
+\mathbf{w})^{t}\{1-y(\mathbf{x}, \mathbf{w})\}^{1-t}
+\]</span></p>
+<p>如果我们考虑一组由独立观测构成的训练集，那么可以得到误差函数（负对数似然函数）为交叉熵误差函数：
+<span class="math display">\[
+E(\mathbf{w}) = -\sum_{n=1}^{N}\{t_{n}\ln y_{n} + (1-t_{n})\ln
+(1-y_{n})\}
+\]</span></p>
+<p>对于分类问题，<strong>使用交叉熵误差函数的训练速度会比平方和误差函数更快，同时也能提升泛化能力</strong>。</p>
+<p>我们可以得到上面误差函数关于活性值<span
+class="math inline">\(a_{k}\)</span>的导数为，这里需要用到sigmoid函数的导数：
+<span class="math display">\[
+\begin{align}
+\frac{\partial E}{\partial a_{k}}
+&amp;= \frac{\partial E}{\partial y_{k}} \frac{\partial y_{k}}{\partial
+a_{k}} \\
+&amp;= -\left(\frac{t_{k}}{y_{k}} - \frac{1-t_{k}}{1-y_{k}}\right)
+y_{k}(1-y_{k}) \\
+&amp;= -t_{k}(1-y_{k}) + y_{k}(1-t_{k}) \\
+&amp;= y_{k} - t_{k}
+\end{align}
+\]</span></p>
+<p>如果我们需要执行<span
+class="math inline">\(K\)</span>个不同的二分类问题，我们可以构建一个具有<span
+class="math inline">\(K\)</span>个输出的神经网络，每个输出都使用logistic
+sigmoid函数。每个输出都和一个二元类别标签<span
+class="math inline">\(t_{k} \in \{0, 1\}\)</span>相关联，其中<span
+class="math inline">\(k = 1, \dots,
+K\)</span>。我们假设类别标签是独立的，那么给定输入向量，目标向量的条件概率分布为：
+<span class="math display">\[
+p(\mathbf{t} \mid \mathbf{x}, \mathbf{w}) =
+\prod_{k=1}^{K}y_{k}(\mathbf{x}, \mathbf{w})^{t_{k}}[1-y_{k}(\mathbf{x},
+\mathbf{w})]^{1-t_{k}}
+\]</span></p>
+<p>取负对数似然函数，可以得到误差函数为： <span class="math display">\[
+E(\mathbf{w}) = -\sum_{n=1}^{N}\sum_{k=1}^{K}\{t_{n k}\ln y_{n k} +
+(1-t_{n k})\ln (1-y_{n k})\}
+\]</span></p>
+<p>另外，误差函数关于活性值<span
+class="math inline">\(a_{k}\)</span>的导数与上面一样（这里还没有证明）。</p>
+<p>对比神经网络和之前的第四章中的线性分类模型，我们可以看到在<strong>神经网络第一层的参数由各个输出共享</strong>。而线性模型中，每个分类问题需要独立解决，参数不能共享。<strong>神经网络的第一层进行了一个非线性的特征提取操作，每个不同的输出之间共享特征，可以节省计算量，同时也可以提升模型的泛化能力</strong>。</p>
+<h3 id="标准多分类问题">标准多分类问题</h3>
+<p>最后，我们考虑标准的多分类问题，每个输入都被分到<span
+class="math inline">\(K\)</span>个互斥的类别中。二元目标变量<span
+class="math inline">\(t_{k} \ln \{0, 1\}\)</span>使用<span
+class="math inline">\(1-of-K\)</span>编码方式表示类别。于是，神经网络的输出可以表示为<span
+class="math inline">\(y_{k}(\mathbf{x}, \mathbf{w}) = p(t_{k}=1 \mid
+\mathbf{x})\)</span>，对应的误差函数为： <span class="math display">\[
+E(\mathbf{w}) = -\sum_{n=1}^{N}\sum_{k=1}^{K}t_{n k} \ln
+y_{k}(\mathbf{x}_{k}, \mathbf{w})
+\]</span></p>
+<p>根据4.3.4节（[[ch4-4-3-概率判别式模型#4 3 4
+多类Logistic回归]]），输出单元的激活函数采用softmax函数： <span
+class="math display">\[
+y_{k}(\mathbf{x}, \mathbf{w}) = \frac{\exp(a_{k}(\mathbf{x},
+\mathbf{w}))}{\sum_{j} \exp(a_{j}(\mathbf{x}, \mathbf{w}))}
+\]</span></p>
+<p>softmax函数满足<span class="math inline">\(0 \leqslant y_{k}
+\leqslant 1\)</span>，并且<span class="math inline">\(\sum_{k}
+y_{k}=1\)</span>。</p>
+<p>需要注意的是，如果我们给所有的<span
+class="math inline">\(a_{k}(\mathbf{x},
+\mathbf{w})\)</span>加上一个常数，<span
+class="math inline">\(y_{k}(\mathbf{x},
+\mathbf{w})\)</span>是不变的，这使得误差函数在权重空间的某些方向上是常数。但是，如果我们给误差函数加上一个恰当的正则化项，这个问题可以被避免。</p>
+<p>与之前一样，对于一个特定的输出单元，它对于活性值<span
+class="math inline">\(a_{k}\)</span>的导数与回归问题中一样（这里还没有证明）。</p>
+<h3 id="参数优化">5.2.1 参数优化</h3>
+<p>下面，我们考虑寻找能使得确定的误差函数<span
+class="math inline">\(E(\mathbf{w})\)</span>最小的权重向量<span
+class="math inline">\(\mathbf{w}\)</span>。下图为误差函数的几何表示，误差函数可以看成是权重空间中的一个曲面。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/误差函数的几何表示.png" alt="误差函数的几何表示" style="zoom:50%;" /></p>
+<p>如果在权重空间中，<span
+class="math inline">\(\mathbf{w}\)</span>变化为<span
+class="math inline">\(\mathbf{w}+\delta
+\mathbf{w}\)</span>，那么误差函数的变化量为<span
+class="math inline">\(\delta E = \delta \mathbf{w}^{\mathrm{T}} \nabla
+E(\mathbf{w})\)</span>，其中<span class="math inline">\(\nabla
+E(\mathbf{w})\)</span>表示误差函数的梯度方向，即误差函数变化量最大的方向。</p>
+<p>由于误差函数<span
+class="math inline">\(E(\mathbf{w})\)</span>是光滑连续的函数，因此它的最小值出现在误差函数梯度为<span
+class="math inline">\(0\)</span>的位置，即： <span
+class="math display">\[
+\nabla E(\mathbf{w}) = 0
+\]</span></p>
+<p>因此，我们可以每次朝着梯度的负方向<span class="math inline">\(-\nabla
+E(\mathbf{w})\)</span>前进一小步来减小误差。</p>
+<p>我们的目标是找到一个向量<span
+class="math inline">\(\mathbf{w}\)</span>使得<span
+class="math inline">\(E(\mathbf{w})\)</span>取最小值。然而，误差函数通常对权重和偏置参数具有高度非线性的依赖性，因此在<strong>权重空间中会有很多点梯度为<span
+class="math inline">\(0\)</span>（或数值非常小）</strong>。l例如，根据5.1.1节（[[ch5-5-1-前馈神经网络#5
+1 1
+权重空间对称性]]）的讨论，对于任意的一个局部极小值点，在权重空间中都存在等价的极小值点。</p>
+<p>此外，通常会存在多个不等价的极小值点，在所有极小值点中最小的称为<strong>全局最小值（global
+minima）</strong>，其他点为<strong>局部最小值（local
+minima）</strong>。在神经网络应用中，通常没有必要寻找全局最小值（通常无法知道是否找到了全局最小值），足够好的局部最小值就能满足我们的需求。</p>
+<p>由于无法找到方程<span class="math inline">\(\nabla
+E(\mathbf{w})=0\)</span>的解析解，我们使用数值迭代的方法。大部分方法会选择一个权重向量的初值<span
+class="math inline">\(\mathbf{w}^{(0)}\)</span>，然后在权重空间中一步步迭代求最小值：
+<span class="math display">\[
+\mathbf{w}^{(\tau + 1)} = \mathbf{w}^{(\tau)} + \Delta
+\mathbf{w}^{(\tau)}
+\]</span></p>
+<p>其中，<span
+class="math inline">\(\tau\)</span>表示迭代的步数。不同的算法对权重的更新量<span
+class="math inline">\(\Delta
+\mathbf{w}^{(\tau)}\)</span>的计算不同。</p>
+<h3 id="局部二次近似">5.2.2 局部二次近似</h3>
+<p>局部二次近似可以让我们更深入的认识最优化问题。考虑<span
+class="math inline">\(E(\mathbf{w})\)</span>在权重空间中某点<span
+class="math inline">\(\widehat{\mathbf{w}}\)</span>处的泰勒展开（忽略三次以上高阶项）：
+<span class="math display">\[
+E(\mathbf{w}) \simeq E(\widehat{\mathbf{w}}) + (\mathbf{w} -
+\widehat{\mathbf{w}})^{\mathrm{T}}\mathbf{b} + \frac{1}{2} (\mathbf{w} -
+\widehat{\mathbf{w}})^{\mathrm{T}} \mathbf{H} (\mathbf{w} -
+\widehat{\mathbf{w}})
+\]</span></p>
+<p>其中，<span class="math inline">\(\mathbf{b}\)</span>为<span
+class="math inline">\(E\)</span>在<span
+class="math inline">\(\widehat{\mathbf{w}}\)</span>处的梯度。 <span
+class="math display">\[
+\mathbf{b} = \left.\nabla E \right|_{\mathbf{w} = \widehat{\mathbf{w}}}
+\]</span></p>
+<p>Hessian矩阵<span class="math inline">\(\mathbf{H} = \nabla \nabla
+E\)</span>，其中的元素为： <span class="math display">\[
+(\mathbf{H})_{i j} \equiv \left.\frac{\partial E}{\partial w_{i}
+\partial w_{j}}\right|_{\mathbf{w}=\widehat{\mathbf{w}}}
+\]</span></p>
+<p>根据泰勒展开，我们可以得到误差函数的梯度的局部近似为： <span
+class="math display">\[
+\nabla E \simeq \mathbf{b} + \mathbf{H}(\mathbf{w} -
+\widehat{\mathbf{w}})
+\]</span></p>
+<p>下面我们考虑在误差函数最小值<span
+class="math inline">\(\mathbf{w}^{\star}\)</span>处的局部二次近似，此时泰勒展开中没有一次项：
+<span class="math display">\[
+E(\mathbf{w}) \simeq E(\mathbf{w}^{\star}) + \frac{1}{2} (\mathbf{w} -
+\mathbf{w}^{\star})^{\mathrm{T}} \mathbf{H} (\mathbf{w} -
+\mathbf{w}^{\star})
+\]</span></p>
+<p>为了从几何角度解释上面的式子，我们考虑Hessian矩阵的特征方程： <span
+class="math display">\[
+\mathbf{H} \mathbf{u}_{i} = \lambda_{i}\mathbf{u}_{i}
+\]</span></p>
+<p>其中，特征向量<span
+class="math inline">\(\mathbf{u}_{i}\)</span>构成了<strong>完备正交集（complete
+orthonormal set）</strong>，即： <span class="math display">\[
+\mathbf{u}_{i}^{\mathrm{T}}\mathbf{u}_{j} = \delta_{i j}
+\]</span></p>
+<p>现在，我们将<span
+class="math inline">\((\mathbf{w}-\mathbf{w}^{\star})\)</span>展开成特征向量的线性组合形式：
+<span class="math display">\[
+\mathbf{w}-\mathbf{w}^{\star} = \sum_{i} \alpha_{i}\mathbf{u}_{i}
+\]</span></p>
+<p>上式可以看做是一种坐标变换，其中原点平移到了<span
+class="math inline">\(\mathbf{w}^{\star}\)</span>，坐标轴与特征向量平行。将上式代入泰勒展开式，我们可以得到：
+<span class="math display">\[
+\begin{align}
+E(\mathbf{w})
+&amp;\simeq E(\mathbf{w}^{\star}) +
+\frac{1}{2}\left(\sum_{i}\alpha_{i}\mathbf{u}_{i}\right)^{\mathrm{T}}\mathbf{H}\left(\sum_{j}\alpha_{j}\mathbf{u}_{j}\right)
+\\
+&amp;= E(\mathbf{w}^{\star}) +
+\frac{1}{2}\left(\sum_{i}\alpha_{i}\mathbf{u}_{i}\right)^{\mathrm{T}}
+\left(\sum_{j}\alpha_{j}\mathbf{H}\mathbf{u}_{j}\right) \\
+&amp;= E(\mathbf{w}^{\star}) +
+\frac{1}{2}\left(\sum_{i}\alpha_{i}\mathbf{u}_{i}\right)^{\mathrm{T}}
+\left(\sum_{j}\alpha_{j}\lambda_{j}\mathbf{u}_{j}\right) \\
+&amp;= E(\mathbf{w}^{\star}) + \frac{1}{2} \sum_{i}
+\lambda_{i}\alpha_{i}^{2}
+\end{align}
+\]</span></p>
+<p>矩阵<span
+class="math inline">\(\mathbf{H}\)</span>是正定矩阵，当且仅当： <span
+class="math display">\[
+\mathbf{v}^{\mathrm{T}}\mathbf{H}\mathbf{v} \gt 0 \quad \text{for all }
+\mathbf{v}
+\]</span></p>
+<p>因为特征向量<span
+class="math inline">\(\{\mathbf{u}_{i}\}\)</span>构成完备集，所以任意的向量<span
+class="math inline">\(\mathbf{v}\)</span>可以写成如下形式： <span
+class="math display">\[
+\mathbf{v} = \sum_{i} c_{i}\mathbf{u}_{i}
+\]</span></p>
+<p>于是，我们可以得到： <span class="math display">\[
+\mathbf{v}^{\mathrm{T}}\mathbf{H}\mathbf{v} = \sum_{i}
+c_{i}^{2}\lambda_{i}
+\]</span></p>
+<p>所以，当且仅当特征值为正时，<span
+class="math inline">\(\mathbf{H}\)</span>是正定的。</p>
+<p>对于一维的权重空间，驻点<span
+class="math inline">\(w^{\star}\)</span>为最小值，当： <span
+class="math display">\[
+\left.\frac{\partial^{2}E}{\partial w^{2}}\right|_{w^{\star}} \gt 0
+\]</span></p>
+<p>对应的，在<span
+class="math inline">\(D\)</span>维的权重空间中，驻点<span
+class="math inline">\(\mathbf{w}^{\star}\)</span>处的Hessian矩阵为正定矩阵时，该处取最小值。</p>
+<h3 id="使用梯度信息">5.2.3 使用梯度信息</h3>
+<p>我们将在5.3节中看到，使用反向传播可以有效得计算误差函数的梯度。使用梯度信息可以加快找到误差函数最小值。下面，我们将看到为什么可以这样。</p>
+<p>在误差函数的二次近似中，可以看到误差函数的曲面由<span
+class="math inline">\(\mathbf{b}\)</span>和<span
+class="math inline">\(\mathbf{H}\)</span>两个量确定，一共包含<span
+class="math inline">\(W(W+3)/2\)</span>个独立参数，其中<span
+class="math inline">\(W\)</span>为<span
+class="math inline">\(\mathbf{w}\)</span>的维数，即神经网络中可调节参数的总量。</p>
+<p>因此，二次近似的最小值的位置依赖于<span
+class="math inline">\(O(W^{2})\)</span>个参数，并且我们不能期望能定位最小值直到我们得到了<span
+class="math inline">\(O(W^{2})\)</span>条独立的信息。如果不使用梯度信息，我们需要进行<span
+class="math inline">\(O(W^{2})\)</span>次函数求值来计算误差函数<span
+class="math inline">\(E\)</span>，并且求值都需要<span
+class="math inline">\(O(W)\)</span>个步骤。所以，为了找到最小值，需要的计算复杂度为<span
+class="math inline">\(O(W^{3})\)</span>。</p>
+<p>在使用梯度信息时，由于每次计算<span class="math inline">\(\nabla
+E\)</span>会带来<span
+class="math inline">\(W\)</span>个信息，所以我们找到最小值预计需要<span
+class="math inline">\(O(W)\)</span>次梯度计算。由于可以使用误差反向传播计算梯度，每次计算只需要<span
+class="math inline">\(O(W)\)</span>个步骤，所以最小值的计算复杂度为<span
+class="math inline">\(O(W^{2})\)</span>。基于这个原因，<strong>使用梯度信息的方法构成了实际训练神经网络的算法基础</strong>。</p>
+<h3 id="梯度下降优化">5.2.4 梯度下降优化</h3>
+<p>最简单的使用梯度信息的方式是——<strong>每次权值更新就在负梯度方向上进行一次小的移动</strong>：
+<span class="math display">\[
+\mathbf{w}^{(\tau + 1)} = \mathbf{w}^{(\tau)} - \eta \nabla
+E(\mathbf{w}^{(\tau)})
+\]</span></p>
+<p>其中，参数<span class="math inline">\(\eta \gt
+0\)</span>称为<strong>学习率（learning rate）</strong>。</p>
+<p>由于误差函数是定义在整个训练集上的，因此每次计算梯度都需要处理整个数据集。这种一次使用所用数据的方法称为<strong>批方法（batch
+method）</strong>。每一次权重向量的更新都会沿着误差函数下降速度最快的方向（负梯度方向）移动，所以这个方法被称为<strong>梯度下降法（gradient
+descent）</strong>。</p>
+<p>对于大规模数据集，梯度下降法有一个在线版本，称为顺序梯度下降法或<strong>随机梯度下降法（stochastic
+gradient
+descent）</strong>。随机梯度下降法中，每次权重向量的更新只依赖于一个数据点：
+<span class="math display">\[
+\mathbf{w}^{(\tau + 1)} = \mathbf{w}^{(\tau)} - \eta \nabla
+E_{n}(\mathbf{w}^{(\tau)})
+\]</span></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/02/15/ch5-5-2-%E7%BD%91%E7%BB%9C%E8%AE%AD%E7%BB%83/" title="ch5-5.2 网络训练">https://ehehe.cn/2022/02/15/ch5-5-2-网络训练/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PRML/" rel="tag"># PRML</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch5-5-1-%E5%89%8D%E9%A6%88%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="prev" title="ch5-5.1 前馈神经网络">
+                  <i class="fa fa-angle-left"></i> ch5-5.1 前馈神经网络
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch6-6-1-%E5%AF%B9%E5%81%B6%E8%A1%A8%E7%A4%BA/" rel="next" title="ch6-6.1 对偶表示">
+                  ch6-6.1 对偶表示 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

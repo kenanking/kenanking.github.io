@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="这次的作业在Board.java中由于为了减少循环次数（只在构造函数中做一次循环，并在这次循环计算所有需要的数据），不得不增加了成员变量，所以Board类在内存占用上是超出作业要求的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Algorithms, Part1 - 8-Puzzle">
+<meta property="og:url" content="https://ehehe.cn/2021/02/07/Algorithms-Part1-8-Puzzle/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="这次的作业在Board.java中由于为了减少循环次数（只在构造函数中做一次循环，并在这次循环计算所有需要的数据），不得不增加了成员变量，所以Board类在内存占用上是超出作业要求的。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-07T15:06:11.000Z">
+<meta property="article:modified_time" content="2021-02-07T15:06:11.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="Coursera">
+<meta property="article:tag" content="Algorithms">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ehehe.cn/2021/02/07/Algorithms-Part1-8-Puzzle/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2021/02/07/Algorithms-Part1-8-Puzzle/","path":"2021/02/07/Algorithms-Part1-8-Puzzle/","title":"Algorithms, Part1 - 8-Puzzle"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Algorithms, Part1 - 8-Puzzle | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2021/02/07/Algorithms-Part1-8-Puzzle/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Algorithms, Part1 - 8-Puzzle | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Algorithms, Part1 - 8-Puzzle
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-02-07 23:06:11" itemprop="dateCreated datePublished" datetime="2021-02-07T23:06:11+08:00">2021-02-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">数据结构与算法</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>998</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>这次的作业在<code>Board.java</code>中由于为了减少循环次数（只在构造函数中做一次循环，并在这次循环计算所有需要的数据），不得不增加了成员变量，所以Board类在内存占用上是超出作业要求的。</p>
+<span id="more"></span>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* *****************************************************************************</span></span><br><span class="line"><span class="comment"> *  Name:              Board.java</span></span><br><span class="line"><span class="comment"> *  User ID:           Yan Tang</span></span><br><span class="line"><span class="comment"> *  Last modified:     2021/2/7</span></span><br><span class="line"><span class="comment"> **************************************************************************** */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.In;</span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.StdOut;</span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.StdRandom;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Board</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span>[][] tiles;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> n;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> <span class="variable">zeroRow</span> <span class="operator">=</span> <span class="number">0</span>, zeroCol = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> <span class="variable">hammingDist</span> <span class="operator">=</span> <span class="number">0</span>, manhattanDist = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span>[] rows, cols;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// create a board from an n-by-n array of tiles,</span></span><br><span class="line">    <span class="comment">// where tiles[row][col] = tile at (row, col)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Board</span><span class="params">(<span class="type">int</span>[][] tiles)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.n = tiles.length;</span><br><span class="line">        <span class="built_in">this</span>.tiles = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="built_in">this</span>.n][<span class="built_in">this</span>.n];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">row</span> <span class="operator">=</span> <span class="number">0</span>; row &lt; <span class="built_in">this</span>.n; row++)</span><br><span class="line">            <span class="built_in">this</span>.tiles[row] = tiles[row].clone();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// in order to reduce the num of loops, do calculation in the constructor</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">row</span> <span class="operator">=</span> <span class="number">0</span>; row &lt; <span class="built_in">this</span>.n; row++)</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">col</span> <span class="operator">=</span> <span class="number">0</span>; col &lt; <span class="built_in">this</span>.n; col++) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">ele</span> <span class="operator">=</span> <span class="built_in">this</span>.tiles[row][col];</span><br><span class="line"></span><br><span class="line">                <span class="comment">// calculate hamming distance</span></span><br><span class="line">                <span class="keyword">if</span> ((ele != row * n + col + <span class="number">1</span>) &amp;&amp;</span><br><span class="line">                        !((row == <span class="built_in">this</span>.n - <span class="number">1</span>) &amp;&amp; (col == <span class="built_in">this</span>.n - <span class="number">1</span>))) hammingDist++;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// locate the blank square</span></span><br><span class="line">                <span class="keyword">if</span> (ele == <span class="number">0</span>) &#123;</span><br><span class="line">                    zeroRow = row;</span><br><span class="line">                    zeroCol = col;</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// calculate manhattan distance</span></span><br><span class="line">                <span class="type">int</span> <span class="variable">realRow</span> <span class="operator">=</span> (ele - <span class="number">1</span>) / <span class="built_in">this</span>.n;</span><br><span class="line">                <span class="type">int</span> <span class="variable">realCol</span> <span class="operator">=</span> ele - realRow * <span class="built_in">this</span>.n - <span class="number">1</span>;</span><br><span class="line">                manhattanDist += Math.abs(realRow - row) + Math.abs(realCol - col);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// randomly choose a pair of tiles to generate a twin</span></span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            rows = StdRandom.permutation(<span class="built_in">this</span>.n, <span class="number">2</span>);</span><br><span class="line">            cols = StdRandom.permutation(<span class="built_in">this</span>.n, <span class="number">2</span>);</span><br><span class="line">        &#125; <span class="keyword">while</span> ((rows[<span class="number">0</span>] == zeroRow &amp;&amp; cols[<span class="number">0</span>] == zeroCol) ||</span><br><span class="line">                (rows[<span class="number">1</span>] == zeroRow &amp;&amp; cols[<span class="number">1</span>] == zeroCol));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// string representation of this board</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">toString</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">StringBuilder</span> <span class="variable">stringBuilder</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>(n + <span class="string">&quot;\n&quot;</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span>[] row : <span class="built_in">this</span>.tiles) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> ele : row)</span><br><span class="line">                stringBuilder.append(String.format(<span class="string">&quot;%2d &quot;</span>, ele));</span><br><span class="line">            stringBuilder.append(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> stringBuilder.toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// board dimension n</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">dimension</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> n;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// number of tiles out of place</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">hamming</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> hammingDist;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// sum of Manhattan distances between tiles and goal</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">manhattan</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> manhattanDist;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// is this board the goal board?</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isGoal</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> hammingDist == <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// does this board equal y?</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Object y)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (y == <span class="literal">null</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (!(y.getClass().isInstance(<span class="built_in">this</span>))) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="type">Board</span> <span class="variable">that</span> <span class="operator">=</span> (Board) y;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span>.n != that.n) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (!Arrays.deepEquals(<span class="built_in">this</span>.tiles, that.tiles)) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// swap the value of two specified location and returns a copy</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span>[][] swap(<span class="type">int</span> row1, <span class="type">int</span> col1, <span class="type">int</span> row2, <span class="type">int</span> col2) &#123;</span><br><span class="line">        <span class="type">int</span>[][] copyOfTiles = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="built_in">this</span>.n][<span class="built_in">this</span>.n];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">row</span> <span class="operator">=</span> <span class="number">0</span>; row &lt; <span class="built_in">this</span>.n; row++)</span><br><span class="line">            copyOfTiles[row] = <span class="built_in">this</span>.tiles[row].clone();</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> <span class="variable">tmp</span> <span class="operator">=</span> copyOfTiles[row1][col1];</span><br><span class="line">        copyOfTiles[row1][col1] = copyOfTiles[row2][col2];</span><br><span class="line">        copyOfTiles[row2][col2] = tmp;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> copyOfTiles;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// all neighboring boards</span></span><br><span class="line">    <span class="keyword">public</span> Iterable&lt;Board&gt; <span class="title function_">neighbors</span><span class="params">()</span> &#123;</span><br><span class="line">        ArrayList&lt;Board&gt; neigh = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;Board&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (zeroRow &gt; <span class="number">0</span>)</span><br><span class="line">            neigh.add(<span class="keyword">new</span> <span class="title class_">Board</span>(swap(zeroRow, zeroCol, zeroRow - <span class="number">1</span>, zeroCol)));</span><br><span class="line">        <span class="keyword">if</span> (zeroRow &lt; <span class="built_in">this</span>.n - <span class="number">1</span>)</span><br><span class="line">            neigh.add(<span class="keyword">new</span> <span class="title class_">Board</span>(swap(zeroRow, zeroCol, zeroRow + <span class="number">1</span>, zeroCol)));</span><br><span class="line">        <span class="keyword">if</span> (zeroCol &gt; <span class="number">0</span>)</span><br><span class="line">            neigh.add(<span class="keyword">new</span> <span class="title class_">Board</span>(swap(zeroRow, zeroCol, zeroRow, zeroCol - <span class="number">1</span>)));</span><br><span class="line">        <span class="keyword">if</span> (zeroCol &lt; <span class="built_in">this</span>.n - <span class="number">1</span>)</span><br><span class="line">            neigh.add(<span class="keyword">new</span> <span class="title class_">Board</span>(swap(zeroRow, zeroCol, zeroRow, zeroCol + <span class="number">1</span>)));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> neigh;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// a board that is obtained by exchanging any pair of tiles</span></span><br><span class="line">    <span class="keyword">public</span> Board <span class="title function_">twin</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Board</span>(swap(rows[<span class="number">0</span>], cols[<span class="number">0</span>], rows[<span class="number">1</span>], cols[<span class="number">1</span>]));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// unit testing (not graded)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// create initial board from file</span></span><br><span class="line">        <span class="type">In</span> <span class="variable">in</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">In</span>(args[<span class="number">0</span>]);</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> in.readInt();</span><br><span class="line">        <span class="type">int</span>[][] tiles = <span class="keyword">new</span> <span class="title class_">int</span>[n][n];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; n; j++)</span><br><span class="line">                tiles[i][j] = in.readInt();</span><br><span class="line">        <span class="type">Board</span> <span class="variable">board</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Board</span>(tiles);</span><br><span class="line"></span><br><span class="line">        StdOut.println(<span class="string">&quot;The input board: &quot;</span>);</span><br><span class="line">        StdOut.println(board.toString());</span><br><span class="line"></span><br><span class="line">        StdOut.println(<span class="string">&quot;The dimension: &quot;</span> + board.dimension());</span><br><span class="line">        StdOut.println(<span class="string">&quot;The Hamming distance: &quot;</span> + board.hamming());</span><br><span class="line">        StdOut.println(<span class="string">&quot;The Manhattan distance: &quot;</span> + board.manhattan());</span><br><span class="line">        StdOut.println(<span class="string">&quot;Is the goal board? &quot;</span> + board.isGoal());</span><br><span class="line"></span><br><span class="line">        StdOut.println(<span class="string">&quot;Neighbours: &quot;</span>);</span><br><span class="line">        <span class="keyword">for</span> (Board b : board.neighbors())</span><br><span class="line">            StdOut.println(b.toString());</span><br><span class="line"></span><br><span class="line">        StdOut.println(<span class="string">&quot;A twin board: &quot;</span>);</span><br><span class="line">        StdOut.println(board.twin().toString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* *****************************************************************************</span></span><br><span class="line"><span class="comment"> *  Name:              Solver.java</span></span><br><span class="line"><span class="comment"> *  User ID:           Yan Tang</span></span><br><span class="line"><span class="comment"> *  Last modified:     2021/2/7</span></span><br><span class="line"><span class="comment"> **************************************************************************** */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.In;</span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.MinPQ;</span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.Stack;</span><br><span class="line"><span class="keyword">import</span> edu.princeton.cs.algs4.StdOut;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Solver</span> &#123;</span><br><span class="line">    <span class="comment">// the last SearchNode dequeued from the MinPQ</span></span><br><span class="line">    <span class="keyword">private</span> SearchNode lastNode;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">class</span> <span class="title class_">SearchNode</span> <span class="keyword">implements</span> <span class="title class_">Comparable</span>&lt;SearchNode&gt; &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> Board board;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> moves;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">int</span> priority;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> SearchNode previous;  <span class="comment">// trace of the solution</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// constructor for root node</span></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">SearchNode</span><span class="params">(Board board)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.board = board;</span><br><span class="line">            <span class="built_in">this</span>.moves = <span class="number">0</span>;</span><br><span class="line">            <span class="built_in">this</span>.priority = moves + board.manhattan();</span><br><span class="line">            <span class="built_in">this</span>.previous = <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// constructor for tree node</span></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">SearchNode</span><span class="params">(Board board, SearchNode previous)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.board = board;</span><br><span class="line">            <span class="built_in">this</span>.previous = previous;</span><br><span class="line">            <span class="built_in">this</span>.moves = previous.moves + <span class="number">1</span>;</span><br><span class="line">            <span class="built_in">this</span>.priority = moves + board.manhattan();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">compareTo</span><span class="params">(SearchNode that)</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.priority - that.priority;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// find a solution to the initial board (using the A* algorithm)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Solver</span><span class="params">(Board initial)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (initial == <span class="literal">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;Initial board is null.&quot;</span>);</span><br><span class="line"></span><br><span class="line">        MinPQ&lt;SearchNode&gt; gameTree = <span class="keyword">new</span> <span class="title class_">MinPQ</span>&lt;SearchNode&gt;();</span><br><span class="line">        gameTree.insert(<span class="keyword">new</span> <span class="title class_">SearchNode</span>(initial));</span><br><span class="line"></span><br><span class="line">        MinPQ&lt;SearchNode&gt; twinGameTree = <span class="keyword">new</span> <span class="title class_">MinPQ</span>&lt;SearchNode&gt;();</span><br><span class="line">        twinGameTree.insert(<span class="keyword">new</span> <span class="title class_">SearchNode</span>(initial.twin()));</span><br><span class="line"></span><br><span class="line">        lastNode = gameTree.delMin();</span><br><span class="line">        <span class="type">SearchNode</span> <span class="variable">twinLastNode</span> <span class="operator">=</span> twinGameTree.delMin();</span><br><span class="line">        <span class="keyword">while</span> (!lastNode.board.isGoal() &amp;&amp; !twinLastNode.board.isGoal()) &#123;</span><br><span class="line">            <span class="keyword">for</span> (Board neigh : lastNode.board.neighbors()) &#123;</span><br><span class="line">                <span class="keyword">if</span> ((lastNode.moves == <span class="number">0</span>) || !neigh.equals(lastNode.previous.board))</span><br><span class="line">                    gameTree.insert(<span class="keyword">new</span> <span class="title class_">SearchNode</span>(neigh, lastNode));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (Board neigh : twinLastNode.board.neighbors()) &#123;</span><br><span class="line">                <span class="keyword">if</span> ((twinLastNode.moves == <span class="number">0</span>) || !neigh.equals(twinLastNode.previous.board))</span><br><span class="line">                    twinGameTree.insert(<span class="keyword">new</span> <span class="title class_">SearchNode</span>(neigh, twinLastNode));</span><br><span class="line">            &#125;</span><br><span class="line">            lastNode = gameTree.delMin();</span><br><span class="line">            twinLastNode = twinGameTree.delMin();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// is the initial board solvable? (see below)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isSolvable</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (lastNode.board.isGoal()) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// min number of moves to solve initial board; -1 if unsolvable</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">moves</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (isSolvable()) <span class="keyword">return</span> lastNode.moves;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// sequence of boards in a shortest solution; null if unsolvable</span></span><br><span class="line">    <span class="keyword">public</span> Iterable&lt;Board&gt; <span class="title function_">solution</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!isSolvable()) <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// need a stack to output the solution in a reversed order</span></span><br><span class="line">        Stack&lt;Board&gt; solution = <span class="keyword">new</span> <span class="title class_">Stack</span>&lt;Board&gt;();</span><br><span class="line">        <span class="type">SearchNode</span> <span class="variable">current</span> <span class="operator">=</span> lastNode;</span><br><span class="line">        <span class="keyword">while</span> (current.previous != <span class="literal">null</span>) &#123;</span><br><span class="line">            solution.push(current.board);</span><br><span class="line">            current = current.previous;</span><br><span class="line">        &#125;</span><br><span class="line">        solution.push(current.board);</span><br><span class="line">        <span class="keyword">return</span> solution;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// test client (see below)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// create initial board from file</span></span><br><span class="line">        <span class="type">In</span> <span class="variable">in</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">In</span>(args[<span class="number">0</span>]);</span><br><span class="line">        <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> in.readInt();</span><br><span class="line">        <span class="type">int</span>[][] tiles = <span class="keyword">new</span> <span class="title class_">int</span>[n][n];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; n; j++)</span><br><span class="line">                tiles[i][j] = in.readInt();</span><br><span class="line">        <span class="type">Board</span> <span class="variable">initial</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Board</span>(tiles);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// solve the puzzle</span></span><br><span class="line">        <span class="type">Solver</span> <span class="variable">solver</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Solver</span>(initial);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// print solution to standard output</span></span><br><span class="line">        <span class="keyword">if</span> (!solver.isSolvable())</span><br><span class="line">            StdOut.println(<span class="string">&quot;No solution possible&quot;</span>);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            StdOut.println(<span class="string">&quot;Minimum number of moves = &quot;</span> + solver.moves());</span><br><span class="line">            <span class="keyword">for</span> (Board board : solver.solution())</span><br><span class="line">                StdOut.println(board);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2021/02/07/Algorithms-Part1-8-Puzzle/" title="Algorithms, Part1 - 8-Puzzle">https://ehehe.cn/2021/02/07/Algorithms-Part1-8-Puzzle/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Coursera/" rel="tag"># Coursera</a>
+              <a href="/tags/Algorithms/" rel="tag"># Algorithms</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/02/07/Emacs%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" rel="prev" title="Emacs配置文件">
+                  <i class="fa fa-angle-left"></i> Emacs配置文件
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/02/09/Programming-Languages-Homework-1/" rel="next" title="Programming Languages Homework 1">
+                  Programming Languages Homework 1 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

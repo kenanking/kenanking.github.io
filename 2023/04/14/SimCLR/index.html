@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Ting Chen, Simon Kornblith, Mohammad Norouzi, Geoffrey Hinton SimCLR 本文提出一个用于对比学习视觉表征的框架SimCLR。该框架不仅优于以前的工作，而且更简单，既不需要专门的体系结构，也不需要存储库（memory bank）。作者系统地研究了该框架的主要组成部分，并发现数据增强、可学习非线性变换（MLP）和批量大小、训练次数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] A Simple Framework for Contrastive Learning of Visual  Representations (ICML 2020)">
+<meta property="og:url" content="https://ehehe.cn/2023/04/14/SimCLR/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Ting Chen, Simon Kornblith, Mohammad Norouzi, Geoffrey Hinton SimCLR 本文提出一个用于对比学习视觉表征的框架SimCLR。该框架不仅优于以前的工作，而且更简单，既不需要专门的体系结构，也不需要存储库（memory bank）。作者系统地研究了该框架的主要组成部分，并发现数据增强、可学习非线性变换（MLP）和批量大小、训练次数">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SimCLR%E6%A1%86%E6%9E%B6.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SimCLR%E6%A1%86%E6%9E%B6%E5%B1%95%E7%A4%BA.gif">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SimCLR%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA.png">
+<meta property="article:published_time" content="2023-04-14T01:43:56.000Z">
+<meta property="article:modified_time" content="2023-04-14T03:59:40.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="对比学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SimCLR%E6%A1%86%E6%9E%B6.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/04/14/SimCLR/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/04/14/SimCLR/","path":"2023/04/14/SimCLR/","title":"[Note] A Simple Framework for Contrastive Learning of Visual  Representations (ICML 2020)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] A Simple Framework for Contrastive Learning of Visual  Representations (ICML 2020) | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#simclr"><span class="nav-text">SimCLR</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#simclr%E6%A1%86%E6%9E%B6"><span class="nav-text">SimCLR框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7batch-size%E8%AE%AD%E7%BB%83"><span class="nav-text">大Batch Size训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA"><span class="nav-text">数据增强</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/04/14/SimCLR/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] A Simple Framework for Contrastive Learning of Visual  Representations (ICML 2020) | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] A Simple Framework for Contrastive Learning of Visual  Representations (ICML 2020)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-04-14 09:43:56 / 修改时间：11:59:40" itemprop="dateCreated datePublished" datetime="2023-04-14T09:43:56+08:00">2023-04-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Ting Chen, Simon Kornblith, Mohammad Norouzi, Geoffrey
+Hinton</p>
+<h2 id="simclr">SimCLR</h2>
+<p>本文提出一个用于对比学习视觉表征的框架<strong>SimCLR</strong>。该框架不仅优于以前的工作，而且更简单，既不需要专门的体系结构，也不需要存储库（memory
+bank）。作者系统地研究了该框架的主要组成部分，并发现<strong>数据增强</strong>、<strong>可学习非线性变换（MLP）</strong>和<strong>批量大小、训练次数</strong>等因素对于有效学习视觉表征至关重要。本文提供了一种自我监督学习算法，可以在没有标签数据的情况下从未标记的图像中学习有用的特征表示。</p>
+<h3 id="simclr框架">SimCLR框架</h3>
+<p>受最近对比学习算法的启发，SimCLR通过在潜在空间中使用对比损失来<strong>最大化同一数据示例的不同增强视图之间的一致性</strong>来学习视觉表征。</p>
+<p>SimCLR框架主要有以下几个部分组成：</p>
+<ol type="1">
+<li><strong>随机数据增强</strong>得到同一样本的两个不同视角<span
+class="math inline">\(\tilde{\boldsymbol{x}}_{i}\)</span>和<span
+class="math inline">\(\tilde{\boldsymbol{x}}_{j}\)</span>，作为正样本对。在SimCLR中，按顺序应用了三种数据增强方法。作者通过消融实验证明了这三种数据增强方法的组合能取得最好的效果。
+<ol type="1">
+<li>随机裁剪后缩放回原尺寸（random cropping）</li>
+<li>随机色彩失真（random color distortions）</li>
+<li>随机高斯模糊（random Gaussian blur）</li>
+</ol></li>
+<li><strong>基础的编码器</strong><span
+class="math inline">\(f(\cdot)\)</span>抽取图像表征。在SimCLR中使用了ResNet，即<span
+class="math inline">\(\boldsymbol{h}_{i} = f(\tilde{\boldsymbol{x}}_{i})
+= \text{ResNet}(\tilde{\boldsymbol{x}}_{i})\)</span>，其中<span
+class="math inline">\(\boldsymbol{h}_{i} \in
+\mathbb{R}^{d}\)</span>。<span
+class="math inline">\(\boldsymbol{h}_{i}\)</span>为ResNet中经过全局池化后的特征，即<span
+class="math inline">\(d = 2048\)</span>。</li>
+<li><strong>投影头（projection head）</strong><span
+class="math inline">\(g(\cdot)\)</span>对特征进行非线性变换。在SimCLR中使用了两层的MLP（<code>FC-&gt;ReLU-&gt;FC</code>），即<span
+class="math inline">\(\boldsymbol{z}_{i} = g(\boldsymbol{h}_{i}) =
+W^{(2)} \sigma
+\left(W^{(1)}\boldsymbol{h}_{i}\right)\)</span>，其中<span
+class="math inline">\(\sigma\)</span>为ReLU函数。</li>
+<li><strong>对比损失函数</strong>定义了对比学习任务。给定一个集合<span
+class="math inline">\(\{\tilde{\boldsymbol{x}_k}\}\)</span>，其中包含一个正样本对<span
+class="math inline">\(\tilde{\boldsymbol{x}}_{i}\)</span>和<span
+class="math inline">\(\tilde{\boldsymbol{x}}_{j}\)</span>，对比学习任务旨在当给定<span
+class="math inline">\(\tilde{\boldsymbol{x}}_{i}\)</span>时，从集合<span
+class="math inline">\(\{\tilde{\boldsymbol{x}_k}\}_{k \ne
+i}\)</span>中识别出<span
+class="math inline">\(\tilde{\boldsymbol{x}}_{j}\)</span>。</li>
+</ol>
+<span id="more"></span>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SimCLR%E6%A1%86%E6%9E%B6.png" alt="SimCLR框架" style="zoom: 33%;" /></th>
+<th><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SimCLR%E6%A1%86%E6%9E%B6%E5%B1%95%E7%A4%BA.gif" alt="SimCLR框架展示" style="zoom: 67%;" /></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<h3 id="损失函数">损失函数</h3>
+<p>随机选取一个包含<span
+class="math inline">\(N\)</span>的样本的batch，经过数据增强后，可以得到<span
+class="math inline">\(2N\)</span>个数据点，则正样本对有<span
+class="math inline">\(N\)</span>个，剩下的<span
+class="math inline">\(2(N-1)\)</span>个为负样本。SimCLR中使用<strong>余弦相似度（cosine
+similarity）</strong>定义两个特征之间的相似性：</p>
+<p><span class="math display">\[
+\text{sim}(\boldsymbol{u}, \boldsymbol{v}) =
+\frac{\boldsymbol{u}^{\mathrm{T}} \boldsymbol{v}}{\|\boldsymbol{u}\|
+\|\boldsymbol{v}\|}
+\]</span></p>
+<p>SimCLR中使用了<em>NT-Xent</em>损失函数，即：Normalized
+Temperature-Scaled Cross Entropy Loss，其形式为：</p>
+<p><span class="math display">\[
+\ell_{i, j}=-\log \frac{\exp
+\left(\operatorname{sim}\left(\boldsymbol{z}_{i},
+\boldsymbol{z}_{j}\right) / \tau\right)}{\sum_{k=1}^{2 N} \mathbb{1}_{[k
+\neq i]} \exp \left(\operatorname{sim}\left(\boldsymbol{z}_{i},
+\boldsymbol{z}_{k}\right) / \tau\right)}
+\]</span></p>
+<p>其中，<span class="math inline">\(\mathbb{1}_{[k \neq i]} \in \{0,
+1\}\)</span>是指示函数，仅当<span class="math inline">\(k \neq
+i\)</span>时等于<span class="math inline">\(1\)</span>，<span
+class="math inline">\(\tau\)</span>是一个温度超参数。对图像中的所有正样本对（包括<span
+class="math inline">\(\{i, j\}\)</span>和<span
+class="math inline">\(\{j,
+i\}\)</span>）计算损失后取平均得到最后的损失值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">NT_Xent</span>(<span class="params">proj_i, proj_j</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;The normalized temperature-scaled cross entropy loss.&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    tau = <span class="number">0.1</span>   <span class="comment"># temperature</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># L2归一化</span></span><br><span class="line">    z_i = tf.math.l2_normalize(proj_i, axis=<span class="number">1</span>)</span><br><span class="line">    z_j = tf.math.l2_normalize(proj_j, axis=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 计算余弦相似度</span></span><br><span class="line">    similiarities = tf.matmul(z_i, z_j, transpose_b=<span class="literal">True</span>) / tau</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 计算交叉熵</span></span><br><span class="line">    batch_size = tf.shape(proj_i)[<span class="number">0</span>]</span><br><span class="line">    contrastive_labels = tf.<span class="built_in">range</span>(batch_size)  <span class="comment"># 每个个体自成一类</span></span><br><span class="line">    loss_ij = tf.nn.sparse_softmax_cross_entropy_with_logits(</span><br><span class="line">        labels=contrastive_labels,</span><br><span class="line">        logits=similiarities)</span><br><span class="line">    loss_ji = tf.nn.sparse_softmax_cross_entropy_with_logits(</span><br><span class="line">        labels=contrastive_labels,</span><br><span class="line">        logits=tf.transpose(similiarities))</span><br><span class="line"></span><br><span class="line">    loss = tf.reduce_mean(loss_ij + loss_ji)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> loss</span><br></pre></td></tr></table></figure>
+<h3 id="大batch-size训练">大Batch Size训练</h3>
+<p>SimCLR中为了模型训练的简单，没有使用memory bank的操作<a href="#fn1"
+class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a><a
+href="#fn2" class="footnote-ref" id="fnref2"
+role="doc-noteref"><sup>2</sup></a>。相对的，SimCLR将Batch
+Size从256增加到了8192，从而提升负样本的数量。</p>
+<p>在Batch
+Size较大时，使用标准的动量SGD方法会出现训练不稳定的情况，因此在SimCLR中采用了<strong>LARS优化方式</strong>。</p>
+<h3 id="数据增强">数据增强</h3>
+<p>为了系统地研究数据增强的影响，文中考虑了几种常见的增强方法。<strong>一种增强方法涉及数据的空间/几何变换</strong>，例如裁剪和调整大小（水平翻转），旋转和剪切。<strong>一种增强方法涉及外观变换</strong>，例如颜色扭曲（包括颜色丢弃、亮度、对比度、饱和度、色调），高斯模糊和Sobel滤波。</p>
+<p>为了了解单个数据增强的效果以及增强组合的重要性，文中研究了单独使用某种增强或将其组合的效果。下图展示了在单个和组合变换下的线性评估结果。使用<strong>随机裁剪和随机颜色扭曲</strong>组合的增强方式效果非常好。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SimCLR%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA.png" alt="SimCLR数据增强" style="zoom:50%;" /></p>
+<aside id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Wu, Zhirong, Yuanjun Xiong, Stella X. Yu and Dahua Lin.
+“Unsupervised Feature Learning via Non-parametric Instance
+Discrimination.” <em>2018 IEEE/CVF Conference on Computer Vision and
+Pattern Recognition</em> (2018): 3733-3742.<a href="#fnref1"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>He, Kaiming, Haoqi Fan, Yuxin Wu, Saining Xie and Ross
+B. Girshick. “Momentum Contrast for Unsupervised Visual Representation
+Learning.” <em>2020 IEEE/CVF Conference on Computer Vision and Pattern
+Recognition (CVPR)</em> (2019): 9726-9735.<a href="#fnref2"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</aside>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/04/14/SimCLR/" title="[Note] A Simple Framework for Contrastive Learning of Visual  Representations (ICML 2020)">https://ehehe.cn/2023/04/14/SimCLR/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/" rel="tag"># 对比学习</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/13/RLE/" rel="prev" title="[Note] Human Pose Regression with Residual Log-likelihood  Estimation (ICCV 2021)">
+                  <i class="fa fa-angle-left"></i> [Note] Human Pose Regression with Residual Log-likelihood  Estimation (ICCV 2021)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/14/FasterNet/" rel="next" title="[Note] Run, Don’t Walk: Chasing Higher FLOPS for Faster Neural  Networks (CVPR 2023)">
+                  [Note] Run, Don’t Walk: Chasing Higher FLOPS for Faster Neural  Networks (CVPR 2023) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

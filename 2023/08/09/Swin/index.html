@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Ze Liu, Yutong Lin, Yue Cao, Han Hu, Yixuan Wei, Zheng Zhang, Stephen Lin, Baining Guo Swin Transformer ViT证明了一个经过简单调整的普通Transformer，可以在ImageNet数据集上与最有效的CNN达到差不多甚至更好的效果，但它尚未用于其他视觉任务（例如：目标检测、语义分割等）。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows (ICCV 2021)">
+<meta property="og:url" content="https://ehehe.cn/2023/08/09/Swin/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Ze Liu, Yutong Lin, Yue Cao, Han Hu, Yixuan Wei, Zheng Zhang, Stephen Lin, Baining Guo Swin Transformer ViT证明了一个经过简单调整的普通Transformer，可以在ImageNet数据集上与最有效的CNN达到差不多甚至更好的效果，但它尚未用于其他视觉任务（例如：目标检测、语义分割等）。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Swin%20Transformer%20architecture.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Patch_Merging.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/hierarchical%20feature%20maps.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Swin%20Transformer%20Block.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/multi-head_self-attention.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/self-attention_in_shifted_window_partitioning.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Visualization_of_attention_mask.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/relative_position_bias.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/relative_position_bias_implementation.png">
+<meta property="article:published_time" content="2023-08-09T09:44:27.000Z">
+<meta property="article:modified_time" content="2023-08-14T02:59:39.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="Transformer">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Swin%20Transformer%20architecture.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/08/09/Swin/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/08/09/Swin/","path":"2023/08/09/Swin/","title":"[Note] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows (ICCV 2021)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows (ICCV 2021) | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#swin-transformer"><span class="nav-text">Swin Transformer</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-text">网络结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#patch-partition-linear-embedding"><span class="nav-text">1. Patch Partition &#x2F; Linear
+Embedding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#patch-merging"><span class="nav-text">2. Patch Merging</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#swin-transformer-block"><span class="nav-text">3. Swin Transformer Block</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%BB%E5%8A%A8%E7%AA%97%E5%8F%A3%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B"><span class="nav-text">4. 移动窗口自注意力</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AA%97%E5%8F%A3%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B"><span class="nav-text">（1）窗口自注意力</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A7%BB%E5%8A%A8%E7%AA%97%E5%8F%A3"><span class="nav-text">（2）移动窗口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%B8%E5%AF%B9%E4%BD%8D%E7%BD%AE%E5%81%8F%E5%B7%AErelative-position-bias"><span class="nav-text">（3）相对位置偏差（Relative
+Position Bias）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/08/09/Swin/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows (ICCV 2021) | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows (ICCV 2021)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-08-09 17:44:27" itemprop="dateCreated datePublished" datetime="2023-08-09T17:44:27+08:00">2023-08-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-14 10:59:39" itemprop="dateModified" datetime="2023-08-14T10:59:39+08:00">2023-08-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>12 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Ze Liu, Yutong Lin, Yue Cao, Han Hu, Yixuan Wei, Zheng Zhang,
+Stephen Lin, Baining Guo</p>
+<h1 id="swin-transformer">Swin Transformer</h1>
+<p>ViT证明了一个经过简单调整的普通Transformer，可以在ImageNet数据集上与最有效的CNN达到差不多甚至更好的效果，但它尚未用于其他视觉任务（例如：目标检测、语义分割等）。Swin
+Transformer的提出正是为了解决这一问题，由于其在各项视觉任务中具有优异的性能，因此是目前常用的一种骨干网络。</p>
+<p>ViT直接用于目标检测、语义分割等任务，会存在一些问题，最明显的两个是：（1）ViT的计算复杂度与图像大小成平方关系；（2）ViT中单一尺度、固定大小的图像块（<span
+class="math inline">\(16 \times
+16\)</span>）不适用于处理具有多尺度目标的视觉问题。</p>
+<p>Swin
+Transformer作为ViT的改进，引入了两个关键的方法：<strong>层级式的特征图</strong>和<strong>移动窗口的注意力机制</strong>。Swin的名字也正是来自移动窗口（<strong>S</strong>hifted
+<strong>win</strong>dows）。Swin
+Transformer由于引入了这两个改进，所以在方法上相对要复杂不少。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Swin%20Transformer%20architecture.png" alt="Swin Transformer architecture" style="zoom: 67%;" /></p>
+<span id="more"></span>
+<h2 id="网络结构">网络结构</h2>
+<p>上图展示了Swin Transformer的架构图，输入图像首先通过Patch
+Partition模块分割成不重叠的Patch，每个Patch视作一个“token”。在这个Patch的基础上使用一个Linear
+Embedding模块，将其投影到任意的嵌入维度。</p>
+<p>后面则是交替使用的“Swin Transformer Block模块”和“Patch
+Merging模块”，这两个模块是Swin Transformer的主要组成部分。Patch
+Merging模块得作用是将输入特征分辨率降低一倍，通道数增加一倍，对应于CNN中的降采样过程。Swin
+Transformer Block模块用于进行特征变换，其输入和输出的形状是相同的。</p>
+<p>由此，可以看到，Swin
+Transformer是将Transformer和常用的VGG、ResNet等网络联系起来了。Swin
+Transformer同样可以生成多尺度的特征图，直接替换现有方法中的骨干网，应用于各种下游视觉任务。</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 17%" />
+<col style="width: 37%" />
+<col style="width: 37%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Stage</th>
+<th style="text-align: center;">Layer</th>
+<th style="text-align: center;">Input shape</th>
+<th style="text-align: center;">Output shape</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><strong>Input</strong></td>
+<td style="text-align: center;">Patch partition</td>
+<td style="text-align: center;"><span class="math inline">\((\mathrm{H},
+\mathrm{W}, 3)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((\mathrm{H}
+/ 4, \mathrm{~W} / 4,48)\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>Stage1</strong></td>
+<td style="text-align: center;">Linear Embedding</td>
+<td style="text-align: center;"><span class="math inline">\((\mathrm{H}
+/ 4, \mathrm{~W} / 4,48)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((\mathrm{H}
+/ 4, \mathrm{~W} / 4, \mathrm{C})\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Swin Transformer blocks</td>
+<td style="text-align: center;">不改变形状</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>Stage2</strong></td>
+<td style="text-align: center;">Patch merging</td>
+<td style="text-align: center;"><span class="math inline">\((\mathrm{H}
+/ 4, \mathrm{~W} / 4, \mathrm{C})\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((\mathrm{H}
+/ 8, \mathrm{H} / 8,4 \mathrm{C})\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Linear projection</td>
+<td style="text-align: center;"><span class="math inline">\((\mathrm{H}
+/ 8, \mathrm{H} / 8,4 \mathrm{C})\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((\mathrm{H}
+/ 8, \mathrm{H} / 8,2 \mathrm{C})\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Swin Transformer blocks</td>
+<td style="text-align: center;">不改变形状</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong>Stage3</strong></td>
+<td style="text-align: center;">Patch merging</td>
+<td style="text-align: center;"><span class="math inline">\((\mathrm{H}
+/ 8, \mathrm{H} / 8,2 \mathrm{C})\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((H / 16, H /
+16,8 C)\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Linear projection</td>
+<td style="text-align: center;"><span class="math inline">\((H / 16, H /
+16,8 C)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((H / 16, H /
+16,4 C)\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Swin Transformer blocks</td>
+<td style="text-align: center;">不改变形状</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>Stage4</strong></td>
+<td style="text-align: center;">Patch merging</td>
+<td style="text-align: center;"><span class="math inline">\((\mathrm{H}
+/ 16, \mathrm{H} / 16,4 \mathrm{C})\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((\mathrm{H}
+/ 32, \mathrm{H} / 32,16 \mathrm{C})\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Linear projection</td>
+<td style="text-align: center;"><span class="math inline">\((\mathrm{H}
+/ 32, \mathrm{H} / 32,16 \mathrm{C})\)</span></td>
+<td style="text-align: center;"><span class="math inline">\((\mathrm{H}
+/ 32, \mathrm{H} / 32,8 \mathrm{C})\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Swin Transformer blocks</td>
+<td style="text-align: center;">不改变形状</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="patch-partition-linear-embedding">1. Patch Partition / Linear
+Embedding</h3>
+<p>第一步是将输入图像分块，变成Patch
+Embedding，这与ViT中是完全相同的。不同的是，ViT中的Patch大小为<span
+class="math inline">\(16 \times 16\)</span>，在Swin
+Transformer中使用了<span class="math inline">\(4 \times
+4\)</span>大小的Patch，并且嵌入的维度为<span
+class="math inline">\(96\)</span>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">PatchEmbedding</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, img_size=<span class="number">224</span>, patch_size=<span class="number">16</span>, in_chans=<span class="number">3</span>, embed_dim=<span class="number">768</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.img_size = img_size</span><br><span class="line">        self.patch_size = patch_size</span><br><span class="line">        self.n_patches = (img_size // patch_size) ** <span class="number">2</span></span><br><span class="line">        self.patch_size = patch_size</span><br><span class="line">        self.in_chans = in_chans</span><br><span class="line">        self.embed_dim = embed_dim</span><br><span class="line"></span><br><span class="line">        self.proj = nn.Conv2d(</span><br><span class="line">            in_chans, embed_dim, kernel_size=patch_size, stride=patch_size</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="comment"># proj: [B, 3, H, W] -&gt; [B, embed, n_patch_h, n_patch_w]</span></span><br><span class="line">        <span class="comment"># flatten: [B, embed, n_patch_h, n_patch_w] -&gt; [B, embed, n_patch]</span></span><br><span class="line">        <span class="comment"># transpose: [B, embed, n_patch] -&gt; [B, n_patch, embed]</span></span><br><span class="line">        x = self.proj(x).flatten(<span class="number">2</span>).transpose(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">x = torch.randn(<span class="number">1</span>, <span class="number">3</span>, <span class="number">224</span>, <span class="number">224</span>)</span><br><span class="line">patch_embed = PatchEmbedding(img_size=<span class="number">224</span>, patch_size=<span class="number">4</span>, embed_dim=<span class="number">96</span>)</span><br><span class="line">patch_embed(x).shape</span><br><span class="line"></span><br><span class="line">&gt;&gt; torch.Size([<span class="number">1</span>, <span class="number">3136</span>, <span class="number">96</span>])</span><br></pre></td></tr></table></figure>
+<p>可以看到，此时Patch的数量为<span
+class="math inline">\(3136\)</span>，每个Patch的维度为<span
+class="math inline">\(96\)</span>，对应特征图的话，即<span
+class="math inline">\((56, 56, 96)\)</span>大小。</p>
+<p>Patch的数量相比较ViT中的<span
+class="math inline">\(196\)</span>要多出很多。由于注意力机制的复杂度是<span
+class="math inline">\(\mathcal{O}(N^2)\)</span>的，如果直接使用普通的Transformer
+Block会变得比较低效，因此，Swin
+Transformer中提出了对全局注意力机制的改进。</p>
+<h3 id="patch-merging">2. Patch Merging</h3>
+<p>Patch Merging将<span class="math inline">\(2 \times
+2\)</span>大小的窗口中的特征沿深度方向堆叠起来，然后进行合并，最后在<span
+class="math inline">\(4C\)</span>的特征维度上使用线性层，将特征减少为<span
+class="math inline">\(2C\)</span>。</p>
+<p>这一操作其实是完成了CNN中的下采样操作，空间分辨率减低一倍的同时，特征通道数增加一倍。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Patch_Merging.png" alt="Patch Merging" style="zoom: 33%;" /></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">PatchMerging</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_resolution, dim</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.input_resolution = input_resolution</span><br><span class="line">        self.dim = dim</span><br><span class="line">        self.norm = nn.LayerNorm(dim * <span class="number">4</span>)</span><br><span class="line">        self.reduction = nn.Linear(<span class="number">4</span> * dim, <span class="number">2</span> * dim, bias=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        H, W = self.input_resolution</span><br><span class="line">        B, n_patch, C = x.shape</span><br><span class="line">        </span><br><span class="line">        x = x.view(B, H, W, C) <span class="comment"># [B, n_patch, C] -&gt; [B, H, W, C]</span></span><br><span class="line">        x0 = x[:, <span class="number">0</span>::<span class="number">2</span>, <span class="number">0</span>::<span class="number">2</span>, :] <span class="comment"># [B, H, W, C] -&gt; [B, H/2, W/2, C]</span></span><br><span class="line">        x1 = x[:, <span class="number">1</span>::<span class="number">2</span>, <span class="number">0</span>::<span class="number">2</span>, :] <span class="comment"># [B, H, W, C] -&gt; [B, H/2, W/2, C]</span></span><br><span class="line">        x2 = x[:, <span class="number">0</span>::<span class="number">2</span>, <span class="number">1</span>::<span class="number">2</span>, :] <span class="comment"># [B, H, W, C] -&gt; [B, H/2, W/2, C]</span></span><br><span class="line">        x3 = x[:, <span class="number">1</span>::<span class="number">2</span>, <span class="number">1</span>::<span class="number">2</span>, :] <span class="comment"># [B, H, W, C] -&gt; [B, H/2, W/2, C]</span></span><br><span class="line">        </span><br><span class="line">        x = torch.cat([x0, x1, x2, x3], dim=-<span class="number">1</span>) <span class="comment"># [B, H/2, W/2, 4*C]</span></span><br><span class="line">        x = x.view(B, -<span class="number">1</span>, <span class="number">4</span> * C) <span class="comment"># [B, H/2, W/2, 4*C] -&gt; [B, n_patch/4, 4*C]</span></span><br><span class="line">        </span><br><span class="line">        x = self.norm(x)</span><br><span class="line">        x = self.reduction(x) <span class="comment"># [B, n_patch/4, 4*C] -&gt; [B, n_patch/4, 2*C]</span></span><br><span class="line">    </span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">x = torch.randn(<span class="number">1</span>, <span class="number">56</span> * <span class="number">56</span>, <span class="number">96</span>)	<span class="comment"># input feature map: (56, 56, 96)</span></span><br><span class="line">patch_merge = PatchMerging(input_resolution=(<span class="number">56</span>, <span class="number">56</span>), dim=<span class="number">96</span>)</span><br><span class="line">patch_merge(x).shape</span><br><span class="line"></span><br><span class="line">&gt;&gt; torch.Size([<span class="number">1</span>, <span class="number">784</span>, <span class="number">192</span>]) <span class="comment"># output feature map: (28, 28, 192)</span></span><br></pre></td></tr></table></figure>
+<p>在Swin Transformer中，正是通过Patch
+Merging的方式，完成了层级式特征图的获取。这样，就将Transformer和卷积神经网络（如：VGG、ResNet）对等起来了，现在Transformer也可以提取不同层级的、多尺度特征了。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/hierarchical%20feature%20maps.png" alt="hierarchical feature maps" style="zoom:25%;" /></p>
+<h3 id="swin-transformer-block">3. Swin Transformer Block</h3>
+<p>Swin Transformer
+Block包含两种类型，每一种类型都由一个标准化层，一个注意力模块，另一个标准化层和一个MLP层组成，这与普通的Transformer
+Block是一样的。</p>
+<p>不同的地方在于，Swin Transformer
+Block中使用的两种注意力机制：<strong>窗口自注意力（W-MSA）模块</strong>、<strong>移动窗口的自注意力（SW-MSA）模块</strong>。</p>
+<p>在实际使用中，W-MSA和SW-MSA通常会连续使用。这一点也可以从Swin
+Transformer不同阶段的设计中看出，其每个阶段包含的Swin Transformer
+Block都是偶数个。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Swin%20Transformer%20Block.png" alt="Swin Transformer Block" style="zoom: 50%;" /></p>
+<h3 id="移动窗口自注意力">4. 移动窗口自注意力</h3>
+<p>ViT中使用的标准多头自注意力执行全局自注意力，并计算每个Patch与其他所有Patch之间的关系。这导致与Patch的数量呈平方复杂性，使其不适用于高分辨率图像。</p>
+<p>为了计算的高效性，Swin
+Transformer使用基于窗口的多头自注意力方法。窗口就是一个不重叠的Patch的集合，并且<strong>注意力计算仅在每个窗口内部进行</strong>。</p>
+<p>但是，这种窗口化的自注意力机制限制了只有窗口内的Patch之间能进行交互，限制了模型的能力。为了引入窗口之间的交互，同时保持非重叠窗口的高效计算，文中引入了移动窗口的注意力。通过<strong>交替使用窗口自注意力和移动窗口自注意力</strong>来实现。</p>
+<h4 id="窗口自注意力">（1）窗口自注意力</h4>
+<p>窗口自注意力将输入特征图均匀地、非重叠地分割成不同的窗口。假设输入特征图包含<span
+class="math inline">\(h \times w\)</span>个Patch，窗口大小为<span
+class="math inline">\(M\)</span>（默认情况下<span
+class="math inline">\(M=7\)</span>），全局的MSA模块和窗口的MSA模块的计算复杂度分别为：
+<span class="math display">\[
+\begin{aligned}
+&amp; \Omega(\text { MSA })=4 h w C^2+2(h w)^2 C \\
+&amp; \Omega(\text { W-MSA })=4 h w C^2+2 M^2 h w C
+\end{aligned}
+\]</span>
+可以看到，MSA随着Patch数量的增加成平方级别增加，W-MSA则是线性的。</p>
+<p>对于矩阵<span class="math inline">\(\mathbf{A}(m \times
+n)\)</span>和矩阵<span class="math inline">\(B(n \times
+p)\)</span>，那么<span class="math inline">\(\mathbf{A} \times
+\mathbf{B}\)</span>的复杂度为<span class="math inline">\(\mathcal{O}(m
+\cdot n \cdot p)\)</span>，下面用一段简单的代码解释这一复杂度计算：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; m; i++) &#123;	<span class="comment">// A矩阵中的m行</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; i &lt; p; j++) &#123;	<span class="comment">// B矩阵中的p列</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> k = <span class="number">0</span>; k &lt; n; k++) &#123;	<span class="comment">// A矩阵中的n列或B矩阵中的n行</span></span><br><span class="line">            C[i][j] = C[i][j] + A[i][k] * B[k][j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于全局的多头自注意力（MSA），如下面的示意图，在计算过程中，有四个线性层，分别是将输入映射到<span
+class="math inline">\(\mathbf{Q}\)</span>、<span
+class="math inline">\(\mathbf{K}\)</span>、<span
+class="math inline">\(\mathbf{V}\)</span>，以及将注意力结果映射到输出<span
+class="math inline">\(\mathbf{Out}\)</span>。这四个线性层的计算是相同的，即<span
+class="math inline">\((N, C) \times (C,
+C)\)</span>。因此，这四个线性层的计算量为：<span
+class="math inline">\(4NC^2\)</span>。</p>
+<p>在注意力部分，首先是<span
+class="math inline">\(\mathbf{Q}\mathbf{K}^{\mathrm{T}}\)</span>，即<span
+class="math inline">\((N, C) \times (C,
+N)\)</span>，这一步的计算量为<span
+class="math inline">\(N^2C\)</span>。这里忽略scale和Softmax的计算量。然后是<span
+class="math inline">\(\mathbf{Attn} \times \mathbf{V}\)</span>，即<span
+class="math inline">\((N, N) \times (N,
+C)\)</span>，这一步的计算量也是<span
+class="math inline">\(N^2C\)</span>。</p>
+<p>考虑到这里一共有<span class="math inline">\(h \times
+w\)</span>个Patch（<span class="math inline">\(N = h \times
+w\)</span>），于是，MSA的计算复杂度为：<span
+class="math inline">\(4NC^2+2N^2C = 4hwC^2+2(hw)^2C\)</span>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/multi-head_self-attention.png" alt="多头自注意力模块" style="zoom:40%;" /></p>
+<p>对于窗口自注意力（W-MSA），先考虑每个窗口内的计算量，即<span
+class="math inline">\(N=M^2\)</span>，则每个窗口内的计算量为：<span
+class="math inline">\(4M^2C^2+2M^4C\)</span>。考虑到有<span
+class="math inline">\(\frac{h}{M} \times \frac{w}{M}\)</span>个窗口：
+<span class="math display">\[
+\begin{align}
+\Omega(\text{W-MSA})
+&amp;= \frac{h}{M} \times \frac{w}{M} \times \left(4M^2C^2+2M^4C\right)
+\\
+&amp;= 4 h w C^2+2 M^2 h w C
+\end{align}
+\]</span></p>
+<h4 id="移动窗口">（2）移动窗口</h4>
+<p>为了引入跨窗口的连接，移动窗口的自注意力将窗口向右下移动<span
+class="math inline">\(\left\lfloor\frac{M}{2}\right\rfloor\)</span>的大小。这样原来的窗口就可以与其相邻的窗口建立联系。</p>
+<p>然而，这种操作会出现一些大小不一的窗口，比如下图中展示的窗口<span
+class="math inline">\(A\)</span>、<span
+class="math inline">\(B\)</span>和<span
+class="math inline">\(C\)</span>。这些窗口可以通过Pad的方式填充成<span
+class="math inline">\(M \times
+M\)</span>大小的窗口进行。然而，为了避免增加计算量，文中提出了<strong>循环移位（Cyclic
+Shift）</strong>的方式，将一些不完整的Patch移动到一起，形成完整的窗口。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/self-attention_in_shifted_window_partitioning.png" alt="self-attention_in_shifted_window_partitioning" style="zoom:33%;" /></p>
+<p>需要注意的是，这种移动之后，一个窗口可能由原始特征图中非相邻的Patch组成。因此，在计算过程中，对于这类窗口需要<strong>使用掩码来限制自注意力只作用于相邻的Patch</strong>。</p>
+<p>这种循环移位的操作是为了计算上的效率，在计算完成后，需要使用<strong>逆循环移位（Reverse
+Cyclic Shift）</strong>将特征图还原。</p>
+<p>下面是生成注意力掩码的PyTorch代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">window_partition</span>(<span class="params">x, window_size</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    Partitions the given input into windows.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        x: (B, H, W, C)</span></span><br><span class="line"><span class="string">        window_size (int): window size</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        windows: (num_windows*B, window_size, window_size, C)</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    B, H, W, C = x.shape</span><br><span class="line">    x = x.view(B, H // window_size, window_size, W // window_size, window_size, C)</span><br><span class="line">    windows = x.permute(<span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>).contiguous().view(-<span class="number">1</span>, window_size, window_size, C)</span><br><span class="line">    <span class="keyword">return</span> windows</span><br><span class="line"></span><br><span class="line">window_size = <span class="number">7</span></span><br><span class="line">shift_size = window_size // <span class="number">2</span></span><br><span class="line">H, W = <span class="number">14</span>, <span class="number">14</span></span><br><span class="line">img_mask = torch.zeros((<span class="number">1</span>, H, W, <span class="number">1</span>))  <span class="comment"># 1 H W 1</span></span><br><span class="line">h_slices = (<span class="built_in">slice</span>(<span class="number">0</span>, -window_size),</span><br><span class="line">            <span class="built_in">slice</span>(-window_size, -shift_size),</span><br><span class="line">            <span class="built_in">slice</span>(-shift_size, <span class="literal">None</span>))</span><br><span class="line">w_slices = (<span class="built_in">slice</span>(<span class="number">0</span>, -window_size),</span><br><span class="line">            <span class="built_in">slice</span>(-window_size, -shift_size),</span><br><span class="line">            <span class="built_in">slice</span>(-shift_size, <span class="literal">None</span>))</span><br><span class="line">cnt = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> h <span class="keyword">in</span> h_slices:</span><br><span class="line">    <span class="keyword">for</span> w <span class="keyword">in</span> w_slices:</span><br><span class="line">        img_mask[:, h, w, :] = cnt</span><br><span class="line">        cnt += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">mask_windows = window_partition(img_mask, window_size)  <span class="comment"># nW, window_size, window_size, 1</span></span><br><span class="line">mask_windows = mask_windows.view(-<span class="number">1</span>, window_size * window_size)</span><br><span class="line"></span><br><span class="line">attn_mask = mask_windows.unsqueeze(<span class="number">1</span>) - mask_windows.unsqueeze(<span class="number">2</span>)</span><br><span class="line">attn_mask = attn_mask.masked_fill(attn_mask != <span class="number">0</span>, <span class="built_in">float</span>(-<span class="number">100.0</span>)).masked_fill(attn_mask == <span class="number">0</span>, <span class="built_in">float</span>(<span class="number">0.0</span>))</span><br><span class="line"></span><br><span class="line">plt.matshow(img_mask[<span class="number">0</span>, :, :, <span class="number">0</span>].numpy())</span><br><span class="line">plt.matshow(attn_mask[<span class="number">0</span>].numpy())</span><br><span class="line">plt.matshow(attn_mask[<span class="number">1</span>].numpy())</span><br><span class="line">plt.matshow(attn_mask[<span class="number">2</span>].numpy())</span><br><span class="line">plt.matshow(attn_mask[<span class="number">3</span>].numpy())</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Visualization_of_attention_mask.png" alt="Visualization_of_attention_mask" style="zoom:22%;" /></p>
+<h4 id="相对位置偏差relative-position-bias">（3）相对位置偏差（Relative
+Position Bias）</h4>
+<p>在普通的Transformer中，使用<strong>位置编码</strong>给模型提供序列中元素的位置信息。在Swin
+Transformer中，不直接给输入添加位置编码，而是在自注意力机制中引入<strong>相对位置偏差</strong>。加入了相对位置编码的注意力计算：
+<span class="math display">\[
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^{\mathrm{T}} +
+{\color{Red} B} }{\sqrt{d_k}}\right) V
+\]</span> 假设窗口大小为<span class="math inline">\(M\)</span>，则<span
+class="math inline">\(Q, K, V \in \mathbb{R}^{M^2 \times
+d_k}\)</span>，<span class="math inline">\(B \in \mathbb{R}^{M^2 \times
+M^2}\)</span>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/relative_position_bias.png" alt="relative position bias" style="zoom: 25%;" /></p>
+<p>在窗口大小为<span
+class="math inline">\(M\)</span>的情况下，每一个方向上的相对位置都在<span
+class="math inline">\([-M+1, M-1]\)</span>的范围中，例如：<span
+class="math inline">\(M=4 \rightarrow range
+[-3,3]\)</span>。这说明了相对位置可选的值最多只有<span
+class="math inline">\(2M-1\)</span>种。因此，在代码实现中，是<strong>预设了一个可学习的相对位置偏差的查询表</strong><span
+class="math inline">\(\hat{B} \in \mathbb{R}^{(2 M-1) \times(2
+M-1)}\)</span>，每一个<span class="math inline">\(B\)</span>都是从<span
+class="math inline">\(\hat{B}\)</span>中获取的。</p>
+<p>下面是获取相对位置偏置的PyTorch代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 参数</span></span><br><span class="line">window_size = (<span class="number">4</span>, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建相对位置偏置的查询表</span></span><br><span class="line">relative_position_bias_table = nn.Parameter(</span><br><span class="line">    torch.zeros((<span class="number">2</span> * window_size[<span class="number">0</span>] - <span class="number">1</span>) * (<span class="number">2</span> * window_size[<span class="number">1</span>] - <span class="number">1</span>), heads)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算窗口内每个位置相对于其他位置之间的相对位置索引</span></span><br><span class="line">coords_h = torch.arange(window_size[<span class="number">0</span>])</span><br><span class="line">coords_w = torch.arange(window_size[<span class="number">1</span>])</span><br><span class="line">coords = torch.stack(torch.meshgrid([coords_h, coords_w]))</span><br><span class="line">coords_flatten = torch.flatten(coords, <span class="number">1</span>)</span><br><span class="line">relative_coords = coords_flatten[:, :, <span class="literal">None</span>] - coords_flatten[:, <span class="literal">None</span>, :]</span><br><span class="line">relative_coords = relative_coords.permute(<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>).contiguous()</span><br><span class="line">relative_coords[:, :, <span class="number">0</span>] += window_size[<span class="number">0</span>] - <span class="number">1</span></span><br><span class="line">relative_coords[:, :, <span class="number">1</span>] += window_size[<span class="number">1</span>] - <span class="number">1</span></span><br><span class="line">relative_coords[:, :, <span class="number">0</span>] *= <span class="number">2</span> * window_size[<span class="number">1</span>] - <span class="number">1</span></span><br><span class="line">relative_position_index = relative_coords.<span class="built_in">sum</span>(-<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在前向推理过程中，就直接从查询表中按索引获取值</span></span><br><span class="line">relative_position_bias = relative_position_bias_table[relative_position_index.view(-<span class="number">1</span>)]</span><br><span class="line">relative_position_bias = relative_position_bias.view(</span><br><span class="line">    window_size[<span class="number">0</span>] * window_size[<span class="number">1</span>], window_size[<span class="number">0</span>] * window_size[<span class="number">1</span>], -<span class="number">1</span></span><br><span class="line">)</span><br><span class="line">relative_position_bias = relative_position_bias.permute(<span class="number">2</span>, <span class="number">0</span>, <span class="number">1</span>).contiguous()</span><br></pre></td></tr></table></figure>
+<p>下图以窗口大小<span
+class="math inline">\(M=2\)</span>为例，展示了相对位置偏差的计算过程。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/relative_position_bias_implementation.png" alt="relative_position_bias_implementation" style="zoom: 33%;" /></p>
+<h2 id="参考资料">参考资料</h2>
+<ol type="1">
+<li><p><a
+target="_blank" rel="noopener" href="https://towardsdatascience.com/a-comprehensive-guide-to-swin-transformer-64965f89d14c">A
+Comprehensive Guide to Microsoft’s Swin Transformer</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="https://amaarora.github.io/posts/2022-07-04-swintransformerv1.html">Swin
+Transformer</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV13L4y1475U/?vd_source=bc305312099c57b5c8ae25c6cf3544b6">Swin
+Transformer论文精读【论文精读】</a></p></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/08/09/Swin/" title="[Note] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows (ICCV 2021)">https://ehehe.cn/2023/08/09/Swin/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/07/26/ViT/" rel="prev" title="[Note] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale (ICLR 2021)">
+                  <i class="fa fa-angle-left"></i> [Note] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale (ICLR 2021)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/08/19/Compressed-DNNs-forget/" rel="next" title="[Note] What Do Compressed Deep Neural Networks Forget?">
+                  [Note] What Do Compressed Deep Neural Networks Forget? <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

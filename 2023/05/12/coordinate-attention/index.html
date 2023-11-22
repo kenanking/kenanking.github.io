@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Qibin Hou, Daquan Zhou, Jiashi Feng Coordinate Attention 本文主要介绍了一种针对轻量级网络的坐标注意力机制（Coordinate Attention）。与通道注意力不同，坐标注意力从\(H\)和\(W\)两个方向聚合特征，这样在一个方向上获得了长程依赖关系（long-range dependencies），在另一个方向上保留了精确的位置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] Coordinate Attention for Efficient Mobile Network Design (CVPR 2021)">
+<meta property="og:url" content="https://ehehe.cn/2023/05/12/coordinate-attention/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Qibin Hou, Daquan Zhou, Jiashi Feng Coordinate Attention 本文主要介绍了一种针对轻量级网络的坐标注意力机制（Coordinate Attention）。与通道注意力不同，坐标注意力从\(H\)和\(W\)两个方向聚合特征，这样在一个方向上获得了长程依赖关系（long-range dependencies），在另一个方向上保留了精确的位置">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Squeeze-and-Excitation.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/CBAM.jpg">
+<meta property="article:published_time" content="2023-05-12T14:02:55.000Z">
+<meta property="article:modified_time" content="2023-05-14T04:28:55.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="注意力机制">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Squeeze-and-Excitation.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/05/12/coordinate-attention/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/05/12/coordinate-attention/","path":"2023/05/12/coordinate-attention/","title":"[Note] Coordinate Attention for Efficient Mobile Network Design (CVPR 2021)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] Coordinate Attention for Efficient Mobile Network Design (CVPR 2021) | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#coordinate-attention"><span class="nav-text">Coordinate Attention</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-text">方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9D%90%E6%A0%87%E4%BF%A1%E6%81%AF%E7%BC%96%E7%A0%81"><span class="nav-text">1. 坐标信息编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9D%90%E6%A0%87%E6%B3%A8%E6%84%8F%E5%8A%9B%E7%94%9F%E6%88%90"><span class="nav-text">2. 坐标注意力生成</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#tensorflow"><span class="nav-text">1. TensorFlow</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pytorch"><span class="nav-text">2. PyTorch</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/05/12/coordinate-attention/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] Coordinate Attention for Efficient Mobile Network Design (CVPR 2021) | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] Coordinate Attention for Efficient Mobile Network Design (CVPR 2021)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-05-12 22:02:55" itemprop="dateCreated datePublished" datetime="2023-05-12T22:02:55+08:00">2023-05-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-14 12:28:55" itemprop="dateModified" datetime="2023-05-14T12:28:55+08:00">2023-05-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Qibin Hou, Daquan Zhou, Jiashi Feng</p>
+<h2 id="coordinate-attention">Coordinate Attention</h2>
+<p>本文主要介绍了一种针对轻量级网络的<strong>坐标注意力机制（Coordinate
+Attention）</strong>。与通道注意力不同，坐标注意力从<span
+class="math inline">\(H\)</span>和<span
+class="math inline">\(W\)</span>两个方向聚合特征，这样<strong>在一个方向上获得了长程依赖关系（long-range
+dependencies），在另一个方向上保留了精确的位置关系</strong>。坐标注意力机制可以简单灵活地插入到经典的轻量级网络中，例如MobileNetV2、MobileNeXT和EfficientNet中，几乎不需要计算开销。通过在ImageNet分类、目标检测和语义分割等任务上进行实验，证明了该机制相比其他注意力机制具有更好的性能表现。</p>
+<h3 id="背景">背景</h3>
+<p>注意力机制用于告诉模型“<strong>在哪里（What）</strong>”和“<strong>关注什么（Where）</strong>”。考虑到轻量级网络的计算限制，SE（Squeeze-and-Excitation）注意力机制仍然是最流行的方法，它利用2D全局池化计算通道注意力。SE通过<code>squeeze</code>，<code>excitation</code>和<code>scale</code>操作得到<span
+class="math inline">\(c\)</span>个权重系数，用来自适应地标定<span
+class="math inline">\(c\)</span>个通道。在计算成本相对较低的情况下，SE注意力提供显着的性能提升。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Squeeze-and-Excitation.png" alt="Squeeze and Excitation Block" style="zoom:25%;" /></p>
+<p>然而，SE注意力只考虑了通道之间的信息，而忽略了位置信息的重要性。之后的工作，如BAM和CBAM，通过减少输入张量的通道维度，然后使用卷积计算空间注意力来利用位置信息。但是，卷积只能捕获局部关系，不能建模对于视觉任务至关重要的长程依赖关系。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/CBAM.jpg" alt="CBAM" style="zoom:25%;" /></p>
+<p>本文在之前的工作基础上，提出了一种新颖且高效的注意力机制，通过<strong>将位置信息嵌入通道注意力中</strong>，使得网络可以关注大范围的区域，同时避免产生显著的计算开销。为了减轻2D全局池化引起的位置信息丢失，本文将通道注意力分解为<strong>两个并行的1D特征编码过程</strong>，以有效地将空间坐标信息整合到生成的注意力映射中。具体来说，我们的方法利用两个1D全局池化操作，分别沿着垂直和水平方向聚合输入特征，生成两个分别包含方向特定信息的特征映射。然后，将这两个特征映射分别编码成两个注意力映射，每个注意力映射都捕获输入特征映射沿一个空间方向的长程依赖关系，从而能够保留位置信息。然后，通过乘法将两个注意力映射应用于输入特征映射，以强调感兴趣的特征。</p>
+<span id="more"></span>
+<h3 id="方法">方法</h3>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SE%E3%80%81CBAM%E5%92%8CCA%E4%B8%89%E7%A7%8D%E6%B3%A8%E6%84%8F%E5%8A%9B%E5%AF%B9%E6%AF%94.png"
+alt="SE、CBAM和CA三种注意力对比" />
+<figcaption aria-hidden="true">SE、CBAM和CA三种注意力对比</figcaption>
+</figure>
+<p>坐标注意力块可以看作是一个计算单元，旨在增强移动网络所学特征的表达能力。对于输入特征<span
+class="math inline">\(\mathbf{X}=[\mathbf{x}_1,\mathbf{x}_2,\dots,\mathbf{x}_3]
+\in \mathbb{R}^{C \times H \times
+W}\)</span>，坐标注意力的输出为同样大小的增强后特征<span
+class="math inline">\(\mathbf{Y}=[\mathbf{y}_1,\mathbf{y}_2,\dots,\mathbf{y}_3]\)</span>。</p>
+<h4 id="坐标信息编码">1. 坐标信息编码</h4>
+<p>前面提到全局池化操作将空间信息压缩到一个通道中，难以保留空间位置信息。为了在进行长程交互的同时保留空间信息，坐标注意力中在<span
+class="math inline">\(H\)</span>和<span
+class="math inline">\(W\)</span>两个方向上进行特征聚合： <span
+class="math display">\[
+z_c^h(h)=\frac{1}{W} \sum_{0 \leq i&lt;W} x_c(h, i)
+\]</span></p>
+<p><span class="math display">\[
+z_c^w(w)=\frac{1}{H} \sum_{0 \leq j&lt;H} x_c(j, w) .
+\]</span></p>
+<p>上述的两种变换分别沿两个空间方向聚合特征，生成一对<strong>方向感知（direction-aware）</strong>的特征映射。</p>
+<h4 id="坐标注意力生成">2. 坐标注意力生成</h4>
+<p>通过坐标信息编码实现了全局感受野，并编码了精确的位置信息。文中提出对上面的特征进行变换，称为坐标注意力生成。</p>
+<p>首先对聚合特征<span
+class="math inline">\([\mathbf{z}^{h},\mathbf{z}^{w}]\)</span>进行合并，然后使用一个<span
+class="math inline">\(1 \times 1\)</span>卷积<span
+class="math inline">\(F_1\)</span>进行特征变换： <span
+class="math display">\[
+\mathbf{f} = \delta
+\left(F_1\left(\left[\mathbf{z}^{h},\mathbf{z}^{w}\right]\right)\right)
+\]</span> 其中：<span
+class="math inline">\([\cdot,\cdot]\)</span>表示沿空间维度的连接操作，<span
+class="math inline">\(\delta\)</span>为非线性激活函数，<span
+class="math inline">\(\mathbf{f} \in \mathbb{R}^{C/r \times
+(H+W)}\)</span>是水平和垂直方向上编码后的中间特征。其中<span
+class="math inline">\(r\)</span>用于控制块大小的缩减比率。</p>
+<p>然后继续将<span
+class="math inline">\(\mathbf{f}\)</span>沿着空间维度分为两个特征<span
+class="math inline">\(\mathbf{f}^{h} \in \mathbb{R}^{C/r \times
+H}\)</span>和<span class="math inline">\(\mathbf{f}^{w} \in
+\mathbb{R}^{C/r \times W}\)</span>。使用两个<span
+class="math inline">\(1 \times 1\)</span>卷积<span
+class="math inline">\(F_h\)</span>和<span
+class="math inline">\(F_w\)</span>分别对两个特征进行变换，使得与输入特征的维度相同，从而得到：
+<span class="math display">\[
+\mathbf{g}^h=\sigma\left(F_h\left(\mathbf{f}^h\right)\right)
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{g}^w=\sigma\left(F_w\left(\mathbf{f}^w\right)\right)
+\]</span></p>
+<p>其中：<span class="math inline">\(\sigma\)</span>为sigmod函数。</p>
+<p><span class="math inline">\(\mathbf{g}^h\)</span>和<span
+class="math inline">\(\mathbf{g}^w\)</span>即为注意力权重，与输入特征相乘得到输出特征：
+<span class="math display">\[
+y_c(i, j)=x_c(i, j) \times g_c^h(i) \times g_c^w(j)
+\]</span></p>
+<h3 id="实现">实现</h3>
+<h4 id="tensorflow">1. TensorFlow</h4>
+<p>TensorFlow代码由官方的PyTorch实现修改。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_depth</span>(<span class="params">v, divisor=<span class="number">8</span>, min_value=<span class="literal">None</span></span>):</span><br><span class="line">    <span class="keyword">if</span> min_value <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        min_value = divisor</span><br><span class="line"></span><br><span class="line">    new_v = <span class="built_in">max</span>(min_value, <span class="built_in">int</span>(v + divisor / <span class="number">2</span>) // divisor * divisor)</span><br><span class="line">    <span class="comment"># Make sure that round down does not go down by more than 10%.</span></span><br><span class="line">    <span class="keyword">if</span> new_v &lt; <span class="number">0.9</span> * v:</span><br><span class="line">        new_v += divisor</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> new_v</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">hard_sigmoid</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> tf.keras.layers.ReLU(<span class="number">6.0</span>)(x + <span class="number">3.0</span>) * (<span class="number">1.0</span> / <span class="number">6.0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">hard_swish</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> tf.keras.layers.Multiply()([x, hard_sigmoid(x)])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">_coord_attention</span>(<span class="params">x, groups=<span class="number">32</span></span>):</span><br><span class="line">    _, h, w, c = tf.keras.backend.int_shape(x)</span><br><span class="line">    mid = _depth(c // groups)</span><br><span class="line"></span><br><span class="line">    identity = x</span><br><span class="line"></span><br><span class="line">    x_h = tf.keras.layers.AvgPool2D(pool_size=(<span class="number">1</span>, w), strides=<span class="number">1</span>)(x)</span><br><span class="line">    x_w = tf.keras.layers.AvgPool2D(pool_size=(h, <span class="number">1</span>), strides=<span class="number">1</span>)(x)</span><br><span class="line">    x_w = tf.keras.layers.Permute((<span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>))(x_w)</span><br><span class="line"></span><br><span class="line">    y = tf.keras.layers.Concatenate(axis=<span class="number">1</span>)([x_h, x_w])</span><br><span class="line">    y = tf.keras.layers.Conv2D(mid, kernel_size=<span class="number">1</span>, padding=<span class="string">&quot;same&quot;</span>, use_bias=<span class="literal">False</span>)(y)</span><br><span class="line">    y = tf.keras.layers.BatchNormalization()(y)</span><br><span class="line">    y = hard_swish(y)</span><br><span class="line"></span><br><span class="line">    x_h, x_w = tf.keras.layers.Lambda(<span class="keyword">lambda</span> z: tf.split(z, [h, w], axis=<span class="number">1</span>))(y)</span><br><span class="line">    x_w = tf.keras.layers.Permute((<span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>))(x_w)</span><br><span class="line"></span><br><span class="line">    a_h = tf.keras.layers.Conv2D(c, kernel_size=<span class="number">1</span>, padding=<span class="string">&quot;same&quot;</span>, use_bias=<span class="literal">False</span>)(x_h)</span><br><span class="line">    a_h = tf.keras.layers.Activation(<span class="string">&quot;sigmoid&quot;</span>)(a_h)</span><br><span class="line"></span><br><span class="line">    a_w = tf.keras.layers.Conv2D(c, kernel_size=<span class="number">1</span>, padding=<span class="string">&quot;same&quot;</span>, use_bias=<span class="literal">False</span>)(x_w)</span><br><span class="line">    a_w = tf.keras.layers.Activation(<span class="string">&quot;sigmoid&quot;</span>)(a_w)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> tf.keras.layers.Multiply()([identity, a_w, a_h])</span><br></pre></td></tr></table></figure>
+<h4 id="pytorch">2. PyTorch</h4>
+<p>下面为官方的PyTorch实现<a href="#fn1" class="footnote-ref"
+id="fnref1" role="doc-noteref"><sup>1</sup></a>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">h_sigmoid</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, inplace=<span class="literal">True</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(h_sigmoid, self).__init__()</span><br><span class="line">        self.relu = nn.ReLU6(inplace=inplace)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">return</span> self.relu(x + <span class="number">3</span>) / <span class="number">6</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">h_swish</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, inplace=<span class="literal">True</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(h_swish, self).__init__()</span><br><span class="line">        self.sigmoid = h_sigmoid(inplace=inplace)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">return</span> x * self.sigmoid(x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CoordAtt</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, inp, oup, reduction=<span class="number">32</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(CoordAtt, self).__init__()</span><br><span class="line">        self.pool_h = nn.AdaptiveAvgPool2d((<span class="literal">None</span>, <span class="number">1</span>))</span><br><span class="line">        self.pool_w = nn.AdaptiveAvgPool2d((<span class="number">1</span>, <span class="literal">None</span>))</span><br><span class="line"></span><br><span class="line">        mip = <span class="built_in">max</span>(<span class="number">8</span>, inp // reduction)</span><br><span class="line"></span><br><span class="line">        self.conv1 = nn.Conv2d(inp, mip, kernel_size=<span class="number">1</span>, stride=<span class="number">1</span>, padding=<span class="number">0</span>)</span><br><span class="line">        self.bn1 = nn.BatchNorm2d(mip)</span><br><span class="line">        self.act = h_swish()</span><br><span class="line"></span><br><span class="line">        self.conv_h = nn.Conv2d(mip, oup, kernel_size=<span class="number">1</span>, stride=<span class="number">1</span>, padding=<span class="number">0</span>)</span><br><span class="line">        self.conv_w = nn.Conv2d(mip, oup, kernel_size=<span class="number">1</span>, stride=<span class="number">1</span>, padding=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        identity = x</span><br><span class="line"></span><br><span class="line">        _, _, h, w = x.size()</span><br><span class="line">        x_h = self.pool_h(x)</span><br><span class="line">        x_w = self.pool_w(x).permute(<span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">        y = torch.cat([x_h, x_w], dim=<span class="number">2</span>)</span><br><span class="line">        y = self.conv1(y)</span><br><span class="line">        y = self.bn1(y)</span><br><span class="line">        y = self.act(y)</span><br><span class="line"></span><br><span class="line">        x_h, x_w = torch.split(y, [h, w], dim=<span class="number">2</span>)</span><br><span class="line">        x_w = x_w.permute(<span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">        a_h = self.conv_h(x_h).sigmoid()</span><br><span class="line">        a_w = self.conv_w(x_w).sigmoid()</span><br><span class="line"></span><br><span class="line">        out = identity * a_w * a_h</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> out</span><br></pre></td></tr></table></figure>
+<aside id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>https://github.com/houqb/CoordAttention<a href="#fnref1"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</aside>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/05/12/coordinate-attention/" title="[Note] Coordinate Attention for Efficient Mobile Network Design (CVPR 2021)">https://ehehe.cn/2023/05/12/coordinate-attention/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/" rel="tag"># 注意力机制</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/05/10/frp-setting/" rel="prev" title="FRP内网穿透——实现内网主机访问">
+                  <i class="fa fa-angle-left"></i> FRP内网穿透——实现内网主机访问
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/06/01/SimCC/" rel="next" title="[Note] SimCC: a Simple Coordinate Classification Perspective  for Human Pose Estimation">
+                  [Note] SimCC: a Simple Coordinate Classification Perspective  for Human Pose Estimation <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

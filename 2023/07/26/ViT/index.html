@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer, Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil H">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale (ICLR 2021)">
+<meta property="og:url" content="https://ehehe.cn/2023/07/26/ViT/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer, Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil H">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/vision_transformer.gif">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/seq2seq.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/transformer.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/position_encoding.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%BB%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E6%A3%80%E7%B4%A2%E5%9B%BE%E7%89%87.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/attention_weights.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/patches.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/position_embedding_similarity.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/ViT%E5%AE%9E%E9%AA%8C%E5%A4%8D%E7%8E%B0%E7%BB%93%E6%9E%9C.png">
+<meta property="article:published_time" content="2023-07-26T07:27:24.000Z">
+<meta property="article:modified_time" content="2023-08-06T02:40:34.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="Transformer">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/vision_transformer.gif">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/07/26/ViT/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/07/26/ViT/","path":"2023/07/26/ViT/","title":"[Note] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale (ICLR 2021)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale (ICLR 2021) | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#vision-transformer"><span class="nav-text">Vision Transformer</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#transformer%E6%A6%82%E8%BF%B0"><span class="nav-text">Transformer概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8transformer"><span class="nav-text">1. 为什么要用Transformer？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E5%99%A8%E5%9D%97"><span class="nav-text">2. 编码器块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%A0%81%E5%99%A8%E5%9D%97"><span class="nav-text">3. 解码器块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81"><span class="nav-text">4. 位置编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6"><span class="nav-text">5. 自注意力机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%E7%9A%84%E4%BC%98%E5%8A%BF%E4%B8%8E%E5%8A%A3%E5%8A%BF"><span class="nav-text">注意力机制的优势与劣势</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E9%A6%88%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="nav-text">6. 前馈神经网络</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vit"><span class="nav-text">ViT</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#patch-embedding"><span class="nav-text">1. Patch Embedding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cls-token"><span class="nav-text">2. [CLS] Token</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%8D%E7%BD%AE%E5%B5%8C%E5%85%A5"><span class="nav-text">3. 位置嵌入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vit%E6%98%AF%E5%90%A6%E8%83%BD%E8%BE%93%E5%85%A5%E4%B8%8D%E5%90%8C%E5%A4%A7%E5%B0%8F%E7%9A%84%E5%9B%BE%E5%83%8F"><span class="nav-text">4.
+ViT是否能输入不同大小的图像？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E5%8A%9B%E5%9B%BE%E5%8F%AF%E8%A7%86%E5%8C%96"><span class="nav-text">5. 注意力图可视化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C"><span class="nav-text">6. 实验</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/07/26/ViT/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale (ICLR 2021) | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale (ICLR 2021)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-07-26 15:27:24" itemprop="dateCreated datePublished" datetime="2023-07-26T15:27:24+08:00">2023-07-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-06 10:40:34" itemprop="dateModified" datetime="2023-08-06T10:40:34+08:00">2023-08-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>15 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk
+Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani,
+Matthias Minderer, Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil
+Houlsby</p>
+<h1 id="vision-transformer">Vision Transformer</h1>
+<p>基于自注意力机制的模型，尤其是Transformer，已经成为NLP中的首选模型。它们通过在大型语料库上进行预训练，然后在较少的任务数据集上进行微调，可以取得最优的性能。由于Transformer的计算效率和可扩展性，现在已经可以训练超过<span
+class="math inline">\(100B\)</span>参数的大模型（实际上，目前的GPT-4由<span
+class="math inline">\(8\)</span>个<span
+class="math inline">\(220B\)</span>模型组成），并且<strong>随着模型参数和数据集的不断增长，还没有出现性能饱和的现象</strong>。</p>
+<p>受Transformer的启发，Vision
+Transformer（ViT）在19年首次提出后，就以惊人之势席卷了计算机视觉领域，在几个月内获得了数百次引用。ViT的工作证实了<strong>一个经过简单调整用来处理图像数据的普通Transformer，可以与最有效的卷积神经网络达到差不多的效果</strong>。</p>
+<p>ViT的结构相对比较简单，相对于普通Transformer的改动仅限于生成patch
+embedding和可学习得class token部分：</p>
+<ul>
+<li>将图像划分为多个patch（类似NLP中的token），将其展平并投影到<span
+class="math inline">\(D\)</span>维嵌入空间，得到<strong>patch
+embedding</strong>。</li>
+<li>将patch embedding与position
+embedding相加，然后拼接上一个可学习的class
+token，就可以输入Transformer编码器进行处理。position
+embedding是一组可学习的向量，让模型保留位置信息。</li>
+<li>最后，在class token上使用分类头，让模型进行图像分类任务。</li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/vision_transformer.gif" alt="vision_transformer" style="zoom:33%;" /></p>
+<p>ViT在公开ImageNet-21k数据集和Google内部JFT-300M数据集上预训练后，在CIFAR-10、CIFAR-100和ImageNet等数据集上进行分类，都取得了最优的精度。</p>
+<p>这一巨大提升是由于ViT没有引入<strong>归纳偏置（inductive
+bias）</strong>所导致的，即卷积的<strong>平移不变性（translation
+equivariance）</strong>和<strong>局部性（locality）</strong>。通过减少对数据的假设，ViT能够更好地适应给定的任务。然而，没有归纳偏置的代价是需要大规模数据集预训练，在小数据集（或没有预训练权重）的情况下，CNNs仍是更好的选择。这说明了大规模预训练的结果是要好于归纳偏置的。</p>
+<span id="more"></span>
+<h2 id="transformer概述">Transformer概述</h2>
+<p>基于循环神经网络（RNNs）和长短期记忆网络（LSTM）的架构一直是自然语言处理的主要架构，直到2017年Transformer（”<a
+target="_blank" rel="noopener" href="https://arxiv.org/abs/1706.03762">Attention is all you
+need</a>“）的出现。Transformer是一种采用自注意力机制的深度学习模型，可以不同程度地加权输入数据的每个部分的重要性（affinity）。</p>
+<h3 id="为什么要用transformer">1. 为什么要用Transformer？</h3>
+<p>Transformer最早提出用于解决序列转录（sequence
+transduction）问题，即Seq2Seq。早在Transformer之前，基于RNNs和LSTM的神经网络被广泛用于序列建模和转录任务，比如文本预测、机器翻译、文章生成等。</p>
+<p>以Seq2Seq为例，该模型包括编码器和解码器两部分。在encode阶段，编码器的输入为序列当前的词和之前输出的隐藏状态（hidden
+state）。最终，编码器的输出为这个序列最后一个词的输出，作为上下文向量（context
+vector）。在decode阶段，将上下文向量作为解码器的输入，以每次都预测下一个词的方式（auto-regressive）得到最终的序列。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/seq2seq.png" alt="seq2seq" style="zoom:25%;" /></p>
+<p>基于RNNs的编码器和解码器的架构非常经典，然而，这种架构面临的主要问题有<strong>如何记录长序列的上下文依赖</strong>，并且该架构<strong>不能用于并行计算、内存占用多</strong>。</p>
+<p>Transformer是第一个完全依赖于自注意力机制的深度学习模型，摒弃了循环神经网络。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/transformer.png" alt="transformer" style="zoom: 40%;" /></p>
+<h3 id="编码器块">2. 编码器块</h3>
+<p>编码器部分是多个编码器块的叠加（<span
+class="math inline">\(N=6\)</span>），每个块中的计算如下：</p>
+<pre class="mermaid">
+graph LR
+subgraph Encoder Block
+C[Self Attention] --&gt; M1((+))
+N1 --&gt; D[Feed Forward]
+M1 --&gt; N1[Norm]
+N1 --&gt; M2((+))
+D --&gt; M2
+M2 --&gt; N2[Norm]
+end
+B[Input] --&gt; M1
+B --&gt; C
+N2 --&gt; G[Output]
+</pre>
+<ol type="1">
+<li><strong>多头自注意力机制（Multi-Head
+Attention）</strong>：获取输入序列中的全局信息，然后产生一个新的词嵌入。</li>
+<li><strong>残差连接和层归一化（Add &amp;
+Nrom）</strong>：避免深度网络训练中的梯度消失问题。</li>
+<li><strong>前馈神经网络（Feed
+Forward）</strong>：两层的MLP，对每个词嵌入进行变换。</li>
+<li><strong>残差连接和层归一化（Add &amp;
+Nrom）</strong>：与上面作用相同。</li>
+</ol>
+<h3 id="解码器块">3. 解码器块</h3>
+<pre class="mermaid">
+graph LR
+subgraph Decoder Block
+C[Masked Self Attention] --&gt; M1((+))
+M1 --&gt; N1[Norm]
+N1 --&gt; D[Encoder-Decoder Attention]
+N1 --&gt; M2((+))
+D --&gt; M2
+M2 --&gt; N2[Norm]
+N2 --&gt; E[Feed Forward]
+N2 --&gt; M3((+))
+E --&gt; M3
+M3 --&gt; N3[Norm]
+end
+B[Input] --&gt; C
+B --&gt; M1
+N3 --&gt; G[Output]
+</pre>
+<p>解码器与编码器的几乎是相同的，除了这里多一个Encoder-Decoder的注意力，用于融合编码器的输出。</p>
+<p>另外，这里的自注意力是<strong>带有掩码的</strong>，为了避免当前的元素与它后面的元素产生交互。在编码器阶段，需要访问全局的信息进行交互，如果解码器还能访问全局信息那就失去意义了。掩码的作用是将当前位置之后的元素置为负无穷，这样在Softmax之后，就变成了<span
+class="math inline">\(0\)</span>。</p>
+<p><span class="math display">\[
+\frac{\mathbf{Q}\cdot \mathbf{K}^{\mathrm{T}}}{\sqrt{d_k}}=\left[
+\begin{matrix}
+    9.13&amp;       -\infty&amp;        -\infty&amp;        -\infty\\
+    5.0&amp;        12.37&amp;      -\infty&amp;        -\infty\\
+    7.25&amp;       5.0&amp;        19.37&amp;      -\infty\\
+    1.5&amp;        1.73&amp;       1.97&amp;       10.0\\
+\end{matrix} \right]
+\]</span></p>
+<h3 id="位置编码">4. 位置编码</h3>
+<p>Transformer的编码器接收一串词嵌入作为输入。然后，这些嵌入和<strong>位置编码（Positional
+Encoding）</strong>相加。位置编码的目的是向模型提供一些关于单词在句子中位置的信息，因为Transformer模型自身并不具备这种识别单词时序的能力。</p>
+<p>在原始的Transformer模型中，使用基于正弦和余弦函数的编码方式： <span
+class="math display">\[
+\begin{gathered}
+P E_{(pos, 2 i)}=\sin \left(\frac{pos}{10000^{2 i /
+d_{\text{model}}}}\right) \\
+P E_{(pos, 2 i+1)}=\cos \left(\frac{pos}{10000^{2 i /
+d_{\text{model}}}}\right)
+\end{gathered}
+\]</span> 其中，<span class="math inline">\(pos\)</span>表示位置，<span
+class="math inline">\(i\)</span>表示维度，<span
+class="math inline">\(d_{\text{model}}\)</span>表示嵌入维度。</p>
+<p>假设处理一个长度为<span
+class="math inline">\(50\)</span>的序列，每个词的嵌入维度为<span
+class="math inline">\(128\)</span>，那么这个位置编码可视化为：</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/position_encoding.png" alt="位置编码的热图" style="zoom:30%;" /></p>
+<h3 id="自注意力机制">5. 自注意力机制</h3>
+<p>自注意力机制是Transformer架构中的核心机制，用于<strong>计算序列中每个元素与其他元素之间的依赖关系</strong>，这种处理在文本数据中特别有用，因为每个单词通常都与其他单词存在相关性。通过这种方式，<strong>可以使网络更加关注有意义的信息，并对其余部分给予更少的关注</strong>。从实现的角度来看，注意力衡量两个向量之间的相似度，并返回加权相似度分数。</p>
+<p>在自注意力机制中，有三个重要概念：<strong>查询（Query）</strong>，<strong>键（Key）</strong>和<strong>值（Value）</strong>。这些术语来自搜索引擎和推荐系统，因此下面是一个从数据库中检索的示例。</p>
+<p>想象一下，你输入“沙滩上的狗”，想从数据库中检索一张图片。在数据库内部，每张照片都由一组关键词所描述——“猫”“狗”“聚会”等。我们将这些关键词称为“键”。搜索引擎会将你的查询和数据库中的键进行对比。“狗”匹配了<span
+class="math inline">\(1\)</span>个结果，“猫”匹配了<span
+class="math inline">\(0\)</span>个结果。然后，它会按照匹配度（相关性）对这些键进行排序，并按相关性顺序返回前<span
+class="math inline">\(n\)</span>张匹配图片。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%BB%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E6%A3%80%E7%B4%A2%E5%9B%BE%E7%89%87.png" alt="从数据库中检索图片" style="zoom:35%;" /></p>
+<p>下面是注意力机制的数学表达式： <span class="math display">\[
+Attention(Q, K, V) = Softmax(\frac{QK^T}{\sqrt{d_k}})V
+\]</span> 其中：<span class="math inline">\(Q\)</span>，<span
+class="math inline">\(K\)</span>，<span
+class="math inline">\(V\)</span>分别表示输入在经过投影后的查询矩阵、键矩阵和值矩阵。这一注意力机制称为<strong>缩放点积注意力（scaled-dot
+product attention）</strong>。</p>
+<p>下面展示了单头的缩放点积注意力的计算流程及其权重矩阵：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"></span><br><span class="line"><span class="comment"># set no grad</span></span><br><span class="line">torch.set_grad_enabled(<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">torch.manual_seed(<span class="number">1234</span>)</span><br><span class="line"></span><br><span class="line">in_seq = [<span class="string">&quot;Hello&quot;</span>, <span class="string">&quot;world&quot;</span>, <span class="string">&quot;how&quot;</span>, <span class="string">&quot;are&quot;</span>, <span class="string">&quot;you&quot;</span>, <span class="string">&quot;doing&quot;</span>, <span class="string">&quot;today&quot;</span>, <span class="string">&quot;?&quot;</span>]</span><br><span class="line">B, T, C = <span class="number">1</span>, <span class="number">8</span>, <span class="number">32</span>  <span class="comment"># batch size, sequence length, embedding dimension</span></span><br><span class="line">x = torch.randn(B, T, C)  <span class="comment"># input</span></span><br><span class="line"></span><br><span class="line">head_size = <span class="number">8</span></span><br><span class="line">key = nn.Linear(C, head_size, bias=<span class="literal">False</span>)</span><br><span class="line">query = nn.Linear(C, head_size, bias=<span class="literal">False</span>)</span><br><span class="line">value = nn.Linear(C, head_size, bias=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">k = key(x)  <span class="comment"># (B, T, H)</span></span><br><span class="line">q = query(x)  <span class="comment"># (B, T, H)</span></span><br><span class="line">v = value(x)  <span class="comment"># (B, T, H)</span></span><br><span class="line"></span><br><span class="line">attention = q @ k.transpose(-<span class="number">2</span>, -<span class="number">1</span>)  <span class="comment"># (B, T, H) @ (B, H, T) -&gt; (B, T, T)</span></span><br><span class="line">attention = attention / (head_size**<span class="number">0.5</span>)  <span class="comment"># scaled dot-product attention</span></span><br><span class="line"></span><br><span class="line">attention = F.softmax(attention, dim=-<span class="number">1</span>)  <span class="comment"># (B, T, T)</span></span><br><span class="line"></span><br><span class="line">output = attention @ v  <span class="comment"># (B, T, T) @ (B, T, H) -&gt; (B, T, H)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># visualize the attention weights</span></span><br><span class="line">plt.figure(figsize=(<span class="number">8</span>, <span class="number">6</span>))</span><br><span class="line">sns.heatmap(</span><br><span class="line">    attention[<span class="number">0</span>].numpy(),</span><br><span class="line">    annot=<span class="literal">True</span>,</span><br><span class="line">    cmap=<span class="string">&quot;viridis&quot;</span>,</span><br><span class="line">    xticklabels=in_seq,</span><br><span class="line">    yticklabels=in_seq,</span><br><span class="line">)</span><br><span class="line">plt.title(<span class="string">&quot;Attention Weights&quot;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/attention_weights.png" alt="注意力权重可视化" style="zoom: 50%;" /></p>
+<h4 id="注意力机制的优势与劣势">注意力机制的优势与劣势</h4>
+<ul>
+<li><strong>长程依赖（Long-term
+Dependencies）</strong>：传统的RNNs容易出现随着处理序列边长，历史信息被减弱的问题。注意机制使得模型能够直接访问输入序列中的任何位置，缓解了这一问题，从而保留了完整的上下文信息。</li>
+<li><strong>并行性（Parallelization）</strong>：与需要顺序计算的RNNs不同，基于注意力的模型（如：Transformer）可以并行处理输入序列中的所有词嵌入。这使它们在计算上更高效，并且在硬件加速器上扩展性更好。</li>
+<li><strong>可解释性（Interpretability）</strong>：注意机制提供一定程度的可解释性，因为它突出显示模型认为对于产生特定输出最重要的输入部分。</li>
+<li><strong>全局上下文（Global Context）</strong>:
+在卷积神经网络（CNNs）中，感受野通常是局部的，并且取决于卷积核的大小。然而，通过注意力，每个位置的元素可以考虑输入序列中的其他元素的信息，从而保留全局上下文。</li>
+<li><strong>更好的性能（Improved
+Performance）</strong>：基于注意力的模型，特别是Transformer，在各项自然语言处理任务中都获得了最好的性能。并且也推动了其他领域的发展，如：计算机视觉、语言识别、多模态等。</li>
+</ul>
+<p>尽管注意力机制存在上述优点，它们也存在一些限制。注意力机制中，<strong>随着序列长度的增加，内存消耗和计算成本都呈<span
+class="math inline">\(\mathcal{O}(N^2)\)</span>增加</strong>。这里的复杂度没考虑嵌入维度，实际上是<span
+class="math inline">\(\mathcal{O}(N^2 \cdot
+d)\)</span>。另外，<strong>虽然在训练时Transformer具有并行化的优势，在推理过程中，仍然是使用自回归的方式一个词一个词的输出</strong>。</p>
+<blockquote>
+<p>如果查询（Query）、键（Key）和值（Value）来自同一输入，此时的注意力被称为<strong>自注意力（self-attention）</strong>。如果它们来自不同的输入，则称为<strong>交叉注意力（cross-attention）</strong>。</p>
+</blockquote>
+<p>最后，在Transformer中，对注意力机制还做了一点改进——<strong>多头注意力机制</strong>。多头注意力机制允许模型<strong>同时关注不同位置的不同表示子空间中的信息</strong>。</p>
+<p><span class="math display">\[
+\begin{aligned}
+\operatorname{MultiHead}(Q, K, V) &amp;= \operatorname{Concat} \left(
+\text{head}_1, \ldots, \text{head}_{\mathrm{h}}\right) W^O \\
+\text{where} \space \text{head}_{i}
+&amp;=\operatorname{Attention}\left(Q W_i^Q, K W_i^K, V W_i^V\right)
+\end{aligned}
+\]</span></p>
+<h3 id="前馈神经网络">6. 前馈神经网络</h3>
+<p>Transformer中还包含一个MLP对特征嵌入进行变化，该MLP由两个线性层组成，中间使用ReLU激活函数。需要注意的是，该MLP的输入和输出维度都是<span
+class="math inline">\(d_{\text{model}}\)</span>，在中间层则会将特征维度扩大四倍：<span
+class="math inline">\(4 \times
+d_{\text{model}}\)</span>。在ViT中也延续了这一做法。</p>
+<p><span class="math display">\[
+\operatorname{FFN}(x)=\max \left(0, x W_1+b_1\right) W_2+b_2
+\]</span></p>
+<h2 id="vit">ViT</h2>
+<h3 id="patch-embedding">1. Patch Embedding</h3>
+<p>ViT的工作方式与Transformer类似，但是ViT的输入是图像块（image
+patch），而非词元（word token）。</p>
+<p>如果不将图像分成图像块，直接将像素值作为输出。那么，自注意力模块需要在每个像素间进行交互，<span
+class="math inline">\(N=224 \times
+224\)</span>。而注意力机制的复杂度又是平方级别的，即<span
+class="math inline">\(224^4 \approx
+2.5E9\)</span>，这样的计算复杂度是难以接受的。不过现在的大语言模型，claude可以做到<span
+class="math inline">\(N=100k\)</span>，GPT-4可以做到<span
+class="math inline">\(N=32k\)</span>，转换成图像的话，已经可以处理<span
+class="math inline">\(316 \times 316\)</span>和<span
+class="math inline">\(178 \times 178\)</span>大小的图像了。</p>
+<p>在patch embedding中，图像被分割成相同高度和宽度<span
+class="math inline">\(P\)</span>的多个块：</p>
+<p><span class="math display">\[
+x \in \mathbb{R}^{H \times W \times C} \Rightarrow x \in \mathbb{R}^{N
+\times P^2 C}
+\]</span></p>
+<p>其中：</p>
+<ul>
+<li><span
+class="math inline">\(N=\frac{HW}{P^2}\)</span>——图像块的数量；</li>
+<li><span
+class="math inline">\(P\)</span>——图像块的宽高，每个块的大小为<span
+class="math inline">\((P,P,C)\)</span>；</li>
+<li><span class="math inline">\(C\)</span>——输入图像的通道数。</li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/patches.png" alt="构建图像块" style="zoom:20%;" /></p>
+<p>在构建完图像块之后，使用线性层将图像块映射到嵌入空间。以上是ViT论文中的描述，在代码实现中，构建图像块和线性映射使用一个卷积即可完成。</p>
+<p>下面是PatchEmbedding的PyTorch代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">PatchEmbedding</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, img_size=<span class="number">224</span>, patch_size=<span class="number">16</span>, in_chans=<span class="number">3</span>, embed_dim=<span class="number">768</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.img_size = img_size</span><br><span class="line">        self.patch_size = patch_size</span><br><span class="line">        self.n_patches = (img_size // patch_size) ** <span class="number">2</span></span><br><span class="line">        self.patch_size = patch_size</span><br><span class="line">        self.in_chans = in_chans</span><br><span class="line">        self.embed_dim = embed_dim</span><br><span class="line"></span><br><span class="line">        self.proj = nn.Conv2d(</span><br><span class="line">            in_chans, embed_dim, kernel_size=patch_size, stride=patch_size</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="comment"># proj: [B, 3, H, W] -&gt; [B, embed, n_patches_h, n_patches_w]</span></span><br><span class="line">        <span class="comment"># flatten: [B, embed, n_patches_h, n_patches_w] -&gt; [B, embed, n_patches]</span></span><br><span class="line">        <span class="comment"># transpose: [B, embed, n_patches] -&gt; [B, n_patches, embed]</span></span><br><span class="line">        x = self.proj(x).flatten(<span class="number">2</span>).transpose(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<h3 id="cls-token">2. [CLS] Token</h3>
+<p>这个 [CLS] token在自然语言处理中起源于BERT模型。在 BERT 中，[CLS]
+token被添加到每个输入序列的开始处，并用于聚合整个序列的信息以进行分类任务。[CLS]
+token的输出通常被用作下游任务的输入，例如：句子分类。</p>
+<p>同样，在ViT中，[CLS] token在所有的patch
+embedding之前，其目的是<strong>聚合整个图像的信息</strong>。在模型的前向传播过程中，[CLS]
+token与所有的patch embedding一起通过
+Transformer。在最后一层，我们取[CLS]
+token的输出，并使用MLP进行分类任务。</p>
+<h3 id="位置嵌入">3. 位置嵌入</h3>
+<p>Transformer模型没有任何机制来考虑token或patch
+embedding的顺序。然而，顺序是非常关键的。在语言中，词语的顺序可以完全改变它们的意思。</p>
+<p>对于图像也是一样。如果给定一组乱码的拼图，对于一个人来说准确预测这一个图代表什么是非常困难甚至不可能的。因此，我们需要一种方式使得模型能够推断拼图块的顺序或位置。</p>
+<p>在ViT中，使用位置嵌入来实现顺序的机制，这些<strong>位置嵌入是与块嵌入具有相同维度的可学习向量</strong>。</p>
+<p>在创建图像块嵌入并在前面添加[CLS]
+token之后，将它们和位置嵌入一起求和，作为Transformer的输入。这些位置嵌入在模型训练过程中一起学习。</p>
+<p>下图展示了每一个位置嵌入和其他位置嵌入之间的余弦相似度。可以看到，每一个位置嵌入都与它所在行和列的位置嵌入具有最高的相似度。因此位置嵌入可以学习到当前图像块在图像中的位置。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/position_embedding_similarity.png" alt="位置嵌入的余弦相似度" style="zoom: 25%;" /></p>
+<h3 id="vit是否能输入不同大小的图像">4.
+ViT是否能输入不同大小的图像？</h3>
+<p>显然<span class="math inline">\(224 \times 224\)</span>或者<span
+class="math inline">\(384 \times
+384\)</span>大小的输入图像并不能满足很多视觉任务的需求，比如图像分割、目标检测等。</p>
+<p>当输入更大尺寸的图像时，我们保持图像块大小<span
+class="math inline">\(P\)</span>不变，这样会导致更长的输入序列<span
+class="math inline">\(N=\frac{HW}{P^{2}}\)</span>，这一步对于Patch
+Embedding没有影响。但是，对于位置嵌入就会出问题，因为预训练的位置嵌入可能不再有意义了。ViT中解决这一问题的方式是<strong>使用双线性插值来缩放位置嵌入</strong>，来满足新的图像块大小。</p>
+<p>当前，这种方式并不完美，后续有的工作中放弃的位置编码或对其进行改进（SegFormer，Swin
+Transformer等）。</p>
+<h3 id="注意力图可视化">5. 注意力图可视化</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Image</th>
+<th style="text-align: center;">Vanilla Attention Rollout</th>
+<th style="text-align: center;">With discarding lowest pixels + max
+fusion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/both.png"
+alt="both" /></td>
+<td style="text-align: center;"><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/both_attention_rollout_0.000_mean.png"
+alt="both_attention_rollout_mean" /></td>
+<td style="text-align: center;"><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/both_attention_rollout_0.990_max.png"
+alt="both_attention_rollout_max" /></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/plane.png"
+alt="plane" /></td>
+<td style="text-align: center;"><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/plane_attention_rollout_0.000_mean.png"
+alt="plane_attention_rollout_mean" /></td>
+<td style="text-align: center;"><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/plane_attention_rollout_0.900_max.png"
+alt="plane_attention_rollout_max" /></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/dogbird.png"
+alt="dogbird" /></td>
+<td style="text-align: center;"><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/dogbird_attention_rollout_0.000_mean.png"
+alt="dogbird_attention_rollout_mean" /></td>
+<td style="text-align: center;"><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/dogbird_attention_rollout_0.900_max.png"
+alt="dogbird_attention_rollout_max" /></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/plane2.png"
+alt="plane2" /></td>
+<td style="text-align: center;"><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/plane2_attention_rollout_0.000_mean.png"
+alt="plane2_attention_rollout_mean" /></td>
+<td style="text-align: center;"><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/plane2_attention_rollout_0.900_max.png"
+alt="plane2_attention_rollout_max" /></td>
+</tr>
+</tbody>
+</table>
+<h3 id="实验">6. 实验</h3>
+<p>下面是实现了一个简易版本的ViT，并通过加载Hugging
+Face上的预训练权重，在CIFAR10和CIFAR100上对ViT论文中的相关实验的复现结果。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/ViT%E5%AE%9E%E9%AA%8C%E5%A4%8D%E7%8E%B0%E7%BB%93%E6%9E%9C.png" alt="ViT实验复现结果" style="zoom: 50%;" /></p>
+<h2 id="参考资料">参考资料</h2>
+<ol type="1">
+<li><p><a
+target="_blank" rel="noopener" href="https://keras.io/examples/vision/probing_vits/">Investigating
+Vision Transformer representations</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="https://www.pinecone.io/learn/series/image-search/vision-transformers/">Vision
+Transformers (ViT) Explained</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="https://jacobgil.github.io/deeplearning/vision-transformer-explainability">Exploring
+Explainability for Vision Transformers</a></p></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/07/26/ViT/" title="[Note] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale (ICLR 2021)">https://ehehe.cn/2023/07/26/ViT/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/07/25/PointRend/" rel="prev" title="[Note] PointRend: Image Segmentation as Rendering (CVPR 2020)">
+                  <i class="fa fa-angle-left"></i> [Note] PointRend: Image Segmentation as Rendering (CVPR 2020)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/08/09/Swin/" rel="next" title="[Note] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows (ICCV 2021)">
+                  [Note] Swin Transformer: Hierarchical Vision Transformer using Shifted Windows (ICCV 2021) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

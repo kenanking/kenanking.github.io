@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Programming Languages作业4。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Programming Languages Homework 4">
+<meta property="og:url" content="https://ehehe.cn/2021/02/20/Programming-Languages-Homework-4/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="Programming Languages作业4。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-20T11:50:55.000Z">
+<meta property="article:modified_time" content="2021-02-20T11:50:55.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="Coursera">
+<meta property="article:tag" content="Programming Languages">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ehehe.cn/2021/02/20/Programming-Languages-Homework-4/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2021/02/20/Programming-Languages-Homework-4/","path":"2021/02/20/Programming-Languages-Homework-4/","title":"Programming Languages Homework 4"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Programming Languages Homework 4 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-1"><span class="nav-text">Problem 1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-2"><span class="nav-text">Problem 2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-3"><span class="nav-text">Problem 3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-4"><span class="nav-text">Problem 4</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-5"><span class="nav-text">Problem 5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-6"><span class="nav-text">Problem 6</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-7"><span class="nav-text">Problem 7</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-8"><span class="nav-text">Problem 8</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-9"><span class="nav-text">Problem 9</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#problem-10"><span class="nav-text">Problem 10</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2021/02/20/Programming-Languages-Homework-4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Programming Languages Homework 4 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Programming Languages Homework 4
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-02-20 19:50:55" itemprop="dateCreated datePublished" datetime="2021-02-20T19:50:55+08:00">2021-02-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Programming Languages作业4。</p>
+<span id="more"></span>
+<h2 id="problem-1">Problem 1</h2>
+<p>Write a function <code>sequence</code> that takes 3 arguments low,
+high, and stride, all assumed to be numbers. Further assume stride is
+positive. sequence produces a list of numbers from low to high
+(including low and possibly high) separated by stride and in sorted
+order. Sample solution: 4 lines. Examples:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Call</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>(sequence 3 11 2)</td>
+<td>'(3 5 7 9 11)</td>
+</tr>
+<tr class="even">
+<td>(sequence 3 8 3)</td>
+<td>'(3 6)</td>
+</tr>
+<tr class="odd">
+<td>(sequence 3 2 1)</td>
+<td>'()</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">;; Problem 1</span><br><span class="line">(define (sequence low high stride)</span><br><span class="line">  (if (&gt; low high)</span><br><span class="line">      null</span><br><span class="line">      (cons low (sequence (+ low stride) high stride))))</span><br></pre></td></tr></table></figure>
+<h2 id="problem-2">Problem 2</h2>
+<p>Write a function <code>string-append-map</code> that takes a list of
+strings xs and a string suffix and returns a list of strings. Each
+element of the output should be the corresponding element of the input
+appended with suffix (with no extra space between the element and
+suffix). You must use Racket-library functions map and string-append.
+Sample solution: 2 lines.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">;; Problem 2</span><br><span class="line">(define (string-append-map xs suffix)</span><br><span class="line">  (map (lambda (x) (string-append x suffix)) xs))</span><br></pre></td></tr></table></figure>
+<h2 id="problem-3">Problem 3</h2>
+<p>Write a function <code>list-nth-mod</code> that takes a list xs and a
+number n. If the number is negative, terminate the computation with
+(error "list-nth-mod: negative number"). Else if the list is empty,
+terminate the computation with (error "list-nth-mod: empty list"). Else
+return the ith element of the list where we count from zero and i is the
+remainder produced when dividing n by the list's length. Library
+functions length, remainder, car, and list-tail are all useful — see the
+Racket documentation. Sample solution is 6 lines.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">;; Problem 3</span><br><span class="line">(define (list-nth-mod xs n)</span><br><span class="line">  (cond [(&lt; n 0) (error &quot;list-nth-mod: negative number&quot;)]</span><br><span class="line">        [(null? xs) (error &quot;list-nth-mod: empty list&quot;)]</span><br><span class="line">        [#t (let ([i (remainder n (length xs))])</span><br><span class="line">              (car (list-tail xs i)))]))</span><br></pre></td></tr></table></figure>
+<h2 id="problem-4">Problem 4</h2>
+<p>Write a function <code>stream-for-n-steps</code> that takes a stream
+s and a number n. It returns a list holding the rst n values produced by
+s in order. Assume n is non-negative. Sample solution: 5 lines. Note:
+You can test your streams with this function instead of the graphics
+code.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">;; Problem 4</span><br><span class="line">(define (stream-for-n-steps s n)</span><br><span class="line">  (if (= n 0)</span><br><span class="line">      null</span><br><span class="line">      (let ([pr (s)])</span><br><span class="line">        (cons (car pr) (stream-for-n-steps (cdr pr) (- n 1))))))</span><br></pre></td></tr></table></figure>
+<h2 id="problem-5">Problem 5</h2>
+<p>Write a stream <code>funny-number-stream</code> that is like the
+stream of natural numbers (i.e., 1, 2, 3, ...) except numbers divisble
+by 5 are negated (i.e., 1, 2, 3, 4, -5, 6, 7, 8, 9, -10, 11, ...).
+Remember a stream is a thunk that when called produces a pair. Here the
+car of the pair will be a number and the cdr will be another stream.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">;; Problem 5</span><br><span class="line">(define funny-number-stream</span><br><span class="line">  (letrec ([f (lambda (x) (cons</span><br><span class="line">                           (if (= (remainder x 5) 0) (- x) x)</span><br><span class="line">                           (lambda () (f (+ x 1)))))])</span><br><span class="line">    (lambda() (f 1))))</span><br></pre></td></tr></table></figure>
+<h2 id="problem-6">Problem 6</h2>
+<p>Write a stream <code>dan-then-dog</code>, where the elements of the
+stream alternate between the strings "dan.jpg" and "dog.jpg" (starting
+with "dan.jpg"). More specifically, dan-then-dog should be a thunk that
+when called produces a pair of "dan.jpg" and a thunk that when called
+produces a pair of "dog.jpg" and a thunk that when called... etc. Sample
+solution: 4 lines.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">;; Problem 6</span><br><span class="line">(define dan-then-dog</span><br><span class="line">  (letrec ([f (lambda (x)</span><br><span class="line">                (if x</span><br><span class="line">                    (cons &quot;dan.jpg&quot; (lambda () (f #f)))</span><br><span class="line">                    (cons &quot;dog.jpg&quot; (lambda () (f #t)))))])</span><br><span class="line">    (lambda() (f #t))))</span><br></pre></td></tr></table></figure>
+<h2 id="problem-7">Problem 7</h2>
+<p>Write a function <code>stream-add-zero</code> that takes a stream s
+and returns another stream. If s would produce v for its ith element,
+then (stream-add-zero s) would produce the pair (0 . v) for its ith
+element. Sample solution: 4 lines. Hint: Use a thunk that when called
+uses s and recursion. Note: One of the provided tests in the file using
+graphics uses (stream-add-zero dan-then-dog) with place-repeatedly.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(define (stream-add-zero s)</span><br><span class="line">  (lambda ()</span><br><span class="line">    (let ([pr (s)])</span><br><span class="line">      (cons (cons 0 (car pr)) (stream-add-zero (cdr pr))))))</span><br></pre></td></tr></table></figure>
+<h2 id="problem-8">Problem 8</h2>
+<p>Write a function <code>cycle-lists</code> that takes two lists xs and
+ys and returns a stream. The lists may or may not be the same length,
+but assume they are both non-empty. The elements produced by the stream
+are pairs where the rst part is from xs and the second part is from ys.
+The stream cycles forever through the lists. For example, if xs is '(1 2
+3) and ys is '("a" "b"), then the stream would produce, (1 . "a"), (2 .
+"b"), (3 . "a"), (1 . "b"), (2 . "a"), (3 . "b"), (1 . "a"), (2 . "b"),
+etc.</p>
+<p>Sample solution is 6 lines and is more complicated than the previous
+stream problems. Hints: Use one of the functions you wrote earlier. Use
+a recursive helper function that takes a number n and calls itself with
+(+ n 1) inside a thunk.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">;; Problem 8</span><br><span class="line">(define (cycle-lists xs ys)</span><br><span class="line">  (letrec ([f (lambda (n) (cons</span><br><span class="line">                           (cons (list-nth-mod xs n) (list-nth-mod ys n))</span><br><span class="line">                           (lambda() (f (+ n 1)))))])</span><br><span class="line">    (lambda() (f 0))))</span><br></pre></td></tr></table></figure>
+<h2 id="problem-9">Problem 9</h2>
+<p>Write a function <code>vector-assoc</code> that takes a value v and a
+vector vec. It should behave like Racket's assoc library function except
+(1) it processes a vector (Racket's name for an array) instead of a
+list, (2) it allows vector elements not to be pairs in which case it
+skips them, and (3) it always takes exactly two arguments. Process the
+vector elements in order starting from 0. You must use library functions
+vector-length, vector-ref, and equal?. Return #f if no vector element is
+a pair with a car field equal to v, else return the rst pair with an
+equal car field. Sample solution is 9 lines, using one local recursive
+helper function.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">;; Problem 9</span><br><span class="line">(define (vector-assoc v vec)</span><br><span class="line">  (letrec ([len (vector-length vec)]</span><br><span class="line">           [f (lambda (n)</span><br><span class="line">                (if (&lt; n len)</span><br><span class="line">                    (let ([nth (vector-ref vec n)])</span><br><span class="line">                      (if (and (pair? nth) (equal? (car nth) v))</span><br><span class="line">                          nth</span><br><span class="line">                          (f (+ n 1))))</span><br><span class="line">                    #f))])</span><br><span class="line">    (f 0)))</span><br></pre></td></tr></table></figure>
+<h2 id="problem-10">Problem 10</h2>
+<p>Write a function <code>cached-assoc</code> that takes a list xs and a
+number n and returns a function that takes one argument v and returns
+the same thing that (assoc v xs) would return. However, you should use
+an n-element cache of recent results to possibly make this function
+faster than just calling assoc (if xs is long and a few elements are
+returned often). The cache must be a Racket vector of length n that is
+created by the call to cached-assoc (use Racket library function vector
+or make-vector) and used-and-possibly-mutated each time the function
+returned by cached-assoc is called. Assume n is positive.</p>
+<p>The cache starts empty (all elements #f). When the function returned
+by cached-assoc is called, it rst checks the cache for the answer. If it
+is not there, it uses assoc and xs to get the answer and if the result
+is not #f (i.e., xs has a pair that matches), it adds the pair to the
+cache before returning (using vector-set!). The cache slots are used in
+a round-robin fashion: the rst time a pair is added to the cache it is
+put in position 0, the next pair is put in position 1, etc. up to
+position n-1 and then back to position 0 (replacing the pair already
+there), then position 1, etc.</p>
+<p>Hints:</p>
+<ul>
+<li>In addition to a variable for holding the vector whose contents you
+mutate with vector-set!, use a second variable to keep track of which
+cache slot will be replaced next. After modifying the cache, increment
+this variable (with set!) or set it back to 0.</li>
+<li>To test your cache, it can be useful to add print expressions so you
+know when you are using the cache and when you are not. But remove these
+print expressions before submitting your code.</li>
+<li>Sample solution is 15 lines.</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">;; Problem 10</span><br><span class="line">(define (cached-assoc xs n)</span><br><span class="line">  (letrec ([memo (make-vector n #f)]</span><br><span class="line">           [pos 0])</span><br><span class="line">    (lambda (v)</span><br><span class="line">      (let ([ans (vector-assoc v memo)])</span><br><span class="line">        (if ans</span><br><span class="line">            ans</span><br><span class="line">            (let ([new-ans (assoc v xs)])</span><br><span class="line">              (begin</span><br><span class="line">                (vector-set! memo pos new-ans)</span><br><span class="line">                (set! pos (remainder (+ pos 1) n)))</span><br><span class="line">              (vector-assoc v memo)))))))</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2021/02/20/Programming-Languages-Homework-4/" title="Programming Languages Homework 4">https://ehehe.cn/2021/02/20/Programming-Languages-Homework-4/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Coursera/" rel="tag"># Coursera</a>
+              <a href="/tags/Programming-Languages/" rel="tag"># Programming Languages</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/02/17/Programming-Languages-Homework-3/" rel="prev" title="Programming Languages Homework 3">
+                  <i class="fa fa-angle-left"></i> Programming Languages Homework 3
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/14/ch1-1-1-%E4%BE%8B%E5%AD%90%EF%BC%9A%E5%A4%9A%E9%A1%B9%E5%BC%8F%E6%9B%B2%E7%BA%BF%E6%8B%9F%E5%90%88/" rel="next" title="ch1-1.1 例子：多项式曲线拟合">
+                  ch1-1.1 例子：多项式曲线拟合 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

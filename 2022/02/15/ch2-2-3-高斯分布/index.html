@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="2.3 高斯分布 高斯分布（Gaussian distribution），也被称为正态分布（normal distribution），⼴泛应⽤于连续型随机变量分布的模型中。 对于一元变量\(x\)，高斯分布为： \[ \mathcal{N}(x \mid \mu, \sigma^{2})&#x3D;\frac{1}{(2 \pi \sigma^{2})^{1 &#x2F; 2}} \exp \{-\frac{1}{2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch2-2.3 高斯分布">
+<meta property="og:url" content="https://ehehe.cn/2022/02/15/ch2-2-3-%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="2.3 高斯分布 高斯分布（Gaussian distribution），也被称为正态分布（normal distribution），⼴泛应⽤于连续型随机变量分布的模型中。 对于一元变量\(x\)，高斯分布为： \[ \mathcal{N}(x \mid \mu, \sigma^{2})&#x3D;\frac{1}{(2 \pi \sigma^{2})^{1 &#x2F; 2}} \exp \{-\frac{1}{2">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%B8%AD%E5%BF%83%E6%9E%81%E9%99%90%E5%AE%9A%E7%90%86.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%BA%8C%E7%BB%B4%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83%E6%A4%AD%E5%9C%86.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%BA%8C%E7%BB%B4%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%B8%8D%E5%90%8C%E7%9A%84%E8%B6%85%E5%8F%82%E6%95%B0%E5%80%BC%E5%AF%B9%E5%BA%94gamma%E5%88%86%E5%B8%83.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E9%AB%98%E6%96%AF-gamma%E5%88%86%E5%B8%83.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E5%AD%A6%E7%94%9Ft%E5%88%86%E5%B8%83.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/gaussian_and_student_t.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E5%91%A8%E6%9C%9F%E5%8F%98%E9%87%8F%E8%A1%A8%E7%A4%BA%E4%B8%BA%E5%8D%95%E4%BD%8D%E5%9C%86%E4%B8%8A%E7%9A%84%E4%BA%8C%E7%BB%B4%E5%90%91%E9%87%8F.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/mixture_of_gaussians.jpg">
+<meta property="article:published_time" content="2022-02-15T02:26:08.000Z">
+<meta property="article:modified_time" content="2022-02-15T02:26:08.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="PRML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%B8%AD%E5%BF%83%E6%9E%81%E9%99%90%E5%AE%9A%E7%90%86.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/02/15/ch2-2-3-%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/02/15/ch2-2-3-%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83/","path":"2022/02/15/ch2-2-3-高斯分布/","title":"ch2-2.3 高斯分布"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch2-2.3 高斯分布 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83"><span class="nav-text">2.3 高斯分布</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83%E7%9A%84%E5%88%86%E6%9E%90"><span class="nav-text">对高斯分布的分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="nav-text">高斯分布的局限性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B1%80%E9%99%90%E4%B8%80%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83%E8%87%AA%E7%94%B1%E5%8F%82%E6%95%B0%E6%95%B0%E9%87%8F%E5%A4%9A"><span class="nav-text">局限一：高斯分布自由参数数量多</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B1%80%E9%99%90%E4%BA%8C%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83%E6%98%AF%E5%8D%95%E5%B3%B0%E7%9A%84%E4%B8%8D%E8%83%BD%E5%BE%88%E5%A5%BD%E5%9C%B0%E8%BF%91%E4%BC%BC%E5%A4%9A%E5%B3%B0%E5%88%86%E5%B8%83"><span class="nav-text">局限二：高斯分布是单峰的，不能很好地近似多峰分布</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83"><span class="nav-text">2.3.1 条件高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%B9%E7%BC%98%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83"><span class="nav-text">2.3.2 边缘高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E6%96%AF%E5%8F%98%E9%87%8F%E7%9A%84%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9A%E7%90%86"><span class="nav-text">2.3.3 高斯变量的贝叶斯定理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83%E7%9A%84%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1"><span class="nav-text">2.3.4 高斯分布的最大似然估计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%BA%E5%BA%8F%E4%BC%B0%E8%AE%A1"><span class="nav-text">2.3.5 顺序估计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%BA%E5%BA%8F%E4%BC%B0%E8%AE%A1%E6%80%9D%E6%83%B3"><span class="nav-text">顺序估计思想</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%BA%E5%BA%8F%E4%BC%B0%E8%AE%A1%E7%9A%84%E4%B8%80%E8%88%AC%E6%96%B9%E6%B3%95%E5%8D%95%E5%8F%98%E9%87%8F%E6%83%85%E5%86%B5"><span class="nav-text">顺序估计的一般方法（单变量情况）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E9%97%AE%E9%A2%98"><span class="nav-text">最大似然问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83%E7%9A%84%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%8E%A8%E6%96%AD"><span class="nav-text">2.3.6 高斯分布的贝叶斯推断</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E5%B7%AE%E5%B7%B2%E7%9F%A5%E6%B1%82%E5%9D%87%E5%80%BC"><span class="nav-text">方差已知，求均值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9D%87%E5%80%BC%E5%B7%B2%E7%9F%A5%E6%B1%82%E6%96%B9%E5%B7%AE"><span class="nav-text">均值已知，求方差</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9D%87%E5%80%BC%E5%92%8C%E6%96%B9%E5%B7%AE%E5%9D%87%E6%9C%AA%E7%9F%A5"><span class="nav-text">均值和方差均未知</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%A6%E7%94%9Ft-%E5%88%86%E5%B8%83"><span class="nav-text">2.3.7 学生t-分布</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%A6%E7%94%9Ft-%E5%88%86%E5%B8%83-1"><span class="nav-text">学生t-分布</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E6%9E%90"><span class="nav-text">分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%A8%E6%9C%9F%E5%8F%98%E9%87%8F"><span class="nav-text">2.3.8 周期变量</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1"><span class="nav-text">最大似然估计</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E9%AB%98%E6%96%AF%E6%A8%A1%E5%9E%8B"><span class="nav-text">2.3.9 混合高斯模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">其他参考资料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/02/15/ch2-2-3-%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch2-2.3 高斯分布 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch2-2.3 高斯分布
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-15 10:26:08" itemprop="dateCreated datePublished" datetime="2022-02-15T10:26:08+08:00">2022-02-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>29 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="高斯分布">2.3 高斯分布</h2>
+<p><strong>高斯分布（Gaussian
+distribution）</strong>，也被称为<strong>正态分布（normal
+distribution）</strong>，⼴泛应⽤于连续型随机变量分布的模型中。</p>
+<p>对于一元变量<span class="math inline">\(x\)</span>，高斯分布为：
+<span class="math display">\[
+\mathcal{N}(x \mid \mu, \sigma^{2})=\frac{1}{(2 \pi \sigma^{2})^{1 / 2}}
+\exp \{-\frac{1}{2 \sigma^{2}}(x-\mu)^{2}\}
+\]</span></p>
+<p>其中，<span class="math inline">\(\mu\)</span>是均值，<span
+class="math inline">\(\sigma^{2}\)</span>是方差。</p>
+<p>对于<span class="math inline">\(D\)</span>维向量<span
+class="math inline">\(\mathrm{x}\)</span>，高斯分布为： <span
+class="math display">\[
+\mathcal{N}(\mathrm{x} \mid \boldsymbol{\mu}, \Sigma)=\frac{1}{(2
+\pi)^{D / 2}} \frac{1}{|\Sigma|^{1 / 2}} \exp
+\{-\frac{1}{2}(\mathrm{x}-\boldsymbol{\mu})^{\mathrm{T}}
+\Sigma^{-1}(\mathrm{x}-\boldsymbol{\mu})\}
+\]</span></p>
+<p>其中，<span class="math inline">\(\boldsymbol{\mu}\)</span>是<span
+class="math inline">\(D\)</span>维的均值向量，<span
+class="math inline">\(\Sigma\)</span>是一个<span class="math inline">\(D
+\times D\)</span>的协方差矩阵，<span class="math inline">\(\mid \Sigma
+\mid\)</span>是<span class="math inline">\(\Sigma\)</span>的行列式。</p>
+<span id="more"></span>
+<p>在很多不同的问题中产生都会出现高斯分布的应用。例如：①对于一元实值向量，满足高斯分布时熵最大（对于多元变量存在同样的结论）。②<strong>中心极限定理（central
+limit theorem）</strong>：一组随机变量之和的概率
+分布会随着数量的增加而趋向高斯分布。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">mean_of_n_uniform_variables</span>(<span class="params">n</span>):</span><br><span class="line">	x = np.random.uniform(<span class="number">0</span>, <span class="number">1</span>, <span class="number">1000000</span>)</span><br><span class="line">	<span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n-<span class="number">1</span>):</span><br><span class="line">		x += np.random.uniform(<span class="number">0</span>, <span class="number">1</span>, <span class="number">1000000</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> x / n</span><br><span class="line"></span><br><span class="line">N = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">10</span>]</span><br><span class="line">plt.figure(figsize=(<span class="number">9</span>, <span class="number">3</span>))</span><br><span class="line"><span class="keyword">for</span> i, n <span class="keyword">in</span> <span class="built_in">enumerate</span>(N):</span><br><span class="line">	plt.subplot(<span class="number">1</span>, <span class="number">3</span>, i+<span class="number">1</span>)</span><br><span class="line">	plt.hist(mean_of_n_uniform_variables(n), bins=<span class="number">15</span>, edgecolor=<span class="string">&#x27;black&#x27;</span>, rwidth=<span class="number">0.8</span>, density=<span class="literal">True</span>)</span><br><span class="line">	plt.annotate(<span class="string">f&#x27;$N = <span class="subst">&#123;n&#125;</span>$&#x27;</span>, xy=(<span class="number">0.1</span>, <span class="number">0.9</span>), xycoords=<span class="string">&#x27;axes fraction&#x27;</span>)</span><br><span class="line">	plt.xticks([<span class="number">0</span>, <span class="number">0.5</span>, <span class="number">1</span>], [<span class="number">0</span>, <span class="number">0.5</span>, <span class="number">1</span>])</span><br><span class="line">	plt.yticks([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>])</span><br><span class="line"></span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/中心极限定理.png" alt="中心极限定理" style="zoom:50%;" /></p>
+<h3 id="对高斯分布的分析">对高斯分布的分析</h3>
+<p>这一部分在<a
+target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1RW411m7WE?p=3">机器学习白板推导-数学基础</a>中，讲的比较清楚。</p>
+<p>高斯分布对于<span
+class="math inline">\(\mathbf{x}\)</span>的依赖是通过下面的二次型：
+<span class="math display">\[
+\Delta^{2}=(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}}
+\boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})
+\]</span></p>
+<p><span class="math inline">\(\Delta\)</span>叫做<span
+class="math inline">\(\boldsymbol{\mu}\)</span>和<span
+class="math inline">\(\mathbf{x}\)</span>之间的<strong>马氏距离（Mahalanobis
+distance）</strong>。当<span
+class="math inline">\(\boldsymbol{\Sigma}\)</span>为单位阵时，<span
+class="math inline">\(\Delta\)</span>变成欧氏距离。</p>
+<p>在下面的分析中，令<span
+class="math inline">\(\boldsymbol{\Sigma}\)</span>为对称阵，因为任何⾮对称项都会从指数中消失。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">First of all, we note that the matrix $\boldsymbol&#123;\Sigma&#125;$ can be taken to be symmetric, without loss of generality, because any antisymmetric component would disappear from the exponent.</span><br></pre></td></tr></table></figure>
+<p>下面解释一下这段话（参考资料2）：</p>
+<p>令<span class="math inline">\(\mathbf{A} =
+\boldsymbol{\Sigma}^{-1}\)</span>，于是：<span
+class="math inline">\(\Delta^{2}=(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}}
+\mathbf{A} (\mathbf{x}-\boldsymbol{\mu})\)</span>。</p>
+<p><span
+class="math inline">\(\mathbf{A}\)</span>可以写成如下形式：<span
+class="math inline">\(\mathbf{A}=\frac{1}{2}\left(\mathbf{A} +
+\mathbf{A}^{T}\right)+\frac{1}{2}\left(\mathbf{A} -
+\mathbf{A}^{T}\right)\)</span>。</p>
+<p>令<span class="math inline">\(\mathbf{B} =
+\frac{1}{2}\left(\mathbf{A} + \mathbf{A}^{T}\right)\)</span>，<span
+class="math inline">\(\mathbf{C} = \frac{1}{2}\left(\mathbf{A} -
+\mathbf{A}^{T}\right)\)</span>。注意到这里<span
+class="math inline">\(\mathbf{B}\)</span>为对称阵，<span
+class="math inline">\(\mathbf{C}\)</span>为反对称阵（即：<span
+class="math inline">\(c_{ij} = - c_{ji}\)</span>）。</p>
+<p>于是： <span class="math display">\[
+\Delta^{2}=(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} \mathbf{B}
+(\mathbf{x}-\boldsymbol{\mu}) +
+(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} \mathbf{C}
+(\mathbf{x}-\boldsymbol{\mu})
+\]</span></p>
+<p>其中： <span class="math display">\[
+\begin{aligned}
+(x-\mu)^{T} \mathbf{C} (x-\mu) &amp;=\sum_{i=1}^{D} \sum_{j=1}^{D} c_{i
+j}(x-\mu)_{i}(x-\mu)_{j} \\
+&amp;=\sum_{i=1}^{D} \sum_{j=i+1}^{D}\left(c_{i j}+c_{j
+i}\right)(x-\mu)_{i}(x-\mu)_{j} \\
+&amp;=0
+\end{aligned}
+\]</span></p>
+<p>所以可以得到： <span class="math display">\[
+\Delta^{2}=(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} \mathbf{B}
+(\mathbf{x}-\boldsymbol{\mu})
+\]</span></p>
+<p>其中：<span class="math inline">\(\mathbf{B}\)</span>为对称阵。</p>
+<p>从上面的过程可以得到，<strong>如果<span
+class="math inline">\(\boldsymbol{\Sigma}\)</span>不是对称阵，那么总会存在对称阵<span
+class="math inline">\(\mathbf{B}\)</span>，使得<span
+class="math inline">\(\Delta^{2}=(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}}
+\boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu}) =
+(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}} \mathbf{B}
+(\mathbf{x}-\boldsymbol{\mu})\)</span></strong>。</p>
+<p>下面考虑协方差矩阵的特征值，对<span
+class="math inline">\(\boldsymbol{\Sigma}\)</span>进行特征值分解，设对角阵<span
+class="math inline">\(\boldsymbol{\Lambda}\)</span>，正交矩阵<span
+class="math inline">\(\mathbf{U}\)</span>：</p>
+<p><span class="math display">\[
+\boldsymbol{\Sigma} \mathbf{u}_{i}=\lambda_{i} \mathbf{u}_{i}
+\]</span></p>
+<p>设对角阵<span
+class="math inline">\(\boldsymbol{\Lambda}\)</span>，正交矩阵<span
+class="math inline">\(\mathbf{U}\)</span>：</p>
+<p><span class="math display">\[
+\boldsymbol{\Lambda} =
+\left(\begin{array}{cccc}
+\lambda_{1} &amp; &amp; &amp; \\
+&amp; \lambda_{L} &amp; &amp;\\
+&amp; &amp; \cdots &amp;\\
+&amp; &amp; &amp;\lambda_{D}
+\end{array}\right)，\ \ \boldsymbol{U} =
+\begin{pmatrix}
+\mathbf{u}_{1},\mathbf{u}_{2},...,\mathbf{u}_{D}
+\end{pmatrix}
+\]</span></p>
+<p>由于协方差矩阵为实对称矩阵，特征值都是实数，且特征向量互相正交。
+<span class="math display">\[
+\begin{aligned}
+&amp;\boldsymbol{\Sigma} =\boldsymbol{U} \boldsymbol{\Lambda}
+\boldsymbol{U}^{T}=\sum_{i}^{D} \lambda_{i} \boldsymbol{u}_{i}
+\boldsymbol{u}_{i}^{T} \\
+&amp;\boldsymbol{\Sigma}^{-1} =(\boldsymbol{U} \boldsymbol{\Lambda}
+\boldsymbol{U}^{T})^{-1} = \boldsymbol{U} \boldsymbol{\Lambda}^{-1}
+\boldsymbol{U}^{T} = \sum_{i}^{D} \frac{1}{\lambda_{i}}
+\boldsymbol{u}_{i} \boldsymbol{u}_{i}^{T}
+\end{aligned}
+\]</span></p>
+<p>于是，上面的二次型可以进一步写成：</p>
+<p><span class="math display">\[
+\begin{aligned}
+\Delta^{2} &amp;= (\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}}
+\boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu}) \\
+&amp;= (\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}}\sum_{i}^{D}
+\frac{1}{\lambda_{i}} \boldsymbol{u}_{i} \boldsymbol{u}_{i}^{T}
+(\mathbf{x}-\boldsymbol{\mu}) \\
+&amp;= \sum_{i}^{D}
+(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}}\boldsymbol{u}_{i}
+\frac{1}{\lambda_{i}} \boldsymbol{u}_{i}^{T}
+(\mathbf{x}-\boldsymbol{\mu})
+\end{aligned}
+\]</span></p>
+<p>令<span
+class="math inline">\(y_{i}=\mathbf{u}_{i}^{\mathrm{T}}(\mathrm{x}-\boldsymbol{\mu})\)</span>，可以得到：</p>
+<p><span class="math display">\[
+\Delta^{2}=\sum_{i=1}^{D} \frac{y_{i}^{2}}{\lambda_{i}}
+\]</span></p>
+<p>我们可以把<span
+class="math inline">\(\left\{y_{i}\right\}\)</span>看作一个新的坐标系，其中<span
+class="math inline">\(y_i\)</span>表示正交向量<span
+class="math inline">\(u_i\)</span>关于原始坐标<span
+class="math inline">\(x_i\)</span>经过平移和旋转后形成的新的坐标。</p>
+<p>定义：<span class="math inline">\(\boldsymbol y =
+(y_1,...,y_D)^T\)</span>，于是有：</p>
+<p><span class="math display">\[
+\mathbf{y}=\mathbf{U}(\mathbf{x}-\boldsymbol{\mu})
+\]</span></p>
+<p>对于<span class="math inline">\(\Delta^{2}=\sum_{i=1}^{D}
+\frac{y_{i}^{2}}{\lambda_{i}}\)</span>，可以令<span
+class="math inline">\(D = 2\)</span>，<span
+class="math inline">\(\Delta^{2}=1\)</span>，这样其实就得到了一个椭圆曲线，椭圆的中心为<span
+class="math inline">\(\boldsymbol{\mu}\)</span>，椭圆的轴沿着方向<span
+class="math inline">\(\mathbf{u}_{i}\)</span>： <span
+class="math display">\[
+\frac{y_{1}^{2}}{\lambda_{1}}+\frac{y_{2}^{2}}{\lambda_{2}}=1
+\]</span></p>
+<p><span class="math inline">\(\Delta^{2}\)</span>和<span
+class="math inline">\(\mathbf{x}\)</span>的取值相关，可以理解为二维高斯分布的概率密度图像的水平切线在底面的投影，如下图所示。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/二维高斯分布椭圆.png" alt="二维高斯分布椭圆" style="zoom:50%;" /></p>
+<p>在上图中，椭圆的中心轴沿着协方差矩阵的特征向量<span
+class="math inline">\(\mathbf{u}_{i}\)</span>方向，长度由特征值<span
+class="math inline">\(\lambda_{i}\)</span>的大小决定。下图用绘制了一个二维高斯分布，及其在三个平面上的投影。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/二维高斯分布.png" alt="二维高斯分布" style="zoom:50%;" /></p>
+<h3 id="高斯分布的局限性">高斯分布的局限性</h3>
+<h4
+id="局限一高斯分布自由参数数量多">局限一：高斯分布自由参数数量多</h4>
+<p>协方差矩阵<span
+class="math inline">\(\boldsymbol{\Sigma}\)</span>中通常有<span
+class="math inline">\(\frac{D(D+1)}{2}\)</span>个独立参数，<span
+class="math inline">\(\boldsymbol{\mu}\)</span>中存在<span
+class="math inline">\(D\)</span>个独立参数，所有总计有<span
+class="math inline">\(\frac{D(D+3)}{2}\)</span>个参数。<strong>对于高维问题，要学习的参数非常多，计算复杂。</strong></p>
+<p>一般解决方法可以<strong>假设协方差矩阵<span
+class="math inline">\(\boldsymbol{\Sigma}\)</span>为对角阵</strong>，就可以简化矩阵求逆的运算。此时椭圆的轴与坐标轴平行。</p>
+<p>特殊地，还可以<strong>令协方差矩阵<span
+class="math inline">\(\boldsymbol{\Sigma}\)</span>为对角阵并且对角线元素都相等</strong>，这种情况称为<strong>各向同性</strong>。此时椭圆变成圆。</p>
+<h4
+id="局限二高斯分布是单峰的不能很好地近似多峰分布">局限二：高斯分布是单峰的，不能很好地近似多峰分布</h4>
+<h3 id="条件高斯分布">2.3.1 条件高斯分布</h3>
+<p>多元⾼斯分布的⼀个重要性质是，<strong>如果两组变量是联合⾼斯分布，那么以⼀组变量为条件，另⼀组变量同样是⾼斯分布</strong>。类似地，<strong>任何⼀个变量的边缘分布也是⾼斯分布</strong>。</p>
+<p>假设<span class="math inline">\(\mathbf{x}\)</span>是一个服从<span
+class="math inline">\(\mathcal{N}(\mathrm{x} \mid \boldsymbol{\mu},
+\boldsymbol{\Sigma})\)</span>的随机向量，划分为<span
+class="math inline">\(\mathbf{x}_{a}\)</span>和<span
+class="math inline">\(\mathbf{x}_{b}\)</span>两个互不相交的子集。</p>
+<p><span class="math display">\[
+\mathbf{x}=\left(\begin{array}{c}
+\mathbf{x}_{a} \\
+\mathbf{x}_{b}
+\end{array}\right)
+\]</span></p>
+<p>对应的均值向量<span
+class="math inline">\(\boldsymbol{\mu}\)</span>为： <span
+class="math display">\[
+\boldsymbol{\mu} =\left(\begin{array}{c}
+\boldsymbol{\mu}_{a} \\
+\boldsymbol{\mu}_{b}
+\end{array}\right)
+\]</span></p>
+<p>对应的协方差矩阵<span
+class="math inline">\(\boldsymbol{\Sigma}\)</span>为： <span
+class="math display">\[
+\boldsymbol{\Sigma}=\left(\begin{array}{cc}
+\boldsymbol{\Sigma}_{a a} &amp; \boldsymbol{\Sigma}_{a b} \\
+\boldsymbol{\Sigma}_{b a} &amp; \boldsymbol{\Sigma}_{b b}
+\end{array}\right)
+\]</span></p>
+<p>在许多情况下，为了方便，经常使用协方差矩阵的逆矩阵，称为<strong>精度矩阵（precision
+matrix）</strong>。</p>
+<p><span class="math display">\[
+\mathbf{\Lambda} = \mathbf{\Sigma}^{-1} =\left(\begin{array}{ll}
+\Lambda_{a a} &amp; \Lambda_{a b} \\
+\Lambda_{b a} &amp; \Lambda_{b b}
+\end{array}\right)
+\]</span></p>
+<p>根据高斯分布中的二次型和上面的分块矩阵，可以的到：</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;
+-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}}(\mathbf{x}-\boldsymbol{\mu})
+\\
+&amp; =
+-\frac{1}{2}
+\begin{bmatrix}
+\mathbf{x}_{a}-\boldsymbol{\mu}_{a} \\
+\mathbf{x}_{b}-\boldsymbol{\mu}_{b}
+\end{bmatrix}^{\mathrm{T}}
+\begin{bmatrix}
+\mathbf{\Lambda}_{a a} &amp; \mathbf{\Lambda}_{a b} \\
+\mathbf{\Lambda}_{b a} &amp; \mathbf{\Lambda}_{b b}
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf{x}_{a}-\boldsymbol{\mu}_{a} \\
+\mathbf{x}_{b}-\boldsymbol{\mu}_{b}
+\end{bmatrix} \\
+&amp; = -\frac{1}{2}
+\begin{bmatrix}
+(\mathbf{x}_{a}-\boldsymbol{\mu}_{a})^{\mathrm{T}} &amp;
+(\mathbf{x}_{b}-\boldsymbol{\mu}_{b})^{\mathrm{T}}
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf{\Lambda}_{a a} &amp; \mathbf{\Lambda}_{a b} \\
+\mathbf{\Lambda}_{b a} &amp; \mathbf{\Lambda}_{b b}
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf{x}_{a}-\boldsymbol{\mu}_{a} \\
+\mathbf{x}_{b}-\boldsymbol{\mu}_{b}
+\end{bmatrix} \\
+&amp; = -\frac{1}{2}
+\begin{bmatrix}
+(\mathbf{x}_{a}-\boldsymbol{\mu}_{a})^{\mathrm{T}}\mathbf{\Lambda}_{a a}
++ (\mathbf{x}_{b}-\boldsymbol{\mu}_{b})^{\mathrm{T}}\mathbf{\Lambda}_{b
+a}
+&amp;
+(\mathbf{x}_{a}-\boldsymbol{\mu}_{a})^{\mathrm{T}}\mathbf{\Lambda}_{a b}
++ (\mathbf{x}_{b}-\boldsymbol{\mu}_{b})^{\mathrm{T}}\mathbf{\Lambda}_{b
+b}
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf{x}_{a}-\boldsymbol{\mu}_{a} \\
+\mathbf{x}_{b}-\boldsymbol{\mu}_{b}
+\end{bmatrix} \\
+&amp;
+=  -\frac{1}{2}(\mathbf{x}_{a}-\boldsymbol{\mu}_{a})^{\mathrm{T}}\mathbf{\Lambda}_{a
+a}(\mathbf{x}_{a}-\boldsymbol{\mu}_{a})
+-\frac{1}{2}(\mathbf{x}_{a}-\boldsymbol{\mu}_{a})^{\mathrm{T}}\mathbf{\Lambda}_{a
+b}(\mathbf{x}_{b}-\boldsymbol{\mu}_{b}) \\
+&amp;
+-\frac{1}{2}(\mathbf{x}_{b}-\boldsymbol{\mu}_{b})^{\mathrm{T}}\mathbf{\Lambda}_{b
+a}(\mathbf{x}_{a}-\boldsymbol{\mu}_{a})
+-\frac{1}{2}(\mathbf{x}_{b}-\boldsymbol{\mu}_{b})^{\mathrm{T}}\mathbf{\Lambda}_{b
+b}(\mathbf{x}_{b}-\boldsymbol{\mu}_{b})
+\end{align}
+\]</span></p>
+<p>将上式看做关于<span
+class="math inline">\(\mathbf{x}_{a}\)</span>的函数，这仍然是个二次型，意味着条件分布<span
+class="math inline">\(p(\mathbf{x}_{a} \mid
+\mathbf{x}_{b})\)</span>也是一个高斯分布。因此，在下面会进一步找到条件分布的均值的高差。</p>
+<p>从高斯分布的一般形式中可以的到：</p>
+<p><span class="math display">\[
+-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}}(\mathbf{x}-\boldsymbol{\mu})
+= -\frac{1}{2}\mathbf{x}^{\mathrm{T}}\Sigma^{-1}\mathbf{x} +
+\mathbf{x}^{\mathrm{T}}\Sigma^{-1}\boldsymbol{\mu} + \mathrm{const}
+\]</span></p>
+<p>上式中，<span
+class="math inline">\(\mathrm{const}\)</span>表示与<span
+class="math inline">\(\mathbf{x}\)</span>无关的项。通过上式，我们可以观察出高斯分布的均值和方差在等式右边出现的形式。</p>
+<p>根据之前使用分块矩阵表示的高斯分布，我们可以从中找出<span
+class="math inline">\(\mathbf{x}_{a}\)</span>的二阶项：</p>
+<p><span class="math display">\[
+-\frac{1}{2}\mathbf{x}_{a}^{\mathrm{T}}\mathbf{\Lambda}_{a
+a}\mathbf{x}_{a}
+\]</span></p>
+<p>于是可以的到条件分布<span class="math inline">\(p(\mathbf{x}_{a} \mid
+\mathbf{x}_{b})\)</span>的方差为： <span class="math display">\[
+\mathbf{\Sigma}_{a \mid b} = \mathbf{\Lambda}_{a a}^{-1}
+\]</span></p>
+<p>接着，考虑关于<span
+class="math inline">\(\mathbf{x}_{a}\)</span>的一阶项：</p>
+<p><span class="math display">\[
+\mathbf{x}_{a}^{\mathrm{T}} \left\{\mathbf{\Lambda}_{a a}
+\boldsymbol{\mu}_{a} - \mathbf{\Lambda}_{a
+b}(\mathbf{x}_{b}-\boldsymbol{\mu}_{b}) \right\}
+\]</span></p>
+<p>从之前的推导中可以看出，上式中<span
+class="math inline">\(\mathbf{x}_{a}^{\mathrm{T}}\)</span>的系数为<span
+class="math inline">\(\mathbf{\Sigma}_{a \mid b}^{-1}\boldsymbol{\mu}_{a
+\mid b}\)</span>，于是可以得出：</p>
+<p><span class="math display">\[
+\begin{align}
+\boldsymbol{\mu}_{a \mid b}
+&amp; = \mathbf{\Sigma}_{a \mid b} \{\mathbf{\Lambda}_{a a}
+\boldsymbol{\mu}_{a} - \mathbf{\Lambda}_{a
+b}(\mathbf{x}_{b}-\boldsymbol{\mu}_{b})\} \\
+&amp; = \boldsymbol{\mu}_{a} - \mathbf{\Lambda}_{a a}^{-1}
+\mathbf{\Lambda}_{a b}(\mathbf{x}_{b}-\boldsymbol{\mu}_{b})
+\end{align}
+\]</span></p>
+<p>上面使用原始联合概率分布<span class="math inline">\(p(\mathbf{x}_{a},
+\mathbf{x}_{b})\)</span>的分块精度矩阵表示了条件概率分布的均值和方差。我们也可以使用对应的分块协方差矩阵表示上面的结果。</p>
+<p>首先，我们需要用到分块矩阵的性质：</p>
+<p><span class="math display">\[
+\begin{pmatrix}
+\mathbf{A} &amp; \mathbf{B} \\
+\mathbf{C} &amp; \mathbf{D}
+\end{pmatrix}^{-1}
+=
+\begin{pmatrix}
+\mathbf{M} &amp; -\mathbf{M}\mathbf{B}\mathbf{D}^{-1} \\
+-\mathbf{D}^{-1}\mathbf{C}\mathbf{M} &amp;
+\mathbf{D}^{-1}\mathbf{C}\mathbf{M}\mathbf{B}\mathbf{D}^{-1}
+\end{pmatrix}
+\]</span></p>
+<p>其中，我们定义： <span class="math display">\[
+\mathbf{M} = (\mathbf{A}-\mathbf{B}\mathbf{D}^{-1}\mathbf{C})^{-1}
+\]</span></p>
+<p><span class="math inline">\(M^{-1}\)</span>也叫做矩阵<span
+class="math inline">\(\begin{pmatrix} \mathbf{A} &amp; \mathbf{B} \\
+\mathbf{C} &amp; \mathbf{D} \end{pmatrix}\)</span>关于子矩阵<span
+class="math inline">\(\mathbf{D}\)</span>的<strong>舒尔补（Schur
+complement）</strong>。</p>
+<p>根据定义： <span class="math display">\[
+\begin{pmatrix}
+\mathbf{\Sigma}_{a a} &amp; \mathbf{\Sigma}_{a b}\\
+\mathbf{\Sigma}_{b a} &amp; \mathbf{\Sigma}_{b b}
+\end{pmatrix}^{-1} =
+\begin{pmatrix}
+\mathbf{\Lambda}_{a a} &amp; \mathbf{\Lambda}_{a b}\\
+\mathbf{\Lambda}_{b a} &amp; \mathbf{\Lambda}_{b b}
+\end{pmatrix}
+\]</span></p>
+<p>利用分块均值求逆的性质，我们可以得出： <span class="math display">\[
+\begin{align}
+\mathbf{\Lambda}_{a a} &amp; = (\mathbf{\Sigma}_{a a}-\mathbf{\Sigma}_{a
+b}\mathbf{\Sigma}_{b b}^{-1}\mathbf{\Sigma}_{b a})^{-1} \\
+\mathbf{\Lambda}_{a b} &amp; = -(\mathbf{\Sigma}_{a
+a}-\mathbf{\Sigma}_{a b}\mathbf{\Sigma}_{b b}^{-1}\mathbf{\Sigma}_{b
+a})^{-1}\mathbf{\Sigma}_{a b}\mathbf{\Sigma}_{b b}^{-1}
+\end{align}
+\]</span></p>
+<p>于是可以得出条件概率分布<span class="math inline">\(p(\mathbf{x}_{a}
+\mid \mathbf{x}_{b})\)</span>的均值和方差的如下表达形式： <span
+class="math display">\[
+\begin{align}
+\boldsymbol{\mu}_{a \mid b} &amp; =
+\boldsymbol{\mu}_{a}+\mathbf{\Sigma}_{a b}\mathbf{\Sigma}_{b
+b}^{-1}(\mathbf{x}_{b}-\boldsymbol{\mu}_{b}) \\
+\mathbf{\Sigma}_{a \mid b} &amp; = \mathbf{\Sigma}_{a
+a}-\mathbf{\Sigma}_{a b}\mathbf{\Sigma}_{b b}^{-1}\mathbf{\Sigma}_{b a}
+\end{align}
+\]</span></p>
+<p>可以看出，条件分布的均值是<span
+class="math inline">\(\mathbf{x}_b\)</span>的线性函数，而协方差与<span
+class="math inline">\(\mathbf{x}_a\)</span>无关。这是<strong>线性高斯模型</strong>的一个例子。</p>
+<h3 id="边缘高斯分布">2.3.2 边缘高斯分布</h3>
+<p>这里的结论是比较符合直觉的： <span class="math display">\[
+\begin{align}
+\mathbb{E}\left[\mathbf{x}_{a}\right] &amp; = \boldsymbol{\mu}_{a} \\
+\operatorname{cov}\left[\mathbf{x}_{a}\right] &amp; =
+\boldsymbol{\Sigma}_{a a}
+\end{align}
+\]</span></p>
+<p>边缘概率分布为： <span class="math display">\[
+p\left(\mathbf{x}_{a}\right)=\mathcal{N}\left(\mathbf{x}_{a} \mid
+\boldsymbol{\mu}_{a}, \mathbf{\Sigma}_{a a}\right)
+\]</span></p>
+<h3 id="高斯变量的贝叶斯定理">2.3.3 高斯变量的贝叶斯定理</h3>
+<p>在这里，我们假设已知高斯边缘概率分布<span
+class="math inline">\(p(\mathbf{x})\)</span>和高斯条件概率分布<span
+class="math inline">\(p(\mathbf{y} \mid \mathbf{x})\)</span>，其中<span
+class="math inline">\(p(\mathbf{y} \mid
+\mathbf{x})\)</span>的均值为<span
+class="math inline">\(\mathbf{x}\)</span>的线性函数。这是<strong>线性高斯模型（linear
+Gaussian model）</strong>的一个示例。后面，我们将计算边缘概率分布<span
+class="math inline">\(p(\mathbf{x})\)</span>和条件概率分布<span
+class="math inline">\(p(\mathbf{x} \mid \mathbf{y})\)</span>。</p>
+<p>已知： <span class="math display">\[
+\begin{aligned}
+p(\mathbf{x}) &amp; = \mathcal{N}(\mathbf{x} \mid \boldsymbol{\mu},
+\mathbf{\Lambda}^{-1}) \\
+p(\mathbf{y} \mid \mathbf{x}) &amp; = \mathcal{N}(\mathbf{y} \mid
+\mathbf{A} \mathbf{x}+\mathbf{b}, \mathbf{L}^{-1})
+\end{aligned}
+\]</span></p>
+<p>求：<span class="math inline">\(p(\mathbf{y})\)</span>和<span
+class="math inline">\(p(\mathbf{x \mid y})\)</span>。</p>
+<p>首先我们找到<span class="math inline">\(\mathbf{x}\)</span>和<span
+class="math inline">\(\mathbf{y}\)</span>的联合概率分布的表达式： <span
+class="math display">\[
+z =
+\begin{pmatrix}
+\mathbf{x} \\
+\mathbf{y}
+\end{pmatrix}
+\]</span></p>
+<p>考虑联合概率分布的对数形式： <span class="math display">\[
+\begin{align}
+\ln p(\mathbf{z}) = &amp; \space \ln p(\mathbf{x}) + \ln p(\mathbf{y}
+\mid \mathbf{x}) \\
+= &amp;
+-\frac{1}{2}(\mathbf{x}-\mathbf{\mu})^{\mathrm{T}}\mathbf{\Lambda}(\mathbf{x}-\mathbf{\mu})
+\\ &amp; -\frac{1}{2}(\mathbf{y}-\mathbf{A}
+\mathbf{x}-\mathbf{b})^{\mathrm{T}}\mathbf{L}(\mathbf{y}-\mathbf{A}
+\mathbf{x}-\mathbf{b}) + \mathrm{const}
+\end{align}
+\]</span></p>
+<p>我们可以看到上式是关于<span
+class="math inline">\(\mathbf{z}\)</span>的一个二次函数，因此<span
+class="math inline">\(p(\mathbf{z})\)</span>符合高斯分布。对上式展开可以得到：</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;
+-\frac{1}{2}\mathbf{x}^{\mathrm{T}}(\mathbf{\Lambda}+\mathbf{A}^{\mathrm{T}}\mathbf{L}\mathbf{A})\mathbf{x}-\frac{1}{2}\mathbf{y}^{\mathrm{T}}\mathbf{L}\mathbf{y}+\frac{1}{2}\mathbf{y}^{\mathrm{T}}\mathbf{L}\mathbf{A}\mathbf{x}+\frac{1}{2}\mathbf{x}^{\mathrm{T}}\mathbf{A}^{\mathrm{T}}\mathbf{L}\mathbf{y}
+\\
+= &amp; -\frac{1}{2}
+\begin{pmatrix}
+\mathbf{x} \\
+\mathbf{y}
+\end{pmatrix}^{\mathrm{T}}
+\begin{pmatrix}
+\mathbf{\Lambda}+\mathbf{A}^{\mathrm{T}}\mathbf{L}\mathbf{A} &amp;
+-\mathbf{A}^{\mathrm{T}}\mathbf{L} \\
+-\mathbf{L}\mathbf{A} &amp; \mathbf{L}
+\end{pmatrix}
+\begin{pmatrix}
+\mathbf{x} \\
+\mathbf{y}
+\end{pmatrix}
+= -\frac{1}{2}\mathbf{z}^{\mathrm{T}}\mathbf{R}\mathbf{z}
+\end{align}
+\]</span></p>
+<p>于是，随机变量<span
+class="math inline">\(\mathbf{z}\)</span>的精度矩阵为： <span
+class="math display">\[
+\mathbf{R} =
+\begin{pmatrix}
+\mathbf{\Lambda}+\mathbf{A}^{\mathrm{T}}\mathbf{L}\mathbf{A} &amp;
+-\mathbf{A}^{\mathrm{T}}\mathbf{L} \\
+-\mathbf{L}\mathbf{A} &amp; \mathbf{L}
+\end{pmatrix}
+\]</span></p>
+<p>根据矩阵求逆的性质，可以的到协方差矩阵： <span
+class="math display">\[
+\operatorname{cov}\left[\mathbf{z}\right] = \mathbf{R}^{-1} =
+\begin{pmatrix}
+\mathbf{\Lambda}^{-1} &amp; \mathbf{\Lambda}^{-1}\mathbf{A}^{\mathrm{T}}
+\\
+\mathbf{A}\mathbf{\Lambda}^{-1} &amp;
+\mathbf{\Lambda}^{-1}+\mathbf{A}\mathbf{\Lambda}^{-1}\mathbf{A}^{\mathrm{T}}
+\end{pmatrix}
+\]</span></p>
+<p>同样可以找到<span
+class="math inline">\(\mathbf{z}\)</span>的均值：</p>
+<p><span class="math display">\[
+\mathbb{E}\left[\mathbf{z}\right] =
+\begin{pmatrix}
+\boldsymbol{\mu} \\
+\mathbf{A}\boldsymbol{\mu}+\mathbf{b}
+\end{pmatrix}
+\]</span></p>
+<p>下面可以计算出边缘概率分布<span
+class="math inline">\(p(\mathbf{y})\)</span>和条件概率分布<span
+class="math inline">\(p(\mathbf{x} \mid
+\mathbf{y})\)</span>的均值和方法，结果如下： <span
+class="math display">\[
+\begin{align}
+p(\mathbf{y}) &amp;=\mathcal{N}(\mathbf{y} \mid \mathbf{A}
+\boldsymbol{\mu}+\mathbf{b}, \mathbf{L}^{-1}+\mathbf{A}
+\mathbf{\Lambda}^{-1} \mathbf{A}^{\mathrm{T}}) \\
+p(\mathbf{x} \mid \mathbf{y}) &amp;=\mathcal{N}(\mathbf{x} \mid
+\mathbf{\Sigma}\left\{\mathbf{A}^{\mathrm{T}}
+\mathbf{L}(\mathbf{y}-\mathbf{b})+\boldsymbol{\Lambda}
+\boldsymbol{\mu}\right\}, \mathbf{\Sigma})
+\end{align}
+\]</span></p>
+<p>其中：<span
+class="math inline">\(\boldsymbol{\Sigma}=\left(\boldsymbol{\Lambda}+\mathbf{A}^{\mathrm{T}}
+\mathbf{L} \mathbf{A}\right)^{-1}\)</span>。</p>
+<h3 id="高斯分布的最大似然估计">2.3.4 高斯分布的最大似然估计</h3>
+<p>给定一个由独立的服从多元高斯分布的观测量组成的数据集<span
+class="math inline">\(\mathbf{X}=\left(\mathbf{x}_{1}, \ldots,
+\mathbf{x}_{N}\right)^{\mathrm{T}}\)</span>。</p>
+<p>得到对数似然函数为： <span class="math display">\[
+\ln p(\mathbf{X} \mid \boldsymbol{\mu}, \mathbf{\Sigma})=-\frac{N D}{2}
+\ln (2 \pi)-\frac{N}{2} \ln |\boldsymbol{\Sigma}|-\frac{1}{2}
+\sum_{n=1}^{N}(\mathbf{x}_{n}-\boldsymbol{\mu})^{\mathrm{T}}
+\boldsymbol{\Sigma}^{-1}(\mathbf{x}_{n}-\boldsymbol{\mu})
+\]</span></p>
+<p>展开整理对数似然函数后，可以发现对数似然函数对数据集的依赖仅和下面两个量有关：
+<span class="math display">\[
+\sum_{n=1}^{N} \mathbf{x}_{n} \qquad \sum_{n=1}^{N} \mathbf{x}_{n}
+\mathbf{x}_{n}^{\mathrm{T}}
+\]</span></p>
+<p>这两个量称为高斯分布的<strong>充分统计量（sufficient
+statistics）</strong>。</p>
+<p>对<span
+class="math inline">\(\boldsymbol{\mu}\)</span>求导等于零，得到： <span
+class="math display">\[
+\boldsymbol{\mu}_{\mathrm{ML}}=\frac{1}{N} \sum_{n=1}^{N} \mathrm{x}_{n}
+\]</span></p>
+<p><span
+class="math inline">\(\mathbf{\Sigma}\)</span>的最大似然估计值为： <span
+class="math display">\[
+\boldsymbol{\Sigma}_{\mathrm{ML}}=\frac{1}{N}
+\sum_{n=1}^{N}(\mathrm{x}_{n}-\boldsymbol{\mu}_{\mathrm{ML}})(\mathrm{x}_{n}-\boldsymbol{\mu}_{\mathrm{ML}})^{\mathrm{T}}
+\]</span></p>
+<p>多元高斯分布的结果和一元高斯分布是类似的，<span
+class="math inline">\(\mathbf{\Sigma}\)</span>的最大似然估计值也是有偏的。下面是最大似然估计值的期望：
+<span class="math display">\[
+\begin{align}
+\mathbb{E}\left[\boldsymbol{\mu}_{\mathrm{ML}}\right] &amp;=
+\boldsymbol{\mu} \\
+\mathbb{E}\left[\mathbf{\Sigma}_{\mathrm{ML}}\right] &amp;=
+\frac{N-1}{N} \mathbf{\Sigma}
+\end{align}
+\]</span></p>
+<h3 id="顺序估计">2.3.5 顺序估计</h3>
+<h4 id="顺序估计思想">顺序估计思想</h4>
+<p>最大似然的顺序估计。<strong>顺序的方法允许每次处理⼀个数据点，然后丢弃这个点</strong>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">**Sequential methods** allow data points to be processed one at a time and then discarded and are important for on-line applications, and also where large data sets are involved so that batch processing of all data points at once is infeasible.</span><br></pre></td></tr></table></figure>
+<p>在讲Beta分布的时候，其实就讲到了<strong>顺序学习的方法</strong>思想。</p>
+<p>考虑高斯分布均值的最大似然结果<span
+class="math inline">\(\mu_{\mathrm{ML}}\)</span>，当它基于前<span
+class="math inline">\(N\)</span>次的观测时，记作<span
+class="math inline">\(\boldsymbol{\mu}_{\mathrm{ML}}^{(N)}\)</span>。于是，我们可以分析出最后一个数据点<span
+class="math inline">\(\mathbf{x}_N\)</span>的贡献：</p>
+<p><span class="math display">\[
+\begin{align}
+\boldsymbol{\mu}_{\mathrm{ML}}^{(N)} &amp;=\frac{1}{N} \sum_{n=1}^{N}
+\mathrm{x}_{n} \\
+&amp;=\frac{1}{N} \mathrm{x}_{N}+\frac{1}{N} \sum_{n=1}^{N-1}
+\mathrm{x}_{n} \\
+&amp;=\frac{1}{N} \mathrm{x}_{N}+\frac{N-1}{N}
+\boldsymbol{\mu}_{\mathrm{ML}}^{(N-1)} \\
+&amp;=\boldsymbol{\mu}_{\mathrm{ML}}^{(N-1)}+\frac{1}{N}\left(\mathrm{x}_{N}-\boldsymbol{\mu}_{\mathrm{ML}}^{(N-1)}\right)
+\end{align}
+\]</span></p>
+<p>上面的计算结果得到了一个迭代公式。根据前<span
+class="math inline">\(N-1\)</span>次的观测，我们可以把<span
+class="math inline">\(\boldsymbol{\mu}\)</span>估计为<span
+class="math inline">\(\boldsymbol{\mu}_{\mathrm{ML}}^{(N-1)}\)</span>。在得到数据点<span
+class="math inline">\(\mathbf{x}\)</span>后，我们得到了一个修正的估计<span
+class="math inline">\(\boldsymbol{\mu}_{\mathrm{ML}}^{(N)}\)</span>。</p>
+<h4
+id="顺序估计的一般方法单变量情况">顺序估计的一般方法（单变量情况）</h4>
+<p>为了给出顺序学习的一般方法，给出了<strong>Robbins-Monro算法（Robbins-Monro
+algorithm）</strong>。</p>
+<p>对于一对随机变量<span class="math inline">\(\theta\)</span>和<span
+class="math inline">\(z\)</span>，它们由一个联合概率分布<span
+class="math inline">\(p(z,\theta)\)</span>控制。已知<span
+class="math inline">\(\theta\)</span>的条件下，<span
+class="math inline">\(z\)</span>的条件期望定义了一个确定的函数<span
+class="math inline">\(f(\theta)\)</span>：</p>
+<p><span class="math display">\[
+f(\theta) \equiv \mathbb{E}[z \mid \theta]=\int z p(z \mid \theta)
+\mathrm{d} z
+\]</span></p>
+<p>这个函数称为<strong>回归函数（regression function）</strong>。</p>
+<p>我们的目标是找到<span
+class="math inline">\(\theta^\star\)</span>使得<span
+class="math inline">\(f(\theta^\star)=0\)</span>。</p>
+<ol type="1">
+<li>假定<span class="math inline">\(z\)</span>的条件方差是有穷的：<span
+class="math inline">\(\mathbb{E}[(z-f)^{2} \mid
+\theta]&lt;\infty\)</span>。</li>
+<li>考虑当<span
+class="math inline">\(\theta&gt;\theta^{\star}\)</span>，<span
+class="math inline">\(f(\theta)&gt;0\)</span>；当<span
+class="math inline">\(\theta&lt;\theta^{\star}\)</span>，<span
+class="math inline">\(f(\theta)&lt;0\)</span>的情况。</li>
+</ol>
+<p>则<span
+class="math inline">\(\theta^{\star}\)</span>的顺序估计可以由序列<span
+class="math inline">\(\theta^{(N)}=\theta^{(N-1)}+a_{N-1}
+z(\theta^{(N-1)})\)</span>得到。</p>
+<p>其中，系数<span
+class="math inline">\(\{a_{N}\}\)</span>为一个满足下列条件的正数数列：
+<span class="math display">\[
+\begin{aligned}
+\lim _{N \rightarrow \infty} a_{N} &amp;=0 \notag \\
+\sum_{N=1}^{\infty} a_{N} &amp;=\infty \notag \\
+\sum_{N=1}^{\infty} a_{N}^{2} &amp;&lt;\infty \notag
+\end{aligned}
+\]</span></p>
+<p>特殊的，当<span
+class="math inline">\(a_{N}=\frac{1}{z&#39;(\theta^{(N-1)}}\)</span>时，迭代公式可以写作：
+<span class="math display">\[
+\theta^{(N)}=\theta^{(N-1)}+\frac{z(\theta^{(N-1)})}{z&#39;(\theta^{(N-1)})}
+\]</span></p>
+<p>这就是非线性方程求根中常用的<strong>牛顿法（Newton's
+method）</strong>。</p>
+<p>上面的做法仅讨论了<strong>单变量的情况</strong>，对多元变量同样适用。</p>
+<h4 id="最大似然问题">最大似然问题</h4>
+<p>下面，我们考虑对于一个通用的最大似然问题，如何使用<strong>Robbins-Monro</strong>算法求解。对于参数<span
+class="math inline">\(\theta\)</span>的最大似然解<span
+class="math inline">\(\theta^{\star}\)</span>是对数似然函数的一个驻点，因此有：
+<span class="math display">\[
+\left.\frac{\partial}{\partial \theta}\left\{\frac{1}{N} \sum_{n=1}^{N}
+\ln p\left(\mathbf{x}_{n} \mid
+\theta\right)\right\}\right|_{\theta_{\mathrm{ML}}}=0
+\]</span></p>
+<p>等式右边交换求导和求和的位置，取极限<span class="math inline">\(N
+\rightarrow \infty\)</span>，可以得到： <span class="math display">\[
+\lim _{N \rightarrow \infty} \frac{1}{N} \sum_{n=1}^{N}
+\frac{\partial}{\partial \theta} \ln p\left(x_{n} \mid
+\theta\right)=\mathbb{E}_{x}\left[\frac{\partial}{\partial \theta} \ln
+p(x \mid \theta)\right]
+\]</span></p>
+<p>因此，<strong>寻找最大似然解对应于寻找回归函数的根</strong>。</p>
+<p>我们可以得到Robbins-Monro算法的迭代形式为： <span
+class="math display">\[
+\theta^{(N)}=\theta^{(N-1)}+a_{N-1} \frac{\partial}{\partial
+\theta^{(N-1)}} \ln p(x_{N} \mid \theta^{(N-1)})
+\]</span></p>
+<h3 id="高斯分布的贝叶斯推断">2.3.6 高斯分布的贝叶斯推断</h3>
+<h4 id="方差已知求均值">方差已知，求均值</h4>
+<p>考虑一元随机变量<span class="math inline">\(x\)</span>，假设方差<span
+class="math inline">\(\sigma^{2}\)</span>已知，从一组<span
+class="math inline">\(N\)</span>次观测<span
+class="math inline">\(\mathbf{X}=\{x_{1}, \ldots,
+x_{N}\}\)</span>中推断<span class="math inline">\(\mu\)</span>。</p>
+<p>似然函数： <span class="math display">\[
+p(\mathbf{X} \mid \mu)=\prod_{n=1}^{N} p\left(x_{n} \mid
+\mu\right)=\frac{1}{\left(2 \pi \sigma^{2}\right)^{N / 2}} \exp
+\left\{-\frac{1}{2 \sigma^{2}}
+\sum_{n=1}^{N}\left(x_{n}-\mu\right)^{2}\right\}
+\]</span></p>
+<p>注：似然函数不是概率密度函数，没有归一化。</p>
+<p>根据似然函数的形式，选择先验分布<span
+class="math inline">\(p(\mu)\)</span>为高斯分布。这样，它就是似然函数的一个共轭分布。
+<span class="math display">\[
+p(\mu)=\mathcal{N}\left(\mu \mid \mu_{0}, \sigma_{0}^{2}\right)
+\]</span></p>
+<p>从而后验分布： <span class="math display">\[
+p(\mu \mid \mathbf{X}) \propto p(\mathbf{X} \mid \mu) p(\mu)
+\]</span></p>
+<p>经过计算可以得到，后验分布为： <span class="math display">\[
+p(\mu \mid \mathbf{X})=\mathcal{N}\left(\mu \mid \mu_{N},
+\sigma_{N}^{2}\right)
+\]</span></p>
+<p>其中： <span class="math display">\[
+\begin{align}
+\mu_{N} &amp;=\frac{\sigma^{2}}{N \sigma_{0}^{2}+\sigma^{2}}
+\mu_{0}+\frac{N \sigma_{0}^{2}}{N \sigma_{0}^{2}+\sigma^{2}}
+\mu_{\mathrm{ML}} \\
+\frac{1}{\sigma_{N}^{2}}
+&amp;=\frac{1}{\sigma_{0}^{2}}+\frac{N}{\sigma^{2}}
+\end{align}
+\]</span></p>
+<p>上式中的<span
+class="math inline">\(\mu_{ML}\)</span>由样本均值给出。</p>
+<p>下面是从贝叶斯的观点看待顺序估计问题。把后验分布中，最后一个数据点<span
+class="math inline">\(x_N\)</span>的贡献单独写出来： <span
+class="math display">\[
+p(\boldsymbol{\mu} \mid D ) \propto\left[p(\boldsymbol{\mu})
+\prod_{n=1}^{N-1} p\left(\mathbf{x}_{n} \mid
+\boldsymbol{\mu}\right)\right] p\left(\mathbf{x}_{N} \mid
+\boldsymbol{\mu}\right)
+\]</span></p>
+<p>⽅括号中的项是观测到<span
+class="math inline">\(N-1\)</span>个数据点之后的后验概率分布。它可以被看作时一个先验分布，然后用贝叶斯定理与似然函数结合到一起，得到观测<span
+class="math inline">\(N\)</span>个数据点之后的后验概率。</p>
+<p>这种贝叶斯推断的顺序观点是非常通用的，可以应用于任何观测数据独立同分布的问题中。</p>
+<h4 id="均值已知求方差">均值已知，求方差</h4>
+<p>这里为了简化计算，使用精度<span class="math inline">\(\lambda \equiv
+1 / \sigma^{2}\)</span>进行计算。</p>
+<p>得到<span class="math inline">\(\lambda\)</span>的似然函数为： <span
+class="math display">\[
+p(\mathbf{X} \mid \lambda)=\prod_{n=1}^{N} \mathcal{N}\left(x_{n} \mid
+\mu, \lambda^{-1}\right) \propto \lambda^{N / 2} \exp
+\left\{-\frac{\lambda}{2}
+\sum_{n=1}^{N}\left(x_{n}-\mu\right)^{2}\right\}
+\]</span></p>
+<p>对应的共轭先验因此应该正比于<span
+class="math inline">\(\lambda\)</span>的幂指数，也正比于<span
+class="math inline">\(\lambda\)</span>的线性函数。</p>
+<p>我们选择<strong>Gamma分布（gamma distribution）</strong>，定义为：
+<span class="math display">\[
+\operatorname{Gam}(\lambda \mid a, b)=\frac{1}{\Gamma(a)} b^{a}
+\lambda^{a-1} \exp (-b \lambda)
+\]</span></p>
+<p>Gamma分布的均值和⽅差为： <span class="math display">\[
+\begin{align}
+\mathbb{E}[\lambda] &amp;=\frac{a}{b} \\
+\operatorname{var}[\lambda] &amp;=\frac{a}{b^{2}}
+\end{align}
+\]</span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> scipy.special <span class="keyword">import</span> gamma</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gamma_distribution</span>(<span class="params">lamb, a, b</span>):</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>/gamma(a) * (b**a) * (lamb**(a-<span class="number">1</span>)) * np.exp(-b*lamb)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">lamb = np.linspace(<span class="number">0</span>, <span class="number">2</span>, <span class="number">100</span>)</span><br><span class="line">  </span><br><span class="line">plt.figure(figsize=(<span class="number">9</span>, <span class="number">2.5</span>))</span><br><span class="line"><span class="keyword">for</span> i, (a, b) <span class="keyword">in</span> <span class="built_in">enumerate</span>([(<span class="number">0.1</span>, <span class="number">0.1</span>), (<span class="number">1</span>, <span class="number">1</span>), (<span class="number">4</span>, <span class="number">6</span>)]):</span><br><span class="line">	y = gamma_distribution(lamb, a, b)</span><br><span class="line">	plt.subplot(<span class="number">1</span>, <span class="number">3</span>, i + <span class="number">1</span>)</span><br><span class="line">	plt.plot(lamb, y, color=<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">	plt.annotate(<span class="string">f&#x27;$a = <span class="subst">&#123;a&#125;</span>$ \n$b = <span class="subst">&#123;b&#125;</span>$&#x27;</span>, xy=(<span class="number">0.5</span>, <span class="number">0.65</span>), xycoords=<span class="string">&#x27;axes fraction&#x27;</span>)</span><br><span class="line">	plt.xlim(<span class="number">0</span>, <span class="number">2</span>)</span><br><span class="line">	plt.ylim(<span class="number">0</span>, <span class="number">2</span>)</span><br><span class="line">	plt.xticks([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>], [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>])</span><br><span class="line">	plt.yticks([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>], [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>])</span><br><span class="line">	plt.xlabel(<span class="string">&#x27;$\lambda$&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/不同的超参数值对应gamma分布.jpg" alt="不同的超参数值对应gamma分布" style="zoom:67%;" /></p>
+<p>考虑先验分布为<span class="math inline">\(\operatorname{Gam}(\lambda
+\mid a_{0}, b_{0})\)</span>，与似然函数相乘后，我们可以得到后验分布为：
+<span class="math display">\[
+p(\lambda \mid \mathbf{X}) \propto \lambda^{a_{0}-1} \lambda^{N / 2}
+\exp\left\{-b_{0} \lambda-\frac{\lambda}{2}
+\sum_{n=1}^{N}\left(x_{n}-\mu\right)^{2}\right\}
+\]</span></p>
+<p>可以把后验分布看出形如<span
+class="math inline">\(\operatorname{Gam}\left(\lambda \mid a_{N},
+b_{N}\right)\)</span>的Gamma分布，其中：</p>
+<p><span class="math display">\[
+\begin{align}
+a_{N} &amp;= a_{0}+\frac{N}{2} \\
+b_{N} &amp;= b_{0}+\frac{1}{2}
+\sum_{n=1}^{N}\left(x_{n}-\mu\right)^{2}=b_{0}+\frac{N}{2}
+\sigma_{\mathrm{ML}}^{2}
+\end{align}
+\]</span></p>
+<h4 id="均值和方差均未知">均值和方差均未知</h4>
+<p>考虑似然函数为： <span class="math display">\[
+\begin{align}
+p(\mathbf{X} \mid \mu, \lambda) &amp;= \prod_{n  =
+1}^{N}\left(\frac{\lambda}{2 \pi}\right)^{1 / 2} \exp
+\left\{-\frac{\lambda}{2}\left(x_{n}-\mu\right)^{2}\right\} \\
+&amp;\propto\left[\lambda^{1 / 2} \exp \left(-\frac{\lambda
+\mu^{2}}{2}\right)\right]^{N} \exp \left\{\lambda \mu \sum_{n  = 1}^{N}
+x_{n}-\frac{\lambda}{2} \sum_{n  = 1}^{N} x_{n}^{2}\right\}
+\end{align}
+\]</span></p>
+<p>假设先验分布的形式为： <span class="math display">\[
+\begin{align}
+p(\mu, \lambda) &amp;\propto\left[\lambda^{\frac{1}{2}} \exp
+\left(-\frac{\lambda \mu^{2}}{2}\right)\right]^{\beta} \exp \{c \lambda
+\mu-d \lambda\} \\
+\quad &amp; = \exp \left\{-\frac{\beta
+\lambda}{2}\left(\mu-\frac{c}{\beta}\right)^{2}\right\}
+\lambda^{\frac{\beta}{2}} \exp \left\{-\left(d-\frac{c^{2}}{2
+\beta}\right) \lambda\right\}
+\end{align}
+\]</span></p>
+<p>由于<span class="math inline">\(p(\mu, \lambda)=p(\mu \mid \lambda)
+p(\lambda)\)</span>，从上式中观察可以得到，<span
+class="math inline">\(p(\mu \mid \lambda)\)</span>是一个高斯分布，<span
+class="math inline">\(p(\mu)\)</span>是一个Gamma分布。</p>
+<p>因此，先验分布为： <span class="math display">\[
+p(\mu, \lambda)=\mathcal{N}\left(\mu \mid \mu_{0},(\beta
+\lambda)^{-1}\right) \operatorname{Gam}(\lambda \mid a, b)
+\]</span></p>
+<p>其中： <span class="math display">\[
+\begin{align}
+\mu_{0} &amp; = \frac{c}{\beta} \\
+a &amp;= 1 + \frac{\beta}{2} \\
+b &amp;= d - \frac{c^2}{2\beta}
+\end{align}
+\]</span></p>
+<p>这个分布称为<strong>高斯-Gamma分布（normal-gamma or
+Gaussian-gamma）</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> scipy.special <span class="keyword">import</span> gamma</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gamma_distribution</span>(<span class="params">lamb, a, b</span>):</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>/gamma(a) * (b**a) * (lamb**(a-<span class="number">1</span>)) * np.exp(-b*lamb)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gaussian_distribution</span>(<span class="params">x, mu, sigma</span>):</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>/(sigma*np.sqrt(<span class="number">2</span>*np.pi)) * np.exp(-((x-mu)**<span class="number">2</span>)/(<span class="number">2</span>*sigma**<span class="number">2</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gaussian_gamma_distribution</span>(<span class="params">mu, lamb, mu_0, beta, a, b</span>):</span><br><span class="line">	<span class="keyword">return</span> gamma_distribution(lamb, a, b) * gaussian_distribution(mu, mu_0, np.power(beta*lamb, -<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line">mu_0 = <span class="number">0</span></span><br><span class="line">beta = <span class="number">2</span></span><br><span class="line">a = <span class="number">5</span></span><br><span class="line">b = <span class="number">6</span></span><br><span class="line"></span><br><span class="line">mu = np.linspace(-<span class="number">2</span>, <span class="number">2</span>, <span class="number">100</span>)</span><br><span class="line">lamb = np.linspace(<span class="number">0</span>, <span class="number">2</span>, <span class="number">100</span>)</span><br><span class="line">mu, lamb = np.meshgrid(mu, lamb)</span><br><span class="line">y = gaussian_gamma_distribution(mu, lamb, mu_0, beta, a, b)</span><br><span class="line"></span><br><span class="line">plt.contour(mu, lamb, y, <span class="number">8</span>, cmap=plt.cm.jet)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;$\mu$&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;$\lambda$&#x27;</span>)</span><br><span class="line">plt.xticks([-<span class="number">2</span>, <span class="number">0</span>, <span class="number">2</span>], [-<span class="number">2</span>, <span class="number">0</span>, <span class="number">2</span>])</span><br><span class="line">plt.yticks([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>], [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>])</span><br><span class="line"></span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.savefig(<span class="string">&quot;高斯-gamma分布.jpg&quot;</span>, dpi=<span class="number">150</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/高斯-gamma分布.jpg" alt="高斯-gamma分布" style="zoom:67%;" /></p>
+<h3 id="学生t-分布">2.3.7 学生t-分布</h3>
+<h4 id="学生t-分布-1">学生t-分布</h4>
+<p>如果有一个一元高斯分布<span class="math inline">\(\mathcal{N}\left(x
+\mid \mu, \tau^{-1}\right)\)</span>和一个Gamma分布<span
+class="math inline">\(\operatorname{Gam}(\tau \mid a,
+b)\)</span>，对精度进行积分，得到<span
+class="math inline">\(x\)</span>的边缘分布为： <span
+class="math display">\[
+\begin{align}
+p(x \mid \mu, a, b) &amp;=\int_{0}^{\infty} \mathcal{N}\left(x \mid \mu,
+\tau^{-1}\right) \operatorname{Gam}(\tau \mid a, b) \mathrm{d} \tau \\
+&amp;=\int_{0}^{\infty} \frac{b^{a} e^{(-b \tau)}
+\tau^{a-1}}{\Gamma(a)}\left(\frac{\tau}{2 \pi}\right)^{1 / 2} \exp
+\left\{-\frac{\tau}{2}(x-\mu)^{2}\right\} \mathrm{d} \tau \\
+&amp;=\frac{b^{a}}{\Gamma(a)}\left(\frac{1}{2 \pi}\right)^{1 /
+2}\left[b+\frac{(x-\mu)^{2}}{2}\right]^{-a-1 / 2} \Gamma(a+1 / 2)
+\end{align}
+\]</span></p>
+<p>令<span class="math inline">\(\nu=2a\)</span>，<span
+class="math inline">\(\lambda=a/b\)</span>，<span
+class="math inline">\(p(x \mid \mu, a, b)\)</span>的形式为：</p>
+<p><span class="math display">\[
+\operatorname{St}(x \mid \mu, \lambda, \nu)=\frac{\Gamma(\nu / 2+1 /
+2)}{\Gamma(\nu / 2)}\left(\frac{\lambda}{\pi \nu}\right)^{1 /
+2}\left[1+\frac{\lambda(x-\mu)^{2}}{\nu}\right]^{-\nu / 2-1 / 2}
+\]</span></p>
+<p>这个分布称为<strong>学生t-分布（Student’s
+t-distribution）</strong>。参数<span
+class="math inline">\(\lambda\)</span>称为<strong>精度（precision）</strong>，参数<span
+class="math inline">\(v\)</span>称为<strong>自由度（degrees of
+freedom）</strong>。</p>
+<p>对于<span
+class="math inline">\(v=1\)</span>的情况，t分布变成了<strong>柯西分布（Cauchy
+distribution）</strong>。</p>
+<p>在<span class="math inline">\(v \rightarrow
+\infty\)</span>的情况下，t分布<span
+class="math inline">\(\operatorname{St}(x \mid \mu, \lambda,
+\nu)\)</span>变成高斯分布<span class="math inline">\(\mathcal{N}\left(x
+\mid \mu, \lambda^{-1}\right)\)</span>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/学生t分布.jpg" alt="学生t分布" style="zoom:67%;" /></p>
+<h4 id="分析">分析</h4>
+<p>从学生t-分布的定义来看，它是由无穷多个相同均值，不同精度的高斯分布相加而成的。</p>
+<p>学生t-分布比高斯分布有着更长的尾巴，少量离群的数据点对学生t-分布的影响要远远小于高斯分布，因此学生t-分布具有<strong>鲁棒性</strong>。</p>
+<p>鲁棒性对回归问题很重要，最小二乘法的的鲁棒性不高是由于其相当于（条件）高斯分布下的最大似然解。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/gaussian_and_student_t.jpg" alt="gaussian_and_student_t" style="zoom:40%;" /></p>
+<h3 id="周期变量">2.3.8 周期变量</h3>
+<p>尽管高斯分布在实际中十分常用，但是它并不适用于周期变量的建模。</p>
+<p>考虑一组包含周期变量的数据集<span
+class="math inline">\(\mathcal{D}=\left\{\theta_{1}, \ldots,
+\theta_{N}\right\}\)</span>。使用单位圆上的点<span
+class="math inline">\(\mathbf{x}_n\)</span>描述周期变量的值<span
+class="math inline">\(\theta_n\)</span>，如下图所示。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/周期变量表示为单位圆上的二维向量.jpg" alt="周期变量表示为单位圆上的二维向量" style="zoom:67%;" /></p>
+<p>则向量的平均值为： <span class="math display">\[
+\overline{\mathrm{x}}=\frac{1}{N} \sum_{n=1}^{N} \mathrm{x}_{n}
+\]</span></p>
+<p><span
+class="math inline">\(\overline{\mathrm{x}}\)</span>通常位于单位圆内部。</p>
+<p>在笛卡尔坐标系下，观测值可以表示为：<span
+class="math inline">\(\mathbf{x}_{n}=\left(\cos \theta_{n}, \sin
+\theta_{n}\right)\)</span>，均值可以表示为：<span
+class="math inline">\(\overline{\mathrm{x}}=(\bar{r} \cos \bar{\theta},
+\bar{r} \sin \bar{\theta})\)</span>。</p>
+<p>于是均值的两个分量可以表示为： <span class="math display">\[
+\bar{x}_1=\bar{r} \cos \bar{\theta}=\frac{1}{N} \sum_{n=1}^{N} \cos
+\theta_{n}, \qquad \bar{x}_2=\bar{r} \sin \bar{\theta}=\frac{1}{N}
+\sum_{n=1}^{N} \sin \theta_{n}
+\]</span></p>
+<p>两者的比值可以求出<span class="math inline">\(\bar{\theta}\)</span>：
+<span class="math display">\[
+\bar{\theta}=\tan ^{-1}\left\{\frac{\sum_{n} \sin \theta_{n}}{\sum_{n}
+\cos \theta_{n}}\right\}
+\]</span></p>
+<p>下面引出的是高斯分布对于周期变量的推广：<strong>von Mises分布（von
+Mises
+distribution）</strong>。考虑在一元变量的情况下，周期概率分布为：<span
+class="math inline">\(p(\theta)\)</span>，<span
+class="math inline">\(p(\theta)\)</span>很自然地满足下面条件： <span
+class="math display">\[
+\begin{align}
+p(\theta) &amp; \geqslant 0 \notag \\
+\int_{0}^{2 \pi} p(\theta) \mathrm{d} \theta &amp;=1 \\
+p(\theta+M2 \pi) &amp;=p(\theta), \quad \mathrm{M为整数}
+\end{align}
+\]</span></p>
+<p>考虑二维高斯分布，随机向量为<span
+class="math inline">\(\mathbf{x}=(x_1, x_2)\)</span>，均值为<span
+class="math inline">\(\boldsymbol{\mu}=(\mu_1,\mu_2)\)</span>，协方差矩阵为<span
+class="math inline">\(\boldsymbol{\Sigma}=\sigma^{2}
+\mathbf{I}\)</span>。则该高斯分布形式为： <span class="math display">\[
+p\left(x_{1}, x_{2}\right)=\frac{1}{2 \pi \sigma^{2}} \exp
+\left\{-\frac{\left(x_{1}-\mu_{1}\right)^{2}+\left(x_{2}-\mu_{2}\right)^{2}}{2
+\sigma^{2}}\right\}
+\]</span></p>
+<p>将观测向量从笛卡尔坐标系转换到极坐标系： <span
+class="math display">\[
+x_{1}=r \cos \theta, \quad x_{2}=r \sin \theta  \quad (r=1 )
+\]</span></p>
+<p>同样将均值向量转到极坐标系为： <span class="math display">\[
+\mu_{1}=r_{0} \cos \theta_{0}, \quad \mu_{2}=r_{0} \sin \theta_{0}
+\]</span></p>
+<p>代入上面的二维高斯分布中：</p>
+<p><span class="math display">\[
+\begin{align}
+&amp; -\frac{1}{2\sigma^{2}}\left\{(r\cos\theta-r_{0}\cos\theta_{0})^{2}
++ (r\sin\theta-r_{0}\sin\theta_{0})^{2}\right\} \\
+&amp; = -\frac{1}{2\sigma^{2}}
+\left\{1+r_{0}^{2}-2r_{0}\cos\theta\sin\theta_{0}-2r_{0}\sin\theta\sin\theta_{0}\right\}
+\\
+&amp; = \frac{r_{0}}{\sigma^{2}}\cos(\theta-\theta_{0}) + \text{const}
+\end{align}
+\]</span></p>
+<p>定义<span
+class="math inline">\(m=r_{0}/\sigma^{2}\)</span>，最终得到<span
+class="math inline">\(p(\theta)\)</span>的表达式为： <span
+class="math display">\[
+p\left(\theta \mid \theta_{0}, m\right)=\frac{1}{2 \pi I_{0}(m)} \exp
+\left\{m \cos \left(\theta-\theta_{0}\right)\right\}
+\]</span></p>
+<p>其中：<span
+class="math inline">\(I_{0}(m)\)</span>为零阶修正贝塞尔函数。 <span
+class="math display">\[
+I_{0}(m)=\frac{1}{2 \pi} \int_{0}^{2 \pi} \exp \{m \cos \theta\}
+\mathrm{d} \theta
+\]</span></p>
+<p>这就是<strong>von
+Mises分布</strong>，或者称为<strong>循环正态分布（circular
+normal）</strong>。参数<span
+class="math inline">\(\theta_0\)</span>和均值相关，参数<span
+class="math inline">\(m=r_0/\sigma^2\)</span>，称为<strong>集中度（concentration）参数</strong>。</p>
+<h4 id="最大似然估计">最大似然估计</h4>
+<p>下面考虑<strong>von Mises分布</strong>的参数<span
+class="math inline">\(\theta_{0}\)</span>和<span
+class="math inline">\(m\)</span>的最大似然估计值，对数似然函数为： <span
+class="math display">\[
+\ln p(\mathcal{D} \mid \theta_{0}, m) = -N\ln (2\pi) - N\ln I_{0}(m) + m
+\sum_{n=1}^{N} \cos(\theta_{n}-\theta_{0})
+\]</span></p>
+<p>令上式关于<span
+class="math inline">\(\theta_{0}\)</span>的导数为<span
+class="math inline">\(0\)</span>： <span class="math display">\[
+\sum_{n=1}^{N}\sin(\theta_{n}-\theta_{0}) = 0
+\]</span></p>
+<p>于是可以得到： <span class="math display">\[
+\theta_{0}^{\mathrm{ML}} =
+\tan^{-1}\left\{\frac{\sum_{n}\sin\theta_{n}}{\sum_{n}\cos\theta_{n}}\right\}
+\]</span></p>
+<p>同样，令对数似然函数关于<span
+class="math inline">\(m\)</span>的导数为<span
+class="math inline">\(0\)</span>，并且利用性质<span
+class="math inline">\(I_{0}^{\prime}(m)=I_{1}(m)\)</span>： <span
+class="math display">\[
+A(m) =
+\frac{1}{N}\sum_{n=1}^{N}\cos(\theta_{n}-\theta_{0}^{\mathrm{ML}})
+\]</span></p>
+<p>其中，我们定义： <span class="math display">\[
+A(m) = \frac{I_1(m)}{I_0(m)}
+\]</span></p>
+<p>利用三角函数的性质，可以得到： <span class="math display">\[
+A(m_{\mathrm{ML}}) =
+\left(\frac{1}{N}\sum_{n=1}^{N}\cos\theta_{n}\right)\cos\theta_{0}^{\mathrm{ML}}
+-
+\left(\frac{1}{N}\sum_{n=1}^{N}\sin\theta_{n}\right)\sin\theta_{0}^{\mathrm{ML}}
+\]</span></p>
+<p>上式中，等式右边可以比较容易的计算，最后<span
+class="math inline">\(m_{\mathrm{ML}}\)</span>的值可以通过数值计算得到。</p>
+<h3 id="混合高斯模型">2.3.9 混合高斯模型</h3>
+<p><strong>单个高斯分布无法描述具有多个峰的数据集。</strong></p>
+<p>例如下图中的数据，具有三个中心，一个简单的高斯分布无法描述这种结构，而三个高斯分布的线性叠加可以更好地描述这个数据集。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/mixture_of_gaussians.jpg" alt="mixture_of_gaussians" style="zoom:40%;" /></p>
+<p>通过将基本的概率分布（例如高斯分布）进行线性组合形成新的概率模型，这种模型称为<strong>混合模型（mixture
+distribution）</strong>。</p>
+<p>考虑<span class="math inline">\(K\)</span>个高斯分布的叠加，形如：
+<span class="math display">\[
+p(\mathbf{x})=\sum_{k=1}^{K} \pi_{k} \mathcal{N}\left(\mathbf{x} \mid
+\boldsymbol{\mu}_{k}, \mathbf{\Sigma}_{k}\right)
+\]</span></p>
+<p>这被称为<strong>混合高斯（mixture of
+Gaussians）</strong>。每一个高斯分布<span
+class="math inline">\(\mathcal{N}\left(\mathbf{x} \mid
+\boldsymbol{\mu}_{k},
+\mathbf{\Sigma}_{k}\right)\)</span>称为混合分布的一个成分。</p>
+<p>参数<span
+class="math inline">\(\pi_{k}\)</span>为<strong>混合系数（mixing
+coefficients）</strong>，满足条件： <span class="math display">\[
+\sum_{k=1}^{K} \pi_{k}=1
+\]</span> 并且 <span class="math display">\[
+0 \leqslant \pi_{k} \leqslant 1
+\]</span></p>
+<p>高斯混合模型中有参数<span
+class="math inline">\(\boldsymbol{\pi}\)</span>，<span
+class="math inline">\(\boldsymbol{\mu}\)</span>和<span
+class="math inline">\(\boldsymbol{\Sigma}\)</span>。其中：<span
+class="math inline">\(\boldsymbol{\pi} \equiv\left\{\pi_{1}, \ldots,
+\pi_{K}\right\}\)</span>，<span class="math inline">\(\boldsymbol{\mu}
+\equiv\left\{\boldsymbol{\mu}_{1}, \ldots,
+\boldsymbol{\mu}_{K}\right\}\)</span>，<span
+class="math inline">\(\mathbf{\Sigma} \equiv\left\{\mathbf{\Sigma}_{1},
+\ldots \mathbf{\Sigma}_{K}\right\}\)</span>。</p>
+<p>一种确定这些参数的方法为<strong>最大似然法</strong>，然而，此时的似然函数非常复杂，不再有闭式解析解。</p>
+<p>此时最大化似然函数的方法有：<strong>迭代数值优化法</strong>、<strong>期望最大化（expectation
+maximization）</strong>。</p>
+<h2 id="其他参考资料">其他参考资料</h2>
+<ol type="1">
+<li><p>机器学习-白板推导系列-数学基础：<a
+target="_blank" rel="noopener" href="https://github.com/shuhuai007/Machine-Learning-Session">https://github.com/shuhuai007/Machine-Learning-Session</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="https://math.stackexchange.com/questions/2262171/we-note-that-the-matrix-%ce%a3-can-be-taken-to-be-symmetric-without-loss-of-general">"we
+note that the matrix Σ can be taken to be symmetric, without loss of
+generality"</a></p></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/02/15/ch2-2-3-%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83/" title="ch2-2.3 高斯分布">https://ehehe.cn/2022/02/15/ch2-2-3-高斯分布/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PRML/" rel="tag"># PRML</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch2-2-2-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E5%8F%98%E9%87%8F/" rel="prev" title="ch2-2.2 二元变量">
+                  <i class="fa fa-angle-left"></i> ch2-2.2 二元变量
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch2-2-4-%E6%8C%87%E6%95%B0%E6%97%8F%E5%88%86%E5%B8%83/" rel="next" title="ch2-2.4 指数族分布">
+                  ch2-2.4 指数族分布 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

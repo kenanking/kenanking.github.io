@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="1.1 例子：多项式曲线拟合 问题描述 在这个例子中用函数\(\sin(2\pi x)\)生成\(N\)个数据点，且加入随机噪声，构成训练集\(\mathbf{x}&#x3D;(x_1, \cdots ,x_N)^T\)，和对应的目标向量\(\mathbf{t}&#x3D;(t_1, \cdots ,t_N)^T\)，如下所示。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch1-1.1 例子：多项式曲线拟合">
+<meta property="og:url" content="https://ehehe.cn/2022/02/14/ch1-1-1-%E4%BE%8B%E5%AD%90%EF%BC%9A%E5%A4%9A%E9%A1%B9%E5%BC%8F%E6%9B%B2%E7%BA%BF%E6%8B%9F%E5%90%88/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="1.1 例子：多项式曲线拟合 问题描述 在这个例子中用函数\(\sin(2\pi x)\)生成\(N\)个数据点，且加入随机噪声，构成训练集\(\mathbf{x}&#x3D;(x_1, \cdots ,x_N)^T\)，和对应的目标向量\(\mathbf{t}&#x3D;(t_1, \cdots ,t_N)^T\)，如下所示。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E7%94%B110%E4%B8%AA%E6%95%B0%E6%8D%AE%E7%82%B9%E7%BB%84%E6%88%90%E7%9A%84%E8%AE%AD%E7%BB%83%E9%9B%86%E5%9B%BE%E5%83%8F.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E8%AE%AD%E7%BB%83%E9%9B%86%E5%92%8C%E6%B5%8B%E8%AF%95%E9%9B%86%E4%B8%8A%E7%9A%84%E5%9D%87%E6%96%B9%E6%A0%B9%E8%AF%AF%E5%B7%AE%E6%9B%B2%E7%BA%BF.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/N%E5%8F%9615_100%E7%9A%84%E6%8B%9F%E5%90%88%E6%9B%B2%E7%BA%BF.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E6%AD%A3%E5%88%99%E5%8C%96%E5%90%8E%E7%9A%84%E6%8B%9F%E5%90%88%E6%9B%B2%E7%BA%BF.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E5%9D%87%E6%96%B9%E6%A0%B9%E8%AF%AF%E5%B7%AE%E9%9A%8Fln(%CE%BB)%E7%9A%84%E5%8F%98%E5%8C%96.jpg">
+<meta property="article:published_time" content="2022-02-14T13:58:39.000Z">
+<meta property="article:modified_time" content="2022-02-14T13:58:39.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="PRML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E7%94%B110%E4%B8%AA%E6%95%B0%E6%8D%AE%E7%82%B9%E7%BB%84%E6%88%90%E7%9A%84%E8%AE%AD%E7%BB%83%E9%9B%86%E5%9B%BE%E5%83%8F.jpg">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/02/14/ch1-1-1-%E4%BE%8B%E5%AD%90%EF%BC%9A%E5%A4%9A%E9%A1%B9%E5%BC%8F%E6%9B%B2%E7%BA%BF%E6%8B%9F%E5%90%88/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/02/14/ch1-1-1-%E4%BE%8B%E5%AD%90%EF%BC%9A%E5%A4%9A%E9%A1%B9%E5%BC%8F%E6%9B%B2%E7%BA%BF%E6%8B%9F%E5%90%88/","path":"2022/02/14/ch1-1-1-例子：多项式曲线拟合/","title":"ch1-1.1 例子：多项式曲线拟合"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch1-1.1 例子：多项式曲线拟合 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90%E5%A4%9A%E9%A1%B9%E5%BC%8F%E6%9B%B2%E7%BA%BF%E6%8B%9F%E5%90%88"><span class="nav-text">1.1 例子：多项式曲线拟合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E6%9E%90%E6%B3%95%E6%8E%A8%E5%AF%BC%E8%BF%87%E7%A8%8B"><span class="nav-text">解析法推导过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-text">线性回归代码实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90"><span class="nav-text">分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%A4%A7%E8%AE%AD%E7%BB%83%E9%9B%86%E7%9A%84%E6%95%B0%E6%8D%AE%E8%A7%84%E6%A8%A1"><span class="nav-text">增大训练集的数据规模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E5%8C%96"><span class="nav-text">正则化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AB%E6%AD%A3%E5%88%99%E5%8C%96%E7%9A%84%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-text">含正则化的线性回归代码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">其他参考资料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/02/14/ch1-1-1-%E4%BE%8B%E5%AD%90%EF%BC%9A%E5%A4%9A%E9%A1%B9%E5%BC%8F%E6%9B%B2%E7%BA%BF%E6%8B%9F%E5%90%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch1-1.1 例子：多项式曲线拟合 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch1-1.1 例子：多项式曲线拟合
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-14 21:58:39" itemprop="dateCreated datePublished" datetime="2022-02-14T21:58:39+08:00">2022-02-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="例子多项式曲线拟合">1.1 例子：多项式曲线拟合</h2>
+<h3 id="问题描述">问题描述</h3>
+<p>在这个例子中用函数<span class="math inline">\(\sin(2\pi
+x)\)</span>生成<span
+class="math inline">\(N\)</span>个数据点，且加入随机噪声，构成训练集<span
+class="math inline">\(\mathbf{x}=(x_1, \cdots
+,x_N)^T\)</span>，和对应的目标向量<span
+class="math inline">\(\mathbf{t}=(t_1, \cdots
+,t_N)^T\)</span>，如下所示。</p>
+<span id="more"></span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">np.random.seed(<span class="number">1</span>) <span class="comment"># 设定随机数种子，使得每次生成的随机数相同</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generateData</span>(<span class="params">func, sampleSize, std</span>):</span><br><span class="line">    x = np.linspace(<span class="number">0</span>, <span class="number">1</span>, sampleSize)</span><br><span class="line">    t = func(x) + np.random.normal(scale=std, size=x.shape)</span><br><span class="line">    <span class="keyword">return</span> x, t</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">function</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> np.sin(<span class="number">2</span>*np.pi*x)</span><br><span class="line"></span><br><span class="line">xTrain, yTrain = generateData(function, <span class="number">10</span>, <span class="number">0.1</span>) <span class="comment"># 训练数据</span></span><br><span class="line">xTest, yTest = generateData(function, <span class="number">100</span>, <span class="number">0.1</span>) <span class="comment"># 测试数据</span></span><br><span class="line">y = function(xTest)</span><br><span class="line"></span><br><span class="line">plt.scatter(xTrain, yTrain, color=<span class="string">&quot;w&quot;</span>, edgecolor=<span class="string">&quot;b&quot;</span>, s=<span class="number">50</span>, label=<span class="string">&quot;training data&quot;</span>)</span><br><span class="line">plt.plot(xTest, y, c=<span class="string">&quot;g&quot;</span>, label=<span class="string">&quot;$\sin(2\pi x)$&quot;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&quot;x&quot;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&quot;t&quot;</span>)</span><br><span class="line">plt.xticks([<span class="number">0</span>, <span class="number">1</span>])</span><br><span class="line">plt.yticks([-<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>])</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/由10个数据点组成的训练集图像.jpg" alt="由10个数据点组成的训练集图像" style="zoom: 67%;" /></p>
+<p>在这个问题中，我们的目标是找到一个函数，当输入新的值<span
+class="math inline">\(\hat{x}\)</span>时，可以预测目标值<span
+class="math inline">\(\hat{t}\)</span>。</p>
+<p>目前使用的方法是用一个<strong>多项式函数</strong>来拟合这些数据点：</p>
+<p><span class="math display">\[
+y(x, \mathbf{w})=w_{0}+w_{1} x+w_{2} x^{2}+\ldots+w_{M}
+x^{M}=\sum_{j=0}^{M} w_{j} x^{j}=\mathbf{X}\mathbf{w}
+\]</span></p>
+<p>其中：<span class="math inline">\(\mathbf{X}\)</span>为<span
+class="math inline">\(N \times (M+1)\)</span>维的矩阵，<span
+class="math inline">\(\mathbf{w}\)</span>为<span
+class="math inline">\((M+1)\)</span>维向量。</p>
+<p>虽然多项式函数<span class="math inline">\(y(x,
+\mathbf{w})\)</span>是一个关于<span
+class="math inline">\(x\)</span>的非线性函数，但它也是系数<span
+class="math inline">\(\mathbf{w}\)</span>的一个线性函数。类似这样的关于未知参数满足线性关系的函数模型，叫做<strong>线性模型（linear
+models）</strong>，它们具有一些重要的性质。</p>
+<p>系数的值通过最小化<strong>误差函数（error
+function）</strong>来获得，误差函数描述了函数<span
+class="math inline">\(y(x,
+\mathbf{w})\)</span>与目标值之间的差别。下面是在这个问题中用到的平方和误差函数：</p>
+<p><span class="math display">\[
+E(\mathbf{w})=\frac{1}{2} \sum_{n=1}^{N}\left\{y\left(x_{n},
+\mathbf{w}\right)-t_{n}\right\}^{2}
+\]</span></p>
+<p>我们可以通过选择使得<span
+class="math inline">\(E(\mathbf{w})\)</span>尽可能小的<span
+class="math inline">\(\mathbf{w}\)</span>来解决这个问题（其实就是<strong>最小二乘估计</strong>）。</p>
+<p>由于误差函数<span
+class="math inline">\(E(\mathbf{w})\)</span>是关于系数<span
+class="math inline">\(\mathbf{w}\)</span>的二次函数，则它的导数是关于<span
+class="math inline">\(\mathbf{w}\)</span>的线性函数，最小值存在唯一解，可以用解析法得到最小值<span
+class="math inline">\(\mathbf{w}^{\star}\)</span>。最终得到的多项式函数为<span
+class="math inline">\(y(x, \mathbf{w}^{\star})\)</span>。</p>
+<h3 id="解析法推导过程">解析法推导过程</h3>
+<p>下面是解析法求参数<span
+class="math inline">\(\mathbf{w}^{*}\)</span>的简要推导过程：</p>
+<p><span class="math display">\[
+\begin{align}
+E(\mathbf{w})&amp;=\frac{1}{2} \sum_{n=1}^{N}\{y(x_{n},
+\mathbf{w})-t_{n}\}^{2} \\
+             &amp;=\frac{1}{2}(\substack{\mathbf{X} \\{\scriptsize N
+\times (M+1)} }  \substack{\mathbf{w} \\{\scriptsize (M+1) \times 1}
+}-\substack{\mathbf{t} \\{\scriptsize N \times 1}
+})^{T}(\substack{\mathbf{X} \\{\scriptsize N \times (M+1)}
+}  \substack{\mathbf{w}  \\{\scriptsize (M+1) \times 1}
+}-\substack{\mathbf{t} \\{\scriptsize N \times 1} }) \\
+             &amp;=\frac{1}{2}((\mathbf{X}
+\mathbf{w})^{T}-\mathbf{t}^{T})(\mathbf{X} \mathbf{w}-\mathbf{t}) \\
+             &amp;=\frac{1}{2}(\mathbf{w}^{T}
+\mathbf{X}^{T}-\mathbf{t}^{T})(\mathbf{X} \mathbf{w}-\mathbf{t}) \\
+             &amp;=\frac{1}{2}(\mathbf{w}^{T} \mathbf{X}^{T} X
+\mathbf{w}-\mathbf{t}^{T} \mathbf{X} \mathbf{w}-\mathbf{w}^{T}
+\mathbf{X}^{T} \mathbf{t}+\mathbf{t}^{T} \mathbf{t}) \\
+             &amp;=\frac{1}{2}(\mathbf{w}^{T} \mathbf{X}^{T} \mathbf{X}
+\mathbf{w}-2\mathbf{w}^{T} \mathbf{X}^{T} \mathbf{t}+\mathbf{t}^{T}
+\mathbf{t})
+\end{align}
+\]</span></p>
+<p>对<span
+class="math inline">\(E(\mathbf{w})\)</span>求导，当导数为零时，可以得到<span
+class="math inline">\(E(\mathbf{w})\)</span>的最小值： <span
+class="math display">\[
+\begin{align}
+\frac{\partial E(\mathbf{w})}{\partial \mathbf{w}}
+&amp;=\frac{1}{2}(2 \mathbf{X}^{T} \mathbf{X} \mathbf{w}-2\mathbf{X}^{T}
+\mathbf{t}) \\
+&amp;=\mathbf{X}^{T} \mathbf{X} \mathbf{w}-\mathbf{X}^{T} \mathbf{t}
+\end{align}
+\]</span></p>
+<p>令导数为零：</p>
+<p><span class="math display">\[
+\begin{align}
+\mathbf{X}^{T} \mathbf{X} \mathbf{w}-\mathbf{X}^{T} \mathbf{t} &amp;= 0
+\\
+\mathbf{X}^{T} \mathbf{X} \mathbf{w} &amp;= \mathbf{X}^{T} \mathbf{t} \\
+\mathbf{w} &amp;= (\mathbf{X}^{T} \mathbf{X})^{-1} \mathbf{X}^{T}
+\mathbf{t}
+\end{align}
+\]</span></p>
+<p>所以最终线性回归的解析解为：<span class="math inline">\(\mathbf{w} =
+(\mathbf{X}^{T} \mathbf{X})^{-1} \mathbf{X}^{T}
+\mathbf{t}\)</span>。</p>
+<p>这里的<span class="math inline">\(\mathbf{X}\)</span>为一个<span
+class="math inline">\(N \times (M+1)\)</span>的矩阵，<span
+class="math inline">\(N\)</span>为训练集样本数，<span
+class="math inline">\(M\)</span>为多项式函数的阶数。<span
+class="math inline">\(\mathbf{t}\)</span>为一个<span
+class="math inline">\(N \times 1\)</span>的列向量。</p>
+<h3 id="线性回归代码实现">线性回归代码实现</h3>
+<p><span class="math inline">\(X\)</span>的形式为：</p>
+<p><span class="math display">\[
+\left(\begin{array}{ccc}
+1 &amp; x_{1} &amp; \cdots &amp; x_{1}^{M} \\
+1 &amp; x_{2} &amp; \cdots &amp; x_{2}^{M} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+1 &amp; x_{N} &amp; \cdots &amp; x_{N}^{M}
+\end{array}\right)
+\]</span></p>
+<p><span class="math inline">\(\mathbf{t}\)</span>的形式为：</p>
+<p><span class="math display">\[
+\left(\begin{array}{c}
+t_{1} \\
+t_{2} \\
+\vdots \\
+t_{N}
+\end{array}\right)
+\]</span></p>
+<p><span class="math inline">\(\mathbf{w}\)</span>的形式为：</p>
+<p><span class="math display">\[
+\left(\begin{array}{c}
+w_{0} \\
+w_{1} \\
+\vdots \\
+w_{M}
+\end{array}\right)
+\]</span></p>
+<p>代码实现的主要步骤就是构造矩阵<span
+class="math inline">\(X\)</span>，然后代入上一步推导出的公式求解出<span
+class="math inline">\(\mathbf{w}\)</span>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 解析法求解线性回归参数值</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LinearRegression</span>():</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, M</span>):</span><br><span class="line">        self.M = M</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">fit</span>(<span class="params">self, x: np.ndarray, t: np.ndarray</span>):</span><br><span class="line">        N = x.shape[<span class="number">0</span>]</span><br><span class="line">        X = np.ones((N, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, self.M+<span class="number">1</span>):</span><br><span class="line">            X = np.c_[X, np.power(x, i).T]</span><br><span class="line"></span><br><span class="line">        self.w = np.linalg.inv(X.T.dot(X)).dot(X.T).dot(t.T)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> self.w</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">self, x:np.ndarray</span>):</span><br><span class="line">        N = x.shape[<span class="number">0</span>]</span><br><span class="line">        X = np.ones((N, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, self.M+<span class="number">1</span>):</span><br><span class="line">            X = np.c_[X, np.power(x, i).T]</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> X.dot(self.w)</span><br></pre></td></tr></table></figure>
+<h3 id="分析">分析</h3>
+<p>在线性回归问题中，剩下的问题就是选择合适多项式函数的阶数<span
+class="math inline">\(M\)</span>，这个过程叫做<strong>模型对比（model
+comparison）</strong>或<strong>模型选择（model
+selection）</strong>。</p>
+<p>在书中，选择了<span
+class="math inline">\(M=\{0,1,3,9\}\)</span>的情况，可以得到如下的图像。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i, M <span class="keyword">in</span> <span class="built_in">enumerate</span>([<span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">9</span>]):</span><br><span class="line">    plt.subplot(<span class="number">2</span>, <span class="number">2</span>, i + <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    model = LinearRegression(M)</span><br><span class="line">    model.fit(xTrain, yTrain)</span><br><span class="line">    yPredict = model.predict(xTest)</span><br><span class="line"></span><br><span class="line">    plt.scatter(xTrain, yTrain, facecolor=<span class="string">&quot;none&quot;</span>, edgecolor=<span class="string">&quot;b&quot;</span>, s=<span class="number">50</span>, label=<span class="string">&quot;training data&quot;</span>)</span><br><span class="line">    plt.plot(xTest, y, c=<span class="string">&quot;g&quot;</span>, label=<span class="string">&quot;$\sin(2\pi x)$&quot;</span>)</span><br><span class="line">    plt.plot(xTest, yPredict, c=<span class="string">&quot;r&quot;</span>, label=<span class="string">&quot;fitting curve&quot;</span>)</span><br><span class="line">    plt.ylim(-<span class="number">1.5</span>, <span class="number">1.5</span>)</span><br><span class="line">    plt.annotate(<span class="string">&quot;M=&#123;&#125;&quot;</span>.<span class="built_in">format</span>(M), xy=(<span class="number">0.75</span>, <span class="number">1</span>))</span><br><span class="line">    plt.xticks([<span class="number">0</span>, <span class="number">1</span>])</span><br><span class="line">    plt.yticks([-<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>])</span><br><span class="line">plt.legend(bbox_to_anchor=(<span class="number">1.05</span>, <span class="number">0.64</span>), loc=<span class="number">2</span>, borderaxespad=<span class="number">0.5</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/M取0_1_3_9对应的拟合曲线.jpg"
+alt="M取0_1_3_9对应的拟合曲线" />
+<figcaption aria-hidden="true">M取0_1_3_9对应的拟合曲线</figcaption>
+</figure>
+<p>可以看到的是，当多项式为常数（<span
+class="math inline">\(M=0\)</span>）或一阶（<span
+class="math inline">\(M=1\)</span>）时，拟合的效果较差。三阶（<span
+class="math inline">\(M=3\)</span>）多项式具有最好的拟合效果。当多项式阶数更高时（<span
+class="math inline">\(M=9\)</span>），尽管此时多项式函数经过了每一个数据点，即：<span
+class="math inline">\(E(\mathbf{w}^{\star})=0\)</span>，但是拟合的曲线剧烈震荡，不能表达函数<span
+class="math inline">\(\sin(2\pi
+x)\)</span>，这种情况为<strong>过拟合（over-fitting）</strong>。</p>
+<p>为了考察模型的在新数据集上的泛化能力，我们可以定量的比较模型泛化能力和<span
+class="math inline">\(M\)</span>之间的关系。对于每个<span
+class="math inline">\(M\)</span>，我们可以计算拟合后函数在训练集上的误差<span
+class="math inline">\(E(\mathbf{w}^{*})\)</span>和在测试集上的误差<span
+class="math inline">\(E(\mathbf{w}^{\star})\)</span>，然后绘制误差随<span
+class="math inline">\(M\)</span>变化的图像。有时候，使用<strong>均方根误差（RMS）</strong>进行比较更为方便，均方根误差除以<span
+class="math inline">\(N\)</span>让我们能够以相同的基础比较不同大小的数据集，平方根确保了<span
+class="math inline">\(E_{\mathrm{RMS}}\)</span>和<span
+class="math inline">\(\mathbf{t}\)</span>具有相同的规模和单位。 <span
+class="math display">\[
+E_{\mathrm{RMS}}=\sqrt{2 E(\mathbf{w}^{\star}) / N}
+\]</span> 下面是<span class="math inline">\(M\)</span>取<span
+class="math inline">\(0\)</span>到<span
+class="math inline">\(9\)</span>的结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">computeRMSError</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">return</span> np.sqrt(np.mean(np.square(a - b)))</span><br><span class="line"></span><br><span class="line">trainingErrors = []</span><br><span class="line">testErrors = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line"></span><br><span class="line">    model = LinearRegression(i)</span><br><span class="line">    model.fit(xTrain, yTrain)</span><br><span class="line">    y = model.predict(xTest)</span><br><span class="line">    trainingErrors.append(computeRMSError(model.predict(xTrain), yTrain))</span><br><span class="line">    testErrors.append(computeRMSError(model.predict(xTest), yTest))</span><br><span class="line"></span><br><span class="line">plt.plot(trainingErrors, <span class="string">&#x27;o-&#x27;</span>, mfc=<span class="string">&quot;none&quot;</span>, mec=<span class="string">&quot;b&quot;</span>, ms=<span class="number">10</span>, c=<span class="string">&quot;b&quot;</span>, label=<span class="string">&quot;Training&quot;</span>)</span><br><span class="line">plt.plot(testErrors, <span class="string">&#x27;o-&#x27;</span>, mfc=<span class="string">&quot;none&quot;</span>, mec=<span class="string">&quot;r&quot;</span>, ms=<span class="number">10</span>, c=<span class="string">&quot;r&quot;</span>, label=<span class="string">&quot;Test&quot;</span>)</span><br><span class="line">plt.xticks(<span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">0</span>, <span class="number">10</span>, <span class="number">3</span>)))</span><br><span class="line">plt.yticks([<span class="number">0</span>, <span class="number">0.5</span>, <span class="number">1</span>])</span><br><span class="line">plt.legend()</span><br><span class="line">plt.xlabel(<span class="string">&quot;M&quot;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&quot;$E_&#123;RMS&#125;$&quot;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/训练集和测试集上的均方根误差曲线.jpg" alt="训练集和测试集上的均方根误差曲线" style="zoom: 67%;" /></p>
+<p>我们可以看多项式取不同阶数时系数<span
+class="math inline">\(\mathbf{w}^{\star}\)</span>的值：</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;"><span
+class="math inline">\(M=0\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(M=1\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(M=3\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(M=9\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span
+class="math inline">\(w_0^{\star}\)</span></td>
+<td style="text-align: center;">-0.01</td>
+<td style="text-align: center;">0.68</td>
+<td style="text-align: center;">0.08</td>
+<td style="text-align: center;">0.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span
+class="math inline">\(w_1^{\star}\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">-0.14</td>
+<td style="text-align: center;">9.15</td>
+<td style="text-align: center;">-123.93</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span
+class="math inline">\(w_2^{\star}\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">-28.40</td>
+<td style="text-align: center;">2978.09</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span
+class="math inline">\(w_3^{\star}\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">19.19</td>
+<td style="text-align: center;">-27114.46</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span
+class="math inline">\(w_4^{\star}\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">128931.40</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span
+class="math inline">\(w_5^{\star}\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">-356296.67</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span
+class="math inline">\(w_6^{\star}\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">591780.22</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span
+class="math inline">\(w_7^{\star}\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">-581593.23</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span
+class="math inline">\(w_8^{\star}\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">311355.35</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span
+class="math inline">\(w_9^{\star}\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">-69916.96</td>
+</tr>
+</tbody>
+</table>
+<p>很显然，<span
+class="math inline">\(M=0、1、2\)</span>时本身无法表现函数<span
+class="math inline">\(\sin(2\pi x)\)</span>。当<span
+class="math inline">\(3\le M \le
+8\)</span>时，在测试集上误差较小，对于函数<span
+class="math inline">\(\sin(2\pi x)\)</span>有较好的拟合。</p>
+<p>当阶数<span
+class="math inline">\(M\)</span>变大时，系数值也变得非常大。尤其是当<span
+class="math inline">\(M=9\)</span>时，虽然在训练集上的误差为<span
+class="math inline">\(0\)</span>，但是在测试集上的表现相当差，这是因为<span
+class="math inline">\(M=9\)</span>的多项式自由度更高，使用这个多项式学习到的函数也满足了目标值上带有的随机噪声。</p>
+<p>一般，我们希望给模型一定的复杂度和自由度，但是又不希望模型出现过拟合的情况。上面我们用于求解曲线拟合问题的最小二乘方法是<strong>最大似然（maximum
+likelihood）</strong>方法的一种特例，从<strong>贝叶斯方法（Bayesian
+approach）</strong>的角度去求解可以自然的避免过拟合问题。</p>
+<p>目前，解决这个问题主要有两种方案：</p>
+<ol type="1">
+<li>增大训练集的数据规模</li>
+<li><strong>正则化（regularization）</strong></li>
+</ol>
+<h3 id="增大训练集的数据规模">增大训练集的数据规模</h3>
+<p>增大训练集的数据规模是一种非常简单并且很有效的方法，不过在现实中往往我们没那么多数据。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">8</span>, <span class="number">3</span>))</span><br><span class="line"><span class="keyword">for</span> i, N <span class="keyword">in</span> <span class="built_in">enumerate</span>([<span class="number">15</span>, <span class="number">100</span>]):</span><br><span class="line">    plt.subplot(<span class="number">1</span>, <span class="number">2</span>, i + <span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    xTrain, yTrain = generateData(function, N, <span class="number">0.25</span>)</span><br><span class="line">    xTest = np.linspace(<span class="number">0</span>, <span class="number">1</span>, <span class="number">100</span>)</span><br><span class="line">    y = function(xTest)</span><br><span class="line"></span><br><span class="line">    model = LinearRegression(<span class="number">9</span>)</span><br><span class="line">    model.fit(xTrain, yTrain)</span><br><span class="line">    yPredict = model.predict(xTest)</span><br><span class="line"></span><br><span class="line">    plt.scatter(xTrain, yTrain, facecolor=<span class="string">&quot;none&quot;</span>,</span><br><span class="line">                edgecolor=<span class="string">&quot;b&quot;</span>, s=<span class="number">20</span>, label=<span class="string">&quot;training data&quot;</span>)</span><br><span class="line">    plt.plot(xTest, y, c=<span class="string">&quot;g&quot;</span>, label=<span class="string">&quot;$\sin(2\pi x)$&quot;</span>)</span><br><span class="line">    plt.plot(xTest, yPredict, c=<span class="string">&quot;r&quot;</span>, label=<span class="string">&quot;fitting curve&quot;</span>)</span><br><span class="line">    plt.ylim(-<span class="number">1.5</span>, <span class="number">1.5</span>)</span><br><span class="line">    plt.annotate(<span class="string">&quot;N=&#123;&#125;&quot;</span>.<span class="built_in">format</span>(N), xy=(<span class="number">0.75</span>, <span class="number">1</span>))</span><br><span class="line">    plt.xticks([<span class="number">0</span>, <span class="number">1</span>])</span><br><span class="line">    plt.yticks([-<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>])</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/N取15_100的拟合曲线.jpg" alt="N取15_100的拟合曲线" style="zoom:80%;" /></p>
+<p>左图是<span
+class="math inline">\(M=9,N=15\)</span>的情况，右图是<span
+class="math inline">\(M=9,N=100\)</span>的情况。</p>
+<h3 id="正则化">正则化</h3>
+<p>正则化的做法是原误差函数上增加一个惩罚（penalty）项，这个惩罚项最简单的形式为所有系数平方和：
+<span class="math display">\[
+\widetilde{E}(\mathbf{w})=\frac{1}{2} \sum_{n=1}^{N}\{y(x_{n},
+\mathbf{w})-t_{n}\}^{2}+\frac{\lambda}{2}\|\mathbf{w}\|^{2}
+\]</span></p>
+<p><strong>注：通常<span
+class="math inline">\(w_0\)</span>不包含在正则项中。</strong></p>
+<p>这个惩罚项在这里的作用是让<span
+class="math inline">\(w_j\)</span>的值接近<span
+class="math inline">\(0\)</span>，从而使学习到的函数更加光滑。从式子<span
+class="math inline">\(y(x, \mathbf{w})=\sum_{j=0}^{M} w_{j}
+x^{j}\)</span>看出，当<span
+class="math inline">\(w_j\)</span>的值接近<span
+class="math inline">\(0\)</span>时，光看一阶项，如果输入变量<span
+class="math inline">\(x\)</span>有一个微小增量<span
+class="math inline">\(\Delta x\)</span>，这个微小增量<span
+class="math inline">\(\Delta x\)</span>造成<span
+class="math inline">\(y\)</span>的变化量为<span
+class="math inline">\(\Delta x
+w_j\)</span>也就越小，函数也就越光滑。也可以看成，正则项控制了模型的复杂度，让模型复杂度减小。</p>
+<p>函数越光滑意味着对输入变量越不敏感，那么也就不容易被输入变量中的随机噪声影响。</p>
+<p><strong>这里为了便于计算，仍然是包含了<span
+class="math inline">\(w_0\)</span>的。</strong>同样对上式求导等于零，可以得到<span
+class="math inline">\(\mathbf{w}\)</span>的解析解为： <span
+class="math display">\[
+\mathbf{w} = (\mathbf{X}^{T} \mathbf{X}+\lambda \mathbf{I})^{-1}
+\mathbf{X}^{T} \mathbf{t}
+\]</span></p>
+<h3 id="含正则化的线性回归代码实现">含正则化的线性回归代码实现</h3>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LinearRegressionWithRegulariztion</span>():</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, M, lambd</span>):</span><br><span class="line">        self.M = M</span><br><span class="line">        self.lambd = lambd</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">fit</span>(<span class="params">self, x: np.ndarray, t: np.ndarray</span>):</span><br><span class="line">        N = x.shape[<span class="number">0</span>]</span><br><span class="line">        X = np.ones((N, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, self.M+<span class="number">1</span>):</span><br><span class="line">            X = np.c_[X, np.power(x, i).T]</span><br><span class="line"></span><br><span class="line">        self.w = np.linalg.inv(X.T.dot(X) + self.lambd * np.eye(self.M+<span class="number">1</span>)).dot(X.T).dot(t.T)</span><br><span class="line">        <span class="keyword">return</span> self.w</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">self, x: np.ndarray</span>):</span><br><span class="line">        N = x.shape[<span class="number">0</span>]</span><br><span class="line">        X = np.ones((N, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, self.M+<span class="number">1</span>):</span><br><span class="line">            X = np.c_[X, np.power(x, i).T]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> X.dot(self.w)</span><br></pre></td></tr></table></figure>
+<p>下面是在<span
+class="math inline">\(M=9,N=15\)</span>的情况下，分别用<span
+class="math inline">\(\lambda = 0.001\)</span>和<span
+class="math inline">\(\lambda = 10\)</span>作为正则化项系数的结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">8</span>, <span class="number">3</span>))</span><br><span class="line"><span class="keyword">for</span> i, lambd <span class="keyword">in</span> <span class="built_in">enumerate</span>([<span class="number">0.001</span>, <span class="number">10</span>]):</span><br><span class="line">    plt.subplot(<span class="number">1</span>, <span class="number">2</span>, i + <span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    xTrain, yTrain = generateData(function, <span class="number">15</span>, <span class="number">0.25</span>)</span><br><span class="line">    xTest = np.linspace(<span class="number">0</span>, <span class="number">1</span>, <span class="number">100</span>)</span><br><span class="line">    y = function(xTest)</span><br><span class="line"></span><br><span class="line">    model = LinearRegressionWithRegulariztion(<span class="number">9</span>, lambd)</span><br><span class="line">    model.fit(xTrain, yTrain)</span><br><span class="line">    yPredict = model.predict(xTest)</span><br><span class="line"></span><br><span class="line">    plt.scatter(xTrain, yTrain, facecolor=<span class="string">&quot;none&quot;</span>,</span><br><span class="line">                edgecolor=<span class="string">&quot;b&quot;</span>, s=<span class="number">20</span>, label=<span class="string">&quot;training data&quot;</span>)</span><br><span class="line">    plt.plot(xTest, y, c=<span class="string">&quot;g&quot;</span>, label=<span class="string">&quot;$\sin(2\pi x)$&quot;</span>)</span><br><span class="line">    plt.plot(xTest, yPredict, c=<span class="string">&quot;r&quot;</span>, label=<span class="string">&quot;fitting curve&quot;</span>)</span><br><span class="line">    plt.ylim(-<span class="number">1.5</span>, <span class="number">1.5</span>)</span><br><span class="line">    plt.annotate(<span class="string">&quot;$\lambda=&#123;&#125;$&quot;</span>.<span class="built_in">format</span>(lambd), xy=(<span class="number">0.75</span>, <span class="number">1</span>))</span><br><span class="line">    plt.xticks([<span class="number">0</span>, <span class="number">1</span>])</span><br><span class="line">    plt.yticks([-<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>])</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/正则化后的拟合曲线.jpg" alt="正则化后的拟合曲线" style="zoom:80%;" /></p>
+<p>可以看到，当<span
+class="math inline">\(\lambda\)</span>较大时，获得的函数越光滑。</p>
+<p>下面是正则化参数<span
+class="math inline">\(\lambda\)</span>取不同值时，<span
+class="math inline">\(M=9\)</span>的多项式系数取值，可以看到，随着<span
+class="math inline">\(\lambda\)</span>增大，系数的大小减小，接近<span
+class="math inline">\(0\)</span>。</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 31%" />
+<col style="width: 25%" />
+<col style="width: 23%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;"><span
+class="math inline">\(\ln(\lambda)=-\infty\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(\ln(\lambda)=-18\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(\ln(\lambda)=0\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span
+class="math inline">\(w_0^{\star}\)</span></td>
+<td style="text-align: center;">0.16</td>
+<td style="text-align: center;">0.16</td>
+<td style="text-align: center;">0.33</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span
+class="math inline">\(w_1^{\star}\)</span></td>
+<td style="text-align: center;">-123.93</td>
+<td style="text-align: center;">1.88</td>
+<td style="text-align: center;">-0.39</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span
+class="math inline">\(w_2^{\star}\)</span></td>
+<td style="text-align: center;">2978.09</td>
+<td style="text-align: center;">30.97</td>
+<td style="text-align: center;">-0.41</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span
+class="math inline">\(w_3^{\star}\)</span></td>
+<td style="text-align: center;">-27114.46</td>
+<td style="text-align: center;">-140.12</td>
+<td style="text-align: center;">-0.27</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span
+class="math inline">\(w_4^{\star}\)</span></td>
+<td style="text-align: center;">128931.40</td>
+<td style="text-align: center;">136.52</td>
+<td style="text-align: center;">-0.14</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span
+class="math inline">\(w_5^{\star}\)</span></td>
+<td style="text-align: center;">-356296.67</td>
+<td style="text-align: center;">59.80</td>
+<td style="text-align: center;">-0.03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span
+class="math inline">\(w_6^{\star}\)</span></td>
+<td style="text-align: center;">591780.22</td>
+<td style="text-align: center;">-111.55</td>
+<td style="text-align: center;">0.05</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span
+class="math inline">\(w_7^{\star}\)</span></td>
+<td style="text-align: center;">-581593.23</td>
+<td style="text-align: center;">-53.70</td>
+<td style="text-align: center;">0.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span
+class="math inline">\(w_8^{\star}\)</span></td>
+<td style="text-align: center;">311355.35</td>
+<td style="text-align: center;">122.20</td>
+<td style="text-align: center;">0.17</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span
+class="math inline">\(w_9^{\star}\)</span></td>
+<td style="text-align: center;">-69916.96</td>
+<td style="text-align: center;">-46.19</td>
+<td style="text-align: center;">0.20</td>
+</tr>
+</tbody>
+</table>
+<p>下面是在训练集和测试集上的均方根误差随<span
+class="math inline">\(\ln(\lambda)\)</span>的变化情况：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">trainingErrors = []</span><br><span class="line">testErrors = []</span><br><span class="line">x = <span class="built_in">list</span>(<span class="built_in">range</span>(-<span class="number">40</span>, <span class="number">21</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(-<span class="number">40</span>, <span class="number">21</span>):</span><br><span class="line">    lambd = np.power(np.e, i)</span><br><span class="line"></span><br><span class="line">    model = LinearRegressionWithRegulariztion(<span class="number">9</span>, lambd)</span><br><span class="line">    model.fit(xTrain, yTrain)</span><br><span class="line">    yPredict = model.predict(xTest)</span><br><span class="line"></span><br><span class="line">    trainingErrors.append(computeRMSError(model.predict(xTrain), yTrain))</span><br><span class="line">    testErrors.append(computeRMSError(model.predict(xTest), yTest))</span><br><span class="line"></span><br><span class="line">plt.plot(x, trainingErrors, <span class="string">&#x27;-&#x27;</span>, mfc=<span class="string">&quot;none&quot;</span>,</span><br><span class="line">         mec=<span class="string">&quot;b&quot;</span>, ms=<span class="number">10</span>, c=<span class="string">&quot;b&quot;</span>, label=<span class="string">&quot;Training&quot;</span>)</span><br><span class="line">plt.plot(x, testErrors, <span class="string">&#x27;-&#x27;</span>, mfc=<span class="string">&quot;none&quot;</span>, mec=<span class="string">&quot;r&quot;</span>, ms=<span class="number">10</span>, c=<span class="string">&quot;r&quot;</span>, label=<span class="string">&quot;Test&quot;</span>)</span><br><span class="line">plt.xticks(np.arange(-<span class="number">35</span>, <span class="number">21</span>, <span class="number">5</span>))</span><br><span class="line">plt.yticks([<span class="number">0</span>, <span class="number">0.5</span>, <span class="number">1</span>, <span class="number">1.5</span>])</span><br><span class="line">plt.legend()</span><br><span class="line">plt.xlabel(<span class="string">&quot;$ln(\lambda)$&quot;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&quot;$E_&#123;RMS&#125;$&quot;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/均方根误差随ln(λ)的变化.jpg" alt="均方根误差随ln(λ)的变化" style="zoom:67%;" /></p>
+<h2 id="其他参考资料">其他参考资料</h2>
+<ol type="1">
+<li>部分代码参考：https://github.com/ctgk/PRML</li>
+<li>线性回归解析法推导过程：https://blog.csdn.net/a755199443/article/details/104198033</li>
+<li>机器学习-白板推导系列-线性回归(Linear
+Regression)：https://github.com/shuhuai007/Machine-Learning-Session</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/02/14/ch1-1-1-%E4%BE%8B%E5%AD%90%EF%BC%9A%E5%A4%9A%E9%A1%B9%E5%BC%8F%E6%9B%B2%E7%BA%BF%E6%8B%9F%E5%90%88/" title="ch1-1.1 例子：多项式曲线拟合">https://ehehe.cn/2022/02/14/ch1-1-1-例子：多项式曲线拟合/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PRML/" rel="tag"># PRML</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/02/20/Programming-Languages-Homework-4/" rel="prev" title="Programming Languages Homework 4">
+                  <i class="fa fa-angle-left"></i> Programming Languages Homework 4
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/14/ch1-1-2-%E6%A6%82%E7%8E%87%E8%AE%BA/" rel="next" title="ch1-1.2 概率论">
+                  ch1-1.2 概率论 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="最近在Coursera上学习Programming Languages的一门课程，需要用到Emacs编辑器，所以稍微了解了一下Emacs编辑器，看了一些视频，配置了一下Emacs。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Emacs配置文件">
+<meta property="og:url" content="https://ehehe.cn/2021/02/07/Emacs%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="最近在Coursera上学习Programming Languages的一门课程，需要用到Emacs编辑器，所以稍微了解了一下Emacs编辑器，看了一些视频，配置了一下Emacs。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-07T04:50:34.000Z">
+<meta property="article:modified_time" content="2021-02-07T04:50:34.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="Emacs">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ehehe.cn/2021/02/07/Emacs%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2021/02/07/Emacs%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/","path":"2021/02/07/Emacs配置文件/","title":"Emacs配置文件"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Emacs配置文件 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2021/02/07/Emacs%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Emacs配置文件 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Emacs配置文件
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-02-07 12:50:34" itemprop="dateCreated datePublished" datetime="2021-02-07T12:50:34+08:00">2021-02-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>833</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>最近在Coursera上学习Programming
+Languages的一门课程，需要用到Emacs编辑器，所以稍微了解了一下Emacs编辑器，看了一些视频，配置了一下Emacs。</p>
+<span id="more"></span>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">;; Emacs自动生成设置</span></span><br><span class="line">(<span class="name">custom-set-variables</span></span><br><span class="line"> <span class="comment">;; custom-set-variables was added by Custom.</span></span><br><span class="line"> <span class="comment">;; If you edit it by hand, you could mess it up, so be careful.</span></span><br><span class="line"> <span class="comment">;; Your init file should contain only one such instance.</span></span><br><span class="line"> <span class="comment">;; If there is more than one, they won&#x27;t work right.</span></span><br><span class="line"> &#x27;(custom-safe-themes</span><br><span class="line">   &#x27;(<span class="string">&quot;bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476&quot;</span> <span class="string">&quot;e6df46d5085fde0ad56a46ef69ebb388193080cc9819e2d6024c9c6e27388ba9&quot;</span> default))</span><br><span class="line"> &#x27;(package-selected-packages</span><br><span class="line">   &#x27;(all-the-icons-ivy flycheck undo-tree doom-themes monokai spacemacs-theme faff-theme doom-modeline zenburn-theme ace-window counsel org-bullets which-key try use-package sml-mode company)))</span><br><span class="line">(<span class="name">custom-set-faces</span></span><br><span class="line"> <span class="comment">;; custom-set-faces was added by Custom.</span></span><br><span class="line"> <span class="comment">;; If you edit it by hand, you could mess it up, so be careful.</span></span><br><span class="line"> <span class="comment">;; Your init file should contain only one such instance.</span></span><br><span class="line"> <span class="comment">;; If there is more than one, they won&#x27;t work right.</span></span><br><span class="line"> &#x27;(aw-leading-char-face ((<span class="literal">t</span> (:inherit ace-jump-face-foreground :height <span class="number">3.0</span>)))))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">;; 关闭工具栏</span></span><br><span class="line">(<span class="name">tool-bar-mode</span> <span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">;; F5刷新页面</span></span><br><span class="line">(<span class="name">global-set-key</span> (<span class="name">kbd</span> <span class="string">&quot;&lt;f5&gt;&quot;</span>) &#x27;revert-buffer)</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 选中一段文字后，输入一个字符会替换掉选中文字</span></span><br><span class="line">(<span class="name">delete-selection-mode</span> <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 在菜单中添加最近编辑过的文件选项</span></span><br><span class="line">(<span class="name">require</span> &#x27;recentf)</span><br><span class="line">(<span class="name">recentf-mode</span> <span class="number">1</span>)</span><br><span class="line">(<span class="name">setq</span> recentf-max-menu-items <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 关闭文件滑动控件</span></span><br><span class="line">(<span class="name">scroll-bar-mode</span> <span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 显示行号</span></span><br><span class="line">(<span class="name">global-linum-mode</span> <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 关闭启动帮助画面</span></span><br><span class="line">(<span class="name">setq</span> inhibit-splash-screen <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 快速打开配置文件</span></span><br><span class="line">(<span class="name">defun</span> open-init-file()</span><br><span class="line">  (<span class="name">interactive</span>)</span><br><span class="line">  (<span class="name">find-file</span> <span class="string">&quot;D:/Program Files/Emacs/.emacs.d/init.el&quot;</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 更改显示字体大小为16pt</span></span><br><span class="line">(<span class="name">set-face-attribute</span> &#x27;default <span class="literal">nil</span> <span class="symbol">:height</span> <span class="number">160</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 禁止Emacs自动生成备份文件</span></span><br><span class="line">(<span class="name">setq</span> make-backup-files <span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 设置网络代理</span></span><br><span class="line">(<span class="name">setq</span> url-proxy-services &#x27;(</span><br><span class="line">			   (<span class="string">&quot;http&quot;</span> . <span class="string">&quot;127.0.0.1:7890&quot;</span>)</span><br><span class="line">			   (<span class="string">&quot;https&quot;</span> . <span class="string">&quot;127.0.0.1:7890&quot;</span>)</span><br><span class="line">			   ))</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 添加Melpa作为插件源</span></span><br><span class="line">(<span class="name">require</span> &#x27;package)</span><br><span class="line">(<span class="name">add-to-list</span> &#x27;package-archives &#x27;(<span class="string">&quot;melpa&quot;</span> . <span class="string">&quot;https://melpa.org/packages/&quot;</span>) <span class="literal">t</span>)</span><br><span class="line">(<span class="name">package-initialize</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 安装use-package，方便安装其他package</span></span><br><span class="line">(<span class="name">unless</span> (<span class="name">package-installed-p</span> &#x27;use-package)</span><br><span class="line">  (<span class="name">package-refresh-contents</span>)</span><br><span class="line">  (<span class="name">package-install</span> &#x27;use-package))</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 通过try，可以不是安装package，仅试用这个package</span></span><br><span class="line">(<span class="name">use-package</span> try</span><br><span class="line">  <span class="symbol">:ensure</span> <span class="literal">t</span>)</span><br><span class="line"></span><br><span class="line">(<span class="name">use-package</span> which-key</span><br><span class="line">  <span class="symbol">:ensure</span> <span class="literal">t</span></span><br><span class="line">  <span class="symbol">:config</span> (<span class="name">which-key-mode</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment">;; Org-mode相关设置</span></span><br><span class="line">(<span class="name">use-package</span> org-bullets</span><br><span class="line">  <span class="symbol">:ensure</span> <span class="literal">t</span></span><br><span class="line">  <span class="symbol">:config</span></span><br><span class="line">  (<span class="name">add-hook</span> &#x27;org-mode-hook (<span class="name">lambda</span> () (<span class="name">org-bullets-mode</span> <span class="number">1</span>))))</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 切换Buffer时给出更多Buffer信息</span></span><br><span class="line">(<span class="name">setq</span> indo-enable-flex-matching <span class="literal">t</span>)</span><br><span class="line">(<span class="name">setq</span> ido-everywhere <span class="literal">t</span>)</span><br><span class="line">(<span class="name">ido-mode</span> <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 更改list-buffers(c-x c-b)命令显示内容</span></span><br><span class="line">(<span class="name">defalias</span> &#x27;list-buffers &#x27;ibuffer)</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 管理窗口</span></span><br><span class="line">(<span class="name">use-package</span> ace-window</span><br><span class="line">  <span class="symbol">:ensure</span> <span class="literal">t</span></span><br><span class="line">  <span class="symbol">:init</span></span><br><span class="line">  (<span class="name">progn</span></span><br><span class="line">    (<span class="name">setq</span> aw-scope &#x27;global)</span><br><span class="line">    (<span class="name">global-set-key</span> [remap other-window] &#x27;ace-window)</span><br><span class="line">    (<span class="name">custom-set-faces</span></span><br><span class="line">     &#x27;(aw-leading-char-face</span><br><span class="line">       ((<span class="literal">t</span> (:inherit ace-jump-face-foreground :height <span class="number">3.0</span>))))) </span><br><span class="line">    ))</span><br><span class="line"></span><br><span class="line"><span class="comment">;; Counsel/Ivy/Swiper是Emacs常用的三个package，用于增强搜索和补全的功能</span></span><br><span class="line">(<span class="name">use-package</span> counsel</span><br><span class="line">  <span class="symbol">:ensure</span> <span class="literal">t</span></span><br><span class="line">  <span class="symbol">:bind</span></span><br><span class="line">  ((<span class="string">&quot;M-y&quot;</span> . counsel-yank-pop)</span><br><span class="line">   <span class="symbol">:map</span> ivy-minibuffer-map</span><br><span class="line">   (<span class="string">&quot;M-y&quot;</span> . ivy-next-line)))</span><br><span class="line"></span><br><span class="line">(<span class="name">use-package</span> ivy</span><br><span class="line">  <span class="symbol">:ensure</span> <span class="literal">t</span></span><br><span class="line">  <span class="symbol">:diminish</span> (<span class="name">ivy-mode</span>)</span><br><span class="line">  <span class="symbol">:bind</span> ((<span class="string">&quot;C-x b&quot;</span> . ivy-switch-buffer))</span><br><span class="line">  <span class="symbol">:config</span></span><br><span class="line">  (<span class="name">ivy-mode</span> <span class="number">1</span>)</span><br><span class="line">  (<span class="name">setq</span> ivy-use-virtual-buffers <span class="literal">t</span>)</span><br><span class="line">  (<span class="name">setq</span> ivy-count-format <span class="string">&quot;%d/%d &quot;</span>)</span><br><span class="line">  (<span class="name">setq</span> ivy-display-style &#x27;fancy))</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 添加ivy图标</span></span><br><span class="line">(<span class="name">use-package</span> all-the-icons-ivy</span><br><span class="line">  <span class="symbol">:ensure</span> <span class="literal">t</span></span><br><span class="line">  <span class="symbol">:init</span> (<span class="name">add-hook</span> &#x27;after-init-hook &#x27;all-the-icons-ivy-setup))</span><br><span class="line"></span><br><span class="line">(<span class="name">use-package</span> swiper</span><br><span class="line">  <span class="symbol">:ensure</span> <span class="literal">t</span></span><br><span class="line">  <span class="symbol">:bind</span> ((<span class="string">&quot;C-s&quot;</span> . swiper-isearch)</span><br><span class="line">	 (<span class="string">&quot;C-c C-r&quot;</span> . ivy-resume)</span><br><span class="line">	 (<span class="string">&quot;M-x&quot;</span> . counsel-M-x)</span><br><span class="line">	 (<span class="string">&quot;C-x C-f&quot;</span> . counsel-find-file))</span><br><span class="line">  <span class="symbol">:config</span></span><br><span class="line">  (<span class="name">progn</span></span><br><span class="line">    (<span class="name">ivy-mode</span> <span class="number">1</span>)</span><br><span class="line">    (<span class="name">setq</span> ivy-use-virtual-buffers <span class="literal">t</span>)</span><br><span class="line">    (<span class="name">setq</span> ivy-display-style &#x27;fancy)</span><br><span class="line">    (<span class="name">define-key</span> read-expression-map (<span class="name">kbd</span> <span class="string">&quot;C-r&quot;</span>) &#x27;counsel-expression-history)</span><br><span class="line">    ))</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 开启全局Company补全</span></span><br><span class="line">(<span class="name">use-package</span> company</span><br><span class="line">  <span class="symbol">:ensure</span> <span class="literal">t</span></span><br><span class="line">  <span class="symbol">:config</span></span><br><span class="line">  (<span class="name">setq</span> company-idle-delay <span class="number">0</span>)</span><br><span class="line">  (<span class="name">setq</span> company-minimum-prefix-length <span class="number">3</span>)</span><br><span class="line">  (<span class="name">global-company-mode</span> <span class="literal">t</span>)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 设置编辑器外观</span></span><br><span class="line">(<span class="name">use-package</span> doom-themes</span><br><span class="line">  <span class="symbol">:ensure</span> <span class="literal">t</span></span><br><span class="line">  <span class="symbol">:config</span></span><br><span class="line">  (<span class="name">load-theme</span> &#x27;doom-dracula <span class="literal">t</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment">;; 美化状态栏显示，需要安装字体(M-x all-the-icons-install-fonts)</span></span><br><span class="line">(<span class="name">use-package</span> doom-modeline</span><br><span class="line">  <span class="symbol">:ensure</span> <span class="literal">t</span></span><br><span class="line">  <span class="symbol">:defer</span> <span class="literal">t</span></span><br><span class="line">  <span class="symbol">:hook</span> (<span class="name">after-init</span> . doom-modeline-init))</span><br><span class="line"></span><br><span class="line"><span class="comment">;; flycheck检查代码语法错误</span></span><br><span class="line">(<span class="name">use-package</span> flycheck</span><br><span class="line">  <span class="symbol">:ensure</span> <span class="literal">t</span></span><br><span class="line">  <span class="symbol">:init</span></span><br><span class="line">  (<span class="name">global-flycheck-mode</span> <span class="literal">t</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment">;; undo-tree通过(C-X u)查看历史记录</span></span><br><span class="line">(<span class="name">use-package</span> undo-tree</span><br><span class="line">  <span class="symbol">:ensure</span> <span class="literal">t</span></span><br><span class="line">  <span class="symbol">:init</span></span><br><span class="line">  (<span class="name">global-undo-tree-mode</span>))</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2021/02/07/Emacs%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" title="Emacs配置文件">https://ehehe.cn/2021/02/07/Emacs配置文件/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Emacs/" rel="tag"># Emacs</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/02/05/Algorithms-Part1-Collinear-Points/" rel="prev" title="Algorithms, Part1 - Collinear Points">
+                  <i class="fa fa-angle-left"></i> Algorithms, Part1 - Collinear Points
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/02/07/Algorithms-Part1-8-Puzzle/" rel="next" title="Algorithms, Part1 - 8-Puzzle">
+                  Algorithms, Part1 - 8-Puzzle <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

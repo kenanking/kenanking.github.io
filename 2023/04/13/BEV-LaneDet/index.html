@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Ruihao Wang，Jian Qin，Kaiying Li，Yaochen Li，Dong Cao，Jintao Xu（毫末智行） BEV-LaneDet  文章介绍了基于单目视觉的3D车道线检测方法——BEV-LaneDet。该方法引入了虚拟相机，通过基于BEV的单应性方法统一不同车辆上安装的前置摄像头的内&#x2F;外参数，从而保证了不同摄像头之间的空间关系的一致性，并减少了数据分布中的差异。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] BEV-LaneDet: An Efficient 3D Lane Detection Based on Virtual Camera via Key-Points (CVPR 2023)">
+<meta property="og:url" content="https://ehehe.cn/2023/04/13/BEV-LaneDet/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Ruihao Wang，Jian Qin，Kaiying Li，Yaochen Li，Dong Cao，Jintao Xu（毫末智行） BEV-LaneDet  文章介绍了基于单目视觉的3D车道线检测方法——BEV-LaneDet。该方法引入了虚拟相机，通过基于BEV的单应性方法统一不同车辆上安装的前置摄像头的内&#x2F;外参数，从而保证了不同摄像头之间的空间关系的一致性，并减少了数据分布中的差异。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/BVE-LaneDet_End-to-End_framework.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/BEV_LaneDet_%E8%99%9A%E6%8B%9F%E7%9B%B8%E6%9C%BA%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/BEV_LaneDet_%E7%BD%91%E7%BB%9C%E7%9A%84%E4%BA%94%E4%B8%AA%E7%BB%84%E6%88%90%E9%83%A8%E5%88%86.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/BEV_LaneDet_%E5%85%B3%E9%94%AE%E7%82%B9%E8%A1%A8%E7%A4%BA.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/BEV_LaneDet_Openlane%E6%95%B0%E6%8D%AE%E9%9B%86%E4%B8%8A%E7%9A%84%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C.png">
+<meta property="article:published_time" content="2023-04-13T02:46:03.000Z">
+<meta property="article:modified_time" content="2023-04-13T02:46:03.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="车道线检测">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/BVE-LaneDet_End-to-End_framework.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/04/13/BEV-LaneDet/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/04/13/BEV-LaneDet/","path":"2023/04/13/BEV-LaneDet/","title":"[Note] BEV-LaneDet: An Efficient 3D Lane Detection Based on Virtual Camera via Key-Points (CVPR 2023)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] BEV-LaneDet: An Efficient 3D Lane Detection Based on Virtual Camera via Key-Points (CVPR 2023) | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#bev-lanedet"><span class="nav-text">BEV-LaneDet</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E7%9B%B8%E6%9C%BA"><span class="nav-text">虚拟相机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8Emlp%E7%9A%84%E7%A9%BA%E9%97%B4%E5%8F%98%E6%8D%A2%E9%87%91%E5%AD%97%E5%A1%94"><span class="nav-text">基于MLP的空间变换金字塔</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E7%82%B9%E8%A1%A8%E7%A4%BA"><span class="nav-text">关键点表示</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BD%AE%E4%BF%A1%E5%BA%A6%E5%88%86%E6%94%AF"><span class="nav-text">1. 置信度分支</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%81%8F%E7%A7%BB%E9%87%8F%E5%88%86%E6%94%AF"><span class="nav-text">2. 偏移量分支</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B5%8C%E5%85%A5%E5%90%91%E9%87%8F%E5%88%86%E6%94%AF"><span class="nav-text">3. 嵌入向量分支</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%A6%E9%81%93%E9%AB%98%E5%BA%A6%E5%88%86%E6%94%AF"><span class="nav-text">4. 车道高度分支</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E4%BD%93%E6%8D%9F%E5%A4%B1"><span class="nav-text">5. 总体损失</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="nav-text">实验结果</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/04/13/BEV-LaneDet/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] BEV-LaneDet: An Efficient 3D Lane Detection Based on Virtual Camera via Key-Points (CVPR 2023) | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] BEV-LaneDet: An Efficient 3D Lane Detection Based on Virtual Camera via Key-Points (CVPR 2023)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-13 10:46:03" itemprop="dateCreated datePublished" datetime="2023-04-13T10:46:03+08:00">2023-04-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Ruihao Wang，Jian Qin，Kaiying Li，Yaochen Li，Dong Cao，Jintao
+Xu（毫末智行）</p>
+<h2 id="bev-lanedet">BEV-LaneDet</h2>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/BVE-LaneDet_End-to-End_framework.png" alt="端到端框架" style="zoom: 80%;" /></p>
+<p>文章介绍了基于单目视觉的3D车道线检测方法——BEV-LaneDet。该方法引入了虚拟相机，通过基于BEV的单应性方法统一不同车辆上安装的前置摄像头的内/外参数，从而保证了不同摄像头之间的空间关系的一致性，并减少了数据分布中的差异。此外，该方法还提出了空间变换金字塔和关键点表示等模块，以更好地表示车道结构的多样性。</p>
+<ul>
+<li>Virtual
+Camera：统一相机的内外参；保证不同车辆的前视相机之间的空间关系一致性、减少数据分布的差异。</li>
+<li>Key-Points Representation：简单有效；对于复杂场景的扩展性。</li>
+<li>Spatial Transformation
+Pyramid：将多尺度的前视特征变换到BEV视角，并提供稳健的BEV特征用于3D车道线检测。</li>
+</ul>
+<span id="more"></span>
+<h3 id="虚拟相机">虚拟相机</h3>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/BEV_LaneDet_%E8%99%9A%E6%8B%9F%E7%9B%B8%E6%9C%BA%E7%A4%BA%E6%84%8F%E5%9B%BE.png" alt="虚拟相机示意图" style="zoom:50%;" /></p>
+<p>假设<span
+class="math inline">\(P_{road}\)</span>是和局部道路相切的平面，由于3D车道线检测更关注平面<span
+class="math inline">\(P_{road}\)</span>，我们可以通过单应性矩阵<span
+class="math inline">\(\mathrm{H}_{i,j}\)</span>将当前相机的图像投影到虚拟相机的视角下。虚拟相机的内参<span
+class="math inline">\(\mathrm{K}_j\)</span>和外参<span
+class="math inline">\((\mathrm{R}_j,
+\mathrm{T}_j)\)</span>固定，为训练集的中内外参的均值。在训练和推理时，根据当前实际相机的内参<span
+class="math inline">\(\mathrm{K}_i\)</span>和外参<span
+class="math inline">\((\mathrm{R}_i,\mathrm{T}_i)\)</span>和虚拟相机的内外参计算单应性矩阵<span
+class="math inline">\(\mathrm{H}_{i,j}\)</span>。</p>
+<p>计算<span class="math inline">\(\mathrm{H}_{i,j}\)</span>的方法：</p>
+<ol type="1">
+<li><p>在BEV平面<span
+class="math inline">\(P_{road}\)</span>上选取四个点<span
+class="math inline">\(\mathrm{x}^k=(x^k,y^k,z^k)^T\)</span>，其中<span
+class="math inline">\(k=1,2,3,4\)</span>。</p></li>
+<li><p>将上面的四个点分别投影到当前的实际相机和虚拟相机的图像上，得到点<span
+class="math inline">\(\mathrm{u}_i^k=(u_i^k,v_i^k,1)^T\)</span>和<span
+class="math inline">\(\mathrm{u}_j^k=(u_j^k,v_j^k,1)^T\)</span>。</p></li>
+<li><p>使用最小二乘进行计算：<span
+class="math inline">\(\mathrm{H}_{i,j}\mathrm{u}_i^k=\mathrm{u}_j^k\)</span>。</p></li>
+</ol>
+<p>在推理阶段，<span
+class="math inline">\(\mathrm{H}_{i,j}\)</span>是固定的，可以直接进行透视变换，如<code>warpPerspective</code>。</p>
+<h3 id="基于mlp的空间变换金字塔">基于MLP的空间变换金字塔</h3>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/BEV_LaneDet_%E7%BD%91%E7%BB%9C%E7%9A%84%E4%BA%94%E4%B8%AA%E7%BB%84%E6%88%90%E9%83%A8%E5%88%86.png" alt="网络的五个组成部分" style="zoom:50%;" /></p>
+<p>文章中使用的空间变换模块参考了基于MLP的View Relation Module (VRM)<a
+href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a>。该模块使用视角关系模块（view
+relation module）<span
+class="math inline">\(R\)</span>来学习前视特征和BEV特征中任意两个像素直接的关系。</p>
+<p>VRM对前视特征层的位置非常敏感。通过实验发现<strong>低分辨率前视特征图更适合在VRM中进行空间变换</strong>，因为该特征包含更多的全局信息。</p>
+<p>通过实验对比，网络中使用了下采样<span
+class="math inline">\(64\times\)</span>和<span
+class="math inline">\(32\times\)</span>的特征作为VRM的输入，得到BEV特征。
+<span class="math display">\[
+\begin{array}{r}
+f_{t}[i]=\operatorname{concate}\left(R_{i}^{S 32}\left(f^{S 32}[1],
+\ldots, f^{S 32}\left[H W^{S 32}\right]\right)\right. \\
+\left.R_{i}^{S 64}\left(f^{S 64}[1], \ldots, f^{S 64}\left[H W^{S
+64}\right]\right)\right)
+\end{array}
+\]</span></p>
+<h3 id="关键点表示">关键点表示</h3>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/BEV_LaneDet_%E5%85%B3%E9%94%AE%E7%82%B9%E8%A1%A8%E7%A4%BA.png" alt="关键点表示" style="zoom: 33%;" /></p>
+<p>车道线的合理表示对检测结果的正确性具有重要影响。文中将BEV平面<span
+class="math inline">\(P_{road}\)</span>分割为<span
+class="math inline">\(s_1\times s_2\)</span>大小的网格，<span
+class="math inline">\(P_{road}\)</span>是道路坐标系<span
+class="math inline">\(\mathcal{C}_{road}=(x,y,z)\)</span>中一个<span
+class="math inline">\(z=0\)</span>的平面。每一个网格表示了面积为<span
+class="math inline">\(x\times
+x\)</span>的区域。网格的大小直接影响车道线的检测，过小的网格单元大小会影响置信度训练中正负样本的平衡。然而，如果网格大小太大，不同车道的会出现重叠。在文中设置为<span
+class="math inline">\(x=0.5m\)</span>。</p>
+<p>在每个网格上，直接预测了：</p>
+<ul>
+<li>置信度（confidence）</li>
+<li>用于聚类的嵌入向量（embedding）</li>
+<li>网格中心在<span
+class="math inline">\(y\)</span>方向的偏移量（offset）</li>
+<li>网格的平均高度（height）</li>
+</ul>
+<p>在文章中，预测了道路坐标系<span
+class="math inline">\(\mathcal{C}_{road}=(x,y,z)\)</span>中，<span
+class="math inline">\(x=(-10m,10m)\)</span>并且<span
+class="math inline">\(y=(3m,103m)\)</span>的区域范围。因此，车道线检测头的输出是四个分辨率为<span
+class="math inline">\(200\times 40\)</span>的张量。</p>
+<h4 id="置信度分支">1. 置信度分支</h4>
+<p>BEV-LaneDet中车道线的置信度是一个二分类问题，如果一个网格中有车道线穿过，置信度为<span
+class="math inline">\(1\)</span>，否则为<span
+class="math inline">\(0\)</span>。置信度损失使用二元交叉熵（Binary Cross
+Entropy）损失： <span class="math display">\[
+L_{conf}^{3 d}=\sum_{i}^{s 1 \times s 2}\left(\hat{p}_{i} \log
+p_{i}+\left(1-\hat{p}_{i}\right) \log \left(1-p_{i}\right)\right)
+\]</span></p>
+<h4 id="偏移量分支">2. 偏移量分支</h4>
+<p>偏移量分支负责预测从网格中心到车道线在<span
+class="math inline">\(y\)</span>方向的精确偏移量，即<span
+class="math inline">\(\Delta
+y_i\)</span>。预测结果使用Sigmoid函数并减去<span
+class="math inline">\(0.5\)</span>来归一化到<span
+class="math inline">\((-0.5,0.5)\)</span>。偏移量损失用均方误差（MSE）损失：
+<span class="math display">\[
+L_{offset}^{3d}=\sum_i^{s1 \times s2} 1_{obj}\left(\sigma\left(\Delta
+y_i\right)-\Delta \hat{y}_i\right)^2
+\]</span></p>
+<h4 id="嵌入向量分支">3. 嵌入向量分支</h4>
+<p>BEV-LaneDet中，使用嵌入向量（Embedding）<strong>将车道线像素点聚类成不同的车道线实例</strong>。具体来说，Embedding部分通过将每个像素点映射到一个高维空间中，并在该空间中计算像素点之间的距离来实现聚类。</p>
+<p>在训练阶段，最小化属于同一车道线的网格嵌入向量之间的距离，而最大化属于不同车道线的网格嵌入向量之间的距离。在推理阶段，使用快速的无监督聚类后处理方法来预测可变数量的车道线。与前视图中的车道线不同（通常在灭点处相交），3D的车道线更适合用于计算聚类损失函数：
+<span class="math display">\[
+L_{embed}^{3d}=L_{var}^{3d}+L_{dist}^{3d}
+\]</span> <span class="math inline">\(L_{v a r}^{3
+d}\)</span>表示最小化属于同一车道线的网格的嵌入向量均值。<span
+class="math inline">\(L_{\text {dist }}^{3
+d}\)</span>表示最大化不同车道的网格的嵌入向量的方差。</p>
+<h4 id="车道高度分支">4. 车道高度分支</h4>
+<p>在网络的训练阶段，我们使用网格单元中的平均高度作为真实值。同时，只有具有正真实值的网格单元才计入损失函数。
+<span class="math display">\[
+L_{height}^{3d}=\sum_i^{s1 \times s2}
+1_{obj}\left(h_i-\hat{h}_i\right)^2
+\]</span></p>
+<h4 id="总体损失">5. 总体损失</h4>
+<p>总损失包括了3D车道线损失和前视车道线损失。前视损失中包括车道线分割损失和车道线嵌入向量损失<a
+href="#fn2" class="footnote-ref" id="fnref2"
+role="doc-noteref"><sup>2</sup></a>。 <span class="math display">\[
+\begin{array}{r}
+L_{total}=\lambda_{conf}^{3d} L_{conf}^{3d}+\lambda_{embed}^{3d}
+L_{embed}^{3d} \\
++\lambda_{offset}^{3d} L_{offset}^{3d}+\lambda_{height}^{3d}
+L_{height}^{3d} \\
++\lambda_{seg}^{2d} L_{seg}^{2d}+\lambda_{embed}^{2d} L_{embed}^{2d}
+\end{array}
+\]</span></p>
+<h3 id="实验结果">实验结果</h3>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/BEV_LaneDet_Openlane%E6%95%B0%E6%8D%AE%E9%9B%86%E4%B8%8A%E7%9A%84%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C.png" alt="OpenLane数据集上的实验结果" style="zoom:33%;" /></p>
+<p>OpenLane包含150,000个训练帧和40,000个测试帧。为了验证模型在每个场景下的性能，文章从验证集中分离了上下行情况、曲线情况、极端天气情况、交叉口情况、合并和分离情况以及夜间情况。BEV-LaneDet模型在训练集中训练了10个Epoch，就在每个场景中实现了最优的性能。对于F-Score，BEV-LaneDet模型比目前最好的方法<a
+href="#fn3" class="footnote-ref" id="fnref3"
+role="doc-noteref"><sup>3</sup></a>高了<span
+class="math inline">\(10.6\%\)</span>。</p>
+<aside id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Pan, Bowen, Jiankai Sun, Ho Yin Tiga Leung, Alex
+Andonian and Bolei Zhou. “Cross-View Semantic Segmentation for Sensing
+Surroundings.” <em>IEEE Robotics and Automation Letters</em> 5 (2019):
+4867-4873.<a href="#fnref1" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Neven, Davy, Bert De Brabandere, Stamatios Georgoulis,
+Marc Proesmans and Luc Van Gool. “Towards End-to-End Lane Detection: an
+Instance Segmentation Approach.” <em>2018 IEEE Intelligent Vehicles
+Symposium (IV)</em> (2018): 286-291.<a href="#fnref2"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>Chen, Li, Chonghao Sima, Yang Li, Zehan Zheng, Jiajie
+Xu, Xiangwei Geng, Hongyang Li, Conghui He, Jianping Shi, Yu Qiao and
+Junchi Yan. “PersFormer: 3D Lane Detection via Perspective Transformer
+and the OpenLane Benchmark.” <em>ArXiv</em> abs/2203.11089 (2022): n.
+pag.<a href="#fnref3" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+</ol>
+</aside>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/04/13/BEV-LaneDet/" title="[Note] BEV-LaneDet: An Efficient 3D Lane Detection Based on Virtual Camera via Key-Points (CVPR 2023)">https://ehehe.cn/2023/04/13/BEV-LaneDet/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E8%BD%A6%E9%81%93%E7%BA%BF%E6%A3%80%E6%B5%8B/" rel="tag"># 车道线检测</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/13/MoCo/" rel="prev" title="[Note] Momentum Contrast for Unsupervised Visual Representation  Learning (CVPR 2020)">
+                  <i class="fa fa-angle-left"></i> [Note] Momentum Contrast for Unsupervised Visual Representation  Learning (CVPR 2020)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/13/RLE/" rel="next" title="[Note] Human Pose Regression with Residual Log-likelihood  Estimation (ICCV 2021)">
+                  [Note] Human Pose Regression with Residual Log-likelihood  Estimation (ICCV 2021) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

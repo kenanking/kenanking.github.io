@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="3.4 贝叶斯模型比较 （这一节后续还需要再看看） 在第一章中，我们介绍了通过使用交叉验证的方法来设置正则化参数，或者从多个模型中选择合适的一个。这里将从贝叶斯的角度去考虑模型选择的问题。 我们将看到最大似然中的过拟合问题，可以通过边缘化模型参数来避免（而不是对模型参数做点估计）。模型可以直接在训练数据上进行比较，不再需要验证集。 模型比较的贝叶斯观点是使用概率来表示模型选择的不确定性。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch3-3.4 贝叶斯模型比较">
+<meta property="og:url" content="https://ehehe.cn/2022/02/15/ch3-3-4-%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A8%A1%E5%9E%8B%E6%AF%94%E8%BE%83/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="3.4 贝叶斯模型比较 （这一节后续还需要再看看） 在第一章中，我们介绍了通过使用交叉验证的方法来设置正则化参数，或者从多个模型中选择合适的一个。这里将从贝叶斯的角度去考虑模型选择的问题。 我们将看到最大似然中的过拟合问题，可以通过边缘化模型参数来避免（而不是对模型参数做点估计）。模型可以直接在训练数据上进行比较，不再需要验证集。 模型比较的贝叶斯观点是使用概率来表示模型选择的不确定性。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E5%85%88%E9%AA%8C%E5%88%86%E5%B8%83%E4%B8%8E%E5%90%8E%E9%AA%8C%E5%88%86%E5%B8%83%E5%9B%BE%E7%A4%BA.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%B8%89%E4%B8%AA%E4%B8%8D%E5%90%8C%E5%A4%8D%E6%9D%82%E5%BA%A6%E7%9A%84%E6%A8%A1%E5%9E%8B.png">
+<meta property="article:published_time" content="2022-02-15T04:41:07.000Z">
+<meta property="article:modified_time" content="2022-02-15T04:41:07.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="PRML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E5%85%88%E9%AA%8C%E5%88%86%E5%B8%83%E4%B8%8E%E5%90%8E%E9%AA%8C%E5%88%86%E5%B8%83%E5%9B%BE%E7%A4%BA.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/02/15/ch3-3-4-%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A8%A1%E5%9E%8B%E6%AF%94%E8%BE%83/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/02/15/ch3-3-4-%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A8%A1%E5%9E%8B%E6%AF%94%E8%BE%83/","path":"2022/02/15/ch3-3-4-贝叶斯模型比较/","title":"ch3-3.4 贝叶斯模型比较"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch3-3.4 贝叶斯模型比较 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A8%A1%E5%9E%8B%E6%AF%94%E8%BE%83"><span class="nav-text">3.4 贝叶斯模型比较</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E9%80%89%E6%8B%A9model-selection"><span class="nav-text">模型选择（Model Selection）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E8%AF%81%E6%8D%AEmodel-evidence"><span class="nav-text">模型证据（Model Evidence）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A8%A1%E5%9E%8B%E6%AF%94%E8%BE%83%E7%9A%84%E7%9B%B4%E8%A7%82%E8%A7%A3%E9%87%8A"><span class="nav-text">贝叶斯模型比较的直观解释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A8%A1%E5%9E%8B%E6%AF%94%E8%BE%83%E6%9B%B4%E5%80%BE%E5%90%91%E4%BA%8E%E6%AD%A3%E7%A1%AE%E7%9A%84%E6%A8%A1%E5%9E%8B"><span class="nav-text">贝叶斯模型比较更倾向于正确的模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/02/15/ch3-3-4-%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A8%A1%E5%9E%8B%E6%AF%94%E8%BE%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch3-3.4 贝叶斯模型比较 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch3-3.4 贝叶斯模型比较
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-15 12:41:07" itemprop="dateCreated datePublished" datetime="2022-02-15T12:41:07+08:00">2022-02-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="贝叶斯模型比较">3.4 贝叶斯模型比较</h2>
+<p>（这一节后续还需要再看看）</p>
+<p>在第一章中，我们介绍了通过使用<strong>交叉验证</strong>的方法来设置正则化参数，或者从多个模型中选择合适的一个。这里将从贝叶斯的角度去考虑<strong>模型选择</strong>的问题。</p>
+<p>我们将看到最大似然中的过拟合问题，可以通过边缘化模型参数来避免（而不是对模型参数做点估计）。模型可以直接在训练数据上进行比较，不再需要验证集。</p>
+<p>模型比较的贝叶斯观点是<strong>使用概率来表示模型选择的不确定性</strong>。</p>
+<span id="more"></span>
+<h3 id="模型选择model-selection">模型选择（Model Selection）</h3>
+<p>假设我们想比较<span class="math inline">\(L\)</span>个模型<span
+class="math inline">\(\{\mathcal{M}_i\}\)</span>，其中<span
+class="math inline">\(i=1,\dots,L\)</span>。这里的模型指的是观测数据<span
+class="math inline">\(\mathcal{D}\)</span>上的概率分布。</p>
+<p>我们<strong>假设数据是由这些模型中的一个生成的</strong>，但我们不知道是哪一个。我们的不确定性通过先验概率<span
+class="math inline">\(p(\mathcal{M}_i)\)</span>表示。于是，在给定训练集<span
+class="math inline">\(\mathcal{D}\)</span>时，我们想估计的后验分布为：
+<span class="math display">\[
+p\left(\mathcal{M}_{i} \mid \mathcal{D}\right) \propto
+p\left(\mathcal{M}_{i}\right) p\left(\mathcal{D} \mid
+\mathcal{M}_{i}\right)
+\]</span></p>
+<p>先验分布<span
+class="math inline">\(p\left(\mathcal{M}_{i}\right)\)</span>表示了我们对于不同模型之间的偏好。这里我们可以假设所有模型都有相同的概率。</p>
+<p><span class="math inline">\(p\left(\mathcal{D} \mid
+\mathcal{M}_{i}\right)\)</span>在这里被称为<strong>模型证据（model
+evidence）</strong>，表示了数据对不同模型呈现的偏好。模型证据有时也被称为<strong>边缘似然（marginal
+likelihood）</strong>，因为它可以看作在模型空间上的似然函数。</p>
+<p>两个模型的模型证据之比<span class="math inline">\(p\left(\mathcal{D}
+\mid \mathcal{M}_{i}\right) / p\left(\mathcal{D} \mid
+\mathcal{M}_{j}\right)\)</span>，称为<strong>贝叶斯因子（Bayes
+factor）</strong>。</p>
+<p>一旦我们知道了模型上的后验分布，那么预测分布可以写为： <span
+class="math display">\[
+p(t \mid \mathbf{x}, \mathcal{D})=\sum_{i=1}^{L} p\left(t \mid
+\mathbf{x}, \mathcal{M}_{i}, \mathcal{D}\right) p\left(\mathcal{M}_{i}
+\mid \mathcal{D}\right)
+\]</span></p>
+<p>这是<strong>混合分布（mixture
+distribution）</strong>的一个例子，因为这个模型是由各个预测模型加权平均得到的。这个公式体现了对各个模型的预测分布<span
+class="math inline">\(p\left(t \mid \mathbf{x}, \mathcal{M}_{i},
+\mathcal{D}\right)\)</span>加权平均，权值为这些模型的后验概率<span
+class="math inline">\(p\left(\mathcal{M}_{i} \mid
+\mathcal{D}\right)\)</span>。这个模型不一定是一个单峰的模型，可能是一个多峰的概率分布。</p>
+<p>对多个模型取平均的一个简单近似是<strong>使用单个最可能的模型进行预测</strong>，这称为<strong>模型选择（model
+selection）</strong>。</p>
+<h3 id="模型证据model-evidence">模型证据（Model Evidence）</h3>
+<p>对于一个由参数为<span
+class="math inline">\(\mathbf{w}\)</span>的模型，根据概率的加法和乘法，模型证据为：
+<span class="math display">\[
+p\left(\mathcal{D} \mid \mathcal{M}_{i}\right)=\int p\left(\mathcal{D}
+\mid \mathbf{w}, \mathcal{M}_{i}\right) p\left(\mathbf{w} \mid
+\mathcal{M}_{i}\right) \mathrm{d} \mathbf{w}
+\]</span></p>
+<p>从抽样的角度来看，边缘似然函数（模型证据）可以被看成从一个模型中生成数据集<span
+class="math inline">\(\mathcal{D}\)</span>的概率，这个模型的参数是从先验分布中随机取样的。</p>
+<p>另外，当计算参数<span
+class="math inline">\(\mathbf{w}\)</span>的后验分布时，<strong>模型证据</strong>是贝叶斯定理分母中的归一化项：
+<span class="math display">\[
+p(\mathbf{w} \mid \mathcal{D}, \mathcal{M}_{i}) = \frac{p(\mathcal{D}
+\mid \mathbf{w}, \mathcal{M}_{i})p(\mathbf{w} \mid
+\mathcal{M}_{i})}{p(\mathcal{D} \mid \mathcal{M}_{i})}
+\]</span></p>
+<p>通过对参数的积分进行一个简单的近似，我们可以更加深刻地认识模型证据。我们考虑一个参数<span
+class="math inline">\(w\)</span>的情形。根据上式，参数的后验分布正比于<span
+class="math inline">\(p(\mathcal{D} \mid w)
+p(w)\)</span>，其中我们忽略了对模型<span
+class="math inline">\(\mathcal{M}_{i}\)</span>的依赖。</p>
+<p>假设后验分布在最大后验值<span
+class="math inline">\(w_{\mathrm{MAP}}\)</span>附近是一个尖峰（红色曲线），宽度为<span
+class="math inline">\(\Delta w_{\text {posterior
+}}\)</span>，那么我们可以通过被积函数的最大值乘以峰宽来近似积分。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/先验分布与后验分布图示.png" alt="先验分布与后验分布图示" style="zoom:80%;" /></p>
+<p>我们进一步假设先验分布在<span class="math inline">\(\Delta w_{\text
+{prior}}\)</span>范围内为均匀分布（蓝色曲线），则<span
+class="math inline">\(p(w)=1 / \Delta w_{\text {prior
+}}\)</span>，于是积分为：</p>
+<p><span class="math display">\[
+p(\mathcal{D})=\int p(\mathcal{D} \mid w) p(w) \mathrm{d} w \simeq
+p\left(\mathcal{D} \mid w_{\mathrm{MAP}}\right) \frac{\Delta w_{\text
+{posterior }}}{\Delta w_{\text {prior }}}
+\]</span></p>
+<p>取对数可得： <span class="math display">\[
+\ln p(\mathcal{D}) \simeq \ln p\left(\mathcal{D} \mid
+w_{\mathrm{MAP}}\right)+\ln \left(\frac{\Delta
+w_{\text{posterior}}}{\Delta w_{\text{prior}}}\right)
+\]</span></p>
+<p><strong>第一项表示最有可能的参数拟合出数据集<span
+class="math inline">\(\mathcal{D}\)</span>的概率的对数。对于先验分布为均匀分布时，这一项对应于对数似然函数。</strong></p>
+<p><strong>第二项用于根据模型的复杂度来惩罚模型。</strong>由于<span
+class="math inline">\(\Delta w_{\text{posterior}}&lt;\Delta
+w_{\text{prior}}\)</span>，这一项为负。当<span
+class="math inline">\(\Delta w_{\text{posterior}}/\Delta
+w_{\text{prior}}\)</span>的比值变小时，这一项就会变大。因此如果参数对于数据集拟合的非常好时，这一项就会比较大。</p>
+<p>对于一个有<span
+class="math inline">\(M\)</span>个参数的模型，我们可以对每个参数进行类似的近似。假设所有的参数的<span
+class="math inline">\(\Delta w_{\text{posterior}}/\Delta
+w_{\text{prior}}\)</span>都相同，可以得到：</p>
+<p><span class="math display">\[
+\ln p(\mathcal{D}) \simeq \ln p\left(\mathcal{D} \mid
+\mathbf{w}_{\mathrm{MAP}}\right)+M \ln \left(\frac{\Delta w_{\text
+{posterior }}}{\Delta w_{\text {prior }}}\right)
+\]</span></p>
+<p>从上面这个公式，可以简单解释我们之前遇到的问题。</p>
+<p>复杂度惩罚项的大小随着模型中可调节参数数量<span
+class="math inline">\(M\)</span>的增加线性变化。随着模型复杂度的增加，第一项通常会减小，因为越复杂的模型对数据的拟合越好，而第二项会增大，因为它随<span
+class="math inline">\(M\)</span>线性变化。所以最优的模型（模型证据<span
+class="math inline">\(p(\mathcal{D})\)</span>最大的模型）是两者折中的结果。</p>
+<p>从上面可以看出<strong>贝叶斯模型比较可以避免过拟合问题</strong>。</p>
+<h3 id="贝叶斯模型比较的直观解释">贝叶斯模型比较的直观解释</h3>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/三个不同复杂度的模型.png" alt="三个不同复杂度的模型" style="zoom:80%;" /></p>
+<p>在这个例子中，我们考虑三个模型<span
+class="math inline">\(\mathcal{M}_1\)</span>，<span
+class="math inline">\(\mathcal{M}_2\)</span>和<span
+class="math inline">\(\mathcal{M}_3\)</span>，复杂度依次增加。上图中的横轴是所有可能的数据集的一维表示，因此横坐标上的每个点表示一个特定的数据集。纵坐标表示对应数据集在该模型下的模型证据值。</p>
+<p>从图中看，简单的模型由于只能生成简单的数据，表现能力差，生成的数据集都集中在一个很窄的区域。而复杂的模型把它的预测概率散布于过多的可能的数据集当中，从而对它们当中的每一个赋予的概率都相对较小。这两种模型总的模型证据值都不大，只有复杂度适中的模型，最后的模型证据最大。</p>
+<h3
+id="贝叶斯模型比较更倾向于正确的模型">贝叶斯模型比较更倾向于正确的模型</h3>
+<p>在贝叶斯模型比较的框架中，一个隐含的假设是<strong>生成数据集的真实分布包含在所考虑的模型集中</strong>。基于这个假设，我们可以看到，在平均水平上，贝叶斯模型比较更倾向于正确的模型。</p>
+<p>考虑两个模型<span
+class="math inline">\(\mathcal{M}_{1}\)</span>和<span
+class="math inline">\(\mathcal{M}_{2}\)</span>，其中<span
+class="math inline">\(\mathcal{M}_{1}\)</span>为正确的模型。对于给定的有限数据集，错误模型的贝叶斯因子可能会更大，即：可能会出现<span
+class="math inline">\(p(\mathcal{D \mid \mathcal{M}_{2}}) &gt;
+p(\mathcal{D \mid
+\mathcal{M}_{1}})\)</span>的情况。然而，从平均的角度来看，<span
+class="math inline">\(p(\mathcal{D \mid \mathcal{M}_{1}}) &gt;
+p(\mathcal{D \mid
+\mathcal{M}_{2}})\)</span>是成立的，<strong>模型证据越大的模型越好</strong>。</p>
+<p>下面是证明。如果我们根据数据集的真实分布计算贝叶斯因子的对数的期望，可以得到下面的形式：</p>
+<p><span class="math display">\[
+\int p(\mathcal{D} \mid \mathcal{M}_{1})\ln \frac{p(\mathcal{D \mid
+\mathcal{M}_{1}})}{p(\mathcal{D \mid \mathcal{M}_{2}})}
+\mathrm{d}\mathcal{D}
+\]</span></p>
+<p>可以看到上式是KL散度的形式（[[ch1-1-6-信息论#相对熵]]），从KL散度的性质来看，上式一定大于等于<span
+class="math inline">\(0\)</span>，仅当两个分布相同时等于<span
+class="math inline">\(0\)</span>。于是，我们可以得到<span
+class="math inline">\(p(\mathcal{D \mid \mathcal{M}_{1}}) &gt;
+p(\mathcal{D \mid \mathcal{M}_{2}})\)</span>成立。</p>
+<h3 id="总结">总结</h3>
+<p>通过贝叶斯的框架，可以避免模型过拟合的问题，并且可以单独根据训练数据来比较模型。但是，贝叶斯方法和其他模式识别方法一样，需要对模型的形式做出假设，如果这些假设是有问题的，那么结果也会产生问题。</p>
+<p>在实际应用中，留出一组独立的数据测试集来评估最终模型的性能是一种明智的做法。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/02/15/ch3-3-4-%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A8%A1%E5%9E%8B%E6%AF%94%E8%BE%83/" title="ch3-3.4 贝叶斯模型比较">https://ehehe.cn/2022/02/15/ch3-3-4-贝叶斯模型比较/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PRML/" rel="tag"># PRML</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch3-3-3-%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" rel="prev" title="ch3-3.3 贝叶斯线性回归">
+                  <i class="fa fa-angle-left"></i> ch3-3.3 贝叶斯线性回归
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch3-3-5-%E8%AF%81%E6%8D%AE%E8%BF%91%E4%BC%BC/" rel="next" title="ch3-3.5 证据近似">
+                  ch3-3.5 证据近似 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

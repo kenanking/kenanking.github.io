@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Nicolas Carion, Francisco Massa, Gabriel Synnaeve, Nicolas Usunier, Alexander Kirillov, Sergey Zagoruyko DETR DETR（DEtection TRansformer）是一种基于Transformer的端到端目标检测方法，它将目标检测视为集合预测问题（set prediction pro">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] End-to-End Object Detection with Transformers (ECCV 2020)">
+<meta property="og:url" content="https://ehehe.cn/2023/09/08/DETR/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Nicolas Carion, Francisco Massa, Gabriel Synnaeve, Nicolas Usunier, Alexander Kirillov, Sergey Zagoruyko DETR DETR（DEtection TRansformer）是一种基于Transformer的端到端目标检测方法，它将目标检测视为集合预测问题（set prediction pro">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/DETR_%E4%BA%8C%E5%88%86%E5%9B%BE%E5%8C%B9%E9%85%8D%E6%8D%9F%E5%A4%B1.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/cost_matrix.svg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/matching.svg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/DETR_detail_architecture.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/DETR_Comparison%20with%20RetinaNet%20and%20Faster%20R-CNN.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/cows_attn.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/nms_fig4.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Visualization%20of%20decoder%20attention.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Results%20for%20different%20positional%20encodings.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/giraffe_collage2.jpg">
+<meta property="article:published_time" content="2023-09-08T06:21:35.000Z">
+<meta property="article:modified_time" content="2023-09-11T08:49:35.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="目标检测">
+<meta property="article:tag" content="Transformer">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/DETR_%E4%BA%8C%E5%88%86%E5%9B%BE%E5%8C%B9%E9%85%8D%E6%8D%9F%E5%A4%B1.jpg">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/09/08/DETR/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/09/08/DETR/","path":"2023/09/08/DETR/","title":"[Note] End-to-End Object Detection with Transformers (ECCV 2020)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] End-to-End Object Detection with Transformers (ECCV 2020) | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#detr"><span class="nav-text">DETR</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-text">方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E9%A2%84%E6%B5%8B%E6%8D%9F%E5%A4%B1"><span class="nav-text">1. 集合预测损失</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E7%89%B9%E6%AE%8A%E6%A1%88%E4%BE%8B"><span class="nav-text">1.1 一个特殊案例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%B9%E7%95%8C%E6%A1%86%E6%8D%9F%E5%A4%B1"><span class="nav-text">2. 边界框损失</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84"><span class="nav-text">3. 架构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C"><span class="nav-text">实验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8Efaster-r-cnn%E5%92%8Cretinanet%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="nav-text">1. 与Faster
+R-CNN和RetinaNet的对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C"><span class="nav-text">2. 消融实验</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E5%99%A8%E5%B1%82%E7%9A%84%E6%95%B0%E9%87%8F"><span class="nav-text">2.1 编码器层的数量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E7%A0%81%E5%99%A8%E5%B1%82%E7%9A%84%E6%95%B0%E9%87%8F"><span class="nav-text">2.2 解码器层的数量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ffn%E5%B1%82%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-text">2.3 FFN层的影响</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-text">2.4 位置编码的影响</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-text">2.5 损失函数的影响</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90"><span class="nav-text">3. 分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E7%A0%81%E5%99%A8queries%E5%88%86%E6%9E%90"><span class="nav-text">3.1 解码器Queries分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B3%9B%E5%8C%96%E6%80%A7%E8%83%BD"><span class="nav-text">3.2 泛化性能</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/09/08/DETR/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] End-to-End Object Detection with Transformers (ECCV 2020) | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] End-to-End Object Detection with Transformers (ECCV 2020)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-09-08 14:21:35" itemprop="dateCreated datePublished" datetime="2023-09-08T14:21:35+08:00">2023-09-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-09-11 16:49:35" itemprop="dateModified" datetime="2023-09-11T16:49:35+08:00">2023-09-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Nicolas Carion, Francisco Massa, Gabriel Synnaeve, Nicolas
+Usunier, Alexander Kirillov, Sergey Zagoruyko</p>
+<h1 id="detr">DETR</h1>
+<p>DETR（DEtection
+TRansformer）是一种基于Transformer的端到端目标检测方法，它将目标检测视为<strong>集合预测问题（set
+prediction
+problem）</strong>。DETR简化了检测流程，去除了人为先验的部分（如：NMS或手工设计的anchor），并且易于扩展到其他视觉任务（如：图像分割）。</p>
+<p>DETR的主要组成部分是<strong>基于集合的全局损失，通过二分图匹配进行一对一的预测</strong>，以及<strong>使用Transformer的编码器解码器架构</strong>。简单来说，DETR包含下面的流程：</p>
+<ol type="1">
+<li>CNN抽取特征；</li>
+<li>利用Transformer全局特征建模；</li>
+<li>生成预测框；</li>
+<li>与GT匹配计算损失。</li>
+</ol>
+<p>总结，DETR的优势包含以下几个方面：</p>
+<ol type="1">
+<li>真正的端到端，需要更少的人工先验（没有anchor、NMS等）；</li>
+<li>在COCO数据集上的准确率和推理效率与Faster
+R-CNN基本持平，且对大目标效果较好；</li>
+<li>不需要任何自定义层。</li>
+</ol>
+<p>然而，DETR也存在下面几个缺点：</p>
+<ol type="1">
+<li>训练时间较长：DETR收敛速度慢（500个epoch）；</li>
+<li>对小目标的检测性能不佳；</li>
+<li>计算量大：尽管DETR简化了目标检测流程，但其计算成本仍然较高，因此不适合实时应用场景。</li>
+</ol>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/DETR_architecture.jpg"
+alt="DETR_architecture" />
+<figcaption aria-hidden="true">DETR_architecture</figcaption>
+</figure>
+<span id="more"></span>
+<h2 id="方法">方法</h2>
+<h3 id="集合预测损失">1. 集合预测损失</h3>
+<p>DETR的推理结果是固定的<span
+class="math inline">\(N\)</span>个边界框，这里<span
+class="math inline">\(N\)</span>通常大于一张图像上最多可能出现的物体数。计算预测损失的难点在于：<strong>我们需要找到一个最优的匹配方案，将预测的边界框与真实标签进行配对</strong>。</p>
+<p>记<span class="math inline">\(y\)</span>是标注的物体集合，<span
+class="math inline">\(\hat{y}\)</span>是预测物体的集合。为了找到两个集合之间的一对一最优匹配，我们要寻找<span
+class="math inline">\(\hat{y}\)</span>的一种排列，使得下面的代价最小。
+<span class="math display">\[
+\hat{\sigma}=\underset{\sigma \in \mathfrak{S}_N}{\arg \min } \sum_i^N
+\mathcal{L}_{\operatorname{match}}\left(y_i, \hat{y}_{\sigma(i)}\right)
+\]</span> 其中，<span class="math inline">\(\mathcal{L}_{\text {match
+}}\left(y_i, \hat{y}_{\sigma(i)}\right)\)</span>定义如下： <span
+class="math display">\[
+\mathcal{L}_{\text {match }}\left(y_i, \hat{y}_{\sigma(i)}\right) =
+-\mathbb{1}_{\left\{c_i \neq \varnothing\right\}}
+\hat{p}_{\sigma(i)}\left(c_i\right)+\mathbb{1}_{\left\{c_i \neq
+\varnothing\right\}} \mathcal{L}_{\text {box }}\left(b_i,
+\hat{b}_{\sigma(i)}\right)
+\]</span></p>
+<ul>
+<li>代价函数定义为<strong>类别预测置信度</strong>和<strong>边界框预测损失</strong>的线性组合。（文中提到这里没有用对数概率，是因为直接使用概率的效果更好）</li>
+<li>边界框预测损失由<strong>GIoU损失</strong>和<strong>L1损失</strong>两部分组成。</li>
+</ul>
+<p>最优匹配的算法为<strong>匈牙利算法</strong>，可以高效地根据代价矩阵寻找<strong>全局最优匹配</strong>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/DETR_%E4%BA%8C%E5%88%86%E5%9B%BE%E5%8C%B9%E9%85%8D%E6%8D%9F%E5%A4%B1.jpg" alt="二分图匹配损失" style="zoom:33%;" /></p>
+<p>在得到真值与预测结果的匹配后，定义如下损失，为类别预测的负对数似然函数和边界框回归损失的线性组合：
+<span class="math display">\[
+\mathcal{L}_{\text {Hungarian }}(y, \hat{y})=\sum_{i=1}^N\left[-\log
+\hat{p}_{\hat{\sigma}(i)}\left(c_i\right)+\mathbb{1}_{\left\{c_i \neq
+\varnothing\right\}} \mathcal{L}_{\text {box }}\left(b_i,
+\hat{b}_{\hat{\sigma}}(i)\right)\right]
+\]</span></p>
+<h4 id="一个特殊案例">1.1 一个特殊案例</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.optimize <span class="keyword">import</span> linear_sum_assignment</span><br><span class="line"></span><br><span class="line"><span class="comment"># 真实标签和预测标签</span></span><br><span class="line">true_labels = np.array(</span><br><span class="line">    [</span><br><span class="line">        [<span class="number">0.1</span>, <span class="number">0.2</span>, <span class="number">0.32</span>, <span class="number">0.14</span>, <span class="number">0</span>],</span><br><span class="line">        [<span class="number">0.5</span>, <span class="number">0.5</span>, <span class="number">0.15</span>, <span class="number">0.36</span>, <span class="number">1</span>],</span><br><span class="line">        [<span class="number">0.7</span>, <span class="number">0.1</span>, <span class="number">0.22</span>, <span class="number">0.35</span>, <span class="number">2</span>],</span><br><span class="line">    ]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">predicted_labels = np.array(</span><br><span class="line">    [</span><br><span class="line">        [<span class="number">0.15</span>, <span class="number">0.25</span>, <span class="number">0.22</span>, <span class="number">0.22</span>, <span class="number">0</span>],</span><br><span class="line">        [<span class="number">0.15</span>, <span class="number">0.7</span>, <span class="number">0.2</span>, <span class="number">0.2</span>, <span class="number">2</span>],</span><br><span class="line">        [<span class="number">0.83</span>, <span class="number">0.83</span>, <span class="number">0.15</span>, <span class="number">0.15</span>, <span class="number">0</span>],</span><br><span class="line">        [<span class="number">0.7</span>, <span class="number">0.15</span>, <span class="number">0.23</span>, <span class="number">0.23</span>, <span class="number">1</span>],</span><br><span class="line">        [<span class="number">0.55</span>, <span class="number">0.55</span>, <span class="number">0.23</span>, <span class="number">0.33</span>, <span class="number">1</span>],</span><br><span class="line">    ]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算损失矩阵</span></span><br><span class="line">cost_matrix = np.zeros((true_labels.shape[<span class="number">0</span>], predicted_labels.shape[<span class="number">0</span>]))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用L1损失作为cost函数（实际上会更为复杂）</span></span><br><span class="line"><span class="keyword">for</span> i, true_label <span class="keyword">in</span> <span class="built_in">enumerate</span>(true_labels):</span><br><span class="line">    <span class="keyword">for</span> j, predicted_label <span class="keyword">in</span> <span class="built_in">enumerate</span>(predicted_labels):</span><br><span class="line">        cost_matrix[i, j] = np.<span class="built_in">sum</span>(np.<span class="built_in">abs</span>(true_label[:<span class="number">4</span>] - predicted_label[:<span class="number">4</span>]))</span><br><span class="line">        </span><br><span class="line"><span class="comment"># 使用匈牙利算法找到最优匹配</span></span><br><span class="line">row_ind, col_ind = linear_sum_assignment(cost_matrix)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出最优匹配</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Best matching: <span class="subst">&#123;<span class="built_in">list</span>(<span class="built_in">zip</span>(row_ind, col_ind))&#125;</span>&quot;</span>)</span><br><span class="line"><span class="comment"># &gt;&gt; Best matching: [(0, 0), (1, 4), (2, 3)]</span></span><br></pre></td></tr></table></figure>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th
+style="text-align: center;"><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/cost_matrix.svg" alt="cost_matrix" style="zoom:100%;" /></th>
+<th
+style="text-align: center;"><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/matching.svg" alt="matching" style="zoom: 80%;" /></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<h3 id="边界框损失">2. 边界框损失</h3>
+<p>边界框回归损失由两部分组成：</p>
+<ol type="1">
+<li><p><strong>Generalized IoU（GIoU）损失</strong></p>
+<p>GIoU是一种改进的IoU损失，引入了最小闭包<span
+class="math inline">\(C\)</span>来处理预测框<span
+class="math inline">\(A\)</span>和标注框<span
+class="math inline">\(B\)</span>不重合的情况。 <span
+class="math display">\[
+G I o U=I o U-\frac{|C-A \cup B|}{|C|}
+\]</span></p>
+<p><span class="math display">\[
+\mathcal{L}_{\text{GIoU}} = 1 - GIoU
+\]</span></p></li>
+<li><p><strong>L1损失</strong></p>
+<p>计算预测框和标注框之间的L1距离。 <span class="math display">\[
+\mathcal{L}_{\text{L1}} = \left\|b_i-\hat{b}_{\sigma(i)}\right\|_1
+\]</span></p></li>
+</ol>
+<p>最终的损失为两者的线性组合。这种方式同时考虑了与目标检测任务更相关的评价指标以及预测框的精度。在文中设置超参数<span
+class="math inline">\(\lambda_{\text{iou}}=2\)</span>，<span
+class="math inline">\(\lambda_{\text{L1}}=5\)</span>。 <span
+class="math display">\[
+\mathcal{L}_{\text {box }}\left(b_i, \hat{b}_{\hat{\sigma}}(i)\right) =
+\lambda_{\text {iou }} \mathcal{L}_{\text {iou }}\left(b_i,
+\hat{b}_{\sigma(i)}\right)+\lambda_{\mathrm{L}
+1}\left\|b_i-\hat{b}_{\sigma(i)}\right\|_1
+\]</span></p>
+<h3 id="架构">3. 架构</h3>
+<p>下图为DETR架构的细节：</p>
+<ul>
+<li>由CNN的骨干网提取图像的紧凑特征表示，将特征展平后加入位置编码得到的序列特征作为Transformer编码器的输入。</li>
+<li>利用Transformer中的注意力机制可以完成全局关系的建模。</li>
+<li>在Transformer解码器中，通过输入对象查询（object
+queries）和编码器特征，可以得到解码后的物体实例的序列。</li>
+<li>最后由一个FFN对检测结果进行预测。</li>
+<li>辅助解码损失，对每一个Transformer解码器都接一个预测头，计算损失，来对中间层进行约束。</li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/DETR_detail_architecture.jpg" alt="DETR_detail_architecture" style="zoom:18%;" /></p>
+<h2 id="实验">实验</h2>
+<h3 id="与faster-r-cnn和retinanet的对比">1. 与Faster
+R-CNN和RetinaNet的对比</h3>
+<p>下表展示了DETR在COCO验证集上与现有目标检测算法的对比。第一部分的评估结果来自Detectron2中的预训练模型。第二部分在模型训练中加入了GIoU损失，并使用了随机裁剪、更长的训练时长等训练策略，目的是为了与DETR保持一致。</p>
+<p>DETR在参数量相同的情况下，与Faster
+R-CNN具有相当强的可比性，甚至精度更高。<strong>然而，在<span
+class="math inline">\(\text{AP}_S\)</span>上，DETR仍明显落后于Faster
+R-CNN，相差5.5个点的精度。</strong></p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/DETR_Comparison%20with%20RetinaNet%20and%20Faster%20R-CNN.png" alt="DETR_Comparison with RetinaNet and Faster R-CNN" style="zoom: 33%;" /></p>
+<h3 id="消融实验">2. 消融实验</h3>
+<h4 id="编码器层的数量">2.1 编码器层的数量</h4>
+<p>去除编码器后，AP下降了3.9个点，大物体的AP下降了6.0个点。逐渐增加编码器层的数量可以逐渐增加模型精度。因此，编码器对于图像全局关系的建模至关重要。下图可视化了模型最后一个编码器层的注意力图，可以看到模型已经能够区分不同的实例，这会简化解码器的物体检测和定位难度。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/cows_attn.jpg" alt="cows_attn" style="zoom:33%;" /></p>
+<h4 id="解码器层的数量">2.2 解码器层的数量</h4>
+<p>DETR中在每个Transformer解码器后都会添加检测头来计算辅助损失，因此可以通过评估每个检测头的输出来分析每个解码器层对物体检测的重要性。可以看到，从第一层到最后一层，模型检测精度AP的提升非常显著（8.2/9.5）。DETR使用集合预测的方式避免了NMS后处理，文中通过在每个解码器的预测结果后加上NMS，验证了这一方式的可行性。可以看到使用一个解码器时，容易对单个物体出现重复预测，因此NMS会对预测结果带来改善。然而，随着层数的增加，NMS甚至会带来负面影响，它错误地去除了真正样本的预测。<strong>解码器中的注意力机制让模型具备了抑制重复预测的能力，因此在DETR中不需要NMS作为后处理。</strong></p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/nms_fig4.jpg" alt="nms_fig4" style="zoom:20%;" /></p>
+<p>文中同样可视化了解码器层的注意力图，相比于编码器更关注物体的中心（整体），解码器更关注物体的局部（比如：头部、腿部等），这有助于识别物体类别和提取边界。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Visualization%20of%20decoder%20attention.png" alt="Visualization of decoder attention" style="zoom: 45%;" /></p>
+<h4 id="ffn层的影响">2.3 FFN层的影响</h4>
+<p>​ 去除FFN后性能大幅下降（2.3 AP），说明FFN也对性能有重要贡献。</p>
+<h4 id="位置编码的影响">2.4 位置编码的影响</h4>
+<p>DETR模型中有两种位置编码：<strong>空间位置编码</strong>和<strong>输出位置编码（object
+queries）</strong>，文中实验了不同的位置编码组合（固定的sine位置编码和可学习的位置编码），输出位置编码始终由模型自己学习。</p>
+<p>输出位置编码是必须的，不能被移除，因此在实验时尝试只在输入的时候加入位置编码，并且完全去除了空间位置编码（下表第一行），这减少了7.8的AP。对于空间位置编码，使用固定的sine位置编码能取得最好的效果。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Results%20for%20different%20positional%20encodings.png" alt="Results for different positional encodings" style="zoom:33%;" /></p>
+<h4 id="损失函数的影响">2.5 损失函数的影响</h4>
+<p>分别去除GIoU损失和L1损失，发现<strong>GIoU损失对性能贡献最大</strong>，通过两者结合可以在不同度量上取得平衡。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Effect%20of%20loss%20components.png"
+alt="Effect of loss components" />
+<figcaption aria-hidden="true">Effect of loss components</figcaption>
+</figure>
+<h3 id="分析">3. 分析</h3>
+<h4 id="解码器queries分析">3.1 解码器Queries分析</h4>
+<p>下图可视化了20个query（<span
+class="math inline">\(N=100\)</span>）在COCO验证集上预测边界框的分布（包括位置和大小）。绿色的点表示了小的边界框、红色的点表示了大的水平框、蓝色的点表示了大的垂直框。</p>
+<p>从图中可以看到，每个query都负责预测图像不同位置的边界框，但它们都有能力预测全图上的大物体。这些query的分布反应了COCO上物体的分布。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/query_distr.png"
+alt="query_distr" />
+<figcaption aria-hidden="true">query_distr</figcaption>
+</figure>
+<h4 id="泛化性能">3.2 泛化性能</h4>
+<p>在COCO的一些类别中，同一张图片中可能没有很多的同类实例。例如，在训练集中没有一张图片中含有超过13头长颈鹿。文中创建了一张合成图像来验证DETR的泛化能力。DETR能够找到图像中的所有24头长颈鹿，这明显超出了训练集分布范围。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/giraffe_collage2.jpg" alt="giraffe_collage2" style="zoom: 50%;" /></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/09/08/DETR/" title="[Note] End-to-End Object Detection with Transformers (ECCV 2020)">https://ehehe.cn/2023/09/08/DETR/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/" rel="tag"># 目标检测</a>
+              <a href="/tags/Transformer/" rel="tag"># Transformer</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/08/26/ViT-Adapter/" rel="prev" title="[Note] Vision Transformer Adapter for Dense Predictions (ICLR 2023)">
+                  <i class="fa fa-angle-left"></i> [Note] Vision Transformer Adapter for Dense Predictions (ICLR 2023)
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

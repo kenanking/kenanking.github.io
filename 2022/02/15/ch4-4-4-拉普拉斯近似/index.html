@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="4.4 拉普拉斯近似 使用贝叶斯的方式处理logistic回归问题要比处理线性回归问题更困难，因为我们无法直接对参数\(\mathbf{w}\)进行积分（后验分布不满足高斯分布）。所以我们需要引入一些近似的方法，这里我们使用了拉普拉斯近似（Laplace approximation）。拉普拉斯近似的目的是找到一个高斯分布，来近似一个定义在一组连续随机变量上的概率分布。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch4-4.4 拉普拉斯近似">
+<meta property="og:url" content="https://ehehe.cn/2022/02/15/ch4-4-4-%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E8%BF%91%E4%BC%BC/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="4.4 拉普拉斯近似 使用贝叶斯的方式处理logistic回归问题要比处理线性回归问题更困难，因为我们无法直接对参数\(\mathbf{w}\)进行积分（后验分布不满足高斯分布）。所以我们需要引入一些近似的方法，这里我们使用了拉普拉斯近似（Laplace approximation）。拉普拉斯近似的目的是找到一个高斯分布，来近似一个定义在一组连续随机变量上的概率分布。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E8%BF%91%E4%BC%BC.png">
+<meta property="article:published_time" content="2022-02-15T05:57:28.000Z">
+<meta property="article:modified_time" content="2022-02-15T05:57:28.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="PRML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E8%BF%91%E4%BC%BC.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/02/15/ch4-4-4-%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E8%BF%91%E4%BC%BC/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/02/15/ch4-4-4-%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E8%BF%91%E4%BC%BC/","path":"2022/02/15/ch4-4-4-拉普拉斯近似/","title":"ch4-4.4 拉普拉斯近似"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch4-4.4 拉普拉斯近似 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E8%BF%91%E4%BC%BC"><span class="nav-text">4.4 拉普拉斯近似</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E5%8F%98%E9%87%8F%E8%BF%91%E4%BC%BC"><span class="nav-text">单变量近似</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%8F%98%E9%87%8F%E8%BF%91%E4%BC%BC"><span class="nav-text">多变量近似</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E8%BF%91%E4%BC%BC%E7%9A%84%E5%88%86%E6%9E%90"><span class="nav-text">拉普拉斯近似的分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E6%AF%94%E8%BE%83%E4%B8%8Ebic"><span class="nav-text">4.4.1 模型比较与BIC</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/02/15/ch4-4-4-%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E8%BF%91%E4%BC%BC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch4-4.4 拉普拉斯近似 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch4-4.4 拉普拉斯近似
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-15 13:57:28" itemprop="dateCreated datePublished" datetime="2022-02-15T13:57:28+08:00">2022-02-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="拉普拉斯近似">4.4 拉普拉斯近似</h2>
+<p>使用贝叶斯的方式处理logistic回归问题要比处理线性回归问题更困难，因为我们无法直接对参数<span
+class="math inline">\(\mathbf{w}\)</span>进行积分（后验分布不满足高斯分布）。所以我们需要引入一些近似的方法，这里我们使用了<strong>拉普拉斯近似（Laplace
+approximation）</strong>。拉普拉斯近似的目的是<strong>找到一个高斯分布，来近似一个定义在一组连续随机变量上的概率分布</strong>。</p>
+<span id="more"></span>
+<h3 id="单变量近似">单变量近似</h3>
+<p>考虑单个连续随机变量<span
+class="math inline">\(z\)</span>，假设概率分布为： <span
+class="math display">\[
+p(z) = \frac{1}{Z}f(z)
+\]</span> 其中，<span class="math inline">\(Z = \int
+f(z)\mathrm{d}z\)</span>为归一化系数，假设<span
+class="math inline">\(Z\)</span>的值未知。</p>
+<p>拉普拉斯方法的目标是<strong>找到一个中心位于分布<span
+class="math inline">\(p(z)\)</span>的众数的高斯近似<span
+class="math inline">\(q(z)\)</span>。</strong></p>
+<p>第一步是找到<span
+class="math inline">\(p(z)\)</span>的众数，也就是使得<span
+class="math inline">\(p^{\prime}(z_{0})=0\)</span>的点<span
+class="math inline">\(z_{0}\)</span>： <span class="math display">\[
+\left.\frac{\mathrm{d} f(z)}{\mathrm{d} z}\right|_{z=z_{0}}=0
+\]</span> 由于高斯分布的对数是一个关于变量的二次函数，所以我们对<span
+class="math inline">\(\ln f(z)\)</span>在<span
+class="math inline">\(z_{0}\)</span>处进行泰勒展开： <span
+class="math display">\[
+\ln f(z) \simeq \ln f(z_{0}) - \frac{1}{2}A(z-z_{0})^{2}
+\]</span> 其中： <span class="math display">\[
+A = - \left.\frac{\mathrm{d}^2}{\mathrm{d} z^{z}}\ln f(z)
+\right|_{z=z_{0}}
+\]</span> 注意到上式中不包含一次项，因为<span
+class="math inline">\(z_{0}\)</span>为分布的一个局部最大值，一阶导数为零。</p>
+<p>上式两边取指数，可以得到： <span class="math display">\[
+f(z) \simeq f(z_{0})\exp \left\{-\frac{A}{2}(z-z_{0})^{2}\right\}
+\]</span></p>
+<p>通过与高斯分布的形式进行对比，我们可以得到高斯分布<span
+class="math inline">\(q(z)\)</span>： <span class="math display">\[
+q(z) = \left(\frac{A}{2\pi}\right)^{1/2} \exp
+\left\{-\frac{A}{2}(z-z_{0})^{2}\right\}
+\]</span></p>
+<p>下图表示了对分布<span class="math inline">\(p(z) \propto
+\exp(-z^{2}/2)\sigma(20z+4)\)</span>的拉普拉斯近似，其中<span
+class="math inline">\(\sigma(z)\)</span>为logistic
+sigmoid函数。左图中黄色区域表示归一化的分布<span
+class="math inline">\(p(z)\)</span>，红色曲线表示中心在<span
+class="math inline">\(z_{0}\)</span>处的拉普拉斯近似<span
+class="math inline">\(q(z)\)</span>。右图表示对于曲线的负对数。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/拉普拉斯近似.png" alt="拉普拉斯近似" style="zoom:50%;" /></p>
+<p>需要注意的是，只有<strong>当精度<span
+class="math inline">\(A&gt;0\)</span>时，拉普拉斯近似是良好定义的</strong>，即：<strong>驻点<span
+class="math inline">\(z_{0}\)</span>必须是局部最大值</strong>。</p>
+<h3 id="多变量近似">多变量近似</h3>
+<p>对于定义在<span
+class="math inline">\(M\)</span>维空间上的随机变量<span
+class="math inline">\(\mathbf{z}\)</span>，对应的分布为： <span
+class="math display">\[
+p(\mathbf{z}) = \frac{1}{Z}f(\mathbf{z})
+\]</span> 在驻点<span
+class="math inline">\(\mathbf{z}_{0}\)</span>处梯度消失（梯度为<span
+class="math inline">\(0\)</span>），在<span
+class="math inline">\(\mathbf{z}_{0}\)</span>处展开，可以得到： <span
+class="math display">\[
+\ln f(\mathbf{z}) \simeq \ln f(\mathbf{z}_{0}) -
+\frac{1}{2}(\mathbf{z}-\mathbf{z}_{0})^{\mathrm{T}}\mathbf{A}(\mathbf{z}-\mathbf{z}_{0})
+\]</span> 其中：<span class="math inline">\(\mathbf{A}\)</span>为<span
+class="math inline">\(M \times M\)</span>维的Hessian矩阵。 <span
+class="math display">\[
+\mathbf{A} = -\nabla \nabla \left.\ln
+f(\mathbf{z})\right|_{\mathbf{z}=\mathbf{z}_{0}}
+\]</span></p>
+<p>同时对两边取指数： <span class="math display">\[
+f(\mathbf{z}) \simeq f(\mathbf{z}_{0}) \exp
+\left\{-\frac{1}{2}(\mathbf{z}-\mathbf{z}_{0})^{\mathrm{T}}\mathbf{A}(\mathbf{z}-\mathbf{z}_{0})\right\}
+\]</span> 通过与多变量高斯分布的形式进行对比，可以得到： <span
+class="math display">\[
+q(\mathbf{z}) = \frac{|\mathbf{A}|^{1/2}}{(2\pi)^{M/2}}\exp
+\left\{-\frac{1}{2}(\mathbf{z}-\mathbf{z}_{0})^{\mathrm{T}}\mathbf{A}(\mathbf{z}-\mathbf{z}_{0})\right\}
+= \mathcal{N}(\mathbf{z} \mid \mathbf{z}_{0}, \mathbf{A}^{-1})
+\]</span></p>
+<p>当精度矩阵<span
+class="math inline">\(\mathbf{A}\)</span>是正定矩阵时，上面的高斯分布是良好定义的。</p>
+<h3 id="拉普拉斯近似的分析">拉普拉斯近似的分析</h3>
+<p>使用拉普拉斯近似时，首先需要找到众数<span
+class="math inline">\(\mathbf{z}_{0}\)</span>，然后计算众数处的Hessian矩阵。在实际应用当中，众数通常可以通过数值优化算法得到。</p>
+<p>许多在实际应用中遇到的概率分布都是多峰的，因此根据峰值（众数）的不同，会有不同的拉普拉斯近似。</p>
+<p>根据中心极限定理，模型的后验概率会随着观测数据的增多可以更好地用高斯分布来近似。因此在数据点相对较多的情况下，拉普拉斯近似会更适用。</p>
+<p>拉普拉斯近似的一个主要<strong>缺点是它基于高斯分布，只能适用于实变量</strong>。在其他情况下，只能将变量采用某种变换之后再使用拉普拉斯变换。例如对于变量<span
+class="math inline">\(0 \leqslant \tau &lt;
+\infty\)</span>，我们可以考虑<span class="math inline">\(\ln
+\tau\)</span>的拉普拉斯变换。</p>
+<p>拉普拉斯近似框架最大的<strong>局限性是它只是真实分布在一个特定点（众数）处的局部高斯近似</strong>，所以会失去一些全局的特性。</p>
+<h3 id="模型比较与bic">4.4.1 模型比较与BIC</h3>
+<p>除了近似分布<span
+class="math inline">\(p(\mathbf{z})\)</span>，我们也可以近似归一化常数<span
+class="math inline">\(Z\)</span>。根据上面的结果，我们可以得到： <span
+class="math display">\[
+\begin{align}
+Z &amp;= \int f(\mathbf{z})\mathrm{d}\mathbf{z} \\
+&amp;\simeq f(\mathbf{z}_{0})\int \exp
+\left\{-\frac{1}{2}(\mathbf{z}-\mathbf{z}_{0})^{\mathrm{T}}\mathbf{A}(\mathbf{z}-\mathbf{z}_{0})\right\}\mathrm{d}\mathbf{z}
+\\
+&amp;= f(\mathbf{z}_{0}) \frac{(2\pi)^{M/2}}{|\mathbf{A}|^{1/2}}
+\end{align}
+\]</span></p>
+<p>我们可以使用上面的结果来计算模型证据（model
+evidence，[[ch3-3-4-贝叶斯模型比较]]）的近似值。</p>
+<p>考虑数据集<span
+class="math inline">\(\mathcal{D}\)</span>和一系列参数为<span
+class="math inline">\(\{\boldsymbol{\theta}_{i}\}\)</span>的模型<span
+class="math inline">\(\{\mathcal{M}_{i}\}\)</span>，对于每个模型我们定义似然函数为<span
+class="math inline">\(p(\mathcal{D} \mid \boldsymbol{\theta}_{i},
+\mathcal{M}_{i})\)</span>。我们引入参数的先验为<span
+class="math inline">\(p(\boldsymbol{\theta}_{i} \mid
+\mathcal{M}_{i})\)</span>。于是，我们可以计算每个模型的模型证据为<span
+class="math inline">\(p(\mathcal{D} \mid
+\mathcal{M}_{i})\)</span>。为了简化记号，省略对<span
+class="math inline">\(\mathcal{M}_{i}\)</span>的条件依赖。根据贝叶斯定理模型证据为：
+<span class="math display">\[
+p(\mathcal{D}) = \int p(\mathcal{D} \mid
+\boldsymbol{\theta})p(\boldsymbol{\theta})\mathrm{d}\boldsymbol{\theta}
+\]</span> 令： <span class="math display">\[
+\begin{align}
+f(\boldsymbol{\theta}) &amp;= p(\mathcal{D} \mid
+\boldsymbol{\theta})p(\boldsymbol{\theta}) \\
+Z &amp;= p(\mathcal{D})
+\end{align}
+\]</span> 利用上面对<span
+class="math inline">\(Z\)</span>的近似结果，计算得到： <span
+class="math display">\[
+\ln p(\mathcal{D}) \simeq \ln p\left(\mathcal{D} \mid
+\boldsymbol{\theta}_{\mathrm{MAP}}\right)+\underbrace{\ln
+p\left(\boldsymbol{\theta}_{\mathrm{MAP}}\right)+\frac{M}{2} \ln (2
+\pi)-\frac{1}{2} \ln |\mathbf{A}|}_{\text {Occam factor}}
+\]</span></p>
+<p>其中：<span
+class="math inline">\(\boldsymbol{\theta}_{\mathrm{MAP}}\)</span>是后验分布的众数对应的<span
+class="math inline">\(\boldsymbol{\theta}\)</span>值，<span
+class="math inline">\(\mathbf{A}\)</span>是负对数后验概率的二阶导数的Hessian矩阵。
+<span class="math display">\[
+\mathbf{A}=-\nabla \nabla \ln p\left(\mathcal{D} \mid
+\boldsymbol{\theta}_{\mathrm{MAP}}\right)
+p\left(\boldsymbol{\theta}_{\mathrm{MAP}}\right)=-\nabla \nabla \ln
+p\left(\boldsymbol{\theta}_{\mathrm{MAP}} \mid \mathcal{D}\right)
+\]</span></p>
+<p>上面的公式中的第一项表示用最优参数计算得到的对数似然函数，剩下三项组成<strong>Occam因子</strong>，用于惩罚模型复杂度。</p>
+<p>如果我们假设参数的高斯先验分布比较宽，且Hessian矩阵是满秩的,那么我们可以使用下式来非常粗略地近似上面的公式：
+<span class="math display">\[
+\ln p(\mathcal{D}) \simeq \ln p(\mathcal{D} \mid
+\boldsymbol{\theta}_{\mathrm{MAP}}) - \frac{1}{2}M \ln N
+\]</span> 其中，<span
+class="math inline">\(N\)</span>为数据点的数量，<span
+class="math inline">\(M\)</span>为<span
+class="math inline">\(\boldsymbol{\theta}\)</span>中参数的数量。</p>
+<p>这个公式被称为<strong>贝叶斯信息准则（Bayesian information
+criterion，BIC）</strong>或<strong>Schwarz准则</strong>。与AIC（[[ch1-1-3-模型选择#信息准则]]）相比，它对模型复杂度的惩罚更重。</p>
+<p>像AIC和BIC这样的复杂度度量的一个优点是它们很容易计算，但也会产生误导性的结果。由于很多参数都不是良好确定的，Hessian矩阵满秩的假设通常不成立。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/02/15/ch4-4-4-%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E8%BF%91%E4%BC%BC/" title="ch4-4.4 拉普拉斯近似">https://ehehe.cn/2022/02/15/ch4-4-4-拉普拉斯近似/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PRML/" rel="tag"># PRML</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch4-4-3-%E6%A6%82%E7%8E%87%E5%88%A4%E5%88%AB%E5%BC%8F%E6%A8%A1%E5%9E%8B/" rel="prev" title="ch4-4.3 概率判别式模型">
+                  <i class="fa fa-angle-left"></i> ch4-4.3 概率判别式模型
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch4-4-5-%E8%B4%9D%E5%8F%B6%E6%96%AFlogistic%E5%9B%9E%E5%BD%92/" rel="next" title="ch4-4.5 贝叶斯logistic回归">
+                  ch4-4.5 贝叶斯logistic回归 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

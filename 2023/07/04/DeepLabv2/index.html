@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Liang-Chieh Chen, George Papandreou, Iasonas Kokkinos, Kevin Murphy, Alan L. Yuille DeepLabv2 DeepLabv2通过空洞卷积和上采样滤波器进行密集特征提取，将在图像分类上训练的网络重新用于语义分割任务。文中进一步提出ASPP以在多个尺度上编码对象以及图像上下文。为了产生语义准确的预测和精细的物体边界">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs (TPAMI)">
+<meta property="og:url" content="https://ehehe.cn/2023/07/04/DeepLabv2/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Liang-Chieh Chen, George Papandreou, Iasonas Kokkinos, Kevin Murphy, Alan L. Yuille DeepLabv2 DeepLabv2通过空洞卷积和上采样滤波器进行密集特征提取，将在图像分类上训练的网络重新用于语义分割任务。文中进一步提出ASPP以在多个尺度上编码对象以及图像上下文。为了产生语义准确的预测和精细的物体边界">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/DeepLabv2_model_illustration.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/dilation.gif">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/dilation_2.gif">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/convolution.gif">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Grid_effect_of_dilated_convolution.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/hydrid_dilated_convolution.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Grid_effect_of_high_frequency_activation.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Resnet18_activation_maps.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Spatial_Pyramid_Pooling.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Atrous_Spatial_Pyramid_Pooling.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/DeepLab_ASPP.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/CRF_Results.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/fully_connected%20CRFs_and_window_fully_connected_CRFs.png">
+<meta property="article:published_time" content="2023-07-04T14:30:05.000Z">
+<meta property="article:modified_time" content="2023-07-10T15:26:05.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="图像分割">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/DeepLabv2_model_illustration.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/07/04/DeepLabv2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/07/04/DeepLabv2/","path":"2023/07/04/DeepLabv2/","title":"[Note] DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs (TPAMI)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs (TPAMI) | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#deeplabv2"><span class="nav-text">DeepLabv2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A9%BA%E6%B4%9E%E5%8D%B7%E7%A7%AFatrousdilated-convolution"><span class="nav-text">1. 空洞卷积（atrous&#x2F;dilated
+convolution）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E5%9C%A8%E9%97%AE%E9%A2%98"><span class="nav-text">存在问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#atrous-spatial-pyramid-poolingaspp"><span class="nav-text">2. Atrous Spatial Pyramid
+Pooling（ASPP）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fully-connected-crfs"><span class="nav-text">3. Fully Connected CRFs</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/07/04/DeepLabv2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs (TPAMI) | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs (TPAMI)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-07-04 22:30:05" itemprop="dateCreated datePublished" datetime="2023-07-04T22:30:05+08:00">2023-07-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-07-10 23:26:05" itemprop="dateModified" datetime="2023-07-10T23:26:05+08:00">2023-07-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Liang-Chieh Chen, George Papandreou, Iasonas Kokkinos, Kevin
+Murphy, Alan L. Yuille</p>
+<h1 id="deeplabv2">DeepLabv2</h1>
+<p>DeepLabv2通过空洞卷积和上采样滤波器进行密集特征提取，将在图像分类上训练的网络重新用于语义分割任务。文中进一步提出ASPP以在多个尺度上编码对象以及图像上下文。为了产生语义准确的预测和精细的物体边界分割图，文中还结合了深度卷积神经网络和全连接条件随机场的思想。</p>
+<p>深度卷积神经网络应用于语义分割的三个挑战：</p>
+<ul>
+<li><p><strong>特征分辨率降低</strong>：DCNN设计之初用于图像分类问题，使用多层的Max-Pool和全连接层，在处理图像时，特征空间分辨率降低。</p></li>
+<li><p><strong>多尺度目标</strong>：图像中的分割对象以多种尺度存在。</p></li>
+<li><p><strong>DCNN的不变性导致的定位误差</strong>：深度卷积神经网络的不变性可能会导致定位精度降低。</p></li>
+</ul>
+<p>为了解决这些问题，DeepLabv2使用了下面的方法：</p>
+<ul>
+<li>去除Max-Pool层并使用空洞卷积（atrous convolution）</li>
+<li>空洞空间金字塔池化（atrous spatial pyramid pooling，ASPP）</li>
+<li>深度卷积网络与概率图模型结合，使用全连接条件随机场（fully connected
+CRFs）进行后处理</li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/DeepLabv2_model_illustration.png" alt="DeepLabv2模型" style="zoom:33%;" /></p>
+<span id="more"></span>
+<h2 id="空洞卷积atrousdilated-convolution">1. 空洞卷积（atrous/dilated
+convolution）</h2>
+<p>在一维情况下，空洞卷积定义为： <span class="math display">\[
+y[i]=\sum_{k=1}^K x[i+r \cdot k] w[k]
+\]</span> 其中：<span
+class="math inline">\(x[i]\)</span>为输入信号，<span
+class="math inline">\(y[i]\)</span>为输出信号，<span
+class="math inline">\(w[k]\)</span>是一个长度为<span
+class="math inline">\(K\)</span>的滤波器。<span
+class="math inline">\(r\)</span>是扩张率，当<span
+class="math inline">\(r=1\)</span>时退化为标准卷积。</p>
+<p>在语义分割模型中，通过在卷积核的每个像素之间插入”空洞"（零）来构建二维的空洞卷积。</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th
+style="text-align: center;"><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/dilation.gif" alt="空洞卷积" style="zoom:24%;" /></th>
+<th
+style="text-align: center;"><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/dilation_2.gif" alt="扩张率为3的空洞卷积" style="zoom:22%;" /></th>
+<th
+style="text-align: center;"><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/convolution.gif" alt="普通卷积" style="zoom:26%;" /></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<ul>
+<li><p>空洞卷积在不增加参数量和计算量的情况下，有效地增加了滤波器的<strong>感受野（field-of-view）</strong>。对于语义分割（或目标检测）来说，增加感受野可以更好地捕捉图像的<strong>上下文信息（context）</strong>，从而提升多尺度目标的提取能力。</p></li>
+<li><p>另外，在DCNN中通过Max-Pool（或带stride的卷积）的方式提升感受野，这种方式会降低特征图的分辨率，导致空间信息的丢失。<strong>空洞卷积允许网络在不降低分辨率的情况下增加感受野</strong>，这在图像分割中非常重要。</p></li>
+</ul>
+<p>从下面的表格可以看到引入空洞卷积后，对VGG16网络的感受野的影响（DeepLab_LargeFOV）：</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 19%" />
+<col style="width: 32%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Layer</th>
+<th style="text-align: center;">Feature Map Size</th>
+<th style="text-align: center;">Receptive Field (Original)</th>
+<th style="text-align: center;">Receptive Field (DeepLab_LargeFOV)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">[224, 224]</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">[224, 224]</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">[224, 224]</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">[224, 224]</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">[224, 224]</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">[112, 112]</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">[112, 112]</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">11</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">[112, 112]</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">[112, 112]</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">15</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">[112, 112]</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">[56, 56]</td>
+<td style="text-align: center;">19</td>
+<td style="text-align: center;">19</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">[56, 56]</td>
+<td style="text-align: center;">27</td>
+<td style="text-align: center;">27</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">[56, 56]</td>
+<td style="text-align: center;">27</td>
+<td style="text-align: center;">27</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">13</td>
+<td style="text-align: center;">[56, 56]</td>
+<td style="text-align: center;">35</td>
+<td style="text-align: center;">35</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">[56, 56]</td>
+<td style="text-align: center;">35</td>
+<td style="text-align: center;">35</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">[56, 56]</td>
+<td style="text-align: center;">43</td>
+<td style="text-align: center;">43</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">16</td>
+<td style="text-align: center;">[56, 56]</td>
+<td style="text-align: center;">43</td>
+<td style="text-align: center;">43</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">17</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">51</td>
+<td style="text-align: center;">51</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">18</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">67</td>
+<td style="text-align: center;">67</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">19</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">67</td>
+<td style="text-align: center;">67</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">83</td>
+<td style="text-align: center;">83</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">21</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">83</td>
+<td style="text-align: center;">83</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">22</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">99</td>
+<td style="text-align: center;">99</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">23</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">99</td>
+<td style="text-align: center;">99</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">24</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">115</td>
+<td style="text-align: center;">115</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">25</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">131</td>
+<td style="text-align: center;">147</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">26</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">131</td>
+<td style="text-align: center;">147</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">27</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">147</td>
+<td style="text-align: center;">179</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">28</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">147</td>
+<td style="text-align: center;">179</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">29</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">163</td>
+<td style="text-align: center;">211</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">163</td>
+<td style="text-align: center;">211</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">31</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">179</td>
+<td style="text-align: center;">227</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">32</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">195</td>
+<td style="text-align: center;">243</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">33</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">387</td>
+<td style="text-align: center;">435</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">34</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">387</td>
+<td style="text-align: center;">435</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">35</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">387</td>
+<td style="text-align: center;">435</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">36</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">387</td>
+<td style="text-align: center;">435</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">37</td>
+<td style="text-align: center;">[28, 28]</td>
+<td style="text-align: center;">387</td>
+<td style="text-align: center;">435</td>
+</tr>
+</tbody>
+</table>
+<h3 id="存在问题">存在问题</h3>
+<ul>
+<li><p>理论上，空洞卷积天生存在<strong>格网效应（Gridding
+Effect）</strong>。在下图中，连续三次使用扩张率为<span
+class="math inline">\(2\)</span>（<span
+class="math inline">\(r=2\)</span>）的空洞卷积时，对于中心像素<span
+class="math inline">\(p\)</span>只能以棋盘的方式获取上下文信息，丢失了<span
+class="math inline">\(75\%\)</span>的有效信息<a href="#fn1"
+class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a>。在参数选择上，过小的扩张率会获取不到足够的上下文信息，而过大的扩张率会导致更严重的格网效应。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Grid_effect_of_dilated_convolution.png" alt="空洞卷积的格网效应" style="zoom:37%;" /></p>
+<p>因此提出了<strong>混合空洞卷积（hybrid dilated
+convolution，HDC）</strong>的方式，连续三个空洞卷积的扩张率分别设置为<span
+class="math inline">\(r=[1,2,5]\)</span>来避免格网效应。</p></li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/hydrid_dilated_convolution.png" alt="混合空洞卷积（HDC）" style="zoom:37%;" /></p>
+<ul>
+<li><p>当输入特征图具有高频内容时，空洞卷积可能在输出中产生格网效应，如下图中的第三列<a
+href="#fn2" class="footnote-ref" id="fnref2"
+role="doc-noteref"><sup>2</sup></a>。我的理解：空洞卷积会把距离较远的高频激活值带到当前的位置（同样也有可能把低频信息带到当前位置），其实可能会导致当前位置的信息与局部的特征不匹配。<strong>（高频值对参数影响大，高频的激活值会不利于网络训练）</strong></p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Grid_effect_of_high_frequency_activation.png" alt="高频信息在格网效应后的输出" style="zoom:33%;" /></p>
+<ul>
+<li><strong>去除Max-Pool</strong>：Max-Pool容易引入高频的激活值，使用卷积替换Max-Pool可以缓解网格化。（有效性难说！）</li>
+<li><strong>在网络最后添加扩张率逐渐减小的卷积层</strong>：类似HDC。</li>
+<li><strong>在后面添加的卷积层中去除残差连接</strong>：防止之前层的高频信号往后传播。</li>
+</ul></li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Resnet18_activation_maps.png" alt="空洞卷积导致的格网效应" style="zoom:33%;" /></p>
+<h2 id="atrous-spatial-pyramid-poolingaspp">2. Atrous Spatial Pyramid
+Pooling（ASPP）</h2>
+<p>文中尝试了两种不同的方式来处理多尺度问题：</p>
+<ul>
+<li><p>将<strong>原始图像缩放为三个不同的尺寸</strong>，输入到权重共享的DCNN中得到特征图，将特征图使用双线性插值到原图分辨率，通过选取每个尺度下最大的响应值来进行特征融合。</p></li>
+<li><p>受SPP<a href="#fn3" class="footnote-ref" id="fnref3"
+role="doc-noteref"><sup>3</sup></a>启发，<strong>对单一尺度提取的卷积特征进行重新采样获取多尺度特征</strong>。文中使用空洞卷积实现了SPP的变体ASPP，通过不同的采样率，ASPP能够探测具有不同感受野的特征，从而在多个尺度上捕获分割对象以及图像的上下文信息。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Spatial_Pyramid_Pooling.png" alt="Spatial_Pyramid_Pooling" style="zoom:25%;" /></p>
+<p>SPP将图像分成多个子区域，在每个区域内进行池化操作，最后将所有区域的池化结果拼接成一个固定长度<span
+class="math inline">\((16+4+1) \times 256\)</span>的向量。</p></li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Atrous_Spatial_Pyramid_Pooling.png" alt="Atrous Spatial Pyramid Pooling" style="zoom:25%;" /></p>
+<p>下面是在加入了ASPP后相比原DeepLabv1的改进。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/DeepLab_ASPP.png" alt="DeepLab-ASPP" style="zoom:25%;" /></p>
+<h2 id="fully-connected-crfs">3. Fully Connected CRFs</h2>
+<p>条件随机场（CRFs）是一种概率图模型，它可以用来<strong>建模输出变量之间的依赖关系</strong>，被用于语义分割和单目深度估计任务（NeW
+CRFs<a href="#fn4" class="footnote-ref" id="fnref4"
+role="doc-noteref"><sup>4</sup></a>，CVPR2022）中。可以证明，CRFs在基于当前和相邻节点信息的情况下，能有效纠正错误的预测结果。<strong>CRFs倾向于将空间上和颜色上相近的点归于相同的类别标签</strong>，起到平滑预测结果、去除噪声的作用。</p>
+<p>在语义图像分割中，输出变量就是每个像素的类别标签，而依赖关系就是像素之间的相似性和一致性。CRFs可以用来对DCNNs的预测结果进行优化，使得分割结果更加平滑和精确。</p>
+<p>在图模型中，全连接的CRFs的能量函数定义为： <span
+class="math display">\[
+E(\boldsymbol{x})=\sum_i \theta_i\left(x_i\right)+\sum_{i j} \theta_{i
+j}\left(x_i, x_j\right)
+\]</span> 其中，<span
+class="math inline">\(\boldsymbol{x}\)</span>为类别标签，<span
+class="math inline">\(\theta_i=-\log P(x_i)\)</span>为一元势函数（unary
+potential），<span
+class="math inline">\(P(x_i)\)</span>是DCNN预测的当前类别标签的置信度。<span
+class="math inline">\(\theta_{i j}\)</span>为二元势函数（pairwise
+potential），表示对于所有的像素对<span
+class="math inline">\(i\)</span>、<span
+class="math inline">\(j\)</span>，当它们的位置<span
+class="math inline">\(p\)</span>和像素值<span
+class="math inline">\(I\)</span>越接近时，越倾向于归为同一类。二元势函数的形式如下：</p>
+<p><span class="math display">\[
+\begin{gathered}
+\theta_{i j}\left(x_i, x_j\right)=\mu\left(x_i, x_j\right)\left[w_1 \exp
+\left(-\frac{\left\|p_i-p_j\right\|^2}{2
+\sigma_\alpha^2}-\frac{\left\|I_i-I_j\right\|^2}{2
+\sigma_\beta^2}\right)\right. \\
+\left.+w_2 \exp \left(-\frac{\left\|p_i-p_j\right\|^2}{2
+\sigma_\gamma^2}\right)\right]
+\end{gathered}
+\]</span></p>
+<p>其中，当<span class="math inline">\(x_i \neq x_j\)</span>时，<span
+class="math inline">\(\mu\left(x_i, x_j\right)=1\)</span>，否则为<span
+class="math inline">\(0\)</span>。</p>
+<p><strong>一元势函数中的信息由神经网络输出的概率图提供</strong>，<strong>二元势函数中的信息由原图提供</strong>。当能量函数<span
+class="math inline">\(E(\boldsymbol{x})\)</span>越小时，预测的类别标签<span
+class="math inline">\(\boldsymbol{x}\)</span>就越准确，通过迭代最小化能量函数，得到最终的后处理结果。该能量函数可以通过<strong>近似推断</strong>的方式进一步加速<a
+href="#fn5" class="footnote-ref" id="fnref5"
+role="doc-noteref"><sup>5</sup></a>。</p>
+<p>在下图中可以看到，使用CRFs后，在对象的边界处可以得到更明确的分类效果。至于为什么要在全图范围计算CRFs，文中提到是因为DCNN给出的结果非常平滑（下图第一行第二列），使用<strong>短程（short-range）的CRF会进一步平滑结果</strong>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/CRF_Results.png" alt="CRF对分割结果的精化" style="zoom:28%;" /></p>
+<p>全连接的CRFs针对全图计算能量函数，当图像分辨率提升时，计算量会急剧增加。因此，在NeW
+CRFs（CVPR 2022）工作中，划分了多个窗口计算CRFs，并引入了Swin
+Transformer中的滑窗方式，在不同窗口中进行交互。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/fully_connected%20CRFs_and_window_fully_connected_CRFs.png" alt="全连接的CRFs和分窗口的CRFs" style="zoom:25%;" /></p>
+<aside id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Wang, Panqu, et al. "Understanding convolution for
+semantic segmentation." <em>2018 IEEE winter conference on applications
+of computer vision (WACV)</em>. Ieee, 2018.APA<a href="#fnref1"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Yu, Fisher, Vladlen Koltun, and Thomas Funkhouser.
+"Dilated residual networks." <em>Proceedings of the IEEE conference on
+computer vision and pattern recognition</em>. 2017.<a href="#fnref2"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>He, Kaiming, et al. "Spatial pyramid pooling in deep
+convolutional networks for visual recognition." <em>IEEE transactions on
+pattern analysis and machine intelligence</em> 37.9 (2015): 1904-1916.<a
+href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>Yuan, Weihao, et al. "Neural window fully-connected crfs
+for monocular depth estimation." <em>Proceedings of the IEEE/CVF
+Conference on Computer Vision and Pattern Recognition</em>. 2022.<a
+href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>Krähenbühl, Philipp, and Vladlen Koltun. "Efficient
+inference in fully connected crfs with gaussian edge potentials."
+<em>Advances in neural information processing systems</em> 24 (2011).<a
+href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</aside>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/07/04/DeepLabv2/" title="[Note] DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs (TPAMI)">https://ehehe.cn/2023/07/04/DeepLabv2/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/" rel="tag"># 图像分割</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/06/01/SimCC/" rel="prev" title="[Note] SimCC: a Simple Coordinate Classification Perspective  for Human Pose Estimation">
+                  <i class="fa fa-angle-left"></i> [Note] SimCC: a Simple Coordinate Classification Perspective  for Human Pose Estimation
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/07/06/PSPNet/" rel="next" title="[Note] Pyramid Scene Parsing Network (CVPR 2017)">
+                  [Note] Pyramid Scene Parsing Network (CVPR 2017) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

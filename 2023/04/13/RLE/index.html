@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Jiefeng Li, Siyuan Bian, Ailing Zeng, Can Wang, Bo Pang, Wentao Liu, Cewu Lu RLE（使用残差对数似然估计的人体姿态回归） 本文主要介绍了一种新的人体姿态估计方法，该方法使用Residual Log-likelihood Estimation（RLE）来捕捉输出分布的内在特征，以提高回归性能。文章指出标准的\(\ma">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] Human Pose Regression with Residual Log-likelihood  Estimation (ICCV 2021)">
+<meta property="og:url" content="https://ehehe.cn/2023/04/13/RLE/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Jiefeng Li, Siyuan Bian, Ailing Zeng, Can Wang, Bo Pang, Wentao Liu, Cewu Lu RLE（使用残差对数似然估计的人体姿态回归） 本文主要介绍了一种新的人体姿态估计方法，该方法使用Residual Log-likelihood Estimation（RLE）来捕捉输出分布的内在特征，以提高回归性能。文章指出标准的\(\ma">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%BA%BA%E4%BD%93%E5%A7%BF%E6%80%81%E7%83%AD%E5%8A%9B%E5%9B%BE.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Normalizing_Flow.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/RLE_Basic_Design.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/RLE_Reparameterization.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/RLE_Residual_Design.png">
+<meta property="article:published_time" content="2023-04-13T13:26:56.000Z">
+<meta property="article:modified_time" content="2023-04-13T13:26:56.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="人体关键点">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%BA%BA%E4%BD%93%E5%A7%BF%E6%80%81%E7%83%AD%E5%8A%9B%E5%9B%BE.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/04/13/RLE/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/04/13/RLE/","path":"2023/04/13/RLE/","title":"[Note] Human Pose Regression with Residual Log-likelihood  Estimation (ICCV 2021)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] Human Pose Regression with Residual Log-likelihood  Estimation (ICCV 2021) | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#rle%E4%BD%BF%E7%94%A8%E6%AE%8B%E5%B7%AE%E5%AF%B9%E6%95%B0%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1%E7%9A%84%E4%BA%BA%E4%BD%93%E5%A7%BF%E6%80%81%E5%9B%9E%E5%BD%92"><span class="nav-text">RLE（使用残差对数似然估计的人体姿态回归）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%BA%E4%BD%93%E5%A7%BF%E6%80%81%E4%BC%B0%E8%AE%A1%E9%97%AE%E9%A2%98"><span class="nav-text">人体姿态估计问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rle%E6%96%B9%E6%B3%95"><span class="nav-text">RLE方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E7%82%B9%E5%9B%9E%E5%BD%92"><span class="nav-text">关键点回归</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%8C%96%E6%B5%81"><span class="nav-text">标准化流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rle"><span class="nav-text">RLE</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#basic-design"><span class="nav-text">1. Basic Design</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#reparameterization"><span class="nav-text">2. Reparameterization</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#residual-design"><span class="nav-text">3. Residual Design</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pytorch%E5%AE%9E%E7%8E%B0"><span class="nav-text">PyTorch实现</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/04/13/RLE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] Human Pose Regression with Residual Log-likelihood  Estimation (ICCV 2021) | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] Human Pose Regression with Residual Log-likelihood  Estimation (ICCV 2021)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-13 21:26:56" itemprop="dateCreated datePublished" datetime="2023-04-13T21:26:56+08:00">2023-04-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Jiefeng Li, Siyuan Bian, Ailing Zeng, Can Wang, Bo Pang, Wentao
+Liu, Cewu Lu</p>
+<h2
+id="rle使用残差对数似然估计的人体姿态回归">RLE（使用残差对数似然估计的人体姿态回归）</h2>
+<p>本文主要介绍了一种新的人体姿态估计方法，该方法使用Residual
+Log-likelihood
+Estimation（RLE）来捕捉输出分布的内在特征，以提高回归性能。文章指出标准的<span
+class="math inline">\(\mathcal{l}_1\)</span>和<span
+class="math inline">\(\mathcal{l}_2\)</span>损失函数在人体姿态估计任务中存在一些问题，如无法捕捉复杂的输出分布、对异常值敏感、难以处理复杂分布等。为了解决这些问题，文章提出了一种基于RLE的新型回归范式，并将其与Normalizing
+Flows相结合，以更好地捕获复杂的输出分布。文中通过实验验证了该方法在各种人体姿态估计任务中的有效性和灵活性。</p>
+<h3 id="人体姿态估计问题">人体姿态估计问题</h3>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%BA%BA%E4%BD%93%E5%A7%BF%E6%80%81%E7%83%AD%E5%8A%9B%E5%9B%BE.png" alt="人体姿态热力图" style="zoom:33%;" /></p>
+<p>姿态估计任务中，一般存在两种方法：</p>
+<ul>
+<li><strong>热力图（heatmap-based）</strong></li>
+<li><strong>坐标回归（regression-based）</strong></li>
+</ul>
+<p>基于热力图的方法通过监督模型学习到高斯概率分布图，网络输出的<span
+class="math inline">\(K\)</span>张热力图对应了<span
+class="math inline">\(K\)</span>个关键点，通过<code>argmax</code>来取得最大值坐标作为关键点的预测。这种方法不可避免地需要输出多个相对高分辨率的输出，自然导致了很大的计算量和内存开销（尤其是从二维向三维扩展时）。但是由于基于热力图的方法具有相当好的表现，仍然是目前主流的方法。</p>
+<p>基于回归的方法直接预测坐标值，通过计算<span
+class="math inline">\(\mathcal{L}_1\)</span>或<span
+class="math inline">\(\mathcal{L}_2\)</span>损失函数进行优化，不需要高分辨率输出，也可以轻松向高维扩展。然而回归方法相比热力图方法表现较差，在图像出现遮挡、模糊和截断等情况下，不具备热力图方法的鲁棒性。另外，回归方法也容易受到标注中的噪声影响。</p>
+<p>尽管基于回归的方法仍存在预测精度上的不足（这也是本文提出RLE要解决的问题），回归方法可以总结出以下三点优势：</p>
+<ul>
+<li>摆脱了高分辨率热力图，计算成本和内存开销的复杂度低。</li>
+<li>输出是连续的，不受量化误差影响。</li>
+<li>可以以最低的成本扩展到各种应用场景（例如，单阶段方法、基于视频的方法、3D
+场景）。</li>
+</ul>
+<p><strong>回归方法在实际项目应用中比热力图方法更具有可行性。</strong></p>
+<span id="more"></span>
+<h3 id="rle方法">RLE方法</h3>
+<h4 id="关键点回归">关键点回归</h4>
+<p>给定输入图像<span
+class="math inline">\(\mathcal{I}\)</span>，回归模型预测了关键点的位置<span
+class="math inline">\(\hat{\boldsymbol{\mu}}\)</span>，即给出了分布<span
+class="math inline">\(P_{\Theta}(\mathbf{x}|\mathcal{I})\)</span>，该分布表示了在位置<span
+class="math inline">\(\mathbf{x}\)</span>的概率值，其中<span
+class="math inline">\(\Theta\)</span>表示了可学习的模型参数。</p>
+<p>假设人工标记的关键点为<span
+class="math inline">\(\boldsymbol{\mu}_{g}\)</span>，回归模型通过学习参数<span
+class="math inline">\(\Theta\)</span>使得<span
+class="math inline">\(\boldsymbol{\mu}_{g}\)</span>处的概率值最大。于是，最大化似然函数等价于最小化负对数似然函数：</p>
+<p><span class="math display">\[
+\mathcal{L}_{\text{mle}} = \left. -\log
+P_{\Theta}(\mathbf{x}|\mathcal{I})
+\right|_{\mathbf{x}=\boldsymbol{\mu}_{g}}
+\]</span></p>
+<p>如果假设输出的分布满足高斯分布，即：</p>
+<p><span class="math display">\[
+P_{\Theta}(\mathbf{x}|\mathcal{I}) =
+\frac{1}{\sqrt{2\pi}\hat{\boldsymbol{\sigma}}} \exp
+\left\{-\frac{(\mathbf{x}-\hat{\boldsymbol{\mu}})^{2}}{2\hat{\boldsymbol{\sigma}}^{2}}\right\}
+\]</span></p>
+<p>其中，<span
+class="math inline">\(\hat{\boldsymbol{\mu}}\)</span>和<span
+class="math inline">\(\hat{\boldsymbol{\sigma}}\)</span>由回归模型预测得到。于是，上述负对数似然函数可以化简为：</p>
+<p><span class="math display">\[
+\begin{align}
+\mathcal{L}
+&amp;= \left. -\log P_{\Theta}(\mathbf{x}|\mathcal{I})
+\right|_{\mathbf{x}=\boldsymbol{\mu}_{g}} \\
+&amp;=
+\frac{(\boldsymbol{\mu}_{g}-\hat{\boldsymbol{\mu}})^{2}}{2\hat{\boldsymbol{\sigma}}^{2}}
++ \log \hat{\boldsymbol{\sigma}} + \frac{1}{2} \log (2\pi) \\
+&amp;\propto
+\frac{(\boldsymbol{\mu}_{g}-\hat{\boldsymbol{\mu}})^{2}}{2\hat{\boldsymbol{\sigma}}^{2}}
++ \log \hat{\boldsymbol{\sigma}}
+\end{align}
+\]</span></p>
+<p>如果进一步假设高斯分布的方差是一个常数，最小化负对数似然函数等价于<span
+class="math inline">\(\mathcal{L}_{2}\)</span>损失函数，即：<span
+class="math inline">\(\mathcal{L}=(\boldsymbol{\mu}_{g}-\hat{\boldsymbol{\mu}})^{2}\)</span>。</p>
+<p>另外，如果我们假设输出的分布为拉普拉斯分布，且方差为一个常数，那么我们可以得到标准的<span
+class="math inline">\(\mathcal{L}_{1}\)</span>损失函数。</p>
+<blockquote>
+<p>从MLE的角度，如果我们能够预先知道输出（关键点）的概率分布<span
+class="math inline">\(P_{\Theta}(\mathbf{x}|\mathcal{I})\)</span>，那么就可以更好地构建损失函数，得到更好的预测结果。</p>
+</blockquote>
+<p>比起草率地假设一个概率分布，本文引入了<strong>标准化流（Normalizing
+Flow）</strong>对复杂分布进行建模，即让模型自己学习输出的概率分布。</p>
+<h4 id="标准化流">标准化流</h4>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Normalizing_Flow.png" alt="Normalizing_Flow" style="zoom:23%;" /></p>
+<h4 id="rle">RLE</h4>
+<h5 id="basic-design">1. Basic Design</h5>
+<p>关于随机变量<span
+class="math inline">\(\mathbf{z}\)</span>的分布<span
+class="math inline">\(P_{\Theta}(\mathbf{z}|\mathcal{I})\)</span>，该分布由回归模型的输出<span
+class="math inline">\(\hat{\boldsymbol{\mu}}\)</span>和<span
+class="math inline">\(\hat{\boldsymbol{\sigma}}\)</span>决定。简单起见，我们假设该分布满足高斯分布：</p>
+<p><span class="math display">\[
+P_{\Theta}(\mathbf{z}|\mathcal{I}) =
+\frac{1}{\sqrt{2\pi}\hat{\boldsymbol{\sigma}}} \exp
+\left\{-\frac{(\mathbf{z}-\hat{\boldsymbol{\mu}})^{2}}{2\hat{\boldsymbol{\sigma}}^{2}}\right\}
+\]</span></p>
+<p>通过流模型<span class="math inline">\(f_{\phi}\)</span>：<span
+class="math inline">\(\mathbb{R}^{2} \rightarrow
+\mathbb{R}^{2}\)</span>，可以将<span
+class="math inline">\(\mathbf{z}\)</span>变换为<span
+class="math inline">\(\mathbf{x}\)</span>，即：<span
+class="math inline">\(\mathbf{x} =
+f_{\phi}(\mathbf{z})\)</span>，其中<span
+class="math inline">\(\phi\)</span>表示流模型的可学习参数。</p>
+<p>变换后的变量<span
+class="math inline">\(\mathbf{x}\)</span>服从一个新的分布<span
+class="math inline">\(P_{\Theta,
+\phi}(\mathbf{x}|\mathcal{I})\)</span>，该分布由回归模型和流模型同时确定：</p>
+<p><span class="math display">\[
+\log P_{\Theta, \phi}(\mathbf{x}|\mathcal{I}) = \log
+P_{\Theta}(\mathbf{z}|\mathcal{I}) + \log \left| \det \frac{\partial
+f_{\phi}^{-1}}{\partial \mathbf{x}} \right|
+\]</span></p>
+<p>在基础设计中，标准化流将回归模型得到的关键点分布<span
+class="math inline">\(P_{\Theta}(\mathbf{z}|\mathcal{I})\)</span>通过可逆变换<span
+class="math inline">\(f_{\phi}\)</span>变换为复杂分布<span
+class="math inline">\(P_{\Theta,
+\phi}(\mathbf{x}|\mathcal{I})\)</span>。</p>
+<p>于是，通过最小化负对数似然函数，可以得到损失函数为：</p>
+<p><span class="math display">\[
+\begin{align}
+\mathcal{L}_{\text{mle}}
+&amp;= \left.-\log P_{\Theta, \phi}(\mathbf{x}|\mathcal{I})
+\right|_{\mathbf{x} = \boldsymbol{\mu}_{g}} \\
+&amp;= -\log P_{\Theta,
+\phi}\left(f_{\phi}^{-1}(\boldsymbol{\mu}_{g})|\mathcal{I}\right) - \log
+\left| \det \frac{\partial f_{\phi}^{-1}}{\partial \boldsymbol{\mu}_{g}}
+\right|
+\end{align}
+\]</span>
+<img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/RLE_Basic_Design.png" alt="RLE_Basic_Design" style="zoom:33%;" /></p>
+<h5 id="reparameterization">2. Reparameterization</h5>
+<p>尽管Basic
+Design看上去说得通了，但实际操作中仍然不可行。因为每张图上的关键点位置和方差是不一样的，通过上面的方式让流模型去学习每张图像上每个具体的关键点的分布是不现实的。</p>
+<p>在Reparameterization
+Design中，假设所以的潜在分布具有相同的密度函数族，但是<strong>均值</strong>和<strong>方差</strong>不同。此时，流模型不再去学习关键点<span
+class="math inline">\(\boldsymbol{\mu}_{g}\)</span>的潜在分布，而是学习关键点误差<span
+class="math inline">\(\boldsymbol{\epsilon}=\frac{\boldsymbol{\mu}_{g}-\hat{\boldsymbol{\mu}}}{\hat{\boldsymbol{\sigma}}}\)</span>的潜在分布，这是一个零均值的分布。</p>
+<p>假设基础分布为标准正态分布<span class="math inline">\(\mathbf{z} \sim
+\mathcal{N}(\mathbf{0},
+\mathbf{I})\)</span>，通过流模型将基础分布变换为误差的原始分布<span
+class="math inline">\(\bar{\mathbf{x}} \sim
+P_{\phi}(\mathbf{\bar{\mathbf{x}}})\)</span>。回归模型预测了平移和缩放参数<span
+class="math inline">\(\hat{\boldsymbol{\mu}}\)</span>和<span
+class="math inline">\(\hat{\boldsymbol{\sigma}}\)</span>，于是，关键点<span
+class="math inline">\(\boldsymbol{\mu}_{g}\)</span>的分布可以表示为：</p>
+<p><span class="math display">\[
+\mathbf{x} = \bar{\mathbf{x}} \cdot \hat{\boldsymbol{\sigma}} +
+\hat{\boldsymbol{\mu}}
+\]</span></p>
+<p>于是，损失函数为：</p>
+<p><span class="math display">\[
+\begin{align}
+\mathcal{L}_{\text{mle}}
+&amp;=\left.-\log P_{\Theta, \phi}(\mathbf{x}|\mathcal{I})
+\right|_{\mathbf{x} = \boldsymbol{\mu}_{g}} \\
+&amp;=-\log P_{\phi}\left(\bar{\boldsymbol{\mu}}_{g}\right)-\log
+\left|\operatorname{det} \frac{\partial
+\bar{\boldsymbol{\mu}}_{g}}{\partial \boldsymbol{\mu}_{g}}\right| \\
+&amp;=-\log P_{\phi}\left(\bar{\boldsymbol{\mu}}_{g}\right)+\log
+\hat{\boldsymbol{\sigma}}
+\end{align}
+\]</span></p>
+<p>其中：<span
+class="math inline">\(\bar{\boldsymbol{\mu}}_{g}=(\boldsymbol{\mu}_{g}-\hat{\boldsymbol{\mu}})/\hat{\boldsymbol{\sigma}}\)</span>，并且<span
+class="math inline">\(\partial \bar{\boldsymbol{\mu}}_{g} / \partial
+\boldsymbol{\mu}_{g}=1 / \hat{\boldsymbol{\sigma}}\)</span>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/RLE_Reparameterization.png" alt="RLE_Reparameterization" style="zoom:33%;" /></p>
+<h5 id="residual-design">3. Residual Design</h5>
+<p>Reparameterization
+Design已经可以端到端地进行训练了，但实际上还是存在一些问题。</p>
+<p>回归模型的学习是完全依赖于流模型变换的结果的，而在模型训练的初期，流模型学到的变换函数是非常不准的，如果让回归模型去拟合基于不正确的变换得到的目标分布，会破坏模型的训练。</p>
+<p>在Residual Design中，对误差分布<span
+class="math inline">\(P_{\phi}(\bar{\mathbf{x}})\)</span>进行了变换：</p>
+<p><span class="math display">\[
+P_{\phi}(\bar{\mathbf{x}}) = Q(\bar{\mathbf{x}}) \cdot
+\frac{P_{\phi}(\bar{\mathbf{x}})}{s \cdot Q(\bar{\mathbf{x}})} \cdot s
+\]</span></p>
+<p>其中：<span
+class="math inline">\(Q(\bar{\mathbf{x}})\)</span>表示一个简单的分布，例如：标准正态分布。<span
+class="math inline">\(G_{\phi}(\bar{\mathbf{x}})=\frac{P_{\phi}(\bar{\mathbf{x}})}{s
+\cdot Q(\bar{\mathbf{x}})}\)</span>表示残差分布，常数<span
+class="math inline">\(s\)</span>用于保证残差分布是一个概率分布。<strong><span
+class="math inline">\(G_{\phi}(\bar{\mathbf{x}})\)</span>就是流模型需要去学习的分布。</strong></p>
+<p>于是，对数似然函数为：</p>
+<p><span class="math display">\[
+\log P_{\phi}(\bar{\mathbf{x}}) = \log Q(\bar{\mathbf{x}}) + \log
+G_{\phi}(\bar{\mathbf{x}}) + \log s
+\]</span></p>
+<p>此时，将上式代入Reparametrization
+Design的损失函数中，可以得到Residual Design的损失函数为：</p>
+<p><span class="math display">\[
+\begin{align}
+\mathcal{L}_{r l e} &amp;=-\left.\log P_{\Theta, \phi}(\mathbf{x} \mid
+\mathcal{I})\right|_{\mathbf{x}=\boldsymbol{\mu}_{g}} \\
+&amp;=-\log P_{\phi}\left(\bar{\boldsymbol{\mu}}_{g}\right)+\log
+\hat{\boldsymbol{\sigma}} \\
+&amp;=-\log Q(\bar{\boldsymbol{\mu}}_{g})-\log
+G_{\phi}\left(\bar{\boldsymbol{\mu}}_{g}\right)-\log s+\log
+\hat{\boldsymbol{\sigma}}
+\end{align}
+\]</span></p>
+<p><span
+class="math inline">\(Q(\bar{\mathbf{x}})\)</span>是一个大致接近目标分布的分布（我们可以选择高斯分布或者拉普拉斯分布），于是可以大大减少回归模型训练对于流模型结果的依赖。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/RLE_Residual_Design.png" alt="RLE_Residual_Design" style="zoom:33%;" /></p>
+<h3 id="pytorch实现">PyTorch实现</h3>
+<p>下面是本文中RLE方法的PyTorch实现，具体内容借鉴了OpenMMPose<a
+href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RLELoss</span>(nn.Module):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;RLE Loss.</span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        use_target_weight (bool): Option to use weighted MSE loss.</span></span><br><span class="line"><span class="string">            Different joint types may have different target weights.</span></span><br><span class="line"><span class="string">        size_average (bool): Option to average the loss by the batch_size.</span></span><br><span class="line"><span class="string">        residual (bool): Option to add L1 loss and let the flow</span></span><br><span class="line"><span class="string">            learn the residual error distribution.</span></span><br><span class="line"><span class="string">        q_dis (string): Option for the identity Q(error) distribution,</span></span><br><span class="line"><span class="string">            Options: &quot;laplace&quot; or &quot;gaussian&quot;</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,</span></span><br><span class="line"><span class="params">                 use_target_weight=<span class="literal">False</span>,</span></span><br><span class="line"><span class="params">                 size_average=<span class="literal">True</span>,</span></span><br><span class="line"><span class="params">                 residual=<span class="literal">True</span>,</span></span><br><span class="line"><span class="params">                 q_dis=<span class="string">&#x27;laplace&#x27;</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(RLELoss, self).__init__()</span><br><span class="line">        self.size_average = size_average</span><br><span class="line">        self.use_target_weight = use_target_weight</span><br><span class="line">        self.residual = residual</span><br><span class="line">        self.q_dis = q_dis</span><br><span class="line"></span><br><span class="line">        self.flow_model = RealNVP()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, output, target, target_weight=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;Forward function.</span></span><br><span class="line"><span class="string">        Note:</span></span><br><span class="line"><span class="string">            - batch_size: N</span></span><br><span class="line"><span class="string">            - num_keypoints: K</span></span><br><span class="line"><span class="string">            - dimension of keypoints: D (D=2 or D=3)</span></span><br><span class="line"><span class="string">        Args:</span></span><br><span class="line"><span class="string">            output (torch.Tensor[N, K, D*2]): Output regression,</span></span><br><span class="line"><span class="string">                    including coords and sigmas.</span></span><br><span class="line"><span class="string">            target (torch.Tensor[N, K, D]): Target regression.</span></span><br><span class="line"><span class="string">            target_weight (torch.Tensor[N, K, D]):</span></span><br><span class="line"><span class="string">                Weights across different joint types.</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        pred = output[:, :, :<span class="number">2</span>]</span><br><span class="line">        sigma = output[:, :, <span class="number">2</span>:<span class="number">4</span>].sigmoid()</span><br><span class="line"></span><br><span class="line">        error = (pred - target) / (sigma + <span class="number">1e-9</span>)</span><br><span class="line">        <span class="comment"># (B, K, 2)</span></span><br><span class="line">        log_phi = self.flow_model.log_prob(error.reshape(-<span class="number">1</span>, <span class="number">2</span>))</span><br><span class="line">        log_phi = log_phi.reshape(target.shape[<span class="number">0</span>], target.shape[<span class="number">1</span>], <span class="number">1</span>)</span><br><span class="line">        log_sigma = torch.log(sigma).reshape(target.shape[<span class="number">0</span>], target.shape[<span class="number">1</span>], <span class="number">2</span>)</span><br><span class="line">        nf_loss = log_sigma - log_phi</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> self.residual:</span><br><span class="line">            <span class="keyword">assert</span> self.q_dis <span class="keyword">in</span> [<span class="string">&#x27;laplace&#x27;</span>, <span class="string">&#x27;gaussian&#x27;</span>, <span class="string">&#x27;strict&#x27;</span>]</span><br><span class="line">            <span class="keyword">if</span> self.q_dis == <span class="string">&#x27;laplace&#x27;</span>:</span><br><span class="line">                loss_q = torch.log(sigma * <span class="number">2</span>) + torch.<span class="built_in">abs</span>(error)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                loss_q = torch.log(sigma * math.sqrt(<span class="number">2</span> * math.pi)) + <span class="number">0.5</span> * error**<span class="number">2</span></span><br><span class="line"></span><br><span class="line">            loss = nf_loss + loss_q</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            loss = nf_loss</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> self.use_target_weight:</span><br><span class="line">            <span class="keyword">assert</span> target_weight <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span></span><br><span class="line">            loss *= target_weight</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> self.size_average:</span><br><span class="line">            loss /= <span class="built_in">len</span>(loss)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> loss.<span class="built_in">sum</span>()</span><br></pre></td></tr></table></figure>
+<aside id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li
+id="fn1"><p>https://github.com/open-mmlab/mmpose/blob/8dd07a75eb48eb0d482c73cf70eaa03e0a98767e/mmpose/models/losses/regression_loss.py#L14<a
+href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</aside>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/04/13/RLE/" title="[Note] Human Pose Regression with Residual Log-likelihood  Estimation (ICCV 2021)">https://ehehe.cn/2023/04/13/RLE/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E4%BA%BA%E4%BD%93%E5%85%B3%E9%94%AE%E7%82%B9/" rel="tag"># 人体关键点</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/13/BEV-LaneDet/" rel="prev" title="[Note] BEV-LaneDet: An Efficient 3D Lane Detection Based on Virtual Camera via Key-Points (CVPR 2023)">
+                  <i class="fa fa-angle-left"></i> [Note] BEV-LaneDet: An Efficient 3D Lane Detection Based on Virtual Camera via Key-Points (CVPR 2023)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/14/SimCLR/" rel="next" title="[Note] A Simple Framework for Contrastive Learning of Visual  Representations (ICML 2020)">
+                  [Note] A Simple Framework for Contrastive Learning of Visual  Representations (ICML 2020) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

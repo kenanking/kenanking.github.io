@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="原文：A Cookbook of Self-Supervised Learning  1 自我监督学习是什么，为何必须关注？ 自监督学习被誉为“智能的暗物质（the dark matter of intelligence）”，是推动机器学习发展的一条有前途的途径。与有监督学习不同的是，自监督方法可以从大量未标注的数据中进行学习，而有监督学习则受到标注数据可用性的限制。自监督学习（SSL）是深度学">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A Cookbook of Self-Supervised Learning （自监督学习指南）">
+<meta property="og:url" content="https://ehehe.cn/2023/04/26/A-Cookbook-of-Self-Supervised-Learning/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="原文：A Cookbook of Self-Supervised Learning  1 自我监督学习是什么，为何必须关注？ 自监督学习被誉为“智能的暗物质（the dark matter of intelligence）”，是推动机器学习发展的一条有前途的途径。与有监督学习不同的是，自监督方法可以从大量未标注的数据中进行学习，而有监督学习则受到标注数据可用性的限制。自监督学习（SSL）是深度学">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-26T15:40:46.000Z">
+<meta property="article:modified_time" content="2023-04-26T15:40:46.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="自监督学习">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/04/26/A-Cookbook-of-Self-Supervised-Learning/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/04/26/A-Cookbook-of-Self-Supervised-Learning/","path":"2023/04/26/A-Cookbook-of-Self-Supervised-Learning/","title":"A Cookbook of Self-Supervised Learning （自监督学习指南）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>A Cookbook of Self-Supervised Learning （自监督学习指南） | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E6%88%91%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E6%98%AF%E4%BB%80%E4%B9%88%E4%B8%BA%E4%BD%95%E5%BF%85%E9%A1%BB%E5%85%B3%E6%B3%A8"><span class="nav-text">1
+自我监督学习是什么，为何必须关注？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E6%8C%87%E5%8D%97%E5%91%A2"><span class="nav-text">1.1
+为什么需要自监督学习“指南”呢？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%96%B9%E6%B3%95%E6%97%8F%E5%92%8C%E8%B5%B7%E6%BA%90"><span class="nav-text">2 自监督学习的方法族和起源</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E8%B5%B7%E6%BA%90"><span class="nav-text">2.1 自监督学习起源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%BA%A6%E9%87%8F%E5%AD%A6%E4%B9%A0%E5%AE%B6%E6%97%8F-simclrnnclrmeanshiftscl"><span class="nav-text">2.2 深度度量学习家族:
+SimCLR&#x2F;NNCLR&#x2F;MeanSHIFT&#x2F;SCL</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/04/26/A-Cookbook-of-Self-Supervised-Learning/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="A Cookbook of Self-Supervised Learning （自监督学习指南） | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          A Cookbook of Self-Supervised Learning （自监督学习指南）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-thumbs-up"></i>
+      </span>
+      <span class="post-meta-item-text">置顶</span>
+    </span>
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-26 23:40:46" itemprop="dateCreated datePublished" datetime="2023-04-26T23:40:46+08:00">2023-04-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>13 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>原文：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2304.12210">A Cookbook of
+Self-Supervised Learning</a></p>
+</blockquote>
+<h2 id="自我监督学习是什么为何必须关注">1
+自我监督学习是什么，为何必须关注？</h2>
+<p><strong>自监督学习</strong>被誉为<em>“智能的暗物质（the dark matter
+of
+intelligence）”</em>，是推动机器学习发展的一条有前途的途径。与有监督学习不同的是，自监督方法可以从大量未标注的数据中进行学习，而有监督学习则受到标注数据可用性的限制。自监督学习（SSL）是深度学习在自然语言处理领域取得成功的基础，推进了从机器翻译到基于大规模网络文本语料库预训练的大型语言模型的发展。在计算机视觉领域，SSL推动了数据规模的新突破，例如SEER模型在10亿张图像上进行训练。计算机视觉领域的SSL方法已经能够匹敌或在某些情况下超越经过标注数据训练的模型，甚至在像ImageNet这样竞争激烈的基准测试中也可以达到很好的效果。SSL也已成功地应用于其他模态，例如视频、音频和时间序列。</p>
+<p>自监督学习基于未标注的数据定义一个<strong>代理任务（pretext
+task）</strong>，以产生具有描述性和可理解的表征。在自然语言中，一个常见的自监督学习任务是<strong>掩盖文本中的一个单词并预测周围的单词</strong>。这个预测单词周围语境的目标鼓励模型在文本中捕获单词之间的关系，而不需要任何人工标签。预训练的自监督学习模型的表征可以用于一系列下游任务，例如机器翻译、摘要、甚至生成文本等。在计算机视觉中，类似的方式可以让模型（如MAE或BYOL）学习预测图像中的某一块掩盖区域。其他自监督学习任务则鼓励将同一图像的两个视图（例如通过添加颜色或裁剪等数据增强）映射到相似的表征。</p>
+<p>使用大规模未标注数据进行预训练具有多重优势。传统的有监督学习方法通常根据可用的标注数据训练一个特定任务，而<strong>自监督学习则学习适用于不同任务的通用表征</strong>。自监督学习在医学等人工标注成本高或者特定任务不确定的领域尤为有用。此外，证据表明对应的有监督对应模型相比，自监督模型可以学习出更加鲁棒的表征，能够抵抗对抗性样本、标注破坏和输入扰动，并且更加公平。因此，自监督学习是一个受到越来越多关注的领域。然而，就像烹饪一样，训练自监督学习方法是一门需要高门槛的艺术。</p>
+<span id="more"></span>
+<h3 id="为什么需要自监督学习指南呢">1.1
+为什么需要自监督学习“指南”呢？</h3>
+<p>虽然自监督学习的许多组成部分对于研究人员来说已经很熟悉，但成功地训练一个自监督方法涉及到从<strong>代理任务</strong>到<strong>训练超参数</strong>的一系列令人眼花缭乱的选择。自监督学习的研究门槛较高，原因在于：</p>
+<ul>
+<li>（i）计算成本较高；</li>
+<li>（ii）缺少详细说明实现所需的复杂信息的清晰的论文；</li>
+<li>（iii）缺乏自监督学习的统一术语和理论观点。</li>
+</ul>
+<p>由于自监督学习建立了一个与基于传统重建的无监督学习方法（如去噪、变分）不同的范式，因此我们理解自监督学习的术语是有限的。事实上，只有在最近一年中，试图将自监督学习方法统一到一个观点下的尝试才开始出现。没有共同的基础来刻画自监督学习方法的不同组成部分，研究人员开始研究自监督学习方法会更具挑战性。与此同时，由于自监督学习已经在现实世界中得到广泛应用，因此自监督学习研究急需新的研究人员。然而，关于自监督学习的泛化保证、公平性属性以及对抗攻击或甚至对于自然变化的鲁棒性等方面仍存在许多开放性的研究问题。这些问题对于自监督学习方法的可靠性至关重要。</p>
+<p>此外，自监督学习是<strong>经验驱动</strong>的，有许多可变的部分（主要是超参数），可能会影响最终表征的关键特性，并且在已发表的工作中并不一定详细说明。也就是说，要开始研究自监督学习方法，必须首先详尽地探究这些方法，以充分掌握所有这些可变部分的影响和行为。这些经验盲点是强大的限制，因为它们要求大量的计算资源和现有的操作经验。总而言之，看似不同但有重叠之处的最先进表现的共同出现，少有的现有理论研究和广泛的实际应用，使得需要一本“烹饪书”来统一技术和它们的配方，以降低自监督学习的研究门槛。</p>
+<p>我们的目标是通过像烹饪书一样介绍自监督学习的基础知识和最新技术，降低进入自监督学习研究的门槛。要成功地烹饪，您必须首先学习基本技巧：切割、煎炒等。在第2节中，我们使用共同的术语介绍自监督学习的基本技术。具体地，我们描述了各种方法族，以及连接它们统一视角下的目标的理论线索。我们在概念框中强调了关键概念，如损失函数或训练目标。接下来，厨师必须学会巧妙地应用技巧来制作出美味佳肴。这需要学习现有的配方，组装食材，并评估菜品。在第3节中，我们介绍了成功实施自监督学习方法的实际考虑因素。我们讨论了常见的训练配方，包括超参数选择，如何组合架构和优化器，以及如何评估自监督学习方法。我们还分享了领先研究人员关于常见训练配置和陷阱的实用技巧。我们希望这本烹饪书能为成功训练和探索自监督学习提供实用的基础。</p>
+<h2 id="自监督学习的方法族和起源">2 自监督学习的方法族和起源</h2>
+<p>自监督学习方法自2020年以来得到复兴，这在很大程度上要归功于大量可用的数据集和高内存
+GPU。然而，自监督学习的起源可以追溯到深度学习时代的开端。</p>
+<h3 id="自监督学习起源">2.1 自监督学习起源</h3>
+<p>现代方法在之前实验的基础上建立，本节中我们简要介绍2020年之前自监督学习的主要思想。虽然许多具体方法已经不再主流使用，因为它们在基准问题上已经不能提供最先进的性能，因此将不会详细讨论它们，但这些论文中的想法构成了许多现代方法的基础。例如，恢复输入中缺失或扭曲部分的核心目标，或者对同一图像的两个视角进行对比，这些都是现代自监督学习方法的基础。自监督学习的早期进展主要集中在以下（有时重叠的）类别的方法开发上：</p>
+<ul>
+<li><p><strong>信息恢复</strong>：大量的方法先对图像进行掩盖或去除，然后训练神经网络来还原缺失的信息。基于颜色的自监督学习方法将一幅图像转换为灰度图像，然后训练网络预测原始的RGB值。由于颜色化需要理解物体的语义和边界，因此颜色化在目标分割中被证明是早期的SSL方法之一。最直接的信息恢复应用是将图像的一部分进行掩盖（即去除），然后训练网络来填补缺失的像素值，这个想法演变成了掩码自编码（MAE）方法，在这种方法中，被遮挡的区域是可以使用Transformer预测的图像块的集合。</p></li>
+<li><p><strong>利用视频中的时间关系</strong>：虽然本文重点讨论图像（而非视频）处理，但是已经开发了一系列专门的方法，通过预先在视频上进行预训练来学习单一图像表示。需要注意的是，信息恢复方法对于视频特别有用，因为视频包含多种可被掩蔽的模态信息。Wang和Gupta使用<code>triplet loss</code>预训练模型，促进两个不同帧中对象表示的相似性，得到的模型在目标检测方面表现良好。Pathak等人训练模型来预测单帧中对象的运动，并将这些特征用于解决单帧检测问题。Agrawal等人通过多帧预测相机的自我运动。Owens等人提出从视频中移除音轨，然后预测缺失的声音。针对像深度映射这样的特殊应用，已经提出了自监督方法，从未标记的图像对学习单目深度模型，之后再从单个摄像头视频帧中学习。这些方法仍然是一个活跃的研究领域。</p></li>
+<li><p><strong>学习空间上下文</strong>：这类方法训练模型理解场景内物体的相对位置和方向。RotNet通过应用随机旋转来掩蔽重力方向，然后要求模型预测旋转结果。Doersch等人是最早的一批自监督学习方法之一，简单地预测图像中两个随机选取的图像块之间的相对位置。这种方法被“拼图”方法所取代，后者将图像分成多个不相交的块，并预测每个块的相对位置。另一个空间任务是学习计数：模型以自监督方式训练输出图像中物体数量。</p></li>
+<li><p><strong>将相似的图像分组</strong>：可以通过将语义上相似的图像分组来学习丰富的特征。K-means聚类是传统机器学习中最广泛使用的方法之一。许多研究将K-means适应于利用神经模型进行自监督学习。深度聚类在特征空间中执行K-means来为图像分配标签，然后更新模型来优化这些分配的类标签。该方法的最近处理使用均值偏移更新将特征向其聚类中心推动，并且已被证明可以补充BYOL。BYOL是一种基于两个网络的方法，其目标是为每个样本预测伪标签（在第2.3节中讨论）。改进深度聚类的其他方法包括在特征空间中使用最优传输方法（optimal
+transport methods）来创建更有信息量的聚类。</p></li>
+<li><p><strong>生成模型</strong>：一种早期有影响的自监督学习方法是贪婪逐层预训练，其中深度网络的层逐一使用自编码器损失进行训练。类似的方法在早期使用了受限玻尔兹曼机（RBMs），可进行逐层训练并堆叠以创建深度置信网络。虽然这些方法被放弃，而选择更简单的初始化策略和更长的训练时间，但它们是历史上有影响力的自监督学习应用，因为它们使第一个“深度”网络得到了训练。之后的进展提高了自编码器的表示学习能力，包括去噪自编码器、交叉通道预测和深度正交自编码器。然而，最终发现当自编码器被要求恢复其输入中的缺失部分时，其表示的可转移性更好，从而产生了“信息恢复”类别的自监督学习方法。</p>
+<p>生成对抗网络（GAN）包括图像生成器和判别器，判别器区分真实图像和生成的图像。这个模型对可以在没有监督下训练，且这对模型组件都可能包含对于迁移学习有用的知识。早期的GAN论文利用GAN组件进行下游图像分类的实验。也开发了专门的特征学习例程，修改了判别器、添加了生成器或学习了从图像到潜空间的额外映射，以改进迁移学习。</p></li>
+<li><p><strong>多视角不变性</strong>：许多现代的自监督学习方法，特别是我们在本文中关注的方法，使用对比学习来创建对简单转换不变的特征表示。对比学习的想法是鼓励模型以相似的方式表示输入的两个增强版本。在广泛采用对比学习之前，许多方法通过不同的方法来强制实现不变性。</p>
+<p>学习未标记数据最流行的方法之一是使用弱训练网络向图像应用伪标签，然后使用这些标签进行标准监督式训练。稍后通过强制变换不变性进一步改进了这种方法。Virtual
+Adversarial
+Training使用伪标签对图像进行训练，并额外进行对抗训练，以使学习的特征在输入图像的微小扰动下几乎不变。之后的研究着眼于维护在数据增强转换下的不变性。这个类别中重要的早期方法包括MixMatch，该方法通过对训练图像进行多个不同的随机增强来平均网络输出，从而产生不受增强影响的标签。同时也发现，通过训练网络使图像在不同视角下的表示之间的互信息最大化，可以获得良好的自监督表现。这些基于增强的方法连接了上述早期方法和本文重点关注的现代方法。</p></li>
+</ul>
+<p>基于起源，我们现在将自监督学习分为四个大类：<strong>深度度量学习族（Deep
+Metric Learning Family）</strong>、<strong>自蒸馏族（The
+Self-Distillation Family）</strong>、<strong>典型相关分析族（Canonical
+Correlation Analysis Family）</strong>和<strong>掩码图像建模族（Masked
+Image Modeling Family）</strong>。</p>
+<h3 id="深度度量学习家族-simclrnnclrmeanshiftscl">2.2 深度度量学习家族:
+SimCLR/NNCLR/MeanSHIFT/SCL</h3>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/04/26/A-Cookbook-of-Self-Supervised-Learning/" title="A Cookbook of Self-Supervised Learning （自监督学习指南）">https://ehehe.cn/2023/04/26/A-Cookbook-of-Self-Supervised-Learning/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%87%AA%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" rel="tag"># 自监督学习</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/21/TOOD/" rel="prev" title="[Note] TOOD: Task-aligned One-stage Object Detection (ICCV 2021)">
+                  <i class="fa fa-angle-left"></i> [Note] TOOD: Task-aligned One-stage Object Detection (ICCV 2021)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/05/10/frp-setting/" rel="next" title="FRP内网穿透——实现内网主机访问">
+                  FRP内网穿透——实现内网主机访问 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

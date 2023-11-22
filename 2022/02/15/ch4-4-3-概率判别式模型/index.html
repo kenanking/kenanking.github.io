@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="4.3 概率判别式模型 在上一节，我们看到，对于一系列类别条件概率\(p(\mathbf{x} \mid \mathcal{C}_{k})\)（满足指数族分布），后验概率分布都可以写成一个关于\(\mathbf{x}\)的广义线性模型，加上logistic sigmoid或softmax激活函数的形式。在生成式方法中，我们对概率分布进行建模，通过最大似然求分布的参数，最后计算后验概率。 另一种方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch4-4.3 概率判别式模型">
+<meta property="og:url" content="https://ehehe.cn/2022/02/15/ch4-4-3-%E6%A6%82%E7%8E%87%E5%88%A4%E5%88%AB%E5%BC%8F%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="4.3 概率判别式模型 在上一节，我们看到，对于一系列类别条件概率\(p(\mathbf{x} \mid \mathcal{C}_{k})\)（满足指数族分布），后验概率分布都可以写成一个关于\(\mathbf{x}\)的广义线性模型，加上logistic sigmoid或softmax激活函数的形式。在生成式方法中，我们对概率分布进行建模，通过最大似然求分布的参数，最后计算后验概率。 另一种方式">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/logistic%E5%9B%9E%E5%BD%92.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%B8%8D%E5%90%8Cw%E7%9A%84sigmoid%E5%87%BD%E6%95%B0.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E5%A4%9A%E7%B1%BBlogistic%E5%9B%9E%E5%BD%92.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E6%B7%B7%E5%90%88%E9%AB%98%E6%96%AF%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%A6%82%E7%8E%87%E5%88%86%E5%B8%83%E5%8F%8A%E7%B4%AF%E7%A7%AF%E6%A6%82%E7%8E%87%E5%88%86%E5%B8%83.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/probit%E5%87%BD%E6%95%B0%E5%92%8Csigmoid%E5%87%BD%E6%95%B0.jpg">
+<meta property="article:published_time" content="2022-02-15T05:54:24.000Z">
+<meta property="article:modified_time" content="2022-02-15T05:54:24.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="PRML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/logistic%E5%9B%9E%E5%BD%92.jpg">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/02/15/ch4-4-3-%E6%A6%82%E7%8E%87%E5%88%A4%E5%88%AB%E5%BC%8F%E6%A8%A1%E5%9E%8B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/02/15/ch4-4-3-%E6%A6%82%E7%8E%87%E5%88%A4%E5%88%AB%E5%BC%8F%E6%A8%A1%E5%9E%8B/","path":"2022/02/15/ch4-4-3-概率判别式模型/","title":"ch4-4.3 概率判别式模型"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch4-4.3 概率判别式模型 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E7%8E%87%E5%88%A4%E5%88%AB%E5%BC%8F%E6%A8%A1%E5%9E%8B"><span class="nav-text">4.3 概率判别式模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9A%E5%9F%BA%E5%87%BD%E6%95%B0"><span class="nav-text">4.3.1 固定基函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#logistic%E5%9B%9E%E5%BD%92"><span class="nav-text">4.3.2 Logistic回归</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1"><span class="nav-text">最大似然估计</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E9%87%8D%E5%8A%A0%E6%9D%83%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98"><span class="nav-text">4.3.3 迭代重加权最小二乘</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B3%E6%96%B9%E5%92%8C%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-text">平方和损失函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%A4%E5%8F%89%E7%86%B5%E8%AF%AF%E5%B7%AE%E5%87%BD%E6%95%B0"><span class="nav-text">交叉熵误差函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%B1%BBlogistic%E5%9B%9E%E5%BD%92"><span class="nav-text">4.3.4 多类Logistic回归</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#probit%E5%9B%9E%E5%BD%92"><span class="nav-text">4.3.5 Probit回归</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E8%BF%9E%E6%8E%A5%E5%87%BD%E6%95%B0canonical-link-function"><span class="nav-text">6 标准连接函数（Canonical
+link function）</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/02/15/ch4-4-3-%E6%A6%82%E7%8E%87%E5%88%A4%E5%88%AB%E5%BC%8F%E6%A8%A1%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch4-4.3 概率判别式模型 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch4-4.3 概率判别式模型
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-15 13:54:24" itemprop="dateCreated datePublished" datetime="2022-02-15T13:54:24+08:00">2022-02-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>15 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="概率判别式模型">4.3 概率判别式模型</h2>
+<p>在上一节，我们看到，对于一系列类别条件概率<span
+class="math inline">\(p(\mathbf{x} \mid
+\mathcal{C}_{k})\)</span>（满足指数族分布），后验概率分布都可以写成一个关于<span
+class="math inline">\(\mathbf{x}\)</span>的广义线性模型，加上logistic
+sigmoid或softmax激活函数的形式。在生成式方法中，我们对概率分布进行建模，通过最大似然求分布的参数，最后计算后验概率。</p>
+<p>另一种方式是直接对线性函数进行建模，通过最大似然求线性函数的参数，这种方式就是判别式方法。在这种方法中，<strong>迭代重加权最小二乘（iterative
+reweighted least squares，IRLS）</strong>是一种有效的求解算法。</p>
+<p>概率判别式模型具有两个优点：</p>
+<ul>
+<li><strong>更少的自适应参数</strong>（Adaptive parameters）</li>
+<li>当假设的概率密度函数<span class="math inline">\(p(\mathbf{x} \mid
+\mathcal{C}_{k})\)</span>不能很好近似真实数据分布时，能得到<strong>更好的预测性能</strong></li>
+</ul>
+<span id="more"></span>
+<h3 id="固定基函数">4.3.1 固定基函数</h3>
+<p>目前为止，分类模型都是直接应用在原始输入向量<span
+class="math inline">\(\mathbf{x}\)</span>上。上面的模型在使用一系列基函数<span
+class="math inline">\(\boldsymbol{\phi}(\mathbf{x})\)</span>对输入做固定的非线性变化后仍然适用。通过非线性变换，可以使得在原来特征空间中线性不可分，在新特征空间<span
+class="math inline">\(\boldsymbol{\phi}\)</span>中线性可分。</p>
+<p>然而，我们需要注意，<strong>非线性的变换<span
+class="math inline">\(\boldsymbol{\phi}(\mathbf{x})\)</span>不能消除类别之间的条件概率<span
+class="math inline">\(p(\mathbf{x} \mid
+\mathcal{C}_{k})\)</span>的重叠，甚至可能增加重叠</strong>，因为<span
+class="math inline">\(\boldsymbol{\phi}(\mathbf{x})\)</span>是多对一映射。因此，我们需要选择合适的基函数。</p>
+<p>这一章中的计算都基于<span
+class="math inline">\(\mathbf{x}\)</span>经过非线性变换后的特征<span
+class="math inline">\(\boldsymbol{\phi}\)</span>。</p>
+<h3 id="logistic回归">4.3.2 Logistic回归</h3>
+<p>对于二分类问题，类别<span
+class="math inline">\(\mathcal{C}_{1}\)</span>的后验概率可以写成一个关于特征向量的线性函数加上logistic
+sigmoid函数的形式： <span class="math display">\[
+p(\mathcal{C}_{1} \mid \boldsymbol{\phi}) = y(\boldsymbol{\phi}) =
+\sigma(\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi})
+\]</span></p>
+<p>对应类别<span
+class="math inline">\(\mathcal{C}_{2}\)</span>的后验概率为：<span
+class="math inline">\(p(\mathcal{C}_{2} \mid \boldsymbol{\phi}) =
+1-p(\mathcal{C}_{1} \mid \boldsymbol{\phi})\)</span>。</p>
+<p>在统计学中，这个模型称为<strong>logistic回归</strong>，尽管这是一个分类模型而非回归模型。</p>
+<p>对于一个<span class="math inline">\(M\)</span>维的特征空间<span
+class="math inline">\(\boldsymbol{\phi}\)</span>，logistic回归的模型有<span
+class="math inline">\(M\)</span>个可调节的参数。相比较之下，如果我们使用生成式方法，假设类别条件概率为高斯分布，则需要<span
+class="math inline">\(2M\)</span>个参数表示均值、<span
+class="math inline">\(M(M+1)/2\)</span>个参数表示协方差矩阵，加上类别先验一共需要<span
+class="math inline">\(M(M+5)/2+1\)</span>个参数。很明显，当<span
+class="math inline">\(M\)</span>的值较大时，logistic回归的模型在参数量上具有更大的优势。</p>
+<h4 id="最大似然估计">最大似然估计</h4>
+<p>下面，我们使用最大似然估计求解logistic回归模型中的参数。首先，我们求的logistic
+sigmoid函数的的导数为： <span class="math display">\[
+\begin{align}
+\frac{\mathrm{d}\sigma}{\mathrm{d}a} &amp;=
+\frac{-1}{\left(1+\exp(-a)\right)^{2}}\times\exp(-a)\times(-1) \\
+&amp;= \frac{1+\exp(-a)-1}{\left(1+\exp(-a)\right)^{2}} \\
+&amp;= \sigma(1-\sigma)
+\end{align}
+\]</span></p>
+<p>对于一个数据集<span class="math inline">\(\{\boldsymbol{\phi}_{n},
+t_{n}\}\)</span>，其中<span class="math inline">\(t_{n} \in
+\{0,1\}\)</span>并且<span
+class="math inline">\(\boldsymbol{\phi}_{n}=\boldsymbol{\phi}(\mathbf{x}_{n})\)</span>，<span
+class="math inline">\(n=1,\dots,N\)</span>，似然函数可以写为： <span
+class="math display">\[
+p(\mathsf{t} \mid \mathbf{w}) = =\prod_{n=1}^{N}
+y_{n}^{t_{n}}\left\{1-y_{n}\right\}^{1-t_{n}}
+\]</span></p>
+<p>其中，<span
+class="math inline">\(\mathsf{t}=(t_{1},\dots,t_{N})^{\mathrm{T}}\)</span>并且<span
+class="math inline">\(y_{n}=p(\mathcal{C}_{1} \mid
+\boldsymbol{\phi}_{n})\)</span>。<span
+class="math inline">\(y_{n}\)</span>表示的是<span
+class="math inline">\(t_{n}\)</span>为<span
+class="math inline">\(1\)</span>的概率。</p>
+<p>我们将负对数似然函数定义为误差函数： <span class="math display">\[
+E(\mathbf{w}) = -\ln p(\mathsf{t} \mid \mathbf{w}) =
+-\sum_{n=1}^{N}\{t_{n} \ln y_{n} + (1-t_{n}) \ln (1-y_{n})\}
+\]</span></p>
+<p>其中，<span
+class="math inline">\(y_{n}=\sigma(a_{n})\)</span>并且<span
+class="math inline">\(a_{n}=\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi}_{n}\)</span>。上式被称为<strong>交叉熵误差（cross
+entropy error）函数</strong>。</p>
+<p>对<span
+class="math inline">\(E(\mathbf{w})\)</span>求导，我们可以得到： <span
+class="math display">\[
+\begin{align}
+\nabla E(\mathbf{w}) &amp;= -\sum_{n=1}^{N}\left\{t_{n}
+\frac{y_{n}(1-y_{n})}{y_{n}}\boldsymbol{\phi}_{n} +
+(1-t_{n})\frac{-y_{n}(1-y_{n})}{(1-y_{n}}\boldsymbol{\phi}_{n}\right\}
+\\
+&amp;=
+-\sum_{n=1}^{N}\left\{t_{n}(1-y_{n})\boldsymbol{\phi}_{n}-(1-t_{n})y_{n}\boldsymbol{\phi}_{n}\right\}
+\\
+&amp;= \sum_{n=1}^{N}(y_{n}-t_{n})\boldsymbol{\phi}_{n}
+\end{align}
+\]</span></p>
+<p>从上式可以看到，第<span
+class="math inline">\(n\)</span>个数据点对梯度的贡献等于误差<span
+class="math inline">\(y_{n}-t_{n}\)</span>乘上特征向量<span
+class="math inline">\(\boldsymbol{\phi}_{n}\)</span>。另外，我们可以发现，交叉熵误差函数的梯度与平方和误差函数的梯度具有相同的形式。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">np.random.seed(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">logistic_regression</span>(<span class="params">X, Y, lr=<span class="number">0.1</span>, max_iter=<span class="number">100</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    Logistic regression</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_sigmoid</span>(<span class="params">z</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span> / (<span class="number">1</span> + np.exp(-z))</span><br><span class="line"></span><br><span class="line">    n_samples, n_features = X.shape</span><br><span class="line">    w = np.zeros(n_features + <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    X = np.hstack([np.ones((n_samples, <span class="number">1</span>)), X])</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(max_iter):</span><br><span class="line">        w_prev = np.copy(w)</span><br><span class="line">        pred = _sigmoid(X @ w)</span><br><span class="line">        w -= lr * X.T @ (pred - Y)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> np.linalg.norm(w - w_prev) &lt; <span class="number">1e-6</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> w</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">x_1 = np.random.normal(<span class="number">1</span>, <span class="number">1.5</span>, (<span class="number">50</span>, <span class="number">2</span>)) + np.array([-<span class="number">2</span>, <span class="number">1</span>])</span><br><span class="line">x_2 = np.random.normal(<span class="number">0</span>, <span class="number">1.5</span>, (<span class="number">50</span>, <span class="number">2</span>)) + np.array([<span class="number">2</span>, -<span class="number">2</span>])</span><br><span class="line"></span><br><span class="line">X_train = np.vstack([x_1, x_2])</span><br><span class="line">Y_train = np.hstack([np.ones(<span class="number">50</span>, dtype=np.int32),</span><br><span class="line">                     np.zeros(<span class="number">50</span>, dtype=np.int32)])</span><br><span class="line"></span><br><span class="line">w = logistic_regression(X_train, Y_train)</span><br><span class="line"></span><br><span class="line">x = np.linspace(-<span class="number">6</span>, <span class="number">8</span>, <span class="number">100</span>)</span><br><span class="line">y = -(w[<span class="number">1</span>] * x + w[<span class="number">0</span>]) / w[<span class="number">2</span>]</span><br><span class="line"></span><br><span class="line">plt.scatter(x_1[:, <span class="number">0</span>], x_1[:, <span class="number">1</span>], marker=<span class="string">&#x27;x&#x27;</span>, color=<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">plt.scatter(x_2[:, <span class="number">0</span>], x_2[:, <span class="number">1</span>], marker=<span class="string">&#x27;o&#x27;</span>, color=<span class="string">&#x27;b&#x27;</span>)</span><br><span class="line">plt.plot(x, y, color=<span class="string">&#x27;g&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;x1&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;x2&#x27;</span>)</span><br><span class="line">plt.xlim(-<span class="number">6</span>, <span class="number">8</span>)</span><br><span class="line">plt.ylim(-<span class="number">7</span>, <span class="number">7</span>)</span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/logistic回归.jpg" alt="logistic回归" style="zoom:33%;" /></p>
+<p>最后，值得注意的是，最大似然方法在线性可分的数据集上会出现严重的过拟合问题。</p>
+<p>最大似然解中的超平面对应于<span
+class="math inline">\(\sigma=0.5\)</span>的情况，这等价于<span
+class="math inline">\(\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi}=0\)</span>的情况。最大似然解会让每个类别<span
+class="math inline">\(k\)</span>中的数据<span
+class="math inline">\(\mathbf{x}\)</span>对应的后验概率<span
+class="math inline">\(p(\mathcal{C}_{k} \mid
+\mathbf{x})=1\)</span>，这会使得<span
+class="math inline">\(\|\mathbf{w}\|\)</span>的大小趋向于无穷大，意味着sigmoid函数会变得无限陡峭。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/不同w的sigmoid函数.jpg" alt="不同w的sigmoid函数" style="zoom:33%;" /></p>
+<p>即使数据集很大，只要数据集是线性可分的，也会出现这个问题。但是我们可以通过使用<strong>正则化</strong>或<strong>引入<span
+class="math inline">\(\mathbf{w}\)</span>的先验</strong>来解决这个问题。</p>
+<h3 id="迭代重加权最小二乘">4.3.3 迭代重加权最小二乘</h3>
+<p>之前在讨论线性回归模型时，我们可以得到最大似然估计的闭式解，这是由于对数似然函数是关于参数<span
+class="math inline">\(\mathbf{w}\)</span>的二次函数。在logistic回归中，对数似然函数中包含sigmoid函数，无法计算闭式解。</p>
+<p>我们可以通过迭代的方式求解误差函数的最小值，这种迭代方式为<strong>牛顿-拉夫逊（拉弗森）方法（Newton-Raphson
+method）</strong>，也叫<strong>牛顿迭代法</strong>。根据牛顿迭代法，参数<span
+class="math inline">\(\mathbf{w}\)</span>的更新方式为： <span
+class="math display">\[
+\mathbf{w}^{(\text{new})}=\mathbf{w}^{(\text{old})}-\mathbf{H}^{-1}
+\nabla E(\mathbf{w}^{(\text{old})})
+\]</span></p>
+<p>其中，<span
+class="math inline">\(\mathbf{H}\)</span>为Hessian矩阵，其中的每个元素表示<span
+class="math inline">\(E(\mathbf{w})\)</span>关于<span
+class="math inline">\(\mathbf{w}\)</span>的二阶导数，即：<span
+class="math inline">\(\mathbf{H}=\nabla^2 E(\mathbf{w})\)</span>。</p>
+<h4 id="平方和损失函数">平方和损失函数</h4>
+<p>对于线性回归中的平方和损失函数： <span class="math display">\[
+\nabla E(\mathbf{w}) =
+\sum_{n=1}^{N}(\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi}_{n} -
+t_{n})\boldsymbol{\phi}_{n} =
+\boldsymbol{\Phi}^{\mathrm{T}}\boldsymbol{\Phi}\mathbf{w} -
+\boldsymbol{\Phi}^{\mathrm{T}}\boldsymbol{\mathsf{t}}
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{H} = \nabla \nabla E(\mathbf{w}) =
+\sum_{n=1}^{N}\boldsymbol{\phi}_{n}\boldsymbol{\phi}_{n}^{\mathrm{T}} =
+\boldsymbol{\Phi}^{\mathrm{T}}\boldsymbol{\Phi}
+\]</span></p>
+<p>于是，牛顿迭代法的更新公式为： <span class="math display">\[
+\begin{align}
+\mathbf{w}^{(\text{new})}
+&amp;= \mathbf{w}^{(\text{old})}-\left(\mathbf{\Phi}^{\mathrm{T}}
+\mathbf{\Phi}\right)^{-1}\left\{\mathbf{\Phi}^{\mathrm{T}} \mathbf{\Phi}
+\mathbf{w}^{(\mathrm{old})}-\mathbf{\Phi}^{\mathrm{T}}
+\boldsymbol{\mathsf{t}}\right\} \\
+&amp;= \left(\boldsymbol{\Phi}^{\mathrm{T}}
+\boldsymbol{\Phi}\right)^{-1} \boldsymbol{\Phi}^{\mathrm{T}}
+\boldsymbol{\mathsf{t}}
+\end{align}
+\]</span></p>
+<p>可以看到，上式就是线性回归的最小二乘解。在线性回归的情况下，误差函数是二次函数，因此牛顿迭代法一步就可以得到精确解。</p>
+<h4 id="交叉熵误差函数">交叉熵误差函数</h4>
+<p>对于logistic回归中的交叉熵误差函数： <span class="math display">\[
+\nabla E(\mathbf{w}) = \sum_{n=1}^{N}(y_{n} -
+t_{n})\boldsymbol{\phi}_{n} =
+\boldsymbol{\Phi}^{\mathrm{T}}(\boldsymbol{\mathsf{y}} -
+\boldsymbol{\mathsf{t}})
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{H} = \nabla \nabla E(\mathbf{w}) =
+\sum_{n=1}^{N}y_{n}(1-y_{n})\boldsymbol{\phi}_{n}\boldsymbol{\phi}_{n}^{\mathrm{T}}
+= \boldsymbol{\Phi}^{\mathrm{T}} \mathbf{R} \boldsymbol{\Phi}
+\]</span></p>
+<p>其中，<span class="math inline">\(\mathbf{R}\)</span>为<span
+class="math inline">\(N \times N\)</span>的对角阵，每个元素为<span
+class="math inline">\(R_{n n} = y_{n}(1-y_{n})\)</span>。</p>
+<p>Hessian矩阵不再是一个常数，因为误差函数不是一个二次函数。因为<span
+class="math inline">\(0&lt;y_{n}&lt;1\)</span>，所以对于任意的向量<span
+class="math inline">\(\mathbf{u}\)</span>都有<span
+class="math inline">\(\mathbf{u}^{\mathrm{T}}\mathbf{H}\mathbf{u}&gt;0\)</span>，并且<span
+class="math inline">\(\mathbf{H}\)</span>是正定的。于是可以得到，误差函数是关于<span
+class="math inline">\(\mathbf{w}\)</span>的<strong>凹函数</strong>，具有<strong>唯一的最小值</strong>。</p>
+<p>牛顿迭代法的更新公式为： <span class="math display">\[
+\begin{align}
+\mathbf{w}^{\text{(new)}} &amp;= \mathbf{w}^{\text{(old)}} -
+(\mathbf{\Phi}^{\mathrm{T}}\mathbf{R}\mathbf{\Phi})^{-1}\mathbf{\Phi}^{\mathrm{T}}(\mathbf{y}-\boldsymbol{\mathsf{t}})
+\\
+&amp;=(\mathbf{\Phi}^{\mathrm{T}}\mathbf{R}\mathbf{\Phi})^{-1}\{\mathbf{\Phi}^{\mathrm{T}}\mathbf{R}\mathbf{\Phi}\mathbf{w}^{\text{(old)}}-\mathbf{\Phi}^{\mathrm{T}}(\mathbf{y}-\boldsymbol{\mathsf{t}})\}
+\\
+&amp;=
+(\mathbf{\Phi}^{\mathrm{T}}\mathbf{R}\mathbf{\Phi})^{-1}\mathbf{\Phi}^{\mathrm{T}}\mathbf{R}\boldsymbol{\mathsf{z}}
+\end{align}
+\]</span> 其中，<span
+class="math inline">\(\boldsymbol{\mathsf{z}}\)</span>是一个<span
+class="math inline">\(N\)</span>维向量。 <span class="math display">\[
+\boldsymbol{\mathsf{z}} =
+\mathbf{\Phi}\mathbf{w}^{\text{(old)}}-\mathbf{R}^{-1}(\mathbf{y}-\boldsymbol{\mathsf{t}})
+\]</span> #### 迭代重加权最小二乘</p>
+<p>我们可以看到上面的式子满足<strong>加权最小二乘（weighted
+least-squares）</strong>的法方程形式。由于这里的权矩阵<span
+class="math inline">\(\mathbf{R}\)</span>不是一个常数，而是一个与<span
+class="math inline">\(\mathbf{w}\)</span>相关的变量，所以上式必须迭代计算。这种算法称为<strong>迭代重加权最小二乘（iterative
+reweighted least squares，IRLS）</strong>。</p>
+<h3 id="多类logistic回归">4.3.4 多类Logistic回归</h3>
+<p>对于多分类模型，后验分布由线性函数加上softmax变换得到： <span
+class="math display">\[
+p(\mathcal{C}_{k} \mid \boldsymbol{\phi}) = y_{k}(\boldsymbol{\phi}) =
+\frac{\exp(a_{k})}{\sum_{j}\exp(a_{j})}
+\]</span> 其中，<span
+class="math inline">\(a_{k}=\mathbf{w}_{k}^{\mathrm{T}}\boldsymbol{\phi}\)</span>。</p>
+<p>我们可以使用最大似然方法直接确定模型参数<span
+class="math inline">\(\{\mathbf{w}_{k}\}\)</span>。</p>
+<p>首先，我们需要计算<span
+class="math inline">\(y_{k}\)</span>关于每一个<span
+class="math inline">\(a_{j}\)</span>的导数： <span
+class="math display">\[
+\frac{\partial y_{k}}{\partial a_{j}} = y_{k}(\mathbf{I}_{kj} - y_{j})
+\]</span> 其中，<span
+class="math inline">\(\mathbf{I}_{kj}\)</span>是单位矩阵中的元素。</p>
+<p>对于类别<span
+class="math inline">\(\mathcal{C}_{k}\)</span>的一个特征向量<span
+class="math inline">\(\boldsymbol{\phi}_{n}\)</span>，它对应的目标向量为<span
+class="math inline">\(\mathbf{t}_{n}\)</span>，<span
+class="math inline">\(\mathbf{t}_{n}\)</span>采用<span
+class="math inline">\(1-of-K\)</span>编码方式。下面，我们写出似然函数。
+<span class="math display">\[
+p(\mathbf{T} \mid \mathbf{w}_{1},\dots,\mathbf{w}_{K}) =
+\prod_{n=1}^{N}\prod_{k=1}^{K}p(\mathcal{C}_{k} \mid
+\boldsymbol{\phi}_{n})^{t_{n k}} = \prod_{n=1}^{N}\prod_{k=1}^{K}y_{n
+k}^{t_{n k}}
+\]</span></p>
+<p>其中，<span class="math inline">\(y_{n k} =
+y_{k}(\boldsymbol{\phi}_{n})\)</span>，<span
+class="math inline">\(\mathbf{T}=\{\mathbf{t}_{1},\dots,\mathbf{t}_{N}\}^{\mathrm{T}}\)</span>为<span
+class="math inline">\(N \times K\)</span>维的矩阵。</p>
+<p>取负对数似然函数可以得到： <span class="math display">\[
+E(\mathbf{w}_{1},\dots,\mathbf{w}_{K}) = -\ln p(\mathbf{T} \mid
+\mathbf{w}_{1},\dots,\mathbf{w}_{K}) = -\sum_{n=1}^{N}\sum_{k=1}^{K}t_{n
+k}\ln y_{n k}
+\]</span> 上式称为多分类问题中的<strong>交叉熵误差函数（cross-entropy
+error function）</strong>。</p>
+<p>我们求误差函数关于一个参数向量<span
+class="math inline">\(\mathbf{w}_{j}\)</span>的导数： <span
+class="math display">\[
+\begin{align}
+\nabla_{\mathbf{w}_{j}} E(\mathbf{w},\dots,\mathbf{w}_{K})
+&amp;= -\sum_{n=1}^{N}\sum_{k=1}^{K} \frac{\partial}{\partial
+\mathbf{w}_{j}}t_{n k}\ln y_{n k} \\
+&amp;= -\sum_{n=1}^{N}\sum_{k=1}^{K} \frac{\partial t_{n k}\ln y_{n
+k}}{\partial y_{n k}} \frac{\partial y_{n k}}{\partial a_{j}}
+\frac{\partial a_{j}}{\partial \mathbf{w}_{j}} \\
+&amp;= -\sum_{n=1}^{N}\sum_{k=1}^{K}t_{n k} \frac{1}{y_{n k}} \cdot y_{n
+k}(\mathbf{I}_{k j}-y_{n j}) \cdot \boldsymbol{\phi}_{n} \\
+&amp;= -\sum_{n=1}^{N}\sum_{k=1}^{K}t_{n k}(\mathbf{I}_{k j}-y_{n
+j})\boldsymbol{\phi}_{n} \\
+&amp;= \sum_{n=1}^{N}\sum_{k=1}^{K}t_{n k}y_{n j}\boldsymbol{\phi}_{n} -
+\sum_{n=1}^{N}\sum_{k=1}^{K}t_{n k}\mathbf{I}_{k j}\boldsymbol{\phi}_{n}
+\\
+&amp;= \sum_{n=1}^{N}y_{n j}\boldsymbol{\phi}_{n} - t_{n
+j}\boldsymbol{\phi}_{n} \\
+&amp;= \sum_{n=1}^{N}(y_{n j}-t_{n j})\boldsymbol{\phi}_{n}
+\end{align}
+\]</span>
+从上面的式子，我们可以看到梯度的形式与平方和误差函数以及logistic回归的交叉熵误差函数的形式相同。</p>
+<p>为了使用牛顿迭代法去求解上式，我们可以进一步求误差函数的二阶导，得到多分类问题中对应的IRLS解法。</p>
+<p><span class="math display">\[
+\nabla_{\mathbf{w}_{k}}\nabla_{\mathbf{w}_{j}}
+E(\mathbf{w},\dots,\mathbf{w}_{K}) = \sum_{n=1}^{N} y_{n
+k}(\mathbf{I}_{k j}-y_{n
+j})\boldsymbol{\phi}_{n}\boldsymbol{\phi}_{n}^{\mathrm{T}}
+\]</span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">np.random.seed(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">one_of_k_encoding</span>(<span class="params">x, k</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    one-of-k encoding of x with k classes</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        x: input, 1D array</span></span><br><span class="line"><span class="string">        k: number of classes</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        one-of-k encoded x, a 2D array of shape (n, k)</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">type</span>(x) == <span class="built_in">list</span>:</span><br><span class="line">        x = np.array(x)</span><br><span class="line">    <span class="keyword">return</span> np.eye(k)[x]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">softmax</span>(<span class="params">z</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    softmax function</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        z: input, shape=(n_samples, n_classes)</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        softmax(z), shape=(n_samples, n_classes)</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> np.exp(z) / np.<span class="built_in">sum</span>(np.exp(z), axis=<span class="number">1</span>, keepdims=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">multiclass_logistic_regression</span>(<span class="params">X, Y, lr=<span class="number">0.001</span>, max_iter=<span class="number">1000</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    Multiclass logistic regression</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        X: training data, shape=(n_samples, n_features)</span></span><br><span class="line"><span class="string">        Y: training label, shape=(n_samples, n_classes) (one-hot)</span></span><br><span class="line"><span class="string">        lr: learning rate</span></span><br><span class="line"><span class="string">        max_iter: maximum number of iterations</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        w: weight vector, shape=(n_classes, n_features + 1) (including bias)</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    n_samples, n_features = X.shape</span><br><span class="line">    _, n_classes = Y.shape</span><br><span class="line">    W = np.zeros((n_classes, n_features + <span class="number">1</span>))   <span class="comment"># (n_classes, n_features + 1)</span></span><br><span class="line"></span><br><span class="line">    X = np.hstack([np.ones((n_samples, <span class="number">1</span>)), X])  <span class="comment"># add bias term</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(max_iter):</span><br><span class="line">        W_prev = np.copy(W)</span><br><span class="line">        pred = softmax(X @ W.T)    <span class="comment"># (n_samples, n_classes)</span></span><br><span class="line">        W -= lr * (pred - Y).T @ X  <span class="comment"># (n_classes, n_features + 1)</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> np.linalg.norm(W - W_prev) &lt; <span class="number">1e-6</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> W</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">x_1 = np.random.normal(<span class="number">0</span>, <span class="number">2</span>, (<span class="number">50</span>, <span class="number">2</span>)) + np.array([<span class="number">1</span>, <span class="number">8</span>])</span><br><span class="line">x_2 = np.random.normal(<span class="number">0</span>, <span class="number">2</span>, (<span class="number">50</span>, <span class="number">2</span>)) + np.array([<span class="number">5</span>, -<span class="number">4</span>])</span><br><span class="line">x_3 = np.random.normal(<span class="number">0</span>, <span class="number">2</span>, (<span class="number">50</span>, <span class="number">2</span>)) + np.array([-<span class="number">7</span>, -<span class="number">7</span>])</span><br><span class="line"></span><br><span class="line">X_train = np.vstack([x_1, x_2, x_3])</span><br><span class="line">Y_train = one_of_k_encoding(np.hstack([np.zeros(<span class="number">50</span>, dtype=np.int32),</span><br><span class="line">                                       np.ones(<span class="number">50</span>, dtype=np.int32),</span><br><span class="line">                                       np.ones(<span class="number">50</span>, dtype=np.int32) * <span class="number">2</span>]), <span class="number">3</span>)  <span class="comment"># one-hot encoding</span></span><br><span class="line"></span><br><span class="line">W = multiclass_logistic_regression(X_train, Y_train)</span><br><span class="line"><span class="built_in">print</span>(W)</span><br><span class="line"></span><br><span class="line">plt.scatter(x_1[:, <span class="number">0</span>], x_1[:, <span class="number">1</span>], marker=<span class="string">&#x27;x&#x27;</span>, color=<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">plt.scatter(x_2[:, <span class="number">0</span>], x_2[:, <span class="number">1</span>], marker=<span class="string">&#x27;o&#x27;</span>, color=<span class="string">&#x27;b&#x27;</span>)</span><br><span class="line">plt.scatter(x_3[:, <span class="number">0</span>], x_3[:, <span class="number">1</span>], marker=<span class="string">&#x27;^&#x27;</span>, color=<span class="string">&#x27;g&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># plot decision boundary</span></span><br><span class="line">X, Y = np.meshgrid(np.linspace(-<span class="number">15</span>, <span class="number">11</span>, <span class="number">1000</span>), np.linspace(-<span class="number">12</span>, <span class="number">14</span>, <span class="number">1000</span>))</span><br><span class="line">X_test = np.vstack([X.ravel(), Y.ravel()]).T</span><br><span class="line">X_test = np.hstack([np.ones((X_test.shape[<span class="number">0</span>], <span class="number">1</span>)), X_test])</span><br><span class="line">Z = np.argmax(softmax(X_test @ W.T), axis=<span class="number">1</span>)</span><br><span class="line">Z = Z.reshape(X.shape)</span><br><span class="line">plt.contourf(X, Y, Z, alpha=<span class="number">0.3</span>)</span><br><span class="line"></span><br><span class="line">plt.xlabel(<span class="string">&#x27;x1&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;x2&#x27;</span>)</span><br><span class="line">plt.xlim(-<span class="number">15</span>, <span class="number">11</span>)</span><br><span class="line">plt.ylim(-<span class="number">12</span>, <span class="number">14</span>)</span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/多类logistic回归.jpg" alt="多类logistic回归" style="zoom:33%;" /></p>
+<h3 id="probit回归">4.3.5 Probit回归</h3>
+<p>前面我们讨论了一系列类别条件概率符合指数族分布的情况，这些情况下后验概率分布为一个线性函数加上logistic（或softmax）变换。然而，不是所有的类别条件概率（如：混合高斯分布）都能给出logistic（或softmax）这样简单的后验概率形式，所以我们将探索更一般的后验形式。</p>
+<p>在二分类问题中，对于广义线性模型，有如下形式： <span
+class="math display">\[
+p(t=1 \mid a) = f(a)
+\]</span> 其中：<span class="math inline">\(a =
+\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi}\)</span>，<span
+class="math inline">\(f(\cdot)\)</span>表示激活函数。</p>
+<p>一种选择是改变激活函数的阈值，我们可以像下面这样确定目标值： <span
+class="math display">\[
+\begin{cases}
+t_{n} = 1 &amp; \text{ if } a_{n} \geqslant \theta \\
+t_{n} = 0 &amp; \text{ otherwise }
+\end{cases}
+\]</span> 如果我们假设<span
+class="math inline">\(\theta\)</span>从概率分布<span
+class="math inline">\(p(\theta)\)</span>中取得，那么对应的激活函数为累积分布函数：
+<span class="math display">\[
+f(a) = \int_{-\infty}^{a}p(\theta)\mathrm{d}\theta
+\]</span> 如下图所示。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/混合高斯模型的概率分布及累积概率分布.png" alt="混合高斯模型的概率分布及累积概率分布" style="zoom:50%;" /></p>
+<p>特殊情况下，当<span
+class="math inline">\(p(\theta)\)</span>符合均值为<span
+class="math inline">\(0\)</span>，方差为<span
+class="math inline">\(1\)</span>的标准正态分布时，累积分布函数为： <span
+class="math display">\[
+\Phi(a) = \int_{-\infty}^{a} \mathcal{N}(\theta \mid 0,
+1)\mathrm{d}\theta
+\]</span>
+上式称为<strong>probit函数</strong>，形状与sigmoid函数相似，如下图所示。使用<strong>更一般的高斯分布等价于对线性系数<span
+class="math inline">\(\mathbf{w}\)</span>的缩放</strong>，不会改变当前的模型。</p>
+<p>在许多科学计算包中提供了下面的函数： <span class="math display">\[
+\operatorname{erf}(a) =
+\frac{2}{\sqrt{\pi}}\int_{0}^{a}\exp(-\theta^{2}/2)\mathrm{d}\theta
+\]</span>
+这个函数称为<strong>erf函数</strong>或<strong>error函数</strong>（不同于误差函数）。它与probit函数的关系为：
+<span class="math display">\[
+\Phi(a) = \frac{1}{2}\left\{1 +
+\frac{1}{\sqrt{2}}\operatorname{erf}(a)\right\}
+\]</span>
+基于probit激活函数的广义线性模型称为<strong>probit回归</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy.special <span class="keyword">import</span> erf</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sigmoid</span>(<span class="params">z</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> / (<span class="number">1</span> + np.exp(-z))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">probit</span>(<span class="params">z</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0.5</span> * (<span class="number">1</span> + erf(z / np.sqrt(<span class="number">2</span>)))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">x = np.linspace(-<span class="number">10</span>, <span class="number">10</span>, <span class="number">100</span>)</span><br><span class="line">plt.plot(x, sigmoid(x), label=<span class="string">&#x27;sigmoid&#x27;</span>)</span><br><span class="line">plt.plot(x, probit(x), linestyle=<span class="string">&#x27;--&#x27;</span>, label=<span class="string">&#x27;probit&#x27;</span>)</span><br><span class="line">plt.xticks([-<span class="number">5</span>, <span class="number">0</span>, <span class="number">5</span>], [-<span class="number">5</span>, <span class="number">0</span>, <span class="number">5</span>])</span><br><span class="line">plt.yticks([<span class="number">0</span>, <span class="number">0.5</span>, <span class="number">1</span>], [<span class="number">0</span>, <span class="number">0.5</span>, <span class="number">1</span>])</span><br><span class="line">plt.xlim(-<span class="number">10</span>, <span class="number">10</span>)</span><br><span class="line">plt.ylim(-<span class="number">0.1</span>, <span class="number">1.1</span>)</span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.grid()</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/probit函数和sigmoid函数.jpg" alt="probit函数和sigmoid函数" style="zoom:33%;" /></p>
+<h3 id="标准连接函数canonical-link-function">6 标准连接函数（Canonical
+link function）</h3>
+<p>在假设为<strong>高斯分布</strong>的线性回归问题中以及二分类和多分类的logistic回归中，我们都可以看到第<span
+class="math inline">\(n\)</span>个数据点对梯度的贡献等于误差<span
+class="math inline">\((y_{n}-t_{n})\)</span>乘上特征向量<span
+class="math inline">\(\boldsymbol{\phi}_{n}\)</span>。这个结论在满足下面两个条件时都成立：</p>
+<ul>
+<li>类别条件概率<span class="math inline">\(p(\mathbf{x} \mid
+\mathcal{C}_{k})\)</span>满足<strong>指数族分布</strong></li>
+<li>激活函数使用<strong>标准连接函数（canonical link
+function）</strong></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/02/15/ch4-4-3-%E6%A6%82%E7%8E%87%E5%88%A4%E5%88%AB%E5%BC%8F%E6%A8%A1%E5%9E%8B/" title="ch4-4.3 概率判别式模型">https://ehehe.cn/2022/02/15/ch4-4-3-概率判别式模型/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PRML/" rel="tag"># PRML</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch4-4-2-%E6%A6%82%E7%8E%87%E7%94%9F%E6%88%90%E5%BC%8F%E6%A8%A1%E5%9E%8B/" rel="prev" title="ch4-4.2 概率生成式模型">
+                  <i class="fa fa-angle-left"></i> ch4-4.2 概率生成式模型
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch4-4-4-%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E8%BF%91%E4%BC%BC/" rel="next" title="ch4-4.4 拉普拉斯近似">
+                  ch4-4.4 拉普拉斯近似 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

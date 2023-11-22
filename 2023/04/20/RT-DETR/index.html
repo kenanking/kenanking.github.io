@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Wenyu Lv, Shangliang Xu, Yian Zhao, Guanzhong Wang, Jinman Wei, Cheng Cui, Yuning Du, Qingqing Dang, Yi Liu RT-DETR 背景 近来，基于Transformer的端到端目标检测方法（DETR）取得了非常好的效果，但它同时也存在计算量大的问题，因此很少在实时场景下应用，这也进一步阻止了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] DETRs Beat YOLOs on Real-time  Object Detection">
+<meta property="og:url" content="https://ehehe.cn/2023/04/20/RT-DETR/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Wenyu Lv, Shangliang Xu, Yian Zhao, Guanzhong Wang, Jinman Wei, Cheng Cui, Yuning Du, Qingqing Dang, Yi Liu RT-DETR 背景 近来，基于Transformer的端到端目标检测方法（DETR）取得了非常好的效果，但它同时也存在计算量大的问题，因此很少在实时场景下应用，这也进一步阻止了">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/RT-DETR%E4%B8%8E%E5%85%B6%E4%BB%96%E6%96%B9%E6%B3%95%E5%AF%B9%E6%AF%94.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%B8%8D%E5%90%8C%E7%BD%AE%E4%BF%A1%E5%BA%A6%E9%98%88%E5%80%BC%E4%B8%8B%E7%9A%84%E9%A2%84%E6%B5%8B%E6%A1%86%E6%95%B0%E9%87%8F.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%B8%8D%E5%90%8CIoU%E5%92%8C%E7%BD%AE%E4%BF%A1%E5%BA%A6%E9%98%88%E5%80%BC%E5%AF%B9%E6%A8%A1%E5%9E%8B%E7%B2%BE%E5%BA%A6%E5%92%8C%E6%8E%A8%E7%90%86%E6%97%B6%E9%97%B4%E7%9A%84%E5%BD%B1%E5%93%8D.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/RT-DETR%E6%A8%A1%E5%9E%8B%E6%A1%86%E6%9E%B6.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/RT-DETR%E4%B8%AD%E4%B8%8D%E5%90%8C%E7%9A%84%E7%BC%96%E7%A0%81%E5%99%A8%E5%8F%98%E4%BD%93.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/CCFM%E4%B8%AD%E7%9A%84%E8%9E%8D%E5%90%88%E5%9D%97.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/IoU%E6%84%9F%E7%9F%A5.png">
+<meta property="article:published_time" content="2023-04-20T15:33:15.000Z">
+<meta property="article:modified_time" content="2023-04-21T13:57:45.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="目标检测">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/RT-DETR%E4%B8%8E%E5%85%B6%E4%BB%96%E6%96%B9%E6%B3%95%E5%AF%B9%E6%AF%94.jpg">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/04/20/RT-DETR/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/04/20/RT-DETR/","path":"2023/04/20/RT-DETR/","title":"[Note] DETRs Beat YOLOs on Real-time  Object Detection"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] DETRs Beat YOLOs on Real-time  Object Detection | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#rt-detr"><span class="nav-text">RT-DETR</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nms%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-text">NMS的影响</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9F%E5%BA%A6%E6%B5%8B%E8%AF%95%E5%9F%BA%E5%87%86"><span class="nav-text">速度测试基准</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6detr%E6%A8%A1%E5%9E%8B"><span class="nav-text">实时DETR模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E7%BC%96%E7%A0%81%E5%99%A8"><span class="nav-text">混合编码器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#iou%E6%84%9F%E7%9F%A5%E7%9A%84query%E9%80%89%E6%8B%A9"><span class="nav-text">IoU感知的query选择</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/04/20/RT-DETR/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] DETRs Beat YOLOs on Real-time  Object Detection | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] DETRs Beat YOLOs on Real-time  Object Detection
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-20 23:33:15" itemprop="dateCreated datePublished" datetime="2023-04-20T23:33:15+08:00">2023-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-04-21 21:57:45" itemprop="dateModified" datetime="2023-04-21T21:57:45+08:00">2023-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Wenyu Lv, Shangliang Xu, Yian Zhao, Guanzhong Wang, Jinman Wei,
+Cheng Cui, Yuning Du, Qingqing Dang, Yi Liu</p>
+<h2 id="rt-detr">RT-DETR</h2>
+<h3 id="背景">背景</h3>
+<p>近来，基于Transformer的端到端目标检测方法（DETR）取得了非常好的效果，但它同时也存在计算量大的问题，因此很少在实时场景下应用，这也进一步阻止了我们充分利用它无需后处理（NMS）的优势。</p>
+<p>本文介绍了一种新的实时目标检测检测器RT-DETR，在推理速度和准确性方法达到最优，并且不需要后处理（NMS）。文中分析了NMS对于目标检测算法推理速度的影响，并建立了一个端到端的速度测试基准，指出Anchor-Free的方法更具优势。为了避免NMS引起的推理延迟，本文使用了DETR进行端到端目标检测，通过提出高效的混合编码器来处理多尺度特征和IoU感知的query选择，来实现高性能的实时目标检测。</p>
+<p>RT-DETR-L在COCO val2017上达到53.0％AP，在NVIDIA Tesla T4
+GPU上达到114FPS；而RT-DETR-X则达到54.8％AP和74FPS，在速度和准确性方面均优于同等规模的所有YOLO检测器。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/RT-DETR%E4%B8%8E%E5%85%B6%E4%BB%96%E6%96%B9%E6%B3%95%E5%AF%B9%E6%AF%94.jpg" alt="RT-DETR与其他方法对比" style="zoom:15%;" /></p>
+<span id="more"></span>
+<h3 id="nms的影响">NMS的影响</h3>
+<p>NMS是目标检测中广泛使用的后处理算法，用于去除检测器输出的重叠预测框。NMS算法中需要两个超参数：<strong>置信度阈值（score
+threshold）</strong>和<strong>IoU阈值（IoU
+threshold）</strong>。置信度阈值过滤掉了置信度低的预测框；当两个框的重叠度高于IoU阈值时，保留置信度高的预测框。这个过程会迭代执行，直到每个类别的所有框都被处理完。因此，NMS的执行时间主要取决于输入<strong>预测框的数量</strong>和<strong>两个超参数</strong>。</p>
+<p>文中在YOLOv5和YOLOv8两个方法上进行实验，通过设定不同的置信度阈值（<span
+class="math inline">\(0.001-0.25\)</span>）过滤输出框后计算剩余预测框的数量，绘制成如下的直方图。直方图反映了<strong>NMS对其超参数的敏感性</strong>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%B8%8D%E5%90%8C%E7%BD%AE%E4%BF%A1%E5%BA%A6%E9%98%88%E5%80%BC%E4%B8%8B%E7%9A%84%E9%A2%84%E6%B5%8B%E6%A1%86%E6%95%B0%E9%87%8F.jpg" alt="不同置信度阈值下的预测框数量" style="zoom:10%;" /></p>
+<p>另外，文中以YOLOv8为例，在不同的NMS超参数下评估模型在COCO
+val2017上的准确性和NMS操作的执行时间。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E4%B8%8D%E5%90%8CIoU%E5%92%8C%E7%BD%AE%E4%BF%A1%E5%BA%A6%E9%98%88%E5%80%BC%E5%AF%B9%E6%A8%A1%E5%9E%8B%E7%B2%BE%E5%BA%A6%E5%92%8C%E6%8E%A8%E7%90%86%E6%97%B6%E9%97%B4%E7%9A%84%E5%BD%B1%E5%93%8D.png" alt="不同IoU和置信度阈值对模型精度和推理时间的影响" style="zoom:25%;" /></p>
+<h4 id="速度测试基准">速度测试基准</h4>
+<p>文中为了公平比较各种检测器的端到端推理速度，文中建立了一个速度测试基准。考虑到NMS的执行时间可能会受到输入图像的影响，在选定一个基准数据集后，计算多个图像的平均推理时间。另外，对于需要NMS进行后处理的检测器，还要加上NMS的时间。</p>
+<p>基于该测试基准，文中对比了基于锚框的检测算法（YOLOv5、YOLOv7）和无需锚框（PP-YOLOE、YOLOv6、YOLOv8）的检测算法，并指出<strong>对于需要NMS后处理的实时检测器，在相同准确性下，无需锚框检测算法表现更好，因为所用的后处理时间显著更少</strong>。</p>
+<h3 id="实时detr模型">实时DETR模型</h3>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/RT-DETR%E6%A8%A1%E5%9E%8B%E6%A1%86%E6%9E%B6.jpg" alt="RT-DETR模型框架" style="zoom:10%;" /></p>
+<p>RT-DETR包括<strong>骨干网</strong>、<strong>混合编码器</strong>、<strong>Transformer解码器</strong>和<strong>辅助预测头</strong>四个部分。</p>
+<ul>
+<li>RT-DETR使用了骨干网中最后三个阶段的特征<span
+class="math inline">\(\{S_3, S_4,
+S_5\}\)</span>，作为混合编码器的输入。</li>
+<li>混合编码器通过<strong>尺度内交互</strong>和<strong>跨尺度融合</strong>将多尺度特征转换为图像特征序列。</li>
+<li>然后，采用<strong>IoU感知的query选择（IoU-aware query
+selection）</strong>，从编码器输出序列中选择固定数量的图像特征，作为解码器的初始对象query。</li>
+<li>最后，通过带有辅助预测头的解码器迭代优化对象query以生成<strong>边界框</strong>和<strong>置信度分数</strong>。</li>
+</ul>
+<h4 id="混合编码器">混合编码器</h4>
+<p>文中指出<strong>同时进行尺度内特征和跨尺度特征的角度是低效的</strong>，并指出<strong>图像中的高级特征本身是从低级特征中提取的，对多尺度特征之间进行交互是冗余的</strong>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/RT-DETR%E4%B8%AD%E4%B8%8D%E5%90%8C%E7%9A%84%E7%BC%96%E7%A0%81%E5%99%A8%E5%8F%98%E4%BD%93.jpg" alt="RT-DETR中不同的编码器变体" style="zoom:10%;" /></p>
+<p>文中设计了一系列不同的编码器变体，通过将多尺度特征交互解耦为<strong>尺度内交互</strong>和<strong>跨尺度融合</strong>的两步操作，逐步改善模型准确性，同时显著降低计算成本。将DINO-R50模型中的多尺度部分去除，作为基线<span
+class="math inline">\(A\)</span>，往基线中加入不同的操作，得到变体：</p>
+<ol type="1">
+<li><p><span class="math inline">\(A \rightarrow B\)</span>：变体<span
+class="math inline">\(B\)</span>插入了一个单尺度Transformer编码器（Single-Scale
+Encoder），每个尺度的特征共享编码器进行尺度内特征交互，然后多尺度特征进行拼接。</p></li>
+<li><p><span class="math inline">\(B \rightarrow C\)</span>：变体<span
+class="math inline">\(C\)</span>在变体<span
+class="math inline">\(B\)</span>的基础上，先将多尺度特征进行拼接，然后使用单尺度Transformer编码器。</p></li>
+<li><p><span class="math inline">\(C \rightarrow D\)</span>：变体<span
+class="math inline">\(D\)</span>解耦了多尺度特征的尺度内交互和跨尺度融合。首先使用单尺度Transformer编码器进行尺度内特征交互，然后使用类似PANet的方法进行跨尺度特征融合。</p></li>
+<li><p><span class="math inline">\(D \rightarrow
+E\)</span>：基于变体<span class="math inline">\(D\)</span>，变体<span
+class="math inline">\(E\)</span>进一步优化了多尺度特征的<strong>尺度内交互（AIFI）</strong>和<strong>跨尺度融合（CCFM）</strong>，采用了高效的混合编码器。</p></li>
+</ol>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/CCFM%E4%B8%AD%E7%9A%84%E8%9E%8D%E5%90%88%E5%9D%97.jpg" alt="CCFM中的融合块" style="zoom:10%;" /></p>
+<p>AIFI仅在S5上执行尺度内交互，CCFM将在融合通路中插入了<strong>融合块（Fusion）</strong>结构，融合块的作用是将相邻的特征融合成一个新的特征。CCFM的具体操作如下：
+<span class="math display">\[
+\begin{gathered}
+\mathbf{Q}=\mathbf{K}=\mathbf{V}=\operatorname{Flatten}\left(S_5\right)
+\\
+F_5=\operatorname{Reshape}(\operatorname{Attn}(\mathbf{Q}, \mathbf{K},
+\mathbf{V})) \\
+\text { Output }=\operatorname{CCFM}\left(\left\{S_3, S_4,
+F_5\right\}\right)
+\end{gathered}
+\]</span> 其中<span
+class="math inline">\(\operatorname{Attn}\)</span>表示多头自注意力，<span
+class="math inline">\(\operatorname{Reshape}\)</span>表示将特征的形状恢复到与S5相同，这是<span
+class="math inline">\(\operatorname{Flatten}\)</span>的逆运算。</p>
+<h4 id="iou感知的query选择">IoU感知的query选择</h4>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/IoU%E6%84%9F%E7%9F%A5.png" alt="IoU感知" style="zoom:25%;" /></p>
+<p>DETR中的对象query是一组可学习的嵌入向量，由解码器进行优化，并通过预测头映射到类别分数和边界框。然而，这些物体query很难解释和优化，因为它们没有明确的物理意义。</p>
+<p>后续的工作中改进了对象query的初始化，扩展到<strong>内容query</strong>和<strong>位置query（anchor）</strong>。这些方法中，query选择的方案的共同点是<strong>都利用了类别分布</strong>，从编码器中选择前<span
+class="math inline">\(K\)</span>个特征来初始化对象query。但是，由于<strong>分类得分和位置置信度的分布不一致</strong>，部分预测框的分类分数较高，但与真实框不接近。从而更可能出现选择分类分数高、IoU分数低的框；丢弃分类分数低、IoU分数高的框。</p>
+<p>为了解决这个问题，文中提出了<strong>IoU感知query选择</strong>，通过在训练期间约束模型为具有高IoU分数的特征产生高分类分数，并为具有低IoU分数的特征产生低分类分数。因此，根据分类分数选择的前<span
+class="math inline">\(K\)</span>个编码器特征对应的预测框既具有高分类分数又具有高IoU分数。
+<span class="math display">\[
+\begin{aligned}
+\mathcal{L}(\hat{y}, y) &amp; =\mathcal{L}_{b o x}(\hat{b},
+b)+\mathcal{L}_{c l s}(\hat{c}, {\color{Red} \hat{b}} , y, {\color{Red}
+b} ) \\
+&amp; =\mathcal{L}_{b o x}(\hat{b}, b)+\mathcal{L}_{c l s}(\hat{c}, c,
+{\color{Red} IoU} )
+\end{aligned}
+\]</span>
+上图中的红点和蓝点分别表示了原始的query选择和IoU感知query选择。根据可视化结果，可以发现最显著的特征是大量蓝色点集中在图像的右上角，而红色点则集中在右下角。这表明使用<strong>IoU感知query选择训练的模型可以产生更高质量的编码器特征</strong>。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/04/20/RT-DETR/" title="[Note] DETRs Beat YOLOs on Real-time  Object Detection">https://ehehe.cn/2023/04/20/RT-DETR/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/" rel="tag"># 目标检测</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/18/NeRF/" rel="prev" title="基于NeRF的三维场景生成">
+                  <i class="fa fa-angle-left"></i> 基于NeRF的三维场景生成
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/21/TOOD/" rel="next" title="[Note] TOOD: Task-aligned One-stage Object Detection (ICCV 2021)">
+                  [Note] TOOD: Task-aligned One-stage Object Detection (ICCV 2021) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作业1中主要通过（And、Not、Or）进行芯片（逻辑门）的设计，并通过硬件描述语言（HDL）进行仿真实现。做完之后我觉得最难的是实现Mux门，最后通过查阅资料使用卡诺图化简法解决。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nand2Tetris Project 1">
+<meta property="og:url" content="https://ehehe.cn/2021/01/26/Nand2Tetris-Project-1/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作业1中主要通过（And、Not、Or）进行芯片（逻辑门）的设计，并通过硬件描述语言（HDL）进行仿真实现。做完之后我觉得最难的是实现Mux门，最后通过查阅资料使用卡诺图化简法解决。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-26T08:00:30.000Z">
+<meta property="article:modified_time" content="2021-01-26T12:09:15.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="Nand2Tetris">
+<meta property="article:tag" content="Coursera">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ehehe.cn/2021/01/26/Nand2Tetris-Project-1/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2021/01/26/Nand2Tetris-Project-1/","path":"2021/01/26/Nand2Tetris-Project-1/","title":"Nand2Tetris Project 1"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Nand2Tetris Project 1 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#nand%E9%97%A8"><span class="nav-text">1. Nand门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#not%E9%97%A8"><span class="nav-text">2. Not门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#and%E9%97%A8"><span class="nav-text">3. And门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#or%E9%97%A8"><span class="nav-text">4. Or门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xor%E9%97%A8"><span class="nav-text">5. Xor门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mux%E9%97%A8"><span class="nav-text">6. Mux门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dmux%E9%97%A8"><span class="nav-text">7. DMux门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#not16%E9%97%A8"><span class="nav-text">8. Not16门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#and16%E9%97%A8"><span class="nav-text">9. And16门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#or16%E9%97%A8"><span class="nav-text">10. Or16门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mux16%E9%97%A8"><span class="nav-text">11. Mux16门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#or8way%E9%97%A8"><span class="nav-text">12. Or8Way门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mux4way16%E9%97%A8"><span class="nav-text">13. Mux4Way16门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mux8way16%E9%97%A8"><span class="nav-text">14. Mux8Way16门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dmux4way%E9%97%A8"><span class="nav-text">15. DMux4Way门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dmux8way%E9%97%A8"><span class="nav-text">16. DMux8Way门</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2021/01/26/Nand2Tetris-Project-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Nand2Tetris Project 1 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Nand2Tetris Project 1
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-01-26 16:00:30 / 修改时间：20:09:15" itemprop="dateCreated datePublished" datetime="2021-01-26T16:00:30+08:00">2021-01-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">计算机系统</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作业1中主要通过（And、Not、Or）进行芯片（逻辑门）的设计，并通过硬件描述语言（HDL）进行仿真实现。做完之后我觉得最难的是实现Mux门，最后通过查阅资料使用卡诺图化简法解决。</p>
+<span id="more"></span>
+<h2 id="nand门">1. Nand门</h2>
+<p>Nand门是最基本的单元，使用Nand门可以实现任何逻辑门的设计。</p>
+<p>Nand门的真值表：</p>
+<table>
+<thead>
+<tr class="header">
+<th>a</th>
+<th>b</th>
+<th>Nand(a, b)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="not门">2. Not门</h2>
+<p>Not门使用Nand门实现，当输入为0时，Nand(0, b) =
+1，当输入为1时，Nand(1, b) = 0。从而可以判断b始终为1。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Not gate:</span><br><span class="line"> * out = not in</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP Not &#123;</span><br><span class="line">    IN in;</span><br><span class="line">    OUT out;</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Nand(a=in, b=true, out=out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="and门">3. And门</h2>
+<p>只有当输入都是1时，And门输出为1，否则都为0。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * And gate: </span><br><span class="line"> * out = 1 if (a == 1 and b == 1)</span><br><span class="line"> *       0 otherwise</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP And &#123;</span><br><span class="line">    IN a, b;</span><br><span class="line">    OUT out;</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Nand(a=a, b=b, out=nandab);</span><br><span class="line">    Not(in=nandab, out=out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="or门">4. Or门</h2>
+<p>由De
+Morgan定律可以得到：<code>a Or b = Not(Not(a) And Not(b))</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> /**</span><br><span class="line"> * Or gate:</span><br><span class="line"> * out = 1 if (a == 1 or b == 1)</span><br><span class="line"> *       0 otherwise</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP Or &#123;</span><br><span class="line">    IN a, b;</span><br><span class="line">    OUT out;</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Not(in=a, out=nota);</span><br><span class="line">    Not(in=b, out=notb);</span><br><span class="line">    And(a=nota, b=notb, out=notaAndNotb);</span><br><span class="line">    Not(in=notaAndNotb, out=out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="xor门">5. Xor门</h2>
+<p>当两个输入值相反时，Xor门输出1，其他情况返回0。</p>
+<p><code>Xor(a, b) = Or(And(a, Not(b)), And(Not(a), b))</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Exclusive-or gate:</span><br><span class="line"> * out = not (a == b)</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP Xor &#123;</span><br><span class="line">    IN a, b;</span><br><span class="line">    OUT out;</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Not (in=a, out=nota);</span><br><span class="line">    Not (in=b, out=notb);</span><br><span class="line">    And (a=a, b=notb, out=aAndNotb);</span><br><span class="line">    And (a=nota, b=b, out=notaAndb);</span><br><span class="line">    Or (a=aAndNotb, b=notaAndb, out=out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="mux门">6. Mux门</h2>
+<p>Multiplexor是三输入变量的门电路，其中两个为数据位（a和b)，另一个为选择位（sel）。</p>
+<p>Mux门的真值表：</p>
+<table>
+<thead>
+<tr class="header">
+<th>a</th>
+<th>b</th>
+<th>sel</th>
+<th>out</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>其简化版本为：</p>
+<table>
+<thead>
+<tr class="header">
+<th>sel</th>
+<th>out</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>a</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>b</td>
+</tr>
+</tbody>
+</table>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210126170245982.png"
+alt="卡诺图化简法表示Mux" />
+<figcaption aria-hidden="true">卡诺图化简法表示Mux</figcaption>
+</figure>
+<p>所以可以得到：<code>Mux(a, b, sel) = Or(And(b, sel) + And(a, Not(sel)))</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">/** </span><br><span class="line"> * Multiplexor:</span><br><span class="line"> * out = a if sel == 0</span><br><span class="line"> *       b otherwise</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP Mux &#123;</span><br><span class="line">    IN a, b, sel;</span><br><span class="line">    OUT out;</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    And(a=b, b=sel, out=out1);</span><br><span class="line">    </span><br><span class="line">    Not(in=sel, out=notsel);</span><br><span class="line">    And(a=a, b=notsel, out=out2);</span><br><span class="line"></span><br><span class="line">    Or(a=out1, b=out2, out=out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="dmux门">7. DMux门</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Demultiplexor:</span><br><span class="line"> * &#123;a, b&#125; = &#123;in, 0&#125; if sel == 0</span><br><span class="line"> *          &#123;0, in&#125; if sel == 1</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP DMux &#123;</span><br><span class="line">    IN in, sel;</span><br><span class="line">    OUT a, b;</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Not(in=sel, out=notsel);</span><br><span class="line">    And(a=in, b=notsel, out=a);</span><br><span class="line"></span><br><span class="line">    And(a=in, b=sel, out=b);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="not16门">8. Not16门</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 16-bit Not:</span><br><span class="line"> * for i=0..15: out[i] = not in[i]</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP Not16 &#123;</span><br><span class="line">    IN in[16];</span><br><span class="line">    OUT out[16];</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Not(in=in[0], out=out[0]);</span><br><span class="line">    Not(in=in[1], out=out[1]);</span><br><span class="line">    Not(in=in[2], out=out[2]);</span><br><span class="line">    Not(in=in[3], out=out[3]);</span><br><span class="line">    Not(in=in[4], out=out[4]);</span><br><span class="line">    Not(in=in[5], out=out[5]);</span><br><span class="line">    Not(in=in[6], out=out[6]);</span><br><span class="line">    Not(in=in[7], out=out[7]);</span><br><span class="line">    Not(in=in[8], out=out[8]);</span><br><span class="line">    Not(in=in[9], out=out[9]);</span><br><span class="line">    Not(in=in[10], out=out[10]);</span><br><span class="line">    Not(in=in[11], out=out[11]);</span><br><span class="line">    Not(in=in[12], out=out[12]);</span><br><span class="line">    Not(in=in[13], out=out[13]);</span><br><span class="line">    Not(in=in[14], out=out[14]);</span><br><span class="line">    Not(in=in[15], out=out[15]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="and16门">9. And16门</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 16-bit bitwise And:</span><br><span class="line"> * for i = 0..15: out[i] = (a[i] and b[i])</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP And16 &#123;</span><br><span class="line">    IN a[16], b[16];</span><br><span class="line">    OUT out[16];</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    And(a=a[0], b=b[0], out=out[0]);</span><br><span class="line">    And(a=a[1], b=b[1], out=out[1]);</span><br><span class="line">    And(a=a[2], b=b[2], out=out[2]);</span><br><span class="line">    And(a=a[3], b=b[3], out=out[3]);</span><br><span class="line">    And(a=a[4], b=b[4], out=out[4]);</span><br><span class="line">    And(a=a[5], b=b[5], out=out[5]);</span><br><span class="line">    And(a=a[6], b=b[6], out=out[6]);</span><br><span class="line">    And(a=a[7], b=b[7], out=out[7]);</span><br><span class="line">    And(a=a[8], b=b[8], out=out[8]);</span><br><span class="line">    And(a=a[9], b=b[9], out=out[9]);</span><br><span class="line">    And(a=a[10], b=b[10], out=out[10]);</span><br><span class="line">    And(a=a[11], b=b[11], out=out[11]);</span><br><span class="line">    And(a=a[12], b=b[12], out=out[12]);</span><br><span class="line">    And(a=a[13], b=b[13], out=out[13]);</span><br><span class="line">    And(a=a[14], b=b[14], out=out[14]);</span><br><span class="line">    And(a=a[15], b=b[15], out=out[15]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="or16门">10. Or16门</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 16-bit bitwise Or:</span><br><span class="line"> * for i = 0..15 out[i] = (a[i] or b[i])</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP Or16 &#123;</span><br><span class="line">    IN a[16], b[16];</span><br><span class="line">    OUT out[16];</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Or(a=a[0], b=b[0], out=out[0]);</span><br><span class="line">    Or(a=a[1], b=b[1], out=out[1]);</span><br><span class="line">    Or(a=a[2], b=b[2], out=out[2]);</span><br><span class="line">    Or(a=a[3], b=b[3], out=out[3]);</span><br><span class="line">    Or(a=a[4], b=b[4], out=out[4]);</span><br><span class="line">    Or(a=a[5], b=b[5], out=out[5]);</span><br><span class="line">    Or(a=a[6], b=b[6], out=out[6]);</span><br><span class="line">    Or(a=a[7], b=b[7], out=out[7]);</span><br><span class="line">    Or(a=a[8], b=b[8], out=out[8]);</span><br><span class="line">    Or(a=a[9], b=b[9], out=out[9]);</span><br><span class="line">    Or(a=a[10], b=b[10], out=out[10]);</span><br><span class="line">    Or(a=a[11], b=b[11], out=out[11]);</span><br><span class="line">    Or(a=a[12], b=b[12], out=out[12]);</span><br><span class="line">    Or(a=a[13], b=b[13], out=out[13]);</span><br><span class="line">    Or(a=a[14], b=b[14], out=out[14]);</span><br><span class="line">    Or(a=a[15], b=b[15], out=out[15]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="mux16门">11. Mux16门</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 16-bit multiplexor: </span><br><span class="line"> * for i = 0..15 out[i] = a[i] if sel == 0 </span><br><span class="line"> *                        b[i] if sel == 1</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP Mux16 &#123;</span><br><span class="line">    IN a[16], b[16], sel;</span><br><span class="line">    OUT out[16];</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Mux(a=a[0], b=b[0], sel=sel, out=out[0]);</span><br><span class="line">    Mux(a=a[1], b=b[1], sel=sel, out=out[1]);</span><br><span class="line">    Mux(a=a[2], b=b[2], sel=sel, out=out[2]);</span><br><span class="line">    Mux(a=a[3], b=b[3], sel=sel, out=out[3]);</span><br><span class="line">    Mux(a=a[4], b=b[4], sel=sel, out=out[4]);</span><br><span class="line">    Mux(a=a[5], b=b[5], sel=sel, out=out[5]);</span><br><span class="line">    Mux(a=a[6], b=b[6], sel=sel, out=out[6]);</span><br><span class="line">    Mux(a=a[7], b=b[7], sel=sel, out=out[7]);</span><br><span class="line">    Mux(a=a[8], b=b[8], sel=sel, out=out[8]);</span><br><span class="line">    Mux(a=a[9], b=b[9], sel=sel, out=out[9]);</span><br><span class="line">    Mux(a=a[10], b=b[10], sel=sel, out=out[10]);</span><br><span class="line">    Mux(a=a[11], b=b[11], sel=sel, out=out[11]);</span><br><span class="line">    Mux(a=a[12], b=b[12], sel=sel, out=out[12]);</span><br><span class="line">    Mux(a=a[13], b=b[13], sel=sel, out=out[13]);</span><br><span class="line">    Mux(a=a[14], b=b[14], sel=sel, out=out[14]);</span><br><span class="line">    Mux(a=a[15], b=b[15], sel=sel, out=out[15]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="or8way门">12. Or8Way门</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 8-way Or: </span><br><span class="line"> * out = (in[0] or in[1] or ... or in[7])</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP Or8Way &#123;</span><br><span class="line">    IN in[8];</span><br><span class="line">    OUT out;</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Or(a=in[0], b=in[1], out=out1);</span><br><span class="line">    Or(a=out1, b=in[2], out=out2);</span><br><span class="line">    Or(a=out2, b=in[3], out=out3);</span><br><span class="line">    Or(a=out3, b=in[4], out=out4);</span><br><span class="line">    Or(a=out4, b=in[5], out=out5);</span><br><span class="line">    Or(a=out5, b=in[6], out=out6);</span><br><span class="line">    Or(a=out6, b=in[7], out=out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="mux4way16门">13. Mux4Way16门</h2>
+<p>在这题中，首先要注意的是<code>sel[0]</code>表示从右边数起的第一个，<code>sel[1]</code>表示从右边数起第二个。从下面的表中可以看出，可以通过<code>sel[0]</code>从<code>a</code>和<code>b</code>中选一个以及从<code>c</code>和<code>d</code>中选一个，最后选择出来的结果再通过<code>sel[1]</code>选择。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210126192457868.png"
+alt="4通道Mux门" />
+<figcaption aria-hidden="true">4通道Mux门</figcaption>
+</figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 4-way 16-bit multiplexor:</span><br><span class="line"> * out = a if sel == 00</span><br><span class="line"> *       b if sel == 01</span><br><span class="line"> *       c if sel == 10</span><br><span class="line"> *       d if sel == 11</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP Mux4Way16 &#123;</span><br><span class="line">    IN a[16], b[16], c[16], d[16], sel[2];</span><br><span class="line">    OUT out[16];</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Mux16(a=a, b=b, sel=sel[0], out=out1);</span><br><span class="line">    Mux16(a=c, b=d, sel=sel[0], out=out2);</span><br><span class="line"></span><br><span class="line">    Mux16(a=out1, b=out2, sel=sel[1], out=out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="mux8way16门">14. Mux8Way16门</h2>
+<p>这一问可以参照上一题的过程。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 8-way 16-bit multiplexor:</span><br><span class="line"> * out = a if sel == 000</span><br><span class="line"> *       b if sel == 001</span><br><span class="line"> *       etc.</span><br><span class="line"> *       h if sel == 111</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP Mux8Way16 &#123;</span><br><span class="line">    IN a[16], b[16], c[16], d[16],</span><br><span class="line">       e[16], f[16], g[16], h[16],</span><br><span class="line">       sel[3];</span><br><span class="line">    OUT out[16];</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    Mux4Way16(a=a, b=b, c=c, d=d, sel=sel[0..1], out=out1);</span><br><span class="line">    Mux4Way16(a=e, b=f, c=g, d=h, sel=sel[0..1], out=out2);</span><br><span class="line">    </span><br><span class="line">    Mux16(a=out1, b=out2, sel=sel[2], out=out);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="dmux4way门">15. DMux4Way门</h2>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20210126194612383.png"
+alt="4通道DMux门" />
+<figcaption aria-hidden="true">4通道DMux门</figcaption>
+</figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 4-way demultiplexor:</span><br><span class="line"> * &#123;a, b, c, d&#125; = &#123;in, 0, 0, 0&#125; if sel == 00</span><br><span class="line"> *                &#123;0, in, 0, 0&#125; if sel == 01</span><br><span class="line"> *                &#123;0, 0, in, 0&#125; if sel == 10</span><br><span class="line"> *                &#123;0, 0, 0, in&#125; if sel == 11</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP DMux4Way &#123;</span><br><span class="line">    IN in, sel[2];</span><br><span class="line">    OUT a, b, c, d;</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    DMux(in=in, sel=sel[1], a=out1, b=out2);</span><br><span class="line"></span><br><span class="line">    DMux(in=out1, sel=sel[0], a=a, b=b);</span><br><span class="line">    DMux(in=out2, sel=sel[0], a=c, b=d);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="dmux8way门">16. DMux8Way门</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 8-way demultiplexor:</span><br><span class="line"> * &#123;a, b, c, d, e, f, g, h&#125; = &#123;in, 0, 0, 0, 0, 0, 0, 0&#125; if sel == 000</span><br><span class="line"> *                            &#123;0, in, 0, 0, 0, 0, 0, 0&#125; if sel == 001</span><br><span class="line"> *                            etc.</span><br><span class="line"> *                            &#123;0, 0, 0, 0, 0, 0, 0, in&#125; if sel == 111</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">CHIP DMux8Way &#123;</span><br><span class="line">    IN in, sel[3];</span><br><span class="line">    OUT a, b, c, d, e, f, g, h;</span><br><span class="line"></span><br><span class="line">    PARTS:</span><br><span class="line">    DMux4Way(in=in, sel=sel[1..2], a=out1, b=out2, c=out3, d=out4);</span><br><span class="line"></span><br><span class="line">    DMux(in=out1, sel=sel[0], a=a, b=b);</span><br><span class="line">    DMux(in=out2, sel=sel[0], a=c, b=d);</span><br><span class="line">    DMux(in=out3, sel=sel[0], a=e, b=f);</span><br><span class="line">    DMux(in=out4, sel=sel[0], a=g, b=h);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2021/01/26/Nand2Tetris-Project-1/" title="Nand2Tetris Project 1">https://ehehe.cn/2021/01/26/Nand2Tetris-Project-1/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Nand2Tetris/" rel="tag"># Nand2Tetris</a>
+              <a href="/tags/Coursera/" rel="tag"># Coursera</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/09/19/GDAL3-1-3-PROJ7-1-1%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E/" rel="prev" title="GDAL3.1.3+PROJ7.1.1编译说明">
+                  <i class="fa fa-angle-left"></i> GDAL3.1.3+PROJ7.1.1编译说明
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/01/27/Nand2Tetris-Project-2/" rel="next" title="Nand2Tetris Project 2">
+                  Nand2Tetris Project 2 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

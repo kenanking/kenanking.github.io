@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="原文章链接：Einsums in the wild 引言 机器学习和统计学中存在大量的线性组合，许多统计学和机器学习中的算法和模型都可以写成矩阵与向量之间的运算。Einsums是是一种表示向量、矩阵和高维数组之间的线性运算的方法。 这篇文章中列出了使用Einsums的示例。我们假设读者熟悉爱因斯坦求和（Einstein summation）的基础知识。但是，我们将在下一节中简单介绍einsum。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习中的爱因斯坦求和（Einsums）">
+<meta property="og:url" content="https://ehehe.cn/2022/03/20/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E7%88%B1%E5%9B%A0%E6%96%AF%E5%9D%A6%E6%B1%82%E5%92%8C%EF%BC%88Einsums%EF%BC%89/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="原文章链接：Einsums in the wild 引言 机器学习和统计学中存在大量的线性组合，许多统计学和机器学习中的算法和模型都可以写成矩阵与向量之间的运算。Einsums是是一种表示向量、矩阵和高维数组之间的线性运算的方法。 这篇文章中列出了使用Einsums的示例。我们假设读者熟悉爱因斯坦求和（Einstein summation）的基础知识。但是，我们将在下一节中简单介绍einsum。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83%E5%AF%B9%E6%95%B0%E5%AF%86%E5%BA%A6.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/K%E7%BB%84%E5%9D%87%E5%80%BC%E7%9B%B8%E5%90%8C%E7%B2%BE%E5%BA%A6%E4%B8%8D%E5%90%8C%E7%9A%84%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E8%B4%9D%E5%8F%B6%E6%96%AF%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E6%A8%A1%E5%9E%8B%E7%9A%84%E9%A2%84%E6%B5%8B%E9%9D%A2.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SVD%E8%BF%91%E4%BC%BC%E5%9B%BE%E5%83%8F.jpg">
+<meta property="article:published_time" content="2022-03-20T04:32:44.000Z">
+<meta property="article:modified_time" content="2022-03-20T04:32:51.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="爱因斯坦求和">
+<meta property="article:tag" content="Einsum">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83%E5%AF%B9%E6%95%B0%E5%AF%86%E5%BA%A6.jpg">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/03/20/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E7%88%B1%E5%9B%A0%E6%96%AF%E5%9D%A6%E6%B1%82%E5%92%8C%EF%BC%88Einsums%EF%BC%89/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/03/20/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E7%88%B1%E5%9B%A0%E6%96%AF%E5%9D%A6%E6%B1%82%E5%92%8C%EF%BC%88Einsums%EF%BC%89/","path":"2022/03/20/机器学习中的爱因斯坦求和（Einsums）/","title":"机器学习中的爱因斯坦求和（Einsums）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>机器学习中的爱因斯坦求和（Einsums） | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-text">引言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#einsums%E7%AE%80%E4%BB%8B"><span class="nav-text">einsums简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E7%BB%B4%E6%95%B0%E7%BB%84"><span class="nav-text">高维数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E9%AB%98%E7%BB%B4%E7%9A%84%E6%95%B0%E7%BB%84"><span class="nav-text">更高维的数组</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84einsums"><span class="nav-text">机器学习中的Einsums</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83%E7%9A%84%E5%AF%B9%E6%95%B0%E5%AF%86%E5%BA%A6%E5%87%BD%E6%95%B0"><span class="nav-text">高斯分布的对数密度函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E6%A8%A1%E5%9E%8B%E7%9A%84%E9%A2%84%E6%B5%8B%E9%9D%A2"><span class="nav-text">贝叶斯逻辑回归模型的预测面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E5%83%8F%E5%8E%8B%E7%BC%A9%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3svd"><span class="nav-text">图像压缩：奇异值分解（SVD）</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/03/20/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E7%88%B1%E5%9B%A0%E6%96%AF%E5%9D%A6%E6%B1%82%E5%92%8C%EF%BC%88Einsums%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="机器学习中的爱因斯坦求和（Einsums） | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          机器学习中的爱因斯坦求和（Einsums）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-03-20 12:32:44 / 修改时间：12:32:51" itemprop="dateCreated datePublished" datetime="2022-03-20T12:32:44+08:00">2022-03-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>17 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>原文章链接：<a
+target="_blank" rel="noopener" href="https://grrddm.notion.site/Einsums-in-the-wild-bd773f01ba4c463ca9e4c1b5a6d90f5f#ec984527ec994d8ab8dc3b3c20167200">Einsums
+in the wild</a></p>
+<h2 id="引言">引言</h2>
+<p>机器学习和统计学中存在大量的线性组合，许多统计学和机器学习中的算法和模型都可以写成矩阵与向量之间的运算。<strong>Einsums</strong>是是一种表示向量、矩阵和高维数组之间的线性运算的方法。</p>
+<p>这篇文章中列出了使用Einsums的示例。我们假设读者熟悉<strong>爱因斯坦求和（Einstein
+summation）</strong>的基础知识。但是，我们将在下一节中简单介绍einsum。</p>
+<p>在下一节中，我们将简要介绍einsum表达式及其在<code>numpy</code> /
+<code>jax.numpy</code>中的用法。</p>
+<span id="more"></span>
+<h3 id="einsums简介">einsums简介</h3>
+<p>令<span class="math inline">\(\mathbf{a} \in
+\mathbb{R}^{M}\)</span>表示为一个一维向量，<span
+class="math inline">\(a_{m}\)</span>表示向量<span
+class="math inline">\(\mathbf{a}\)</span>中的第<span
+class="math inline">\(m\)</span>个元素。假设我们想要表示<span
+class="math inline">\(\mathbf{a}\)</span>中所有元素的和，可以写成如下形式：
+<span class="math display">\[
+\sum_{m=1}^{M} a_{m}
+\]</span></p>
+<p>为了引入einsum标记，我们注意到这个等式中的和符号（<span
+class="math inline">\(\Sigma\)</span>）只是表明我们应该考虑 <span
+class="math inline">\(\mathbf{a}\)</span>中的所有元素并将它们相加。如果我们假设：1）向量<span
+class="math inline">\(\mathbf{a}\)</span>中的维数没有歧义；2）我们对它的所有元素求和，我们可以将一维向量<span
+class="math inline">\(\mathbf{a}\)</span>中所有元素之和的einsum标记定义为：
+<span class="math display">\[
+\sum_{m=1}^N a_m\stackrel{\text{einsum}}{\equiv} \mathbf{a}_m
+\]</span></p>
+<p>为了保持我们的符号一致，我们将带括号的索引表示为<strong>静态维度（static
+dimensions）</strong>，静态维度允许我们扩展einsum的表达能力。也就是说，我们将<span
+class="math inline">\(\mathbf{a}\)</span>中的所有元素在einsum标记下表示为<span
+class="math inline">\(\mathbf{a}_{(m)}\)</span>。</p>
+<p>由于数组的名称对于定义这些表达式不一定有意义，因此我们在numpy中通过仅关注索引来定义einsum表达式。为了表示<strong>哪些维度是静态的</strong>，<strong>哪些应该相加</strong>，我们引入了<code>-&gt;</code>符号。<code>-&gt;</code>左侧的元素定义数组的索引集，<code>-&gt;</code>右侧的元素表示我们不求和的索引。</p>
+<p>例如，对向量<span
+class="math inline">\(\mathbf{a}\)</span>中的所有元素求和可以写成：
+<span class="math display">\[
+\mathbf{a}_m \equiv \texttt{m-&gt;}
+\]</span></p>
+<p>另外，选择向量<span
+class="math inline">\(\mathbf{a}\)</span>中的所有元素可以写成： <span
+class="math display">\[
+\mathbf{a}_{(m)} \equiv \texttt{m-&gt;m}
+\]</span></p>
+<p>在下面的代码片段中，我们展示了这个符号的作用： <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.einsum(<span class="string">&quot;m-&gt;&quot;</span>, a)</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.einsum(<span class="string">&quot;m-&gt;m&quot;</span>, a)</span><br><span class="line">array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>])</span><br></pre></td></tr></table></figure></p>
+<h3 id="高维数组">高维数组</h3>
+<p>令<span class="math inline">\(\mathbf{a} \in
+\mathbb{R}^{M}\)</span>和<span class="math inline">\(\mathbf{b} \in
+\mathbb{R}^{M}\)</span>表示两个一维向量，则<span
+class="math inline">\(\mathbf{a}\)</span>和<span
+class="math inline">\(\mathbf{b}\)</span>之间的点乘可以写为： <span
+class="math display">\[
+\begin{align}
+\mathbf{a}^{\mathrm{T}} \mathbf{b}
+&amp;= a_1 b_1 + \ldots + a_M b_M \\
+&amp;= \sum_{m=1}^M a_m b_m
+\end{align}
+\]</span></p>
+<p>按照我们之前的标记，我们看到这个einsum表达式在数学和numpy形式中的表示是：
+<span class="math display">\[
+\mathbf{a}_m \mathbf{b}_m \equiv \texttt{m,m-&gt;}
+\]</span></p>
+<p>此外，<span class="math inline">\(\mathbf{a}\)</span>和<span
+class="math inline">\(\mathbf{b}\)</span>之间的逐元素乘积的einsum标记由下式给出：
+<span class="math display">\[
+\mathbf{a}_{(m)} \mathbf{b}_{(m)} \equiv \texttt{m,m-&gt;m}
+\]</span></p>
+<p>例如，考虑以下一维数组<code>a</code>和<code>b</code>：
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = np.array([<span class="number">1</span>, <span class="number">3</span>, <span class="number">1</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = np.array([-<span class="number">1</span>, <span class="number">2</span>, -<span class="number">2</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># dot product</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a @ b</span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.einsum(<span class="string">&quot;m,m-&gt;&quot;</span>, a, b)</span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="comment"># Element-wise product</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a * b</span><br><span class="line">array([-<span class="number">1</span>,  <span class="number">6</span>, -<span class="number">2</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.einsum(<span class="string">&quot;m,m-&gt;m&quot;</span>, a, b)</span><br><span class="line">array([-<span class="number">1</span>,  <span class="number">6</span>, -<span class="number">2</span>])</span><br></pre></td></tr></table></figure></p>
+<p>我们可以进一步对上面的想法进行推广。考虑矩阵<span
+class="math inline">\(\mathbf{A} \in \mathbb{R}^{N\times
+M}\)</span>和向量<span class="math inline">\(\mathbf{x} \in
+\mathbb{R}^M\)</span>之间的乘积。通过线性代数，我们可以写成： <span
+class="math display">\[
+\mathbf{A} \mathbf{x} = \begin{bmatrix} \mathbf{a}_1^{\mathrm{T}} \\
+\vdots \\ \mathbf{a}_N^{\mathrm{T}}  \end{bmatrix} \mathbf{x} =
+\begin{bmatrix} \mathbf{a}_1^{\mathrm{T}} \mathbf{x} \\ \vdots \\
+\mathbf{a}_N^{\mathrm{T}} \mathbf{x} \end{bmatrix}
+\]</span></p>
+<p>其中，<span
+class="math inline">\(\mathbf{a}_n^{\mathrm{T}}\)</span>表示矩阵<span
+class="math inline">\(\mathbf{A}\)</span>中的第<span
+class="math inline">\(n\)</span>行元素。</p>
+<p>根据上面的式子，我们注意到<span class="math inline">\(\mathbf{A}
+\mathbf{x} \in \mathbb{R}^{N}\)</span>可以表示为： <span
+class="math display">\[
+(\mathbf{A} \mathbf{x})_{n} = \sum_{m=1}^M a_{n, m} x_m
+\]</span></p>
+<p>我们还可以观察到这个表达式中，<span
+class="math inline">\(\mathbf{A}\)</span>的第一个维度是静态的。于是，einsum标记可以写为：
+<span class="math display">\[
+\mathbf{A}_{(n),m}\mathbf{x}_m \equiv \texttt{nm,m-&gt;n}
+\]</span></p>
+<p>通过最后一个例子的结果，我们可以很容易地表达出两个矩阵相乘后的第<span
+class="math inline">\((i, j)\)</span>项。</p>
+<p>令<span class="math inline">\(\mathbf{A} \in \mathbb{R}^{N \times
+M}\)</span>，<span class="math inline">\(\mathbf{B} \in \mathbb{R}^{M
+\times K}\)</span>，则<span
+class="math inline">\(\mathbf{A}\)</span>和<span
+class="math inline">\(\mathbf{B}\)</span>的乘积为： <span
+class="math display">\[
+\begin{align}
+\mathbf{A}\mathbf{B}
+&amp;= \begin{bmatrix} \mathbf{a}_1^{\mathrm{T}} \\ \vdots \\
+\mathbf{a}_N^{\mathrm{T}} \end{bmatrix} \begin{bmatrix} \mathbf{b}_1,
+\ldots, \mathbf{b}_M \\ \end{bmatrix} \\
+&amp;= \begin{bmatrix} \mathbf{a}_1^{\mathrm{T}} \mathbf{b}_1 &amp;
+\mathbf{a}_1^{\mathrm{T}} \mathbf{b}_2 &amp; \ldots &amp;
+\mathbf{a}_1^{\mathrm{T}} \mathbf{b}_M \\ \mathbf{a}_2^{\mathrm{T}}
+\mathbf{b}_1 &amp; \mathbf{a}_2^{\mathrm{T}} \mathbf{b}_2 &amp; \ldots
+&amp; \mathbf{a}_2^{\mathrm{T}} \mathbf{b}_M\\ \vdots &amp; \vdots &amp;
+\ddots &amp; \vdots \\ \mathbf{a}_N^{\mathrm{T}} \mathbf{b}_1 &amp;
+\mathbf{a}_N^{\mathrm{T}} \mathbf{b}_2 &amp; \ldots &amp;
+\mathbf{a}_N^{\mathrm{T}} \mathbf{b}_M \end{bmatrix}
+\end{align}
+\]</span></p>
+<p>于是，矩阵乘积<span
+class="math inline">\(\mathbf{A}\mathbf{B}\)</span>中的第<span
+class="math inline">\((i, j)\)</span>项为： <span
+class="math display">\[
+\begin{align}
+\mathbf{A}\mathbf{B} &amp;= \mathbf{a}_i^{\mathbf{T}} \mathbf{b}_j \\
+&amp;= \sum_{m=1}^M a_{i,m} b_{m, j}
+\end{align}
+\]</span></p>
+<p>从上面的等式中，我们看到<span
+class="math inline">\(\mathbf{A}\)</span>的第一个维度和<span
+class="math inline">\(\mathbf{B}\)</span>的第二个维度是静态的。其einsum标记为：
+<span class="math display">\[
+\mathbf{A}_{(i),m} \mathbf{B}_{m, (j)}\equiv \texttt{im,mj-&gt;ij}
+\]</span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>A = np.array([[<span class="number">1</span>, <span class="number">2</span>], [-<span class="number">2</span>, <span class="number">1</span>]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>B = np.array([[<span class="number">0</span>, <span class="number">1</span>], [<span class="number">1</span>, <span class="number">0</span>]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>A @ B</span><br><span class="line">array([[ <span class="number">2</span>,  <span class="number">1</span>],</span><br><span class="line">       [ <span class="number">1</span>, -<span class="number">2</span>]])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.einsum(<span class="string">&quot;im,mj-&gt;ij&quot;</span>, A, B)</span><br><span class="line">array([[ <span class="number">2</span>,  <span class="number">1</span>],</span><br><span class="line">       [ <span class="number">1</span>, -<span class="number">2</span>]])</span><br></pre></td></tr></table></figure>
+<h3 id="更高维的数组">更高维的数组</h3>
+<p>在机器学习中使用einsum的优势在于它们在处理高维数组时的具有强大的表达能力。正如我们将看到的，<strong>知道矩阵向量乘法运算的einsum表示很容易让我们将其推广到多个维度</strong>。这是因为当输出中存在静态维度时，可以将枚举视为线性变换的表达式。</p>
+<p>为了促进使用einsums标记在机器学习中表示线性组合，我们考虑以下示例。</p>
+<h2 id="机器学习中的einsums">机器学习中的Einsums</h2>
+<p>令 <span class="math inline">\(\mathbf{x} \in
+\mathbb{R}^M\)</span>和<span class="math inline">\(\mathbf{A} \in
+\mathbb{R}^{M \times M}\)</span>
+分别表示一个一维数组和一个二维数组，则以零为中心，精度矩阵<span
+class="math inline">\(\mathbf{A}\)</span>的平方马氏距离定义为： <span
+class="math display">\[
+D_{\mathbf{A}}(\mathbf{x}) = \mathbf{x}^{\mathrm{T}} \mathbf{A}
+\mathbf{x}
+\]</span></p>
+<p>根据矩阵乘法法则，对于任意给定的<span
+class="math inline">\(\mathbf{x}\)</span>和一个有效的精度矩阵<span
+class="math inline">\(\mathbf{A}\)</span>我们都可以计算<span
+class="math inline">\(D_{\mathbf{A}}(\mathbf{x})\)</span>。我们可以得到<span
+class="math inline">\(D_{\mathbf{A}}(\mathbf{x})\)</span>的einsum标注为<code>i,ij,j-&gt;</code>，这是因为：
+<span class="math display">\[
+\begin{align} \mathbf{x}^{\mathbf{T}} \mathbf{A} \mathbf{x}
+&amp;= \sum_{i,j} x_i A_{i,j} x_j \\
+&amp;\stackrel{\text{einsum}}{\equiv} \mathbf{x}_i \mathbf{A}_{i,j}
+\mathbf{x}_j
+\end{align}
+\]</span></p>
+<p>一个更有趣的场景是：考虑这样一种情况，我们有<span
+class="math inline">\(N\)</span>个观测值存储在一个二维数组 <span
+class="math inline">\(\mathbf{X} \in \mathbb{R}^{N \times
+M}\)</span>中。如果我们记<span class="math inline">\(\mathbf{x}_{n} \in
+\mathbb{R}^M\)</span>为<span
+class="math inline">\(\mathbf{X}\)</span>中的第<span
+class="math inline">\(n\)</span>个观测，我们需要计算每个观测值的平方马氏距离，以获得：
+<span class="math display">\[
+\mathbf{x}_n^{\mathbf{T}} \mathbf{A} \mathbf{x}_n \quad \forall n \in
+\{1, \ldots, N\}
+\]</span></p>
+<p>获得上面结果的一种方法是通过矩阵计算得到： <span
+class="math display">\[
+\text{Diag}(\mathbf{X}^{\mathbf{T}}{\bf A}\mathbf{X})
+\]</span></p>
+<p>其中：<span class="math inline">\(\text{Diag}(\mathbf{M})_{i} =
+\mathbf{M}_{i,j}\)</span>。</p>
+<p>根据矩阵乘法，我们可以证明上面的结果： <span class="math display">\[
+\begin{align}
+(\mathbf{X} {\bf A}\mathbf{X}^{\mathbf{T}})
+&amp;= \begin{bmatrix}\mathbf{x}_1^{\mathbf{T}} \\ \vdots
+\\\mathbf{x}_N^{\mathbf{T}}\end{bmatrix} {\bf A} \begin{bmatrix}{\bf
+x_1} &amp; \ldots &amp; \mathbf{x}_N\end{bmatrix}\\
+&amp;= \begin{bmatrix}\mathbf{x}_1^{\mathbf{T}} {\bf A}\\ \vdots
+\\\mathbf{x}_N^{\mathbf{T}} {\bf A}\end{bmatrix} \begin{bmatrix}{\bf
+x_1} &amp; \ldots &amp; \mathbf{x}_N\end{bmatrix}\\
+&amp;= \begin{bmatrix} \mathbf{x}_1^{\mathbf{T}} {\bf A} \mathbf{x}_1
+&amp; \mathbf{x}_1^{\mathbf{T}} {\bf A} \mathbf{x}_2 &amp; \ldots &amp;
+\mathbf{x}_1^{\mathbf{T}} {\bf A} \mathbf{x}_N \\
+\mathbf{x}_2^{\mathbf{T}} {\bf A} \mathbf{x}_1 &amp;
+\mathbf{x}_2^{\mathbf{T}} {\bf A} \mathbf{x}_2 &amp; \ldots &amp;
+\mathbf{x}_2^{\mathbf{T}} {\bf A} \mathbf{x}_N \\ \vdots &amp; \vdots
+&amp; \ddots &amp; \vdots \\ \mathbf{x}_N^{\mathbf{T}} {\bf A}
+\mathbf{x}_1 &amp; \mathbf{x}_N^{\mathbf{T}} {\bf A} \mathbf{x}_2 &amp;
+\ldots &amp; \mathbf{x}_N^{\mathbf{T}} {\bf A} \mathbf{x}_N
+\end{bmatrix}
+\end{align}
+\]</span></p>
+<p>但是，上述表达式的计算效率很低，因为我们需要计算<span
+class="math inline">\(N^2\)</span>项来获得我们想要的大小为<span
+class="math inline">\(N\)</span>的一维数组。更高效的方式是利用einsum标记来计算和表达上述的平方马氏距离问题。正如我们已经看到的，<span
+class="math inline">\(D_{\mathbf{A}}(\mathbf{x})\)</span>的einsum标记形式为：
+<span class="math display">\[
+\mathbf{x}_{i}\mathbf{A}_{i,j}\mathbf{x}_j
+\]</span></p>
+<p>我们可以很简单地将上面的表达式扩展到<span
+class="math inline">\(N\)</span>个元素，我们只需要注意<span
+class="math inline">\(\mathbf{X}\)</span>的第一个维度是静态的。我们可以得到：
+<span class="math display">\[
+\mathbf{X}_{(n), i}\mathbf{A}_{i,j}\mathbf{X}_{(n),j} \equiv
+\texttt{ni,ij,nj-&gt;n}
+\]</span></p>
+<p>这个特定的例子中，<strong>使用einsum标注可以帮助我们避免计算不在对角线上的元素</strong>，与直接利用矩阵相乘方法相比，提高了我们的速度。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: %%timeit -n <span class="number">10</span> -r <span class="number">10</span></span><br><span class="line">   ...: np.diag(X @ A @ X.T)</span><br><span class="line"><span class="number">10</span> loops, best of <span class="number">10</span>: <span class="number">5.8</span> s per loop</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: %%timeit -n <span class="number">10</span> -r <span class="number">10</span></span><br><span class="line">   ...: np.einsum(<span class="string">&quot;ni,ij,nj-&gt;n&quot;</span>, X, A, X, optimize=<span class="string">&quot;optimal&quot;</span>)</span><br><span class="line"><span class="number">10</span> loops, best of <span class="number">10</span>: <span class="number">598</span> ms per loop</span><br></pre></td></tr></table></figure>
+<p>为了推广这一结果，我们考虑三维数组<span
+class="math inline">\(\mathbf{X} \in \mathbb{R}^{N_{1} \times N_{2}
+\times
+M}\)</span>。使用线性代数的基本工具，我们已经没法用代数形式表示在<span
+class="math inline">\(\mathbf{X}\)</span>的最后一维上进行平方马氏距离的计算。从我们之前的结果中，我们看到为了扩展<span
+class="math inline">\(\mathbf{X}\)</span>的计算，我们只需要引入一个额外的静态维度：
+<span class="math display">\[
+\mathbf{X}_{(n), (m), i}\mathbf{A}_{i,j}\mathbf{X}_{(n),(m), j} \equiv
+\texttt{nmi,ij,nmj-&gt;nm}
+\]</span></p>
+<p>最后这些表达式表明，<strong>当我们必须计算未使用索引的已知线性变换时，einsums可以提供很大帮助</strong>。</p>
+<p>如果我们继续增加<span
+class="math inline">\(\mathbf{X}\)</span>的维度，我们会得到以下结果：</p>
+<ol type="1">
+<li><code>i,ij,j-&gt;</code> 得到标量输出，</li>
+<li><code>ni,ij,nj-&gt;n</code> 得到一维数组输出，</li>
+<li><code>nmi,ij,nmj-&gt;nm</code> 得到二维数组输出，</li>
+<li><code>nmli,ij,nmlj-&gt;nml</code> 得到三维数组是输出，</li>
+<li><code>...i,ij,...j-&gt;...</code> 得到<span
+class="math inline">\(d\)</span>维数组输出。</li>
+</ol>
+<p>此外，einsums表达式在索引块上是可交换的。这意味着einsum表达式的结果与数组的定位顺序无关。对于我们之前的示例，以下三个表达式是等价的：</p>
+<ol type="1">
+<li><code>ni,ij,nj-&gt;n</code></li>
+<li><code>ni,nj,ij-&gt;n</code></li>
+<li><code>ni,nj,ij-&gt;n</code></li>
+</ol>
+<h3 id="高斯分布的对数密度函数">高斯分布的对数密度函数</h3>
+<p>令<span class="math inline">\(\mathbf{x} \sim
+\mathcal{N}(\boldsymbol{\mu}, \boldsymbol{\Sigma})\)</span>，则<span
+class="math inline">\(\mathbf{x}\)</span>的对数密度函数为： <span
+class="math display">\[
+\log p(\mathbf{x} \vert \boldsymbol{\mu}, \boldsymbol{\Sigma}) =
+-\frac{1}{2}(\mathbf{x} -
+\boldsymbol{\mu})^{\mathrm{T}}\boldsymbol{\Sigma}^{-1}(\mathbf{x} -
+\boldsymbol{\mu}) + \text{const}
+\]</span></p>
+<p>假设我们想要绘制二元高斯分布的对数密度函数在区域<span
+class="math inline">\(\mathcal{X} \subseteq
+\mathbb{R}^2\)</span>中的图像。正如我们之前看到的，表达式<span
+class="math inline">\(\mathbf{x}^{\mathrm{T}} \mathbf{A}
+\mathbf{x}\)</span>的einsum标注为<code>i,ij,j-&gt;</code>。通过引入静态维度<code>n</code>和<code>m</code>，我们可以计算在<span
+class="math inline">\(\mathcal{X}\)</span>上的对数密度函数，只需要将<code>n</code>和<code>m</code>索引加入einsum表达式中，并且将它们指定为输出的大小。于是，我们可以得到：<code>inm,ij,jnm-&gt;nm</code>。</p>
+<p>下面，我们展示了一个例子： <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">mean_vec = jnp.array([<span class="number">1</span>, <span class="number">0</span>]) </span><br><span class="line">cov_matrix = jnp.array([[<span class="number">4</span>, -<span class="number">2</span>], [-<span class="number">2</span>, <span class="number">4</span>]])</span><br><span class="line">prec_matrix = jnp.linalg.inv(cov_matrix)</span><br><span class="line"></span><br><span class="line">step = <span class="number">0.1</span></span><br><span class="line">xmin, xmax = -<span class="number">8</span>, <span class="number">8</span></span><br><span class="line">ymin, ymax = -<span class="number">10</span>, <span class="number">10</span></span><br><span class="line">X_grid = jnp.mgrid[xmin:xmax:step, ymin:ymax:step] + mean_vec[:, <span class="literal">None</span>, <span class="literal">None</span>]</span><br><span class="line"></span><br><span class="line">diff_grid = (X_grid - mean_vec[:, <span class="literal">None</span>, <span class="literal">None</span>])</span><br><span class="line">log_prob_grid = -jnp.einsum(<span class="string">&quot;inm,ij,jnm-&gt;nm&quot;</span>, diff_grid, prec_matrix, diff_grid) / <span class="number">2</span></span><br><span class="line">plt.contour(*X_grid, log_prob_grid, <span class="number">30</span>)</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/高斯分布对数密度.jpg" alt="高斯分布对数密度" style="zoom:50%;" /></p>
+<p>我们将上面的想法扩展到<strong>一组具有恒定均值和多个协方差矩阵的多元高斯</strong>的情况。</p>
+<p>回想一下，计算区域<span class="math inline">\(\mathcal{X} \subseteq
+\mathbb{R}^2\)</span>上二元高斯分布的对数密度的einsum表达式由<code>inm,ij,jnm-&gt;nm</code>给出。假设我们有一组<span
+class="math inline">\(K\)</span>个高斯分布，对于每个<span
+class="math inline">\(k\)</span>，我们有一个精度矩阵<span
+class="math inline">\(\mathbf{S}_{k}\)</span>和一个同样的均值<span
+class="math inline">\(\boldsymbol{\mu} \in
+\mathbb{R}^{M}\)</span>。为了计算每个区域的密度函数，我们只需修改之前的表达式以考虑新的静态维度<span
+class="math inline">\(k\)</span>。我们得到：<code>inm,kij,jnm-&gt;knm</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">C1 = jnp.array([</span><br><span class="line">    [<span class="number">4</span>, -<span class="number">2</span>],</span><br><span class="line">    [-<span class="number">2</span>, <span class="number">4</span>]</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">C2 = jnp.array([</span><br><span class="line">    [<span class="number">4</span>, <span class="number">0</span>],</span><br><span class="line">    [<span class="number">0</span>, <span class="number">4</span>]</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">C3 = jnp.array([</span><br><span class="line">    [<span class="number">4</span>, <span class="number">2</span>],</span><br><span class="line">    [<span class="number">2</span>, <span class="number">4</span>]</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">C4 = jnp.array([</span><br><span class="line">    [<span class="number">1</span>, -<span class="number">2</span>],</span><br><span class="line">    [<span class="number">2</span>, <span class="number">4</span>]</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">C = jnp.stack([C1, C2, C3, C4], axis=<span class="number">0</span>)</span><br><span class="line">S = jnp.linalg.inv(C) <span class="comment"># inversion over the fist dimension</span></span><br><span class="line"></span><br><span class="line">log_prob_grid_multiple = -jnp.einsum(<span class="string">&quot;inm,kij,jnm-&gt;knm&quot;</span>, diff_grid, S, diff_grid) / <span class="number">2</span></span><br><span class="line"></span><br><span class="line">fig, ax = plt.subplots(<span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line">ax = ax.ravel()</span><br><span class="line"><span class="keyword">for</span> axi, log_prob_grid <span class="keyword">in</span> <span class="built_in">zip</span>(ax, log_prob_grid_multiple):</span><br><span class="line">    axi.contour(*X_grid, log_prob_grid, <span class="number">30</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/K组均值相同精度不同的高斯分布.jpg" alt="K组均值相同精度不同的高斯分布" style="zoom:33%;" /></p>
+<p>回顾一下，计算的马氏距离的einsum表达式由下式给出：</p>
+<ul>
+<li><code>i,ij,ij-&gt;</code>：<span
+class="math inline">\(\mathbf{x}\)</span>为一维数组（向量）；</li>
+<li><code>ni,ij,nj-&gt;n</code>：对于<span
+class="math inline">\(N\)</span>组<span
+class="math inline">\(\mathbf{x}\)</span>构成的观测矩阵；</li>
+<li><code>nmi,ij,nmj-&gt;nm</code>：对于<span class="math inline">\(N
+\times M\)</span>组<span
+class="math inline">\(\mathbf{x}\)</span>构成的观测值网格；</li>
+<li><code>nmi,kij,nmj-&gt;knm</code>：对于<span class="math inline">\(N
+\times M\)</span>组<span
+class="math inline">\(\mathbf{x}\)</span>构成的观测值网格，并且具有不同的精度矩阵。</li>
+</ul>
+<h3 id="贝叶斯逻辑回归模型的预测面">贝叶斯逻辑回归模型的预测面</h3>
+<p><strong>只要我们的运算中最里面的操作存在元素的线性组合，我们就可以使用einsum表达式。</strong></p>
+<p>下一个示例，我们计算高斯先验下的贝叶斯逻辑回归的预测曲面。也就是说，我们要计算：
+<span class="math display">\[
+\begin{align}
+p(\hat{y} = 1 \vert \mathbf{x})
+&amp;= \int_{\mathbb{R}^2} \sigma(\mathbf{w}^{\mathrm{T}} \mathbf{x})
+p(\mathbf{w} \vert \mathcal{D}) d\mathbf{x}\\
+&amp;= \mathbb{E}_{\mathbf{w} \vert
+\mathcal{D}}\left[\sigma(\mathbf{w}^{\mathrm{T}} \mathbf{x})\right]\\
+&amp;\approx \frac{1}{S} \sum_{s=1}^S \sigma\left({\bf
+w^{(s)}}^{\mathrm{T}} \mathbf{x}\right)
+\end{align}
+\]</span></p>
+<p>假设我们已经估计了后验分布的参数<span
+class="math inline">\(\hat{\mathbf{w}}\)</span>，<span
+class="math inline">\(\hat{\boldsymbol{\Sigma}}\)</span>。因此预测分布的后验在计算上是难以处理的，我用使用后验预测分布表面的蒙特卡罗近似。和之前的例子相同，我们想要计算在区域上计算<span
+class="math inline">\(p(\hat{y} = 1 \vert \mathbf{x})\)</span>。</p>
+<p>在这种情况下，我们从后验分布<span class="math inline">\(p(\mathbf{w}
+\vert \mathcal{D})\)</span>中采样了<span
+class="math inline">\(S\)</span>个权重。对于每个权重<span
+class="math inline">\(s\)</span>，我们要计算网格点<span
+class="math inline">\(\mathcal{X}\)</span>处的值。</p>
+<p>回想一下，两个向量之间的点乘可以用einsum表示为<code>m,m-&gt;</code>。为了得到由一组<span
+class="math inline">\(S\)</span>在格网<span
+class="math inline">\(\mathcal{X}\)</span>上每个点计算的值（结果是一个三维数组），我们可以简单地在点乘中引入一个静态维度<code>s</code>，表示每一个模拟的权重。令<code>i</code>，<code>j</code>表示网格上的位置，我们可以得到einsum表达式为：<code>sm,mij-&gt;sij</code>。</p>
+<p>在计算了<code>sij</code>后，我们对结果使用logistic函数，并在<code>s</code>维度上对每个元素取平均，得到近似的预测分布。</p>
+<p>下面是代码片段： <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Estimated posterior mean and precision matrix</span></span><br><span class="line">w_hat = jnp.array([<span class="number">4.29669692</span>, <span class="number">1.6520908</span>])</span><br><span class="line">S_hat = jnp.array([[<span class="number">2.74809243</span>, <span class="number">0.76832627</span>],</span><br><span class="line">					[<span class="number">0.76832627</span>, <span class="number">0.88442754</span>]])</span><br><span class="line">C_hat = jnp.linalg.inv(S_hat)</span><br><span class="line"></span><br><span class="line">n_samples = <span class="number">1_000</span></span><br><span class="line">boundary, step = <span class="number">8</span>, <span class="number">0.1</span></span><br><span class="line">key = jax.random.PRNGKey(<span class="number">314</span>)</span><br><span class="line">X_grid = jnp.mgrid[-boundary:boundary:step, -boundary:boundary:step]</span><br><span class="line"></span><br><span class="line">w_samples = jax.random.multivariate_normal(key, w_hat, S_hat, shape=(n_samples,))</span><br><span class="line"></span><br><span class="line">logit_grid = jnp.einsum(<span class="string">&quot;sm,mij-&gt;sij&quot;</span>, w_samples, X_grid)</span><br><span class="line">P_grid = jax.nn.sigmoid(logit_grid).mean(axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">plt.contour(*X_grid, P_grid, <span class="number">30</span>)</span><br><span class="line">plt.title(<span class="string">r&quot;$p(\hat&#123;y&#125; = 1 \vert \mathbf&#123;x&#125;)$&quot;</span>, fontsize=<span class="number">15</span>)</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/贝叶斯逻辑回归模型的预测面.jpg" alt="贝叶斯逻辑回归模型的预测面" style="zoom:50%;" /></p>
+<h3 id="图像压缩奇异值分解svd">图像压缩：奇异值分解（SVD）</h3>
+<p>在学习奇异值分解时，一个典型的应用是<strong>使用奇异值分解来压缩图像</strong>。作为一个启发式示例，假设我们想要在多个阈值上比较图像的奇异值分解结果。</p>
+<p>我们将图像<span class="math inline">\(\mathbf{P}\)</span>分解为：
+<span class="math display">\[
+\mathbf{P} \stackrel{\text{einsum}}{\equiv}
+\mathbf{c}_{k}\mathbf{L}_{(n),(m),k} \in\mathbb{R}^{N\times M} \equiv
+\texttt{c,ijc-&gt;ij}
+\]</span></p>
+<p>这是线性代数的经典结果，我们可以将矩阵<span
+class="math inline">\(\mathbf{P}\)</span>可以分解为： <span
+class="math display">\[
+\mathbf{P} = \mathbf{U} \boldsymbol{\Sigma} \mathbf{V}^{\mathrm{T}}
+\]</span></p>
+<p>其中：<span class="math inline">\(\mathbf{U} \in \mathbb{R}^{M \times
+M}\)</span>，<span class="math inline">\(\mathbf{V} \in \mathbb{R}^{N
+\times N}\)</span>，以及<span class="math inline">\(\boldsymbol{\Sigma}
+\in \mathbb{R}^{M \times N}\)</span>。<span
+class="math inline">\(\boldsymbol{\Sigma}\)</span>中的对角线元素为<span
+class="math inline">\(\{\sigma_1, \sigma_2, \ldots,
+\sigma_{\min(n,m)}\}\)</span>，其他元素为<span
+class="math inline">\(0\)</span>。</p>
+<p>在scipy中，<span
+class="math inline">\(\mathbf{P}\)</span>的SVD分解被方便地分解（以
+einsum 形式）为： <span class="math display">\[
+\mathbf{P}
+\stackrel{\text{einsum}}{\equiv}\hat{\mathbf{U}}_{(n),k}\hat{\boldsymbol{\sigma}}_{k}
+\hat{\mathbf{V}}_{k, (m)}
+\]</span></p>
+<p>其中：<span class="math inline">\(\hat{\mathbf{U}} \in \mathbb{R}^{M
+\times R}\)</span>，<span class="math inline">\(\hat{\mathbf{V}} \in
+\mathbb{R}^{N \times R}\)</span>，<span
+class="math inline">\(\boldsymbol{\sigma} = \{\sigma_1 \ldots,
+\sigma_R\}\)</span>，并且<span class="math inline">\(R =
+\min(M,N)\)</span>。</p>
+<p>作为一个示例，假设我们想要用前<span
+class="math inline">\(K\)</span>个奇异值分量来近似矩阵<span
+class="math inline">\(\mathbf{P}\)</span>。首先我们观察到矩阵<span
+class="math inline">\(\mathbf{P}\)</span>的第<span
+class="math inline">\((n,m)\)</span>个元素可由下式计算： <span
+class="math display">\[
+\mathbf{P}_{n,m} = \sum_{k=1}^R \hat{\mathbf{U}}_{n,k}
+\hat{\boldsymbol{\sigma}}_{k} \hat{\mathbf{V}}_{k, m}
+\]</span></p>
+<p>如果我们想考虑 <span class="math inline">\(\mathbf{P}_{n,m}\)</span>
+的前<span
+class="math inline">\(K\)</span>个分量，我们只需要修改求和中的项数即可得到：
+<span class="math display">\[
+\sum_{k=1}^K \hat{\mathbf{U}}_{n,k} \hat{\boldsymbol{\sigma}}_{k}
+\hat{\mathbf{V}}_{k, m}
+\]</span></p>
+<p>但是，上面的表达式<strong>不能用einsum标注表示</strong>。正如我在开头提到的，<strong>每个einsum表达式都假设在索引的每个元素上求和</strong>。</p>
+<p>为了绕过这个约束，我们简单的引入大小为<span
+class="math inline">\(R\)</span>的一维向量<span
+class="math inline">\(\mathbf{1}_{\cdot \leq K}\)</span>，其中前<span
+class="math inline">\(K\)</span>个元素的值为<span
+class="math inline">\(1\)</span>，剩下<span
+class="math inline">\(R-K\)</span>个元素的值为<span
+class="math inline">\(0\)</span>。</p>
+<p>因此，使用前<span
+class="math inline">\(K\)</span>个奇异值分量近似矩阵<span
+class="math inline">\(\mathbf{P}\)</span>的表达式可以写为： <span
+class="math display">\[
+\sum_{k=1}^R \hat{\mathbf{U}}_{n,k} \hat{\boldsymbol{\sigma}}_{k}
+\hat{\mathbf{V}}_{k, m} (\mathbf{1}_{\cdot \leq K})_{k}
+\]</span></p>
+<p>上式可以简单的用einsum表达式写为： <span class="math display">\[
+\hat{\mathbf{U}}_{(n),k} \hat{\boldsymbol{\sigma}}_{k}
+\hat{\mathbf{V}}_{k, {m}} (\mathbf{1}_{\cdot \leq K})_{k} \equiv
+\texttt{nk,k,km,k-&gt;nm}
+\]</span></p>
+<p>我们同样可以考虑<span
+class="math inline">\(K\)</span>取不同值的情况。我们定义二维数组： <span
+class="math display">\[
+\mathbf{I} = \begin{bmatrix} \mathbf{1}_{\cdot \leq K}\\
+\mathbf{1}_{\cdot \leq K_2}\\ \vdots\\ \mathbf{1}_{\cdot \leq K_C}\\
+\end{bmatrix}
+\]</span></p>
+<p>接下来，我们简单地修改我们之前的表达式，以考虑到矩阵<span
+class="math inline">\(\mathbf{I}\)</span>的附加静态维度。我们可以得到：
+<span class="math display">\[
+\begin{align}
+\hat{\mathbf{U}}_{(n),k}\hat{\boldsymbol{\sigma}}_{k}
+\hat{\mathbf{V}}_{k, (m)}{\mathbf{I}}_{(c), k} &amp;\equiv
+\texttt{nk,k,km,ck-&gt;nmc}\\
+&amp;\equiv \texttt{nk,k,km,ck-&gt;cnm}
+\end{align}
+\]</span></p>
+<p>我们在下一个代码中提供了一个例子：首先，我们加载一张图像存到三维数组<code>img</code>中。接下来，我们对<code>img</code>进行变换，得到一个二维数组<code>img_gray</code>。我们在<code>img_gray</code>上执行奇异值分解并定义了一个矩阵<code>indexer</code>包含不同的阈值。最后，我们利用我们之前定义的表达式来计算在<code>indexer</code>中定义的不同阈值的图像的SVD近似值。
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">FILEPATH = <span class="string">&quot;https://i.imgur.com/p91lldL.png&quot;</span></span><br><span class="line">img = plt.imread(FILEPATH)</span><br><span class="line"></span><br><span class="line">c_weights = jnp.array([<span class="number">0.2989</span>, <span class="number">0.5870</span>, <span class="number">0.1140</span>])</span><br><span class="line">img_gray = jnp.einsum(<span class="string">&quot;c,ijc-&gt;ij&quot;</span>, c_weights, img)</span><br><span class="line">U, s, Vh = jax.scipy.linalg.svd(img_gray, full_matrices=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">indexer = s[:, <span class="literal">None</span>] &gt; jnp.array([<span class="number">10</span>, <span class="number">100</span>, <span class="number">1_000</span>, <span class="number">5_000</span>])</span><br><span class="line">img_svd_collection = jnp.einsum(<span class="string">&quot;nk,k,km,ck-&gt;cnm&quot;</span>, U, s, Vh, indexer)</span><br><span class="line"></span><br><span class="line">fig, ax = plt.subplots(<span class="number">2</span>, <span class="number">2</span>, figsize=(<span class="number">5</span>, <span class="number">6</span>))</span><br><span class="line">ax = ax.ravel()</span><br><span class="line"><span class="keyword">for</span> axi, img_svd <span class="keyword">in</span> <span class="built_in">zip</span>(ax, img_svd_collection):</span><br><span class="line">    axi.imshow(img_svd, cmap=<span class="string">&quot;bone&quot;</span>)</span><br><span class="line">    axi.axis(<span class="string">&quot;off&quot;</span>)</span><br><span class="line">plt.tight_layout(w_pad=-<span class="number">1</span>)</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SVD近似图像.jpg" alt="SVD近似图像" style="zoom:50%;" /></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/03/20/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E7%88%B1%E5%9B%A0%E6%96%AF%E5%9D%A6%E6%B1%82%E5%92%8C%EF%BC%88Einsums%EF%BC%89/" title="机器学习中的爱因斯坦求和（Einsums）">https://ehehe.cn/2022/03/20/机器学习中的爱因斯坦求和（Einsums）/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+              <a href="/tags/%E7%88%B1%E5%9B%A0%E6%96%AF%E5%9D%A6%E6%B1%82%E5%92%8C/" rel="tag"># 爱因斯坦求和</a>
+              <a href="/tags/Einsum/" rel="tag"># Einsum</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch6-6-4-%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B/" rel="prev" title="ch6-6.4 高斯过程">
+                  <i class="fa fa-angle-left"></i> ch6-6.4 高斯过程
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/13/MoCo/" rel="next" title="[Note] Momentum Contrast for Unsupervised Visual Representation  Learning (CVPR 2020)">
+                  [Note] Momentum Contrast for Unsupervised Visual Representation  Learning (CVPR 2020) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

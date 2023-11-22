@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Lang Huang, Yuhui Yuan, Jianyuan Guo, Chao Zhang, Xilin Chen, Jingdong Wang ISANet 本文提出了交错稀疏注意力机制（Interlaced Sparse Self-Attention），目的在于提高自注意力机制的计算效率和内存占用。交错稀疏注意力机制将稠密的注意力矩阵（Affinity）分解为两个注意力矩阵，分别用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] Interlaced Sparse Self-Attention for Semantic Segmentation (IJCV 2021)">
+<meta property="og:url" content="https://ehehe.cn/2023/07/25/ISANet/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Lang Huang, Yuhui Yuan, Jianyuan Guo, Chao Zhang, Xilin Chen, Jingdong Wang ISANet 本文提出了交错稀疏注意力机制（Interlaced Sparse Self-Attention），目的在于提高自注意力机制的计算效率和内存占用。交错稀疏注意力机制将稠密的注意力矩阵（Affinity）分解为两个注意力矩阵，分别用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/GPU%20memory%20FLOPs%20Time%20comparison%20between%20SA%20and%20ISA.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Interlaced%20sparse%20self-attention.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SA%E5%92%8CISA%E7%9A%84%E9%9A%8F%E8%BE%93%E5%85%A5%E5%A4%A7%E5%B0%8F%E7%9A%84FLOPs%E5%8F%98%E5%8C%96.png">
+<meta property="article:published_time" content="2023-07-25T05:11:35.000Z">
+<meta property="article:modified_time" content="2023-07-25T08:42:59.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="图像分割">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/GPU%20memory%20FLOPs%20Time%20comparison%20between%20SA%20and%20ISA.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/07/25/ISANet/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/07/25/ISANet/","path":"2023/07/25/ISANet/","title":"[Note] Interlaced Sparse Self-Attention for Semantic Segmentation (IJCV 2021)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] Interlaced Sparse Self-Attention for Semantic Segmentation (IJCV 2021) | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#isanet"><span class="nav-text">ISANet</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-text">方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6"><span class="nav-text">1. 自注意力机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A4%E9%94%99%E7%A8%80%E7%96%8F%E8%87%AA%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6"><span class="nav-text">2. 交错稀疏自注意力机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%95%BF%E7%A8%8B%E6%B3%A8%E6%84%8F%E5%8A%9B"><span class="nav-text">长程注意力</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9F%AD%E7%A8%8B%E6%B3%A8%E6%84%8F%E5%8A%9B"><span class="nav-text">短程注意力</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90"><span class="nav-text">复杂度分析</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/07/25/ISANet/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] Interlaced Sparse Self-Attention for Semantic Segmentation (IJCV 2021) | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] Interlaced Sparse Self-Attention for Semantic Segmentation (IJCV 2021)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-07-25 13:11:35 / 修改时间：16:42:59" itemprop="dateCreated datePublished" datetime="2023-07-25T13:11:35+08:00">2023-07-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Lang Huang, Yuhui Yuan, Jianyuan Guo, Chao Zhang, Xilin Chen,
+Jingdong Wang</p>
+<h1 id="isanet">ISANet</h1>
+<p>本文提出了<strong>交错稀疏注意力机制（Interlaced Sparse
+Self-Attention）</strong>，目的在于提高自注意力机制的计算效率和内存占用。交错稀疏注意力机制将稠密的注意力矩阵（Affinity）分解为两个注意力矩阵，分别用于计算长程的注意力和短程的注意力。这一方法极大地降低了自注意力机制的计算/内存成本，对于各种视觉任务有较大的应用价值。</p>
+<ul>
+<li><strong>长程注意力：</strong>估计具有长空间间隔的子集内的注意力</li>
+<li><strong>短程注意力：</strong>估计具有短空间间隔的子集内的注意力</li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/GPU%20memory%20FLOPs%20Time%20comparison%20between%20SA%20and%20ISA.png" alt="SA和ISA在GPU内存/FLOPs/时间上的对比" style="zoom:25%;" /></p>
+<span id="more"></span>
+<h2 id="方法">方法</h2>
+<h3 id="自注意力机制">1. 自注意力机制</h3>
+<p>自注意力机制的描述如下： <span class="math display">\[
+\mathbf{A}=\operatorname{Softmax}\left(\frac{\theta(\mathbf{X})
+\phi(\mathbf{X})^{\mathrm{T}}}{\sqrt{d}}\right)
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{Z} = \mathbf{A} g(\mathbf{X})
+\]</span></p>
+<p>其中，<span
+class="math inline">\(\mathbf{X}\)</span>是输入特征，<span
+class="math inline">\(\mathbf{A}\)</span>是稠密的注意力矩阵，<span
+class="math inline">\(\mathbf{Z}\)</span>是输出特征，并且<span
+class="math inline">\(\mathbf{X}, \mathbf{Z} \in \mathbb{R}^{N \times
+C}\)</span>，<span class="math inline">\(\mathbf{A} \in \mathbb{R}^{N
+\times N}\)</span>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SelfAttention</span>(nn.Module):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;One head of self-attention.&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, n_embd, head_size</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.key = nn.Linear(n_embd, head_size, bias=<span class="literal">False</span>)</span><br><span class="line">        self.query = nn.Linear(n_embd, head_size, bias=<span class="literal">False</span>)</span><br><span class="line">        self.value = nn.Linear(n_embd, head_size, bias=<span class="literal">False</span>)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        B, N, C = x.shape</span><br><span class="line">        k = self.key(x)	<span class="comment"># (B, N, head_size)</span></span><br><span class="line">        q = self.query(x) <span class="comment"># (B, N, head_size)</span></span><br><span class="line">        </span><br><span class="line">        wei = q @ k.transpose(-<span class="number">2</span>,-<span class="number">1</span>) * k.shape[-<span class="number">1</span>]**-<span class="number">0.5</span> <span class="comment"># (B, N, N)</span></span><br><span class="line">        wei = F.softmax(wei, dim=-<span class="number">1</span>) <span class="comment"># (B, N, N)</span></span><br><span class="line">        </span><br><span class="line">        v = self.value(x) <span class="comment"># (B, N, head_size)</span></span><br><span class="line">        out = wei @ v <span class="comment"># (B, N, N) @ (B, N, head_size) -&gt; (B, N, head_size)</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> out</span><br></pre></td></tr></table></figure>
+<h3 id="交错稀疏自注意力机制">2. 交错稀疏自注意力机制</h3>
+<p>交错稀疏自注意力的关键是将自注意力中的注意力矩阵<span
+class="math inline">\(\mathbf{A}\)</span>分解为<span
+class="math inline">\(\mathbf{A}^{\mathrm{L}}\)</span>和<span
+class="math inline">\(\mathbf{A}^{\mathrm{S}}\)</span>的两个稀疏注意力矩阵的乘积。</p>
+<p>首先将输入特征图<span class="math inline">\(\mathbf{X} \in
+\mathbb{R}^{N \times C \times H \times
+W}\)</span>分别沿着高度和宽度方向分割成<span
+class="math inline">\(P_h\)</span>和<span
+class="math inline">\(P_w\)</span>块，每个子区域的大小为<span
+class="math inline">\(Q_h \times Q_w\)</span>。记：<span
+class="math inline">\(\mathcal{P}=P_h \times P_w\)</span>，<span
+class="math inline">\(\mathcal{Q}=Q_h \times Q_w\)</span>。 <span
+class="math display">\[
+Q_h = H / P_h
+\]</span></p>
+<p><span class="math display">\[
+Q_w = W/P_w
+\]</span></p>
+<h4 id="长程注意力">长程注意力</h4>
+<p>为了捕捉长空间距离的特征，首先在空间维度上进行交换。交换后的特征图，可以看成是分割成了<span
+class="math inline">\(Q_h \times Q_w\)</span>大小的子区域，一共有<span
+class="math inline">\(\mathcal{P}\)</span>个子区域，即<span
+class="math inline">\(\mathbf{X}^{\mathrm{L}} =
+\left[{\mathbf{X}^{\mathrm{L}}_1}^{\mathrm{T}},
+{\mathbf{X}^{\mathrm{L}}_2}^{\mathrm{T}}, \cdots,
+{\mathbf{X}^{\mathrm{L}}_\mathcal{P}}^{\mathrm{T}}
+\right]\)</span>，其中<span
+class="math inline">\(\mathbf{X}^{\mathrm{L}}_\mathcal{P} \in
+\mathbb{R}^{\mathcal{Q} \times C}\)</span>。对于每一个<span
+class="math inline">\(\mathbf{X}^{\mathrm{L}}_\mathcal{P}\)</span>可以进行自注意力操作：
+<span class="math display">\[
+\mathbf{A}^{\mathrm{L}}_p=\operatorname{Softmax}\left(\frac{\theta(\mathbf{X}^{\mathrm{L}}_p)
+\phi(\mathbf{X}^{\mathrm{L}}_p)^{\mathrm{T}}}{\sqrt{d}}\right)
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{Z}^{\mathrm{L}}_p = \mathbf{A}^{\mathrm{L}}_p
+g(\mathbf{X}^{\mathrm{L}}_p)
+\]</span></p>
+<p>将每一部分的结果组合，即可以得到输出特征：<span
+class="math inline">\(\mathbf{Z}^{\mathrm{L}} =
+\left[{\mathbf{Z}^{\mathrm{L}}_1}^{\mathrm{T}},
+{\mathbf{Z}^{\mathrm{L}}_2}^{\mathrm{T}}, \cdots,
+{\mathbf{Z}^{\mathrm{L}}_\mathcal{P}}^{\mathrm{T}}
+\right]\)</span>。</p>
+<p>在这里，长程注意力的注意力矩阵<span
+class="math inline">\(\mathbf{A}^{\mathrm{L}}\)</span>可以看作是下面的对角矩阵，其中大部分值都是零：
+<span class="math display">\[
+\mathbf{A}^{\mathrm{L}}=\left[\begin{array}{cccc}
+\mathbf{A}_1^{\mathrm{L}} &amp; 0 &amp; \cdots &amp; 0 \\
+0 &amp; \mathbf{A}_2^{\mathrm{L}} &amp; \cdots &amp; 0 \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+0 &amp; 0 &amp; \cdots &amp; \mathbf{A}_{\mathcal{P}}^{\mathrm{L}}
+\end{array}\right]
+\]</span></p>
+<h4 id="短程注意力">短程注意力</h4>
+<p>在长程注意力结果上，再进行空间维度上的变换，回到之前的局部的情况。每个子区域的大小为<span
+class="math inline">\(P_h \times P_w\)</span>，一共有<span
+class="math inline">\(\mathcal{Q}\)</span>个子区域。同样在每个子区域上进行自注意力操作。短程注意力的注意力矩阵<span
+class="math inline">\(\mathbf{A}^{\mathrm{S}}\)</span>同样时稀疏的对角矩阵。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Interlaced%20sparse%20self-attention.png" alt="Interlaced sparse self-attention" style="zoom: 33%;" /></p>
+<h4 id="代码实现">代码实现</h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">InterlacedSparseSelfAttention</span>(<span class="params">x, P_h, P_w</span>):</span><br><span class="line">    <span class="comment"># x: input features with shape (N, C, H, W)</span></span><br><span class="line">    <span class="comment"># P_h, P_w: Number of partitions along H and W dimension</span></span><br><span class="line"></span><br><span class="line">    N, C, H, W = x.size()</span><br><span class="line">    Q_h, Q_w = H // P_h, W // P_w</span><br><span class="line">    x = x.reshape(N, C, Q_h, P_h, Q_w, P_w)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Long−range Attention</span></span><br><span class="line">    x = x.permute(<span class="number">0</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>)	<span class="comment"># gather global information</span></span><br><span class="line">    x = x.reshape(N * P_h * P_w, C, Q_h, Q_w)</span><br><span class="line">    x = SelfAttention(x)</span><br><span class="line">    x = x.reshape(N, P_h, P_w, C, Q_h, Q_w)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Short−range Attention</span></span><br><span class="line">    x = x.permute(<span class="number">0</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>) <span class="comment"># gather local information</span></span><br><span class="line">    x = x.reshape(N * Q_h * Q_w, C, P_h, P_w)</span><br><span class="line">    x = SelfAttention(x)</span><br><span class="line">    x = x.reshape(N, Q_h, Q_w, C, P_h, P_w)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> x.permute(<span class="number">0</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">5</span>).reshape(N, C, H, W)</span><br></pre></td></tr></table></figure>
+<h4 id="复杂度分析">复杂度分析</h4>
+<p>原始注意力机制的复杂度为：<span
+class="math inline">\(\mathcal{O}\left(2 H W C^2+\frac{3}{2}(H W)^2
+C\right)\)</span>。交错稀疏注意力的复杂度为：<span
+class="math inline">\(\mathcal{O}\left(4 H W C^2+\frac{3}{2}(H W)^2
+C\left(\frac{1}{P_h P_w}+\frac{1}{Q_h
+Q_w}\right)\right)\)</span>。当<span class="math inline">\(P_h P_w =
+\sqrt{HW}\)</span>时，复杂度最小为：<span
+class="math inline">\(\mathcal{O}\left(4 H W C^2+3 (H W)^{\frac{3}{2}}
+C\right)\)</span>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SA%E5%92%8CISA%E7%9A%84%E9%9A%8F%E8%BE%93%E5%85%A5%E5%A4%A7%E5%B0%8F%E7%9A%84FLOPs%E5%8F%98%E5%8C%96.png" alt="SA和ISA的随输入大小的FLOPs变化" style="zoom: 25%;" /></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/07/25/ISANet/" title="[Note] Interlaced Sparse Self-Attention for Semantic Segmentation (IJCV 2021)">https://ehehe.cn/2023/07/25/ISANet/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/" rel="tag"># 图像分割</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/07/24/RefineNet/" rel="prev" title="[Note] RefineNet: Multi-Path Refinement Networks for High-Resolution Semantic Segmentation (CVPR 2017 & TPAMI)">
+                  <i class="fa fa-angle-left"></i> [Note] RefineNet: Multi-Path Refinement Networks for High-Resolution Semantic Segmentation (CVPR 2017 & TPAMI)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/07/25/PointRend/" rel="next" title="[Note] PointRend: Image Segmentation as Rendering (CVPR 2020)">
+                  [Note] PointRend: Image Segmentation as Rendering (CVPR 2020) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

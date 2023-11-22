@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="6.2 构造核 为了利用核替换（kernel substitution），我们需要构造有效的核函数。  选择一个特征空间映射\(\boldsymbol{\phi}(\mathbf{x})\)，即基函数，然后使用这个映射寻找对应的核函数。 直接构造核函数。 通过概率生成模型来构造核函数。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch6-6.2 构造核">
+<meta property="og:url" content="https://ehehe.cn/2022/02/15/ch6-6-2-%E6%9E%84%E9%80%A0%E6%A0%B8/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="6.2 构造核 为了利用核替换（kernel substitution），我们需要构造有效的核函数。  选择一个特征空间映射\(\boldsymbol{\phi}(\mathbf{x})\)，即基函数，然后使用这个映射寻找对应的核函数。 直接构造核函数。 通过概率生成模型来构造核函数。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E6%A0%B8%E5%87%BD%E6%95%B0.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E6%A0%B8%E5%87%BD%E6%95%B0_2.jpg">
+<meta property="article:published_time" content="2022-02-15T06:13:04.000Z">
+<meta property="article:modified_time" content="2022-02-15T06:13:04.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="PRML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/%E6%A0%B8%E5%87%BD%E6%95%B0.jpg">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/02/15/ch6-6-2-%E6%9E%84%E9%80%A0%E6%A0%B8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/02/15/ch6-6-2-%E6%9E%84%E9%80%A0%E6%A0%B8/","path":"2022/02/15/ch6-6-2-构造核/","title":"ch6-6.2 构造核"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch6-6.2 构造核 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E6%A0%B8"><span class="nav-text">6.2 构造核</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E7%89%B9%E5%BE%81%E7%A9%BA%E9%97%B4%E6%98%A0%E5%B0%84%E6%9E%84%E9%80%A0%E6%A0%B8%E5%87%BD%E6%95%B0"><span class="nav-text">通过特征空间映射构造核函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E6%9E%84%E9%80%A0%E6%A0%B8%E5%87%BD%E6%95%B0"><span class="nav-text">直接构造核函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E9%A1%B9%E5%BC%8F%E6%A0%B8%E5%87%BD%E6%95%B0"><span class="nav-text">多项式核函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AB%98%E6%96%AF%E6%A0%B8%E5%87%BD%E6%95%B0"><span class="nav-text">高斯核函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B8%E5%87%BD%E6%95%B0%E7%9A%84%E8%A7%82%E7%82%B9"><span class="nav-text">核函数的观点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E6%A6%82%E7%8E%87%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B%E6%9E%84%E9%80%A0%E6%A0%B8%E5%87%BD%E6%95%B0"><span class="nav-text">通过概率生成模型构造核函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#fisher%E6%A0%B8%E5%87%BD%E6%95%B0"><span class="nav-text">Fisher核函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sigmoid%E6%A0%B8%E5%87%BD%E6%95%B0"><span class="nav-text">sigmoid核函数</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/02/15/ch6-6-2-%E6%9E%84%E9%80%A0%E6%A0%B8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch6-6.2 构造核 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch6-6.2 构造核
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-15 14:13:04" itemprop="dateCreated datePublished" datetime="2022-02-15T14:13:04+08:00">2022-02-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>12 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="构造核">6.2 构造核</h2>
+<p>为了利用<strong>核替换（kernel
+substitution）</strong>，我们需要构造有效的核函数。</p>
+<ol type="1">
+<li>选择一个特征空间映射<span
+class="math inline">\(\boldsymbol{\phi}(\mathbf{x})\)</span>，即基函数，然后使用这个映射寻找对应的核函数。</li>
+<li>直接构造核函数。</li>
+<li>通过概率生成模型来构造核函数。</li>
+</ol>
+<span id="more"></span>
+<h3 id="通过特征空间映射构造核函数">通过特征空间映射构造核函数</h3>
+<p>在第一种情况下，由一维输入空间定义的核函数为： <span
+class="math display">\[
+k(x, x^{\prime}) =
+\boldsymbol{\phi}^{\mathrm{T}}(x)\boldsymbol{\phi}(x^{\prime}) =
+\sum_{i=1}^{M}\phi_{i}(x)\phi_{i}(x^{\prime})
+\]</span>
+下图表示了由三种特征空间映射构造的核函数（高斯核函数、多项式核函数和sigmoid核函数），绘制下图的代码由3.3.3节（[[ch3-3-3-贝叶斯线性回归#3
+3 3 等价核]]）中的代码稍作修改得到。下图与书上的图是相似的。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/核函数.jpg" alt="核函数" style="zoom:33%;" /></p>
+<p>如果直接将基函数代入上面的公式，我们将得到下面的结果。与上面的区别是公式中乘了矩阵<span
+class="math inline">\(\mathbf{S}_{N}\)</span>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/核函数_2.jpg" alt="核函数_2" style="zoom:33%;" /></p>
+<h3 id="直接构造核函数">直接构造核函数</h3>
+<p>在第二种情况下，我们需要确保构造核函数是有效的，<strong>有效的核函数对应于某个特征空间的标量积</strong>。假设有一个核函数：
+<span class="math display">\[
+k(\mathbf{x}, \mathbf{z}) = (\mathbf{x}^{\mathrm{T}}\mathbf{z})^{2}
+\]</span></p>
+<p>取二维输入空间<span class="math inline">\(\mathbf{x}=(x_{1},
+x_{2})\)</span>的情况，我们可以展开核函数，得到对应的非线性特征映射：
+<span class="math display">\[
+\begin{align}
+k(\mathbf{x}, \mathbf{z})
+&amp;= (\mathbf{x}^{\mathrm{T}}\mathbf{z})^{2} = (x_{1}z_{1} +
+x_{2}z_{2})^{2} \\
+&amp;= x_{1}^{2}z_{1}^{2} + 2x_{1}z_{1}x_{2}z_{2} + x_{2}^{2}z_{2}^{2}
+\\
+&amp;= (x_{1}^{2}, \sqrt{2}x_{1}x_{2}, x_{2}^{2})(z_{1}^{2},
+\sqrt{2}z_{1}z_{2}, z_{2}^{2})^{\mathrm{T}} \\
+&amp;=
+\boldsymbol{\phi}(\mathbf{x})^{\mathrm{T}}\boldsymbol{\phi}(\mathbf{z})
+\end{align}
+\]</span></p>
+<p>我们可以看到特征映射的形式为：<span
+class="math inline">\(\boldsymbol{\phi}(\mathbf{x}) = (x_{1}^{2},
+\sqrt{2}x_{1}x_{2},
+x_{2}^{2})^{\mathrm{T}}\)</span>，这一特征映射包含了所有的二阶项，并且每一项都有特定的权重。</p>
+<p>然而，更一般地，我们需要一种简单的方法来测试一个函数是否是一个有效的核函数，而不用显式地构造函数<span
+class="math inline">\(\boldsymbol{\phi}(\mathbf{x})\)</span>。<strong>核函数<span
+class="math inline">\(k(\mathbf{x},
+\mathbf{x}^{\prime})\)</span>是一个有效的核函数的充分必要条件是Gram矩阵<span
+class="math inline">\(\mathbf{K}\)</span>（其中元素由<span
+class="math inline">\(k(\mathbf{x}_{n},
+\mathbf{x}_{m})\)</span>得到）在选择集合<span
+class="math inline">\(\{\mathbf{x}_{n}\}\)</span>中的任意元素时都是半正定的。</strong></p>
+<p>构造新的核函数的一个方法是<strong>使用简单的核函数作为基本的模块来构造</strong>。可以使用下面的性质：</p>
+<p>给定有效的核函数<span class="math inline">\(k_{1}\left(\mathbf{x},
+\mathbf{x}^{\prime}\right)\)</span>和<span
+class="math inline">\(k_{2}\left(\mathbf{x},
+\mathbf{x}^{\prime}\right)\)</span>，则下面构造的新核函数也是有效的：
+<span class="math display">\[
+\begin{align}
+k\left(\mathbf{x}, \mathbf{x}^{\prime}\right) &amp;=c
+k_{1}\left(\mathbf{x}, \mathbf{x}^{\prime}\right) \\
+k\left(\mathbf{x}, \mathbf{x}^{\prime}\right) &amp;=f(\mathbf{x})
+k_{1}\left(\mathbf{x}, \mathbf{x}^{\prime}\right)
+f\left(\mathbf{x}^{\prime}\right) \\
+k\left(\mathbf{x}, \mathbf{x}^{\prime}\right)
+&amp;=q\left(k_{1}\left(\mathbf{x}, \mathbf{x}^{\prime}\right)\right) \\
+k\left(\mathbf{x}, \mathbf{x}^{\prime}\right) &amp;=\exp
+\left(k_{1}\left(\mathbf{x}, \mathbf{x}^{\prime}\right)\right) \\
+k\left(\mathbf{x}, \mathbf{x}^{\prime}\right)
+&amp;=k_{1}\left(\mathbf{x},
+\mathbf{x}^{\prime}\right)+k_{2}\left(\mathbf{x},
+\mathbf{x}^{\prime}\right) \\
+k\left(\mathbf{x}, \mathbf{x}^{\prime}\right)
+&amp;=k_{1}\left(\mathbf{x}, \mathbf{x}^{\prime}\right)
+k_{2}\left(\mathbf{x}, \mathbf{x}^{\prime}\right) \\
+k\left(\mathbf{x}, \mathbf{x}^{\prime}\right)
+&amp;=k_{3}\left(\phi(\mathbf{x}),
+\phi\left(\mathbf{x}^{\prime}\right)\right) \\
+k\left(\mathbf{x}, \mathbf{x}^{\prime}\right)
+&amp;=\mathbf{x}^{\mathrm{T}} \mathbf{A} \mathbf{x}^{\prime} \\
+k\left(\mathbf{x}, \mathbf{x}^{\prime}\right)
+&amp;=k_{a}\left(\mathbf{x}_{a},
+\mathbf{x}_{a}^{\prime}\right)+k_{b}\left(\mathbf{x}_{b},
+\mathbf{x}_{b}^{\prime}\right) \\
+k\left(\mathbf{x}, \mathbf{x}^{\prime}\right)
+&amp;=k_{a}\left(\mathbf{x}_{a}, \mathbf{x}_{a}^{\prime}\right)
+k_{b}\left(\mathbf{x}_{b}, \mathbf{x}_{b}^{\prime}\right)
+\end{align}
+\]</span></p>
+<p>其中：<span class="math inline">\(c \gt 0\)</span>是一个常数，<span
+class="math inline">\(f(\cdot)\)</span>是任意的函数，<span
+class="math inline">\(q(\cdot)\)</span>是一个系数非负的多项式函数，<span
+class="math inline">\(\boldsymbol{\phi}(\mathbf{x})\)</span>是一个将<span
+class="math inline">\(\mathbf{x}\)</span>映射到<span
+class="math inline">\(\mathbb{R}^{M}\)</span>的函数，<span
+class="math inline">\(k_{3}(\cdot, \cdot)\)</span>是<span
+class="math inline">\(\mathbb{R}^{M}\)</span>中的一个有效的核函数，<span
+class="math inline">\(\mathbf{A}\)</span>是一个对称的半正定矩阵，<span
+class="math inline">\(\mathbf{x}_{a}\)</span>和<span
+class="math inline">\(\mathbf{x}_{b}\)</span>是两个变量满足<span
+class="math inline">\(\mathbf{x} = (\mathbf{x}_{a},
+\mathbf{x}_{b})\)</span>，<span
+class="math inline">\(k_{a}\)</span>和<span
+class="math inline">\(k_{b}\)</span>是在它们各自空间中有效的核函数。</p>
+<p>根据上面这些性质，我们可以构造针对特定任务的复杂核函数。我们要求核函数<span
+class="math inline">\(k\left(\mathbf{x},
+\mathbf{x}^{\prime}\right)\)</span>是对称半正定的，并且在特定的应用中可以用于表示<span
+class="math inline">\(\mathbf{x}\)</span>和<span
+class="math inline">\(\mathbf{x}^{\prime}\)</span>之间的相似性。下面是一些常见核函数的例子。</p>
+<h4 id="多项式核函数">多项式核函数</h4>
+<p>上面我们看到了一个简单的多项式核函数<span
+class="math inline">\(k(\mathbf{x}, \mathbf{x}^{\prime}) =
+\left(\mathbf{x}^{\mathrm{T}}\mathbf{x}^{\prime}\right)^{2}\)</span>，这个核函数包含了二阶的单项式。</p>
+<p>如果我们考虑稍微一般的核函数<span class="math inline">\(k(\mathbf{x},
+\mathbf{x}^{\prime}) =
+\left(\mathbf{x}^{\mathrm{T}}\mathbf{x}^{\prime}+c\right)^{2}\)</span>，其中<span
+class="math inline">\(c \gt
+0\)</span>，那么它对应的特征映射就会包含常数、一次项和二次项。</p>
+<p>类似地，对于核函数<span class="math inline">\(k(\mathbf{x},
+\mathbf{x}^{\prime}) =
+\left(\mathbf{x}^{\mathrm{T}}\mathbf{x}^{\prime}\right)^{M}\)</span>，它包含了所有的<span
+class="math inline">\(M\)</span>阶单项式。如果<span
+class="math inline">\(\mathbf{x}\)</span>和<span
+class="math inline">\(\mathbf{x}^{\prime}\)</span>表示两张图片，那么这个核表示了第一张图片中<span
+class="math inline">\(M\)</span>个像素和第二张图片中<span
+class="math inline">\(M\)</span>个像素的所有可能的乘积的一个加权和。</p>
+<p>最后，我们可以进一步做推广，核函数<span
+class="math inline">\(k(\mathbf{x}, \mathbf{x}^{\prime}) =
+\left(\mathbf{x}^{\mathrm{T}}\mathbf{x}^{\prime}+c\right)^{M}\)</span>表示最高次为<span
+class="math inline">\(M\)</span>阶的多项式。</p>
+<h4 id="高斯核函数">高斯核函数</h4>
+<p>高斯核函数的形式为： <span class="math display">\[
+k(\mathbf{x}, \mathbf{x}^{\prime}) = \exp \left(-\frac{\|\mathbf{x} -
+\mathbf{x}^{\prime}\|^{2}}{2 \sigma^{2}}\right)
+\]</span></p>
+<p>由于上式不表示一个概率密度，所以没有归一化系数。</p>
+<p>通过对平方项进行展开： <span class="math display">\[
+\|\mathbf{x} - \mathbf{x}^{\prime}\|^{2} =
+\mathbf{x}^{\mathrm{T}}\mathbf{x} +
+(\mathbf{x}^{\prime})^{\mathrm{T}}\mathbf{x}^{\prime} -
+2\mathbf{x}^{\mathrm{T}}\mathbf{x}^{\prime}
+\]</span></p>
+<p>我们可以得到下面的核函数也是一个有效的核函数： <span
+class="math display">\[
+k(\mathbf{x}, \mathbf{x}^{\prime}) = \exp
+\left(-\frac{\mathbf{x}^{\mathrm{T}}\mathbf{x}}{2 \sigma^{2}}\right)\exp
+\left(\frac{\mathbf{x}^{\mathrm{T}}\mathbf{x}^{\prime}}{
+\sigma^{2}}\right)\exp
+\left(-\frac{(\mathbf{x}^{\prime})^{\mathrm{T}}\mathbf{x}^{\prime}}{2
+\sigma^{2}}\right)
+\]</span></p>
+<p><strong>高斯核函数对应的特征向量是无限维的</strong>。</p>
+<p>高斯核函数不局限于使用欧式距离。如果我们使用<strong>核替换</strong>将<span
+class="math inline">\(\mathbf{x}^{\mathrm{T}}\mathbf{x}\)</span>替换成一个非线性的核函数<span
+class="math inline">\(\kappa(\mathbf{x},
+\mathbf{x}^{\prime})\)</span>，我们可以得到核函数： <span
+class="math display">\[
+k\left(\mathbf{x}, \mathbf{x}^{\prime}\right)=\exp \left\{-\frac{1}{2
+\sigma^{2}}\left(\kappa(\mathbf{x},
+\mathbf{x})+\kappa\left(\mathbf{x}^{\prime},
+\mathbf{x}^{\prime}\right)-2 \kappa\left(\mathbf{x},
+\mathbf{x}^{\prime}\right)\right)\right\}
+\]</span></p>
+<h4 id="核函数的观点">核函数的观点</h4>
+<p>从核函数的观点来看的一个重要贡献是可以<strong>将输入扩展为符号化的输入，而不仅局限于实数向量</strong>。核函数可以定义在多种对象上，如图片、几何、字符、文本等。</p>
+<p>考虑一个固定的集合，定义一个非向量空间，这个空间由这个集合的所有子集构成。如果<span
+class="math inline">\(A_{1}\)</span>和<span
+class="math inline">\(A_{2}\)</span>是其中的两个子集，那么可以得到一个简单的核函数为：
+<span class="math display">\[
+k(A_{1}, A_{2}) = 2^{|A_{1} \cap A_{2}|}
+\]</span></p>
+<p>其中：<span class="math inline">\(A_{1} \cap
+A_{2}\)</span>表示集合<span class="math inline">\(A_{1}\)</span>和<span
+class="math inline">\(A_{2}\)</span>的交集，<span
+class="math inline">\(|A|\)</span>表示集合<span
+class="math inline">\(A\)</span>中元素的数量。这是一个有效的核函数，因为它可以被证明是一个特征空间的内积。</p>
+<h3 id="通过概率生成模型构造核函数">通过概率生成模型构造核函数</h3>
+<p>通过概率生成模型构造核函数允许我们<strong>在判别式的框架中使用生成模型</strong>。<strong>生成模型可以自然地处理丢失的数据</strong>，并且<strong>在隐藏马尔可夫模型的情况下可以处理不同长度的序列</strong>。相比之下，<strong>判别模型在判别任务上的表现通常比生成模型更好</strong>。</p>
+<p>因此，将这两种方法结合起来具有一定的意义。一种将这两种方法组合的方法是<strong>使用生成模型来定义核函数，然后在判别式方法中使用这个核函数</strong>。</p>
+<p>给定一个生成式模型<span
+class="math inline">\(p(\mathbf{x})\)</span>，我们可以定义核函数： <span
+class="math display">\[
+k(\mathbf{x}, \mathbf{x}^{\prime}) = p(\mathbf{x})p(\mathbf{x}^{\prime})
+\]</span></p>
+<p>这个一个有效的核函数，因为我们可以把它看成由映射<span
+class="math inline">\(p(\mathbf{x})\)</span>定义的一维特征空间中的一个内积。</p>
+<p>如果两个输入<span class="math inline">\(\mathbf{x}\)</span>和<span
+class="math inline">\(\mathbf{x}^{\prime}\)</span>都有较高的概率，则它们是相似的。我们可以用直接构造的方法来扩展这类核函数，通过考虑不同概率分布的乘积的总和，以及正权重系数<span
+class="math inline">\(p(i)\)</span>，最终的核函数形式为： <span
+class="math display">\[
+k(\mathbf{x}, \mathbf{x}^{\prime}) = \sum_{i} p(\mathbf{x} \mid
+i)p(\mathbf{x}^{\prime} \mid i)p(i)
+\]</span></p>
+<p>如果不考虑归一化系数，这个核就等价于一个混合概率密度。它可以分解成各个分量概率密度，<span
+class="math inline">\(i\)</span>扮演着“潜在”变量的角色。</p>
+<p><strong>如果两个输入<span
+class="math inline">\(\mathbf{x}\)</span>和<span
+class="math inline">\(\mathbf{x}^{\prime}\)</span>在一系列的不同分量下都有较大的概率，那么这两个输入将会使核函数输出较大的值，于是它就表现出相似性。</strong></p>
+<p>对上面的求和取极限，我们可以得到下面的核函数： <span
+class="math display">\[
+k(\mathbf{x}, \mathbf{x}^{\prime}) = \int p(\mathbf{x} \mid
+\mathbf{z})p(\mathbf{x}^{\prime} \mid
+\mathbf{z})p(\mathbf{z})\mathrm{d}\mathbf{z}
+\]</span></p>
+<p>其中，<span
+class="math inline">\(\mathbf{z}\)</span>是一个连续的潜在变量。</p>
+<p>现在我们假设数据由长度为<span
+class="math inline">\(L\)</span>的有序序列组成，即一个观测为<span
+class="math inline">\(\mathbf{X} = \{\mathbf{x}_{1}, \dots,
+\mathbf{x}_{L}\}\)</span>。对于这种序列，一个常用的生成式模型是<strong>隐马尔科夫模型</strong>，它把分布<span
+class="math inline">\(p(\mathbf{X})\)</span>表示为对应的隐藏状态序列<span
+class="math inline">\(\mathbf{Z} = \{\mathbf{z}_{1}, \dots,
+\mathbf{z}_{L}\}\)</span>的边缘化。通过扩展上面的核函数，我们可以定义一个核函数来衡量两个序列<span
+class="math inline">\(\mathbf{X}\)</span>和<span
+class="math inline">\(\mathbf{X}^{\prime}\)</span>之间的相似性： <span
+class="math display">\[
+k(\mathbf{X}, \mathbf{X}^{\prime}) = \sum_{\mathbf{z}} p(\mathbf{X} \mid
+\mathbf{Z}) p(\mathbf{X}^{\prime} \mid \mathbf{Z}) p(\mathbf{Z})
+\]</span></p>
+<p>上面的两个观测序列都由相同的隐藏状态序列<span
+class="math inline">\(\mathbf{Z}\)</span>生成。这个模型可以很容易的扩展来比较不同长度的序列。</p>
+<h4 id="fisher核函数">Fisher核函数</h4>
+<p>另一种使用生成式模型定义核函数的方法称为<strong>Fisher核函数（Fisher
+kernel）</strong>。考虑一个参数化的生成式模型<span
+class="math inline">\(p(\mathbf{x} \mid
+\boldsymbol{\theta})\)</span>，其中<span
+class="math inline">\(\boldsymbol{\theta}\)</span>表示参数向量。我们目标是找到一个核函数，来度量这个生成式模型的两个输入变量<span
+class="math inline">\(\mathbf{x}\)</span>和<span
+class="math inline">\(\mathbf{x}^{\prime}\)</span>之间的相似性。在Fisher核函数方法中，考虑了关于<span
+class="math inline">\(\boldsymbol{\theta}\)</span>的梯度，它在与<span
+class="math inline">\(\boldsymbol{\theta}\)</span>的维度相同的特征空间中定义了一个向量。特别地，它考虑了<strong>Fisher得分（Fisher
+score）</strong>： <span class="math display">\[
+\mathbf{g}(\boldsymbol{\theta}, \mathbf{x}) =
+\nabla_{\boldsymbol{\theta}} \ln p(\mathbf{x} \mid \boldsymbol{\theta})
+\]</span></p>
+<p>根据Fisher得分，Fisher核函数的定义为： <span class="math display">\[
+k(\mathbf{x}, \mathbf{x}^{\prime}) = \mathbf{g}(\boldsymbol{\theta},
+\mathbf{x})^{\mathrm{T}} \mathbf{F}^{-1}\mathbf{g}(\boldsymbol{\theta},
+\mathbf{x}^{\prime})
+\]</span></p>
+<p>其中，<span
+class="math inline">\(\mathbf{F}\)</span>为<strong>Fisher信息矩阵（Fisher
+information matrix）</strong>： <span class="math display">\[
+\mathbf{F} = \mathbb{E}_{\mathbf{x}}
+\left[\mathbf{g}(\boldsymbol{\theta},
+\mathbf{x})\mathbf{g}(\boldsymbol{\theta},
+\mathbf{x})^{\mathrm{T}}\right]
+\]</span></p>
+<p>其中，期望是在概率分布<span class="math inline">\(p(\mathbf{x} \mid
+\boldsymbol{\theta})\)</span>下关于<span
+class="math inline">\(\mathbf{x}\)</span>的期望。这样定义的动机来自<strong>信息几何（information
+geometry）</strong>的视角，它考虑了模型参数空间的微分集合。</p>
+<p>这里，我们注意到，<strong>由于Fisher信息矩阵的存在，在<span
+class="math inline">\(\boldsymbol{\theta}\)</span>做非线性变换<span
+class="math inline">\(\boldsymbol{\theta} \to
+\boldsymbol{\psi}(\boldsymbol{\theta})\)</span>时，Fisher核函数具有不变性</strong>。</p>
+<p>在实际应用中，通常计算Fisher信息矩阵是不可行的。一种方法是把Fisher信息的定义中的期望替换为样本均值，得到：
+<span class="math display">\[
+\mathbf{F} \simeq \frac{1}{N} \sum_{n=1}^{N}
+\mathbf{g}(\boldsymbol{\theta},
+\mathbf{x}_{n})\mathbf{g}(\boldsymbol{\theta},
+\mathbf{x}_{n})^{\mathrm{T}}
+\]</span></p>
+<p>我们可以看到，这是Fisher得分的协方差矩阵，因此Fisher核函数对应于Fisher得分的白化。在简单的情况下，我们可以忽略Fisher信息矩阵，使用具有变化性的核函数：
+<span class="math display">\[
+k(\mathbf{x}, \mathbf{x}^{\prime}) = \mathbf{g}(\boldsymbol{\theta},
+\mathbf{x})^{\mathrm{T}} \mathbf{g}(\boldsymbol{\theta},
+\mathbf{x}^{\prime})
+\]</span></p>
+<h4 id="sigmoid核函数">sigmoid核函数</h4>
+<p>核函数的最后一个例子是sigmoid核函数： <span class="math display">\[
+k(\mathbf{x}, \mathbf{x}^{\prime}) = \tanh \left(a
+\mathbf{x}^{\mathrm{T}}\mathbf{x}^{\prime} + b\right)
+\]</span></p>
+<p>在sigmoid核函数中，它的<strong>Gram矩阵通常不是半正定的</strong>。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/02/15/ch6-6-2-%E6%9E%84%E9%80%A0%E6%A0%B8/" title="ch6-6.2 构造核">https://ehehe.cn/2022/02/15/ch6-6-2-构造核/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PRML/" rel="tag"># PRML</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch6-6-1-%E5%AF%B9%E5%81%B6%E8%A1%A8%E7%A4%BA/" rel="prev" title="ch6-6.1 对偶表示">
+                  <i class="fa fa-angle-left"></i> ch6-6.1 对偶表示
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch6-6-3-%E5%BE%84%E5%90%91%E5%9F%BA%E5%87%BD%E6%95%B0%E7%BD%91%E7%BB%9C/" rel="next" title="ch6-6.3 径向基函数网络">
+                  ch6-6.3 径向基函数网络 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

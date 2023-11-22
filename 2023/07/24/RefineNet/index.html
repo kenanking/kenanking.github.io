@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Guosheng Lin, Anton Milan, Chunhua Shen, Ian Reid RefineNet 本文介绍了一个多路径细化（multi-path refinement）的网络RefineNet，使用长程的残差连接来实现语义分割中的高分辨率预测。该网络利用了在下采样过程中可用的所有信息，使用浅层卷积的细粒度特征来细化更深层次高级语义特征。另外，文章中引入了链式残差池化（c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] RefineNet: Multi-Path Refinement Networks for High-Resolution Semantic Segmentation (CVPR 2017 &amp; TPAMI)">
+<meta property="og:url" content="https://ehehe.cn/2023/07/24/RefineNet/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Guosheng Lin, Anton Milan, Chunhua Shen, Ian Reid RefineNet 本文介绍了一个多路径细化（multi-path refinement）的网络RefineNet，使用长程的残差连接来实现语义分割中的高分辨率预测。该网络利用了在下采样过程中可用的所有信息，使用浅层卷积的细粒度特征来细化更深层次高级语义特征。另外，文章中引入了链式残差池化（c">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/RefineNet%20architecture.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/3%20variants%20of%20RefineNet.png">
+<meta property="article:published_time" content="2023-07-24T02:03:24.000Z">
+<meta property="article:modified_time" content="2023-07-24T07:54:47.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="图像分割">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/RefineNet%20architecture.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/07/24/RefineNet/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/07/24/RefineNet/","path":"2023/07/24/RefineNet/","title":"[Note] RefineNet: Multi-Path Refinement Networks for High-Resolution Semantic Segmentation (CVPR 2017 & TPAMI)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] RefineNet: Multi-Path Refinement Networks for High-Resolution Semantic Segmentation (CVPR 2017 & TPAMI) | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#refinenet"><span class="nav-text">RefineNet</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-text">网络结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#refinenet%E7%9A%84%E5%8F%98%E4%BD%93"><span class="nav-text">RefineNet的变体</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/07/24/RefineNet/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] RefineNet: Multi-Path Refinement Networks for High-Resolution Semantic Segmentation (CVPR 2017 & TPAMI) | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] RefineNet: Multi-Path Refinement Networks for High-Resolution Semantic Segmentation (CVPR 2017 & TPAMI)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-07-24 10:03:24 / 修改时间：15:54:47" itemprop="dateCreated datePublished" datetime="2023-07-24T10:03:24+08:00">2023-07-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>597</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Guosheng Lin, Anton Milan, Chunhua Shen, Ian Reid</p>
+<h1 id="refinenet">RefineNet</h1>
+<p>本文介绍了一个<strong>多路径细化（multi-path
+refinement）</strong>的网络RefineNet，使用长程的残差连接来实现语义分割中的高分辨率预测。该网络利用了在下采样过程中可用的所有信息，使用浅层卷积的细粒度特征来细化更深层次高级语义特征。另外，文章中引入了<strong>链式残差池化（chained
+residual pooling）</strong>，以有效地捕获丰富的背景上下文。</p>
+<p>常用的深度CNN网络（VGG，ResNet），由于池化和卷积的存在，特征图会越来越小，导致损失一些细粒度的信息。浅层的特征图有丰富的细粒度信息，深层的特征图则有更抽象、粗粒度的信息。对于分类问题而言，只需要深层的语义信息就能表现较好，但是对于稠密预测问题（语义分割、深度估计），除了需要强语义信息之外，还需要高空间分辨率。</p>
+<p>常用的解决方法：</p>
+<ul>
+<li>反卷积：不能恢复低级的空间信息。</li>
+<li>空洞卷积：①计算量大（维持高分辨率特征图）；②是对特征图的一种粗粒度采样，会丢失重要信息。</li>
+<li>引入中间层特征：文中说丢失了强空间信息。在当时还没出现FPN、UPerNet等工作。</li>
+</ul>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Comparison%20of%20fully%20convolutional%20approaches%20for%20dense%20classification.png"
+alt="Comparison of fully convolutional approaches for dense classification" />
+<figcaption aria-hidden="true">Comparison of fully convolutional
+approaches for dense classification</figcaption>
+</figure>
+<span id="more"></span>
+<h2 id="网络结构">网络结构</h2>
+<ul>
+<li><strong>多路径细化</strong>
+<ul>
+<li>ReﬁneNet将预训练的ResNet分为4个块（阶段），从最深的块开始，逐步融合浅层的块。</li>
+</ul></li>
+<li><strong>RefineNet块</strong>
+<ul>
+<li>带残差的卷积单元（CRU）</li>
+<li>多分辨率融合</li>
+<li>链式残差池化</li>
+</ul></li>
+<li><strong>残差连接</strong>
+<ul>
+<li>RefineNet中的每个卷积块都带有残差连接，使得梯度可以有效传播。</li>
+</ul></li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/RefineNet%20architecture.png" alt="RefineNet architecture" style="zoom: 28%;" /></p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 16%" />
+<col style="width: 21%" />
+<col style="width: 22%" />
+<col style="width: 8%" />
+<col style="width: 6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Methods</th>
+<th style="text-align: center;">Base network</th>
+<th style="text-align: center;">Input image size</th>
+<th style="text-align: center;">Output size ratio</th>
+<th style="text-align: center;">Memory</th>
+<th style="text-align: center;">FLOPs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Dilated ResNet</td>
+<td style="text-align: center;">ResNet-101</td>
+<td style="text-align: center;"><span class="math inline">\(512 \times
+512\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1 /
+8\)</span></td>
+<td style="text-align: center;">3.3 GB</td>
+<td style="text-align: center;">177 G</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Dilated ResNet</td>
+<td style="text-align: center;">ResNet-152</td>
+<td style="text-align: center;"><span class="math inline">\(512 \times
+512\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1 /
+8\)</span></td>
+<td style="text-align: center;">4.4 GB</td>
+<td style="text-align: center;">241 G</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">DeepLabv2 (dilated)</td>
+<td style="text-align: center;">ResNet-101</td>
+<td style="text-align: center;"><span class="math inline">\(513 \times
+513\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1 /
+8\)</span></td>
+<td style="text-align: center;">4.0 GB</td>
+<td style="text-align: center;">346 G</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">RefineNets+ResNet</td>
+<td style="text-align: center;">ResNet-101</td>
+<td style="text-align: center;"><span class="math inline">\(512 \times
+512\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1 /
+4\)</span></td>
+<td style="text-align: center;">1.9 GB</td>
+<td style="text-align: center;">261 G</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">RefineNets+ResNet</td>
+<td style="text-align: center;">ResNet-152</td>
+<td style="text-align: center;"><span class="math inline">\(512 \times
+512\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1 /
+4\)</span></td>
+<td style="text-align: center;">2.3 GB</td>
+<td style="text-align: center;">280 G</td>
+</tr>
+</tbody>
+</table>
+<h2 id="refinenet的变体">RefineNet的变体</h2>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/3%20variants%20of%20RefineNet.png" alt="3 variants of RefineNet" style="zoom:40%;" /></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Variant</th>
+<th style="text-align: center;">Initialization</th>
+<th style="text-align: center;">IoU</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">single RefineNet</td>
+<td style="text-align: center;">ResNet-50</td>
+<td style="text-align: center;">40.3</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2-cascaded RefineNet</td>
+<td style="text-align: center;">ResNet-50</td>
+<td style="text-align: center;">40.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">4-cascaded RefineNet</td>
+<td style="text-align: center;">ResNet-50</td>
+<td style="text-align: center;">42.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4-cascaded 2-scale RefineNet</td>
+<td style="text-align: center;">ResNet-50</td>
+<td style="text-align: center;">43.1</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/07/24/RefineNet/" title="[Note] RefineNet: Multi-Path Refinement Networks for High-Resolution Semantic Segmentation (CVPR 2017 &amp; TPAMI)">https://ehehe.cn/2023/07/24/RefineNet/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/" rel="tag"># 图像分割</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/07/22/APCNet/" rel="prev" title="[Note] Adaptive Pyramid Context Network for Semantic Segmentation (CVPR 2019)">
+                  <i class="fa fa-angle-left"></i> [Note] Adaptive Pyramid Context Network for Semantic Segmentation (CVPR 2019)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/07/25/ISANet/" rel="next" title="[Note] Interlaced Sparse Self-Attention for Semantic Segmentation (IJCV 2021)">
+                  [Note] Interlaced Sparse Self-Attention for Semantic Segmentation (IJCV 2021) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

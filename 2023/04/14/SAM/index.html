@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Alexander Kirillov, Eric Mintun, Nikhila Ravi, Hanzi Mao, Chloe Rolland, Laura Gustafson, Tete Xiao, Spencer Whitehead, Alex Berg, Wan-Yen Lo, Piotr Dollar, Ross Girshick SAM SAM（Segment Anything M">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] Segment Anything">
+<meta property="og:url" content="https://ehehe.cn/2023/04/14/SAM/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Alexander Kirillov, Eric Mintun, Nikhila Ravi, Hanzi Mao, Chloe Rolland, Laura Gustafson, Tete Xiao, Spencer Whitehead, Alex Berg, Wan-Yen Lo, Piotr Dollar, Ross Girshick SAM SAM（Segment Anything M">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SAM_%E6%95%88%E6%9E%9C1.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SAM_%E6%95%88%E6%9E%9C2.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SAM_%E4%BB%BB%E5%8A%A1%E3%80%81%E6%A8%A1%E5%9E%8B%E5%92%8C%E6%95%B0%E6%8D%AE.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SAM_%E6%A8%A1%E5%9E%8B%E7%BB%84%E6%88%90.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SAM_%E8%BD%BB%E9%87%8F%E7%BA%A7%E6%8E%A9%E8%86%9C%E8%A7%A3%E7%A0%81%E5%99%A8.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SAM_%E6%95%B0%E6%8D%AE%E9%9B%86%E5%9B%BE%E5%83%8F%E6%95%B0.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SAM_%E6%95%B0%E6%8D%AE%E9%9B%86%E6%A0%87%E6%B3%A8%E6%95%B0.png">
+<meta property="article:published_time" content="2023-04-14T10:52:27.000Z">
+<meta property="article:modified_time" content="2023-04-16T04:51:55.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="图像分割">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SAM_%E6%95%88%E6%9E%9C1.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/04/14/SAM/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/04/14/SAM/","path":"2023/04/14/SAM/","title":"[Note] Segment Anything"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] Segment Anything | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#sam"><span class="nav-text">SAM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1"><span class="nav-text">任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B"><span class="nav-text">模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#image-encoder"><span class="nav-text">Image Encoder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#prompt-encoder"><span class="nav-text">Prompt Encoder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lightweight-mask-decoder"><span class="nav-text">Lightweight Mask Decoder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E4%B8%8D%E7%A1%AE%E5%AE%9A%E6%80%A7%E9%97%AE%E9%A2%98"><span class="nav-text">解决不确定性问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E4%B8%8E%E8%AE%AD%E7%BB%83"><span class="nav-text">损失与训练</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE"><span class="nav-text">数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/04/14/SAM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] Segment Anything | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] Segment Anything
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-14 18:52:27" itemprop="dateCreated datePublished" datetime="2023-04-14T18:52:27+08:00">2023-04-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-04-16 12:51:55" itemprop="dateModified" datetime="2023-04-16T12:51:55+08:00">2023-04-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Alexander Kirillov, Eric Mintun, Nikhila Ravi, Hanzi Mao, Chloe
+Rolland, Laura Gustafson, Tete Xiao, Spencer Whitehead, Alex Berg,
+Wan-Yen Lo, Piotr Dollar, Ross Girshick</p>
+<h2 id="sam">SAM</h2>
+<p><strong>SAM（Segment Anything Model）</strong>是Meta
+AI在今年4月5日发布的图像分割工作，具有非常炸裂的效果。SAM是用于<strong>图像分割的基础模型</strong>（Foundation
+Model），通过Prompt的方式，SAM模型具备非常强大的<em>zero-shot</em>和<em>few-shot</em>能力，能够直接迁移到没见过的图像分布和视觉任务中。项目地址：<a
+target="_blank" rel="noopener" href="https://segment-anything.com/">https://segment-anything.com</a>，通过Demo可以感受到SAM的强大效果。</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SAM_%E6%95%88%E6%9E%9C1.png" alt="效果1" style="zoom: 20%;" /></th>
+<th><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SAM_%E6%95%88%E6%9E%9C2.jpg" alt="效果2" style="zoom: 70%;" /></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<h3 id="背景">背景</h3>
+<p>在大规模Web数据集上预训练的<strong>大语言模型（LLM）</strong>通过<strong>提示工程（Prompt
+Engineering）</strong>的方式，在超出训练中所见任务和数据分布的领域具有极强的泛化能力（<strong>零样本</strong>或<strong>少样本</strong>）。经验表明，这种表现会随着<strong>模型规模</strong>、<strong>数据集大小</strong>以及<strong>总的训练计算量</strong>的增加而不断提高。</p>
+<p>基础模型在计算机视觉领域也得到了一定的探索，虽然规模相对较小。CLIP和ALIGN使用对比学习框架训练文本和图像编码器来配对这两种模态数据，这些编码器进而可以与其他下游任务结合，如图像生成（DALL·E）等。虽然视觉与语言编码器取得了很多进展，但是计算机视觉包括许多超出这个范围的问题，并且对于这些问题，<strong>缺乏丰富的训练数据</strong>。</p>
+<p>SAM构建了用于图像分割的视觉基础模型，通过大量的数据和Prompt的学习方式，具有强大的泛化能力。SAM的成功取决于三个组成部分：<strong>任务（Task）</strong>、<strong>模型（Model）</strong>和<strong>数据（Data）</strong>。</p>
+<span id="more"></span>
+<ul>
+<li>什么样的任务可以实现零样本泛化？</li>
+<li>模型应采用什么结构？</li>
+<li>哪些数据可以支持这个任务和模型？</li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SAM_%E4%BB%BB%E5%8A%A1%E3%80%81%E6%A8%A1%E5%9E%8B%E5%92%8C%E6%95%B0%E6%8D%AE.png" alt="任务、模型和数据" /></p>
+<h3 id="任务">任务</h3>
+<p>受NLP领域的“Prompt”启发，SAM提出<strong>可提示的分割任务（promptable
+segmentation
+task）</strong>，在给定任何分割提示的情况下返回有效的分割掩膜。提示只是简单地指定图像中要分割的内容，例如：包括识别对象的空间或文本信息。有效性表现在当给定的提示是模糊、不确定（ambiguous）的时候，模型也能给出至少一个合理的掩膜。</p>
+<h3 id="模型">模型</h3>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SAM_%E6%A8%A1%E5%9E%8B%E7%BB%84%E6%88%90.png" alt="模型组成" /></p>
+<p>可提示的分割任务和实际应用目标对模型架构施加了约束。模型必须支持<strong>灵活的提示（flexible
+prompts）</strong>、<strong>实时（real-time）</strong>计算图像掩膜并且具备<strong>不确定性感知（ambiguity-aware）</strong>能力。SAM使用一个强大的<strong>图像编码器</strong>计算图像嵌入（embedding），<strong>提示编码器</strong>计算提示的嵌入，然后两个信息在<strong>轻量级掩膜解码器</strong>中组合，预测分割掩膜。</p>
+<p>SAM由三个部分组成：</p>
+<ul>
+<li><strong>图像编码器（Image Encoder）</strong></li>
+<li><strong>提示编码器（Prompt Encoder）</strong></li>
+<li><strong>轻量级掩膜解码器（Lightweight Mask Decoder）</strong></li>
+</ul>
+<h4 id="image-encoder">Image Encoder</h4>
+<p>使用了MAE方法预训练的ViT，Image
+Encoder对于每张图只要预先运行一次，是计算量（FLOPs）最大的部分。</p>
+<p>对于一张输入图像，通过缩放和填充，得到<span
+class="math inline">\(1024 \times 1024\)</span>的输入，经过ViT得到<span
+class="math inline">\(64 \times 64\)</span>大小的特征图（下采样<span
+class="math inline">\(16\)</span>倍），通道数为<span
+class="math inline">\(1280\)</span>（ViT-H）。为了减少通道维度，在输出特征后添加Conv1x1和Conv3x3两个卷积，并每个卷积后都有一个Layer
+Normalization层。最终输出的embedding大小为<span
+class="math inline">\((64,64,256)\)</span>。</p>
+<h4 id="prompt-encoder">Prompt Encoder</h4>
+<p>Prompt
+Encoder考虑了两组不同的输入：<strong>稀疏的</strong>（点、框、文本）和<strong>稠密的</strong>（Mask）。</p>
+<ul>
+<li>稀疏输入映射成一个<span
+class="math inline">\(256\)</span>维的嵌入向量。
+<ul>
+<li>点：由点的位置编码和两个可学习的嵌入（表明前景或背景）之一的总和表示。</li>
+<li>框：由一个嵌入对表示，（1）左上角点的位置编码和可学习的嵌入（表面左上角）的总和；（2）右下角点的位置编码和可学习的嵌入（表明右下角）的总和。</li>
+<li>文本：通过CLIP模型进行文本编码。</li>
+</ul></li>
+<li>稠密输入（Mask）在空间上与图像存在相关性，将Mask下采样四倍作为输入，然后使用两个大小为<span
+class="math inline">\(2 \times 2\)</span>、步长为<span
+class="math inline">\(2\)</span>的卷积，和一个大小为<span
+class="math inline">\(1 \times 1\)</span>、输出通道为<span
+class="math inline">\(256\)</span>的卷积，得到和image
+embedding同样大小的输出。最后将输出与image
+embedding进行逐元素相乘。</li>
+</ul>
+<h4 id="lightweight-mask-decoder">Lightweight Mask Decoder</h4>
+<p>该模块有效地将image embedding、一组prompt
+embeddings和输出token（类似ViT中的<code>[CLASS]</code>）映射到输出掩膜。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SAM_%E8%BD%BB%E9%87%8F%E7%BA%A7%E6%8E%A9%E8%86%9C%E8%A7%A3%E7%A0%81%E5%99%A8.png" alt="SAM_轻量级掩膜解码器" style="zoom:25%;" /></p>
+<h4 id="解决不确定性问题">解决不确定性问题</h4>
+<p>当模型只有一个输出时，如果给定一个<strong>模糊的提示</strong>，模型会平均多个有效的掩膜。为解决这个问题，SAM修改了模型，使其为一个prompt预测多个输出掩膜（SAM中设置为<span
+class="math inline">\(3\)</span>）。在训练过程中，只对每个掩膜中，计算损失最小的进行梯度回传。为了对输出掩膜进行排序，SAM为每个掩膜预测了一个置信度（即：预计重叠度IoU）。</p>
+<h4 id="损失与训练">损失与训练</h4>
+<p>SAM的Mask预测分支使用Focal Loss和Dice Loss的线性组合（<span
+class="math inline">\(20:1\)</span>）作为损失函数，IoU预测分支使用MSE损失。</p>
+<h3 id="数据">数据</h3>
+<p>为了实现对新数据分布的泛化能力，SAM需要在大量数据上进行训练。作者构建了一个“<strong>数据引擎（Data
+Engine）</strong>”，即模型训练与数据标注形成闭环。数据引擎包含三个步骤：<strong>人工辅助（assisted-manual）</strong>、<strong>半自动（semi-automatic）</strong>和<strong>全自动（fully
+automatic）</strong>。</p>
+<p>在第一阶段，SAM会协助标注员标注掩膜，类似于经典的交互式图像分割。</p>
+<p>在第二阶段，SAM可以通过prompt标注可能存在物体的位置，标注员则专注于其余对象的掩膜，以增加样本的多样性。</p>
+<p>在最后阶段，使用前景点的规则网格作为提示，平均每张图像可以产生约100个高质量的掩模。</p>
+<p>最终数据集<code>SA-1B</code>包括1100万的图像和超过10个标注掩膜，比起现有数据集多高达400倍的标注。</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SAM_%E6%95%B0%E6%8D%AE%E9%9B%86%E5%9B%BE%E5%83%8F%E6%95%B0.png" alt="数据集图像数" /></th>
+<th><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SAM_%E6%95%B0%E6%8D%AE%E9%9B%86%E6%A0%87%E6%B3%A8%E6%95%B0.png" alt="数据集标注数" /></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<h3 id="总结">总结</h3>
+<p>Segment
+Anything为社区贡献了1100万的图像分割数据集，起到为视觉大模型发展铺路的作用。另外，SAM也可以应用于数据自动化标注、开放目标检测等，在社区中已有不少相关项目。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/04/14/SAM/" title="[Note] Segment Anything">https://ehehe.cn/2023/04/14/SAM/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/" rel="tag"># 图像分割</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/14/FasterNet/" rel="prev" title="[Note] Run, Don’t Walk: Chasing Higher FLOPS for Faster Neural  Networks (CVPR 2023)">
+                  <i class="fa fa-angle-left"></i> [Note] Run, Don’t Walk: Chasing Higher FLOPS for Faster Neural  Networks (CVPR 2023)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/16/block-selection-for-OOD-detection/" rel="next" title="[Note] Block Selection Method for Using Feature Norm  in Out-of-distribution Detection (CVPR 2023)">
+                  [Note] Block Selection Method for Using Feature Norm  in Out-of-distribution Detection (CVPR 2023) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

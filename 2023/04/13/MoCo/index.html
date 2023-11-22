@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Kaiming He, Haoqi Fan, Yuxin Wu, Saining Xie, Ross Girshick Yann Lecun蛋糕比喻  If intelligence is a cake, the bulk of the cake is unsupervised learning, the icing on the cake is supervised learning, a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] Momentum Contrast for Unsupervised Visual Representation  Learning (CVPR 2020)">
+<meta property="og:url" content="https://ehehe.cn/2023/04/13/MoCo/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Kaiming He, Haoqi Fan, Yuxin Wu, Saining Xie, Ross Girshick Yann Lecun蛋糕比喻  If intelligence is a cake, the bulk of the cake is unsupervised learning, the icing on the cake is supervised learning, a">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/lecun_cake_analogy.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/MoCo%E6%96%B9%E6%B3%95%E7%9A%84%E6%95%B4%E4%BD%93%E6%A1%86%E6%9E%B6.png">
+<meta property="article:published_time" content="2023-04-13T01:51:43.000Z">
+<meta property="article:modified_time" content="2023-04-13T01:51:43.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="对比学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/lecun_cake_analogy.jpg">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/04/13/MoCo/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/04/13/MoCo/","path":"2023/04/13/MoCo/","title":"[Note] Momentum Contrast for Unsupervised Visual Representation  Learning (CVPR 2020)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] Momentum Contrast for Unsupervised Visual Representation  Learning (CVPR 2020) | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#yann-lecun%E8%9B%8B%E7%B3%95%E6%AF%94%E5%96%BB"><span class="nav-text">Yann Lecun蛋糕比喻</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0"><span class="nav-text">对比学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#moco"><span class="nav-text">MoCo</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-text">方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%90%86%E4%BB%BB%E5%8A%A1"><span class="nav-text">代理任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E5%87%BD%E6%95%B0"><span class="nav-text">目标函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E5%92%8C%E6%A8%A1%E5%9E%8B"><span class="nav-text">输入和模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">参考资料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/04/13/MoCo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] Momentum Contrast for Unsupervised Visual Representation  Learning (CVPR 2020) | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] Momentum Contrast for Unsupervised Visual Representation  Learning (CVPR 2020)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-13 09:51:43" itemprop="dateCreated datePublished" datetime="2023-04-13T09:51:43+08:00">2023-04-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Kaiming He, Haoqi Fan, Yuxin Wu, Saining Xie, Ross Girshick</p>
+<h2 id="yann-lecun蛋糕比喻">Yann Lecun蛋糕比喻</h2>
+<blockquote>
+<p>If intelligence is a cake, the bulk of the cake is unsupervised
+learning, the icing on the cake is supervised learning, and the cherry
+on the cake is reinforcement learning (RL).</p>
+</blockquote>
+<p>Yann Lecun在<a
+target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=Ount2Y4qxQo&amp;t=1072s">NIPS
+2016</a>上提出了著名的“<strong>蛋糕比喻</strong>”：如果智能是一个蛋糕，蛋糕上的大部分是<strong>无监督学习（unsupervised
+learning）</strong>，蛋糕上的糖霜是监督学习（supervised
+learning），而蛋糕上的樱桃是强化学习（reinforcement learning）。</p>
+<p>在2019年的<a
+target="_blank" rel="noopener" href="https://drive.google.com/file/d/17w443t_5Atnwnu-iOrHKUPFik1pThyhx/view">ISSCC</a>会议上，LeCun使用<strong>自监督学习（self-supervised
+learning）</strong>替换了无监督学习。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/lecun_cake_analogy.jpg" alt="Yann Lecun的蛋糕比喻" style="zoom:33%;" /></p>
+<p>人类并不是通过学习大量的标注数据来理解世界的。相反，我们利用预测和推理等能力，从现有信息中去推断未来。即使在信息不完整的情况下（如文本中缺失片段或图像被遮挡），我们仍然可以利用尝试做出合理推断，而这种能力是机器所不具备的。</p>
+<p>LeCun的蛋糕比喻强调了自监督学习的重要性，他认为这是人工智能发展的重要突破。</p>
+<span id="more"></span>
+<h2 id="对比学习">对比学习</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/one_dollar_from_memory.png"
+alt="one_dollar_from_memory" /></th>
+<th><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/one_dollar_real.png"
+alt="one_dollar_real" /></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<p>左图是凭记忆绘制的一美元图像，右图是真实的一美元。尽管我们已经见过很多次钞票长什么样子，但我们很少能一模一样的画出钞票。虽然我们画不出栩栩如生的钞票，但我们依旧可以轻易地辨别出钞票。<strong>表征学习不一定要学习到样本的每一个细节，只要能够学习到足够的特征，能够将不同的样本区别开。</strong></p>
+<p>视觉领域通过人为设计一些<strong>代理任务（pretext
+tasks）</strong>，这些规则定义了哪些图片是相似的，哪些是不相似的，从而提供了一个监督信息来训练模型。</p>
+<p>例如：在个体判别的代理任务中，图像<span
+class="math inline">\(X\)</span>在经过数据增强后得到了两张图像<span
+class="math inline">\(X_1\)</span>和<span
+class="math inline">\(X_2\)</span>，这两张图像和原来的长得不一样，但是它们包含的语义信息是相同的，所以这两张图称为<strong>正样本</strong>。数据集中其他剩下的图像就被称作<strong>负样本</strong>。在个体判别的代理任务中，每个个体自成一类。</p>
+<pre class="mermaid">
+graph LR
+image(图像X) --数据增强--&gt; image_1(变换后X_1)
+image(图像X) --数据增强--&gt; image_2(变换后X_2)
+</pre>
+<p>对比学习具有很强的灵活性，只要有一种合理的方式定义正负样本，就可以进行学习。在视频领域中可以认为同一个视频里的任意两帧都是正样本，而其他视频里的所有帧都是负样本。在CMC论文中，认为一个物体的不同视角可以作为正样本。</p>
+<h2 id="moco">MoCo</h2>
+<p>在MoCo方法中，使用动量对比（Momentum
+Contrast）学习来进行无监督的表征学习。动量从数学上理解就是一种<strong>加权移动平均</strong>：</p>
+<p><span class="math display">\[
+y_{t} \leftarrow m y_{t - 1} + (1-m) x_{t}
+\]</span></p>
+<p>MoCo将对比学习看作是一个<strong>字典查询</strong>（dictionary
+look-up）的任务，字典由两部分组成：一个<strong>队列</strong>（queue）和一个<strong>移动平均的编码器</strong>（moveing-average
+encoder）。在训练过程中，一个很大的、连续的字典会提升对比学习的效果。</p>
+<p>MoCo在ImageNet分类任务上能取得与其他方法差不多的性能，但能在7个下游任务上（大幅）超过之前的有监督方式训练的模型。这表明，<strong>在许多的视觉任务上，无监督和有监督的特征学习的鸿沟已经被填上了</strong>。</p>
+<h3 id="方法">方法</h3>
+<p>query的图像<span
+class="math inline">\(x^{\text{query}}\)</span>经过编码器得到特征<span
+class="math inline">\(q\)</span>。key的图像<span
+class="math inline">\(x_{0}^{\text{key}}\)</span>、<span
+class="math inline">\(x_{1}^{\text{key}}\)</span>、<span
+class="math inline">\(x_{2}^{\text{key}}\)</span>等经过动量编码器得到对应的特征字典<span
+class="math inline">\(k_{0}\)</span>、<span
+class="math inline">\(k_{1}\)</span>、<span
+class="math inline">\(k_{2}\)</span>等。将query的特征和所有key的特征作类比，使用对比学习的损失函数训练整个模型。整个字典中，只有一个<span
+class="math inline">\(k_{+}\)</span>与<span
+class="math inline">\(q\)</span>匹配，称为一个正样本对。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/MoCo%E6%96%B9%E6%B3%95%E7%9A%84%E6%95%B4%E4%BD%93%E6%A1%86%E6%9E%B6.png" alt="MoCo方法的整体框架" style="zoom: 33%;" /></p>
+<p>MoCo方法与其他方法的区别在于使用了一个<strong>队列</strong>和一个<strong>动量编码器</strong>。</p>
+<p>如果使用字典较大，意味着输入图像是上千或者上万的，因此使用队列是为了<strong>解决显卡内存问题</strong>。使用队列可以将批量大小和字典的大小解耦开来，所以字典的大小可以设置的非常大。</p>
+<p>使用队列之后，出现的另一个问题是：只有当前Batch的特征是从当前的编码器中得到的，之前的key都是用不同时刻的编码器去抽取的特征。为了<strong>保证提取特征的一致性</strong>，作者提出了动量编码器的改进。</p>
+<p>如果现在的编码器的参数用<span
+class="math inline">\(\theta_{q}\)</span>表示，动量编码器的参数用<span
+class="math inline">\(\theta_{k}\)</span>表示，那么<span
+class="math inline">\(\theta_{k}\)</span>的更新可以写成：</p>
+<p><span class="math display">\[
+\theta_{k} \leftarrow m \theta_{k} + (1-m) \theta_{q}
+\]</span></p>
+<p>在模型训练过程中，如果选择的动量<span
+class="math inline">\(m\)</span>较大，则动量编码器更新的非常缓慢，不会随<span
+class="math inline">\(\theta_{q}\)</span>快速变化，从而保证了字典里所有的key都是由相似的编码器得到。在论文实验部分，作者将动量参数<span
+class="math inline">\(m\)</span>设置为了<span
+class="math inline">\(0.999\)</span>能取得最好的效果。</p>
+<h3 id="代理任务">代理任务</h3>
+<p>MoCo只是提出了一种构建动态字典的对比学习机制，具体使用什么样的代理任务是非常灵活的。在本文中，采用了个体判别（instance
+discrimination）任务。</p>
+<h3 id="目标函数">目标函数</h3>
+<p>NCE目标函数将超级多类分类问题，变成了一系列的二分类问题，从而使得Softmax操作可行。</p>
+<p>MoCo中使用了<strong>InfoNCE目标函数</strong>，</p>
+<p><span class="math display">\[
+\mathcal{L}_{q}=-\log \frac{\exp \left(q \cdot k_{+} /
+\tau\right)}{\sum_{i=0}^{K} \exp \left(q \cdot k_{i} / \tau\right)}
+\]</span></p>
+<p>其中，<span
+class="math inline">\(\tau\)</span>是一个温度超参数，用来改变分布的形状。</p>
+<p>如果忽略超参数<span
+class="math inline">\(\tau\)</span>，InfoNCE和交叉熵（CE）目标函数形式一致。区别在于InfoNCE中的<span
+class="math inline">\(K\)</span>指负样本的数量，而CE中的<span
+class="math inline">\(K\)</span>指类别数量。</p>
+<h3 id="输入和模型">输入和模型</h3>
+<p>输入<span class="math inline">\(x^{q}\)</span>和<span
+class="math inline">\(x^{k}\)</span>，以及编码器模型<span
+class="math inline">\(f_{q}\)</span>和<span
+class="math inline">\(f_{k}\)</span>是由特定的代理任务决定的。输入既可以是图像，也可以是图像块，或者是一系列图像块的集合。模型<span
+class="math inline">\(f_{q}\)</span>和<span
+class="math inline">\(f_{k}\)</span>可以是完全相同的模型，或者是参数部分共享的模型，也可以是两个彻底不同的网络。</p>
+<h2 id="参考资料">参考资料</h2>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1C3411s7t9">MoCo
+论文逐段精读</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://ankeshanand.com/blog/2020/01/26/contrative-self-supervised-learning.html">Contrastive
+Self-Supervised Learning | Ankesh Anand</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/04/13/MoCo/" title="[Note] Momentum Contrast for Unsupervised Visual Representation  Learning (CVPR 2020)">https://ehehe.cn/2023/04/13/MoCo/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/" rel="tag"># 对比学习</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/03/20/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E7%88%B1%E5%9B%A0%E6%96%AF%E5%9D%A6%E6%B1%82%E5%92%8C%EF%BC%88Einsums%EF%BC%89/" rel="prev" title="机器学习中的爱因斯坦求和（Einsums）">
+                  <i class="fa fa-angle-left"></i> 机器学习中的爱因斯坦求和（Einsums）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/13/BEV-LaneDet/" rel="next" title="[Note] BEV-LaneDet: An Efficient 3D Lane Detection Based on Virtual Camera via Key-Points (CVPR 2023)">
+                  [Note] BEV-LaneDet: An Efficient 3D Lane Detection Based on Virtual Camera via Key-Points (CVPR 2023) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

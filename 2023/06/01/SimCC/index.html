@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Yanjie Li, Sen Yang, Peidong Liu, Shoukui Zhang, Yunxiao Wang, Zhicheng Wang, Wankou Yang, Shu-Tao Xia SimCC 本文提出了一种名为SimCC的用于人体姿态估计的新方法，该方法将坐标预测问题重构为两个分类任务，分别针对水平和垂直坐标。通过将每个像素均匀划分为几个区间（大于原始的宽高），Si">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] SimCC: a Simple Coordinate Classification Perspective  for Human Pose Estimation">
+<meta property="og:url" content="https://ehehe.cn/2023/06/01/SimCC/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Yanjie Li, Sen Yang, Peidong Liu, Shoukui Zhang, Yunxiao Wang, Zhicheng Wang, Wankou Yang, Shu-Tao Xia SimCC 本文提出了一种名为SimCC的用于人体姿态估计的新方法，该方法将坐标预测问题重构为两个分类任务，分别针对水平和垂直坐标。通过将每个像素均匀划分为几个区间（大于原始的宽高），Si">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SimCC_Pipeline.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SimCC_different_coordinate_representation.png">
+<meta property="article:published_time" content="2023-06-01T12:32:06.000Z">
+<meta property="article:modified_time" content="2023-07-02T10:56:57.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="人体姿态估计">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SimCC_Pipeline.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/06/01/SimCC/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/06/01/SimCC/","path":"2023/06/01/SimCC/","title":"[Note] SimCC: a Simple Coordinate Classification Perspective  for Human Pose Estimation"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] SimCC: a Simple Coordinate Classification Perspective  for Human Pose Estimation | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#simcc"><span class="nav-text">SimCC</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E6%96%B9%E6%B3%95"><span class="nav-text">相关方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#simcc%E6%96%B9%E6%B3%95"><span class="nav-text">SimCC方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#simcc%E5%9D%90%E6%A0%87%E7%BC%96%E7%A0%81"><span class="nav-text">SimCC坐标编码</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/06/01/SimCC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] SimCC: a Simple Coordinate Classification Perspective  for Human Pose Estimation | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] SimCC: a Simple Coordinate Classification Perspective  for Human Pose Estimation
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-06-01 20:32:06" itemprop="dateCreated datePublished" datetime="2023-06-01T20:32:06+08:00">2023-06-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-07-02 18:56:57" itemprop="dateModified" datetime="2023-07-02T18:56:57+08:00">2023-07-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Yanjie Li, Sen Yang, Peidong Liu, Shoukui Zhang, Yunxiao Wang,
+Zhicheng Wang, Wankou Yang, Shu-Tao Xia</p>
+<h1 id="simcc">SimCC</h1>
+<p>本文提出了一种名为<strong>SimCC</strong>的用于人体姿态估计的新方法，该方法<strong>将坐标预测问题重构为两个分类任务</strong>，分别针对水平和垂直坐标。通过将每个像素均匀划分为几个区间（大于原始的宽高），SimCC实现了<strong>亚像素定位精度</strong>和<strong>低量化误差</strong>。这种方法消除了对大计算量的上采样层和额外的后处理的需要，从而形成了一个更简单有效的HPE（人体姿态估计）流程。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SimCC_Pipeline.png" alt="SimCC Pipeline" style="zoom:35%;" /></p>
+<span id="more"></span>
+<h2 id="相关方法">相关方法</h2>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SimCC_different_coordinate_representation.png" alt="不同的坐标表示方式" style="zoom:35%;" /></p>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 68%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>方法</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>回归方法（Regression）</td>
+<td>1. 直接回归关键点坐标，不需要中间表示<br />2.
+丢失了图像在空间上的信息，模型学习难度高，效果不理想<br />3.
+没有给出关键点回归的置信度（质量），RLE方法可以</td>
+</tr>
+<tr class="even">
+<td>2D 热图法 (2D Heatmap-based)</td>
+<td>1. 生成2D高斯分布的热图来定位关键点<br />2.
+受到量化误差的影响（将原始坐标值映射到缩小的热图上）<br />3.
+上采样层计算量大<br />4. 通常需要额外的后处理来减少量化误差<br />5.
+在低分辨率情况下，性能受限<br />6.
+在需要高精度坐标的情况下，2D热图精度明显更低</td>
+</tr>
+<tr class="odd">
+<td>坐标分类法 (SimCC)</td>
+<td>1. 重构为两个分类任务，分别针对水平和垂直坐标<br />2.
+通过均匀地将每个像素划分为几个区间，实现亚像素定位精度和低量化误差<br />3.
+可以省略额外的后处理，更简单有效<br />4.
+在低分辨率设置中明显优于基于热图的方法<br />5.
+去除反卷积层，从而在各种输入分辨率下实现一致的计算成本降低<br />6.
+使用标签平滑策略来提高分类任务的泛化能力</td>
+</tr>
+</tbody>
+</table>
+<h2 id="simcc方法">SimCC方法</h2>
+<p>SimCC使用CNN（HRNet）或者Transformer（TokenPose）作为骨干网进行特征提取。在骨干网之后，分别添加水平坐标和垂直坐标的分类器（线性层）来进行坐标分类。</p>
+<p>为了实现分类，SimCC将每个连续的坐标值均匀离散化为一个整数，作为模型训练的类标签。具体来说，对于水平坐标<span
+class="math inline">\(c_x\)</span>和垂直坐标<span
+class="math inline">\(c_y\)</span>，它们被离散化为<span
+class="math inline">\([1, N_x]\)</span>和<span class="math inline">\([1,
+N_y]\)</span>，其中<span class="math inline">\(N_x = W \times
+k\)</span>和<span class="math inline">\(N_y = H \times
+k\)</span>分别表示水平和垂直方向的区间数，<span
+class="math inline">\(k\)</span>为分割系数（即将输入图像大小的每个像素分割为多个区间）。</p>
+<p>SimCC采用标签平滑来增强模型的泛化能力。标签平滑是一种常用的策略，用于改善分类任务的模型性能。SimCC中使用Gaussian分布来生成平滑的类别标签。</p>
+<p>SimCC使用Kullback-Leibler散度作为训练的损失函数。</p>
+<h3 id="simcc坐标编码">SimCC坐标编码</h3>
+<p>为了考虑相邻坐标对关键点定位任务的空间相关性，SimCC使用高斯分布类生成监督信号：
+<span class="math display">\[
+\begin{aligned}
+\boldsymbol{p}_{\boldsymbol{x} \_\boldsymbol{s} \boldsymbol{a}}^{\prime}
+&amp; =\left[x_0, x_1, \ldots, x_{W \cdot k-1}\right] \in \mathbb{R}^{W
+\cdot k}, x_i=\frac{1}{\sqrt{2 \pi} \sigma} \exp
+\left(-\frac{\left(i-x^{\prime}\right)^2}{2 \sigma^2}\right) \\
+\boldsymbol{p}_{\boldsymbol{y}_{-} \boldsymbol{s}
+\boldsymbol{a}}^{\prime} &amp; =\left[y_0, y_1, \ldots, y_{H \cdot
+k-1}\right] \in \mathbb{R}^{H \cdot k}, y_j=\frac{1}{\sqrt{2 \pi}
+\sigma} \exp \left(-\frac{\left(j-y^{\prime}\right)^2}{2
+\sigma^2}\right)
+\end{aligned}
+\]</span> 以下为相关代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> itertools <span class="keyword">import</span> product</span><br><span class="line"></span><br><span class="line">input_size = (<span class="number">256</span>, <span class="number">256</span>)</span><br><span class="line">simcc_split_ratio = <span class="number">2.0</span></span><br><span class="line">sigma = np.array((<span class="number">4.0</span>, <span class="number">4.0</span>), dtype=np.float32)</span><br><span class="line">normalize = <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">test_keypoints = np.array(</span><br><span class="line">    [[[<span class="number">30</span>, <span class="number">40</span>], [<span class="number">180</span>, <span class="number">50</span>], [<span class="number">220</span>, <span class="number">160</span>], [<span class="number">50</span>, <span class="number">200</span>]]], dtype=np.float32</span><br><span class="line">)</span><br><span class="line">test_keypoints_visible = np.array([[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>]], dtype=np.float32)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_target_simcc</span>(<span class="params">keypoints, keypoints_visible</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Encoding keypoints into SimCC labels with Gaussian Label Smoothing strategy.&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    N, K, _ = keypoints.shape</span><br><span class="line">    w, h = input_size</span><br><span class="line">    W = np.around(w * simcc_split_ratio).astype(np.int32)</span><br><span class="line">    H = np.around(h * simcc_split_ratio).astype(np.int32)</span><br><span class="line"></span><br><span class="line">    keypoints_split = np.around(keypoints * simcc_split_ratio).astype(np.int32)</span><br><span class="line">    keypoints_weight = keypoints_visible</span><br><span class="line"></span><br><span class="line">    target_x = np.zeros((N, K, W), dtype=np.float32)</span><br><span class="line">    target_y = np.zeros((N, K, H), dtype=np.float32)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 3-sigma rule</span></span><br><span class="line">    radius = sigma * <span class="number">3</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># xy grid</span></span><br><span class="line">    x = np.arange(<span class="number">0</span>, W, <span class="number">1</span>, dtype=np.float32)</span><br><span class="line">    y = np.arange(<span class="number">0</span>, H, <span class="number">1</span>, dtype=np.float32)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> n, k <span class="keyword">in</span> product(<span class="built_in">range</span>(N), <span class="built_in">range</span>(K)):</span><br><span class="line">        <span class="keyword">if</span> keypoints_visible[n, k] &lt; <span class="number">0.5</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">        mu = keypoints_split[n, k]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># check that the gaussian has in-bounds part</span></span><br><span class="line">        left, top = mu - radius</span><br><span class="line">        right, bottom = mu + radius + <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> left &gt;= W <span class="keyword">or</span> top &gt;= H <span class="keyword">or</span> right &lt; <span class="number">0</span> <span class="keyword">or</span> bottom &lt; <span class="number">0</span>:</span><br><span class="line">            keypoints_weight[n, k] = <span class="number">0</span></span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">        mu_x, mu_y = mu</span><br><span class="line"></span><br><span class="line">        target_x[n, k] = np.exp(-((x - mu_x) ** <span class="number">2</span>) / (<span class="number">2</span> * sigma[<span class="number">0</span>] ** <span class="number">2</span>))</span><br><span class="line">        target_y[n, k] = np.exp(-((y - mu_y) ** <span class="number">2</span>) / (<span class="number">2</span> * sigma[<span class="number">1</span>] ** <span class="number">2</span>))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> normalize:</span><br><span class="line">        norm_value = sigma * np.sqrt(np.pi * <span class="number">2</span>)</span><br><span class="line">        target_x /= norm_value[<span class="number">0</span>]</span><br><span class="line">        target_y /= norm_value[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> target_x, target_y, keypoints_weight</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="built_in">print</span>(test_keypoints.shape)</span><br><span class="line">    <span class="built_in">print</span>(test_keypoints_visible.shape)</span><br><span class="line">    </span><br><span class="line">    target_x, target_y, keypoints_weight = generate_target_simcc(</span><br><span class="line">        test_keypoints, test_keypoints_visible</span><br><span class="line">    )</span><br><span class="line">    <span class="built_in">print</span>(target_x.shape)</span><br><span class="line">    <span class="built_in">print</span>(target_y.shape)</span><br><span class="line">    <span class="built_in">print</span>(keypoints_weight.shape)</span><br></pre></td></tr></table></figure>
+<p>下图展示了将关键点的<span
+class="math inline">\(x\)</span>坐标编码为分类标签后的结果。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/SimCC_Label_X.png"
+alt="X坐标编码后的结果" />
+<figcaption aria-hidden="true">X坐标编码后的结果</figcaption>
+</figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/06/01/SimCC/" title="[Note] SimCC: a Simple Coordinate Classification Perspective  for Human Pose Estimation">https://ehehe.cn/2023/06/01/SimCC/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E4%BA%BA%E4%BD%93%E5%A7%BF%E6%80%81%E4%BC%B0%E8%AE%A1/" rel="tag"># 人体姿态估计</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/05/12/coordinate-attention/" rel="prev" title="[Note] Coordinate Attention for Efficient Mobile Network Design (CVPR 2021)">
+                  <i class="fa fa-angle-left"></i> [Note] Coordinate Attention for Efficient Mobile Network Design (CVPR 2021)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/07/04/DeepLabv2/" rel="next" title="[Note] DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs (TPAMI)">
+                  [Note] DeepLab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs (TPAMI) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

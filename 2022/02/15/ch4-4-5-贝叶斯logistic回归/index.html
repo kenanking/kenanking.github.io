@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="4.5 贝叶斯logistic回归 现在我们用贝叶斯方式处理logistic回归问题，在logistic回归中，精确贝叶斯推断是无法使用的（因为计算中包含logistic sigmoid函数）。所以这里我们需要使用拉普拉斯近似来处理贝叶斯logistic回归的问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch4-4.5 贝叶斯logistic回归">
+<meta property="og:url" content="https://ehehe.cn/2022/02/15/ch4-4-5-%E8%B4%9D%E5%8F%B6%E6%96%AFlogistic%E5%9B%9E%E5%BD%92/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="4.5 贝叶斯logistic回归 现在我们用贝叶斯方式处理logistic回归问题，在logistic回归中，精确贝叶斯推断是无法使用的（因为计算中包含logistic sigmoid函数）。所以这里我们需要使用拉普拉斯近似来处理贝叶斯logistic回归的问题。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-15T05:59:39.000Z">
+<meta property="article:modified_time" content="2022-02-15T05:59:39.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="PRML">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/02/15/ch4-4-5-%E8%B4%9D%E5%8F%B6%E6%96%AFlogistic%E5%9B%9E%E5%BD%92/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/02/15/ch4-4-5-%E8%B4%9D%E5%8F%B6%E6%96%AFlogistic%E5%9B%9E%E5%BD%92/","path":"2022/02/15/ch4-4-5-贝叶斯logistic回归/","title":"ch4-4.5 贝叶斯logistic回归"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch4-4.5 贝叶斯logistic回归 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AFlogistic%E5%9B%9E%E5%BD%92"><span class="nav-text">4.5 贝叶斯logistic回归</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E8%BF%91%E4%BC%BC"><span class="nav-text">4.5.1 拉普拉斯近似</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E6%B5%8B%E5%88%86%E5%B8%83"><span class="nav-text">4.5.2 预测分布</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">其他参考资料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/02/15/ch4-4-5-%E8%B4%9D%E5%8F%B6%E6%96%AFlogistic%E5%9B%9E%E5%BD%92/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch4-4.5 贝叶斯logistic回归 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch4-4.5 贝叶斯logistic回归
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-15 13:59:39" itemprop="dateCreated datePublished" datetime="2022-02-15T13:59:39+08:00">2022-02-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="贝叶斯logistic回归">4.5 贝叶斯logistic回归</h2>
+<p>现在我们用贝叶斯方式处理logistic回归问题，在logistic回归中，精确贝叶斯推断是无法使用的（因为计算中包含logistic
+sigmoid函数）。所以这里我们需要使用拉普拉斯近似来处理贝叶斯logistic回归的问题。</p>
+<span id="more"></span>
+<h3 id="拉普拉斯近似">4.5.1 拉普拉斯近似</h3>
+<p>选择先验分布为高斯分布： <span class="math display">\[
+p(\mathbf{w}) = \mathcal{N}(\mathbf{w} \mid \mathbf{m}_{0},
+\mathbf{S}_{0})
+\]</span></p>
+<p>其中：<span class="math inline">\(\mathbf{m}_{0}\)</span>和<span
+class="math inline">\(\mathbf{S}_{0}\)</span>为固定的超参数。</p>
+<p>于是，后验分布为： <span class="math display">\[
+p(\mathbf{w} \mid \boldsymbol{\mathsf{t}}) \propto
+p(\mathbf{w})p(\boldsymbol{\mathsf{t}} \mid \mathbf{w})
+\]</span></p>
+<p>其中：<span class="math inline">\(\boldsymbol{\mathsf{t}} = (t_{1},
+\dots, t_{N})^{\mathrm{T}}\)</span>。</p>
+<p>似然函数为： <span class="math display">\[
+p(\boldsymbol{\mathsf{t}} \mid \mathbf{w}) =
+\prod_{n=1}^{N}y_{n}^{t_{n}}\left\{1-y_{n}\right\}^{1-t_{n}}
+\]</span></p>
+<p>其中：<span
+class="math inline">\(y_{n}=\sigma(\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi}_{n})\)</span>。</p>
+<p>对后验分布两边取对数： <span class="math display">\[
+\begin{align}
+\ln p(\mathbf{w} \mid \boldsymbol{\mathsf{t}}) =
+&amp;
+-\frac{1}{2}(\mathbf{w}-\mathbf{m}_{0})^{\mathrm{T}}\mathbf{S}_{0}^{-1}(\mathbf{w}-\mathbf{m}_{0})
+\\
+&amp; +\sum_{n=1}^{N}\left\{t_{n}\ln y_{n} + (1-t_{n}) \ln
+(1-y_{n})\right\} + \text{const}
+\end{align}
+\]</span></p>
+<p>为了得到后验分布的高斯近似，首先最大化后验分布得到<span
+class="math inline">\(\mathbf{w}_{\mathrm{MAP}}\)</span>。协方差矩阵由负对数似然函数的Hessian矩阵的逆得到：
+<span class="math display">\[
+\mathbf{S}_{N}^{-1} = -\nabla \nabla \ln p(\mathbf{w} \mid
+\boldsymbol{\mathsf{t}}) = \mathbf{S}_{0}^{-1} +
+\sum_{n=1}^{N}y_{n}(1-y_{n})\boldsymbol{\phi}_{n}\boldsymbol{\phi}_{n}^{\mathrm{T}}
+\]</span></p>
+<p>于是，后验分布的高斯近似为： <span class="math display">\[
+q(\mathbf{w}) = \mathcal{N}(\mathbf{w} \mid \mathbf{w}_{\mathrm{MAP}},
+\mathbf{S}_{N})
+\]</span></p>
+<p>获得了后验概率分布的高斯近似之后，剩下的任务就是关于这个概率分布求积分来进行预测。</p>
+<h3 id="预测分布">4.5.2 预测分布</h3>
+<p>给定一个新的特征向量<span
+class="math inline">\(\boldsymbol{\phi}(\mathbf{x})\)</span>，对于类别<span
+class="math inline">\(\mathcal{C}_{1}\)</span>的预测分布为： <span
+class="math display">\[
+p(\mathcal{C}_{1} \mid \boldsymbol{\phi}, \boldsymbol{\mathsf{t}}) =
+\int p(\mathcal{C}_{1} \mid \boldsymbol{\phi}, \mathbf{w})p(\mathbf{w}
+\mid \boldsymbol{\mathsf{t}})\mathrm{d}\mathbf{w} \simeq \int
+\sigma(\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi})q(\mathbf{w})\mathrm{d}\mathbf{w}
+\]</span> 则类别<span
+class="math inline">\(\mathcal{C}_{2}\)</span>对于的概率为： <span
+class="math display">\[
+p(\mathcal{C}_{2} \mid \boldsymbol{\phi}, \boldsymbol{\mathsf{t}}) = 1 -
+p(\mathcal{C}_{1} \mid \boldsymbol{\phi}, \boldsymbol{\mathsf{t}})
+\]</span></p>
+<p>注意，函数<span
+class="math inline">\(\sigma(\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi})\)</span>仅依赖于<span
+class="math inline">\(\mathbf{w}\)</span>在<span
+class="math inline">\(\boldsymbol{\phi}\)</span>上的投影。记<span
+class="math inline">\(a=\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi}\)</span>，我们有：
+<span class="math display">\[
+\sigma(\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi}) = \int
+\delta(a-\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi})\sigma(a)\mathrm{d}a
+\]</span></p>
+<p>其中：<span
+class="math inline">\(\delta(\cdot)\)</span>是<strong>Dirac
+delta函数</strong>。</p>
+<blockquote>
+<p>这里用到<strong>筛选性质（Sifting property）</strong>： <span
+class="math display">\[\int_{-\infty}^{\infty}
+f(t)\delta(t-T)\mathrm{d}t = f(T)\]</span></p>
+</blockquote>
+<p>于是，我们可以得到： <span class="math display">\[
+\int
+\sigma(\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi})q(\mathbf{w})\mathrm{d}\mathbf{w}
+= \int \sigma(a)p(a)\mathrm{d}a
+\]</span></p>
+<p>其中： <span class="math display">\[
+p(a) = \int
+\delta(a-\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi})q(\mathbf{w})\mathrm{d}\mathbf{w}
+\]</span></p>
+<p>我们可以估计<span class="math inline">\(p(a)\)</span>的值，因为：</p>
+<ul>
+<li>delta函数在<span
+class="math inline">\(\mathbf{w}\)</span>上加了一个线性约束<strong>（这里不是很懂）</strong>，所以可以通过在与<span
+class="math inline">\(\boldsymbol{\phi}\)</span>正交的各个方向上积分得到<span
+class="math inline">\(q(\mathbf{w})\)</span>的边缘分布</li>
+<li><span
+class="math inline">\(q(\mathbf{w})\)</span>为高斯分布，因此边缘分布<span
+class="math inline">\(p(a)\)</span>仍然是高斯分布</li>
+</ul>
+<p>下面我们可以计算分布<span
+class="math inline">\(p(a)\)</span>的均值和方差：</p>
+<p><span class="math display">\[
+\begin{align}
+\mu_{a} &amp;= \mathbb{E}[a] = \int p(a)a \mathrm{d}a \\
+&amp;= \int \left(\int
+\delta(a-\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi})q(\mathbf{w})\mathrm{d}\mathbf{w}\right)
+a \mathrm{d}a \\
+&amp;= \int q(\mathbf{w}) \left(\int
+\delta(a-\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi}) a \mathrm{d}a \right)
+\mathrm{d}\mathbf{w} \\
+&amp;= \int q(\mathbf{w})\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi}
+\mathrm{d}\mathbf{w} \\
+&amp;= \mathbf{w}_{\mathrm{MAP}}^{\mathrm{T}} \boldsymbol{\phi}
+\end{align}
+\]</span></p>
+<p><span class="math display">\[
+\begin{align}
+\sigma_{a}^{2} &amp;= \operatorname{var}[a] = \mathbb{E}[a^{2}] -
+\mathbb{E}[a]^{2} \\
+&amp;= \int \left(\int
+\delta(a-\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi})q(\mathbf{w})\mathrm{d}\mathbf{w}\right)
+a^{2} \mathrm{d}a - (\mathbf{w}_{\mathrm{MAP}}^{\mathrm{T}}
+\boldsymbol{\phi})^2 \\
+&amp;= \int q(\mathbf{w}) \left(\int
+\delta(a-\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi}) a^{2} \mathrm{d}a
+\right) \mathrm{d}\mathbf{w} - (\mathbf{w}_{\mathrm{MAP}}^{\mathrm{T}}
+\boldsymbol{\phi})^2 \\
+&amp;= \int q(\mathbf{w}) (\mathbf{w}^{\mathrm{T}} \boldsymbol{\phi})^2
+\mathrm{d}\mathbf{w} - (\mathbf{w}_{\mathrm{MAP}}^{\mathrm{T}}
+\boldsymbol{\phi})^2 \\
+&amp;= \int q(\mathbf{w})
+\boldsymbol{\phi}^{\mathrm{T}}\mathbf{w}\mathbf{w}^{\mathrm{T}}\boldsymbol{\phi}
+\mathrm{d}\mathbf{w} -
+\boldsymbol{\phi}^{\mathrm{T}}\mathbf{w}_{\mathrm{MAP}}\mathbf{w}_{\mathrm{MAP}}^{\mathrm{T}}\boldsymbol{\phi}
+\\
+&amp;= \boldsymbol{\phi}^{\mathrm{T}} \left[\int
+q(\mathbf{w})\mathbf{w}\mathbf{w}^{\mathrm{T}} \mathrm{d}\mathbf{w} -
+\mathbf{w}_{\mathrm{MAP}}\mathbf{w}_{\mathrm{MAP}}^{\mathrm{T}}\right]\boldsymbol{\phi}
+\\
+&amp;= \boldsymbol{\phi}^{\mathrm{T}}
+\left[\mathbb{E}[\mathbf{w}\mathbf{w}^{\mathrm{T}}] -
+\mathbb{E}[\mathbf{w}]\mathbb{E}[\mathbf{w}]^{\mathrm{T}}\right]\boldsymbol{\phi}
+\\
+&amp;= \boldsymbol{\phi}^{\mathrm{T}} \mathbf{S}_{N} \boldsymbol{\phi}
+\end{align}
+\]</span></p>
+<p>我们可以注意到，<strong>当噪声的方差为零时，分布<span
+class="math inline">\(p(a)\)</span>与线性回归的预测分布形式相同</strong>（[[ch3-3-3-贝叶斯线性回归#预测（Prediction）]]）。</p>
+<p>我们得到预测分布的变分近似为： <span class="math display">\[
+p(\mathcal{C}_{1} \mid \boldsymbol{\mathsf{t}}) = \int
+\sigma(a)p(a)\mathrm{d}a = \int \sigma(a)\mathcal{N}(a \mid \mu_{a},
+\sigma_{a}^{2})\mathrm{d}a
+\]</span> 关于<span class="math inline">\(a\)</span>的积分是logistic
+sigmoid函数和高斯函数的卷积，无法解析计算。但是我们可以通过使用probit函数<span
+class="math inline">\(\Phi(a)\)</span>替代logistic sigmoid函数<span
+class="math inline">\(\sigma(a)\)</span>，来获得一个比较好的近似结果。</p>
+<p>为了得到最好的近似，我们需要重新缩放横轴，所以我们使用<span
+class="math inline">\(\Phi(\lambda a)\)</span>近似<span
+class="math inline">\(\phi(a)\)</span>。通过令两个函数在原点处有同样的斜率,我们可以找到<span
+class="math inline">\(\lambda\)</span>的取值，此时<span
+class="math inline">\(\lambda = \pi / 8\)</span>。</p>
+<p>使用probit函数的一个好处是它与高斯函数的卷积可以用另一个probit函数解析地表示出来。特别地，我们可以得到：
+<span class="math display">\[
+\int \Phi(\lambda a)\mathcal{N}(a \mid \mu, \sigma^{2}) \mathrm{d}a =
+\Phi \left(\frac{\mu}{(\lambda^{-2} + \sigma^{2})^{1/2}} \right)
+\]</span></p>
+<p>现在将近似关系<span class="math inline">\(\sigma(a) \simeq
+\Phi(\lambda a)\)</span>应用于上式两侧： <span class="math display">\[
+\int \sigma(a) \mathcal{N}(a \mid \mu, \sigma^{2}) \mathrm{d}a \simeq
+\sigma \left(\kappa(\sigma^{2})\mu \right)
+\]</span></p>
+<p>其中，我们定义： <span class="math display">\[
+\kappa(\sigma^{2}) = (1 + \pi \sigma^{2} / 8)^{1/2}
+\]</span></p>
+<p>于是，我们可以得到近似预测分布为： <span class="math display">\[
+p(\mathcal{C}_{1} \mid \boldsymbol{\phi}, \boldsymbol{\mathsf{t}}) =
+\sigma \left(\kappa(\sigma_{a}^{2})\mu_{a} \right)
+\]</span></p>
+<p>我们注意到<span class="math inline">\(p(\mathcal{C}_{1} \mid
+\boldsymbol{\phi},
+\boldsymbol{\mathsf{t}})=0.5\)</span>的决策边界由<span
+class="math inline">\(\mu_{a}=0\)</span>得到，这与MAP得到的<span
+class="math inline">\(\mathbf{w}\)</span>的结果相同。因此，上面的边缘化求预测分布，在先验概率相同的情况下基于最小化误分类率的决策准则下是没有用的。但是<strong>对于更复杂的决策准则，边缘化起着重要作用</strong>。</p>
+<h2 id="其他参考资料">其他参考资料</h2>
+<ol type="1">
+<li><a
+target="_blank" rel="noopener" href="https://www.khanacademy.org/math/differential-equations/laplace-transform/properties-of-laplace-transform/v/dirac-delta-function">Dirac
+delta函数介绍</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/02/15/ch4-4-5-%E8%B4%9D%E5%8F%B6%E6%96%AFlogistic%E5%9B%9E%E5%BD%92/" title="ch4-4.5 贝叶斯logistic回归">https://ehehe.cn/2022/02/15/ch4-4-5-贝叶斯logistic回归/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PRML/" rel="tag"># PRML</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch4-4-4-%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E8%BF%91%E4%BC%BC/" rel="prev" title="ch4-4.4 拉普拉斯近似">
+                  <i class="fa fa-angle-left"></i> ch4-4.4 拉普拉斯近似
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch5-5-1-%E5%89%8D%E9%A6%88%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="next" title="ch5-5.1 前馈神经网络">
+                  ch5-5.1 前馈神经网络 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="2.5 非参数化方法 这一章之前的内容介绍的都是有具体函数形式的概率分布，这些概率分布由少量参数控制，参数则可以由数据集通过估计得到。这种对数据建模的方法称为参数化（parametric）方法。 这种方法的局限性在于概率密度的形式是确定的，对实际数据来说可能并不灵活，无法描述实际数据。 这一节中，使用非参数化（nonparametric）方法进行概率密度估计。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch2-2.5 非参数分布">
+<meta property="og:url" content="https://ehehe.cn/2022/02/15/ch2-2-5-%E9%9D%9E%E5%8F%82%E6%95%B0%E5%88%86%E5%B8%83/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="2.5 非参数化方法 这一章之前的内容介绍的都是有具体函数形式的概率分布，这些概率分布由少量参数控制，参数则可以由数据集通过估计得到。这种对数据建模的方法称为参数化（parametric）方法。 这种方法的局限性在于概率密度的形式是确定的，对实际数据来说可能并不灵活，无法描述实际数据。 这一节中，使用非参数化（nonparametric）方法进行概率密度估计。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-15T02:35:09.000Z">
+<meta property="article:modified_time" content="2022-02-15T02:35:09.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="PRML">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/02/15/ch2-2-5-%E9%9D%9E%E5%8F%82%E6%95%B0%E5%88%86%E5%B8%83/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/02/15/ch2-2-5-%E9%9D%9E%E5%8F%82%E6%95%B0%E5%88%86%E5%B8%83/","path":"2022/02/15/ch2-2-5-非参数分布/","title":"ch2-2.5 非参数分布"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch2-2.5 非参数分布 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9E%E5%8F%82%E6%95%B0%E5%8C%96%E6%96%B9%E6%B3%95"><span class="nav-text">2.5 非参数化方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%BC%95%E5%85%A5"><span class="nav-text">方法引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%AF%86%E5%BA%A6%E4%BC%B0%E8%AE%A1kernel-density-estimators"><span class="nav-text">2.5.1 核密度估计（Kernel
+density estimators）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%91%E9%82%BB%E6%96%B9%E6%B3%95nearest-neighbour-methods"><span class="nav-text">2.5.2
+近邻方法（Nearest-neighbour methods）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#k%E8%BF%91%E9%82%BB%E6%8E%A8%E5%B9%BF%E5%88%B0%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98%E4%B8%AD"><span class="nav-text">\(K\)近邻推广到分类问题中</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/02/15/ch2-2-5-%E9%9D%9E%E5%8F%82%E6%95%B0%E5%88%86%E5%B8%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch2-2.5 非参数分布 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch2-2.5 非参数分布
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-15 10:35:09" itemprop="dateCreated datePublished" datetime="2022-02-15T10:35:09+08:00">2022-02-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="非参数化方法">2.5 非参数化方法</h2>
+<p>这一章之前的内容介绍的都是有具体函数形式的概率分布，这些概率分布由少量参数控制，参数则可以由数据集通过估计得到。这种对数据建模的方法称为<strong>参数化（parametric）方法</strong>。</p>
+<p>这种方法的局限性在于概率密度的形式是确定的，对实际数据来说可能并不灵活，无法描述实际数据。</p>
+<p>这一节中，使用<strong>非参数化（nonparametric）方法</strong>进行概率密度估计。</p>
+<span id="more"></span>
+<p>一种常用的密度估计方法是<strong>直方图（histogram）</strong>，这里我们考虑单个连续变量<span
+class="math inline">\(x\)</span>。标准直方图简单地将<span
+class="math inline">\(x\)</span>划分为宽度为<span
+class="math inline">\(\Delta_{i}\)</span>的不同区间（bin），然后计算落入区间<span
+class="math inline">\(i\)</span>中的<span
+class="math inline">\(x\)</span>的观测数。为了将这个观测数转化为归一化的概率密度，我们简单地除以观测的总数<span
+class="math inline">\(N\)</span>和区间的宽度<span
+class="math inline">\(\Delta_{i}\)</span>，以获得每个区间的概率值：
+<span class="math display">\[
+p_{i} = \frac{n_{i}}{N\Delta_{i}}
+\]</span></p>
+<p>但是直方图在实际应用中存在局限性：</p>
+<ol type="1">
+<li>直方图估计的概率密度不连续，因为直方图本身分成一组一组，就是不连续的。</li>
+<li>直方图会将维度放大，把<span
+class="math inline">\(D\)</span>维空间中的每一维变量都划分称<span
+class="math inline">\(M\)</span>组，一共会划分<span
+class="math inline">\(M^D\)</span>组。在一个高维空间中，估计局部概率密度所需的数据量是非常大的。</li>
+</ol>
+<p>下面介绍的两种方法更适合实际使用。</p>
+<h3 id="方法引入">方法引入</h3>
+<p>假设在<span
+class="math inline">\(D\)</span>维欧氏空间中存在某个未知的概率密度分布<span
+class="math inline">\(p(\mathbf{x})\)</span>，我们想要估计<span
+class="math inline">\(p(\mathbf{x})\)</span>的值。考虑包含<span
+class="math inline">\(\mathbf{x}\)</span>的某个小区域<span
+class="math inline">\(\mathcal{R}\)</span>，这个区域的<strong>概率质量（probability
+mass）</strong>为： <span class="math display">\[
+P=\int_{\mathcal{R}} p(\mathbf{x}) \mathrm{d} \mathbf{x}
+\]</span></p>
+<p>假设我们有服从<span
+class="math inline">\(p(\mathbf{x})\)</span>的<span
+class="math inline">\(N\)</span>次观测，由于每个数据点落在区域<span
+class="math inline">\(\mathcal{R}\)</span>中的概率为<span
+class="math inline">\(P\)</span>，因此位于区域<span
+class="math inline">\(\mathcal{R}\)</span>中的数据点的总数<span
+class="math inline">\(K\)</span>服从二项分布： <span
+class="math display">\[
+\operatorname{Bin}(K \mid N, P)=\frac{N !}{K !(N-K) !} P^{K}(1-P)^{1-K}
+\]</span></p>
+<p>由二项分布的期望和方差，可以得到<span
+class="math inline">\(\mathbb{E}[K / N]=P\)</span>，<span
+class="math inline">\(\operatorname{var} [K / N]=P(1-P) /
+N\)</span>。假设<span
+class="math inline">\(N\)</span>的值比较大时，二项分布的峰值在均值附近，于是可以得到：
+<span class="math display">\[
+K \simeq N P
+\]</span></p>
+<p>同时，假设当<span
+class="math inline">\(\mathcal{R}\)</span>足够小时，可以假定该区域内的<span
+class="math inline">\(p(\mathbf{x})\)</span>为常数，如果区域<span
+class="math inline">\(\mathcal{R}\)</span>的体积为<span
+class="math inline">\(V\)</span>，则： <span class="math display">\[
+P \simeq p(\mathbf{x}) V
+\]</span></p>
+<p>于是，结合上面两个式子，得到概率密度的估计： <span
+class="math display">\[
+p(\mathbf{x})=\frac{K}{N V}
+\]</span></p>
+<p>但是，上面两个假设是<strong>相互矛盾</strong>的。一方面想要区域<span
+class="math inline">\(\mathcal{R}\)</span>足够小，使得这个区域内的概率密度近似为常数；另一方面也想要区域<span
+class="math inline">\(\mathcal{R}\)</span>足够大，使得<span
+class="math inline">\(K\)</span>足够大，让二项分布在均值处达到尖峰。</p>
+<p>不过，我们有两种方法使用上面的式子：</p>
+<ol type="1">
+<li>固定<span class="math inline">\(K\)</span>，然后从数据中确定<span
+class="math inline">\(V\)</span>的值，称为<strong><span
+class="math inline">\(K\)</span>近邻方法</strong>。</li>
+<li>固定<span class="math inline">\(V\)</span>，然后从数据中确定<span
+class="math inline">\(K\)</span>的值，称为<strong>核密度估计方法</strong>。</li>
+</ol>
+<h3 id="核密度估计kernel-density-estimators">2.5.1 核密度估计（Kernel
+density estimators）</h3>
+<p>取区域<span class="math inline">\(\mathcal{R}\)</span>为以<span
+class="math inline">\(\mathbf{x}\)</span>为中心的小超立方体，为了统计落在这个区域内的数据点的数量<span
+class="math inline">\(K\)</span>，定义下面的函数： <span
+class="math display">\[
+k(\mathbf{u})=\left\{\begin{array}{ll}
+1, &amp; \left|u_{i}\right| \leqslant 1 / 2, \quad i=1, \ldots, D \\
+0, &amp; \text { otherwise }
+\end{array}\right.
+\]</span></p>
+<p>这表示一个以原点为中心的单位超立方体。</p>
+<p>函数<span
+class="math inline">\(k(\mathbf{u})\)</span>是一个<strong>核函数（kernel
+function）</strong>，在这个问题中也称为<strong>Parzen窗口</strong>。</p>
+<p>选取<span
+class="math inline">\(\mathbf{u}=(\mathbf{x}-\mathbf{x}_n)/h\)</span>，则<span
+class="math inline">\(\mathbf{x}_n\)</span>在边长为<span
+class="math inline">\(h\)</span>的超立方中时函数值<span
+class="math inline">\(k(\mathbf{u})\)</span>为<span
+class="math inline">\(1\)</span>，否则为<span
+class="math inline">\(0\)</span>。因此落入这个单位超立方体中的数据点数为：
+<span class="math display">\[
+K=\sum_{n=1}^{N} k\left(\frac{\mathrm{x}-\mathrm{x}_{n}}{h}\right)
+\]</span></p>
+<p>代入公式<span
+class="math inline">\(p(\mathbf{x})=K/NV\)</span>，得到： <span
+class="math display">\[
+p(\mathbf{x})=\frac{1}{N} \sum_{n=1}^{N} \frac{1}{h^{D}}
+k\left(\frac{\mathbf{x}-\mathbf{x}_{n}}{h}\right)
+\]</span></p>
+<p>其中，<span
+class="math inline">\(V=h^D\)</span>为超立方体的体积。</p>
+<p>由于<span
+class="math inline">\(k(\mathbf{u})\)</span>的对称性，我们可以重新解释上面的式子。之前我们认为这个函数表示以<span
+class="math inline">\(\mathbf{x}\)</span>为中心的一个超立方体，现在可以理解为以<span
+class="math inline">\(N\)</span>个数据点<span
+class="math inline">\(\mathbf{x}_n\)</span>为中心的<span
+class="math inline">\(N\)</span>个超立方体。</p>
+<p>然而，用上面的公式仍然存在有<strong>不连续</strong>的问题，体现在超立方体的边界上。我们可以通过选取一个较平滑的核函数来解决，通常选择高斯核函数，对应的概率密度模型为：
+<span class="math display">\[
+p(\mathrm{x})=\frac{1}{N} \sum_{n=1}^{N} \frac{1}{\left(2 \pi
+h^{2}\right)^{1 / 2}} \exp
+\left\{-\frac{\left\|\mathrm{x}-\mathrm{x}_{n}\right\|^{2}}{2
+h^{2}}\right\}
+\]</span></p>
+<p>其中：<span
+class="math inline">\(h\)</span>表示高斯分布的标准差。</p>
+<p>参数<span
+class="math inline">\(h\)</span>对模型的平滑起着重要作用。<span
+class="math inline">\(h\)</span>过小会造成模型对噪声过于敏感，<span
+class="math inline">\(h\)</span>过大会造成过度平滑，因此要选择一个折中。</p>
+<p>核函数的选择不是唯一的，只要满足下面的条件： <span
+class="math display">\[
+\begin{aligned}
+k(\mathbf{u}) &amp; \geqslant 0 \notag \\
+\int k(\mathbf{u}) \mathrm{du} &amp;=1 \notag
+\end{aligned}
+\]</span></p>
+<p>核密度估计有⼀个很⼤的优点，即不需要进行“训练”阶段的计算，因为“训练”阶段只需要存储训练集即可。然而，这也是⼀个巨⼤的缺点，因为估计概率密度的计算代价随着数据集的规模线性增长。</p>
+<h3 id="近邻方法nearest-neighbour-methods">2.5.2
+近邻方法（Nearest-neighbour methods）</h3>
+<p>核密度估计方法存在的一个问题是控制核大小的参数<span
+class="math inline">\(h\)</span>对所有核都是固定的。在数据比较集中的区域，较大的<span
+class="math inline">\(h\)</span>值可能造成过度平滑；而在数据比较稀疏的区域，减小<span
+class="math inline">\(h\)</span>值可能会带来更多噪声。因此<span
+class="math inline">\(h\)</span>的选择可能<strong>依赖于数据空间的位置</strong>。</p>
+<p>先选取以<span
+class="math inline">\(\mathbf{x}\)</span>为中心的一个很小的球面，然后逐渐增大半径直到球面包含了恰好<span
+class="math inline">\(K\)</span>个数据点为止，此时球面所围城的体积即为所求的<span
+class="math inline">\(V\)</span>。这种方法称为<strong><span
+class="math inline">\(K\)</span>近邻法（K nearest
+neighbours）</strong>。</p>
+<p><span
+class="math inline">\(K\)</span>的值控制了光滑程度，不能选择过大的，也不能选择过小的。</p>
+<h4 id="k近邻推广到分类问题中"><span
+class="math inline">\(K\)</span>近邻推广到分类问题中</h4>
+<p><span
+class="math inline">\(K\)</span>近邻方法也可以推广到分类问题中，使用<span
+class="math inline">\(K\)</span>近邻法对每一个类别进行密度估计，然后应用贝叶斯理论得到后验概率。</p>
+<p>假设有一个总数为<span
+class="math inline">\(N\)</span>的数据集，其中<span
+class="math inline">\(N_k\)</span>个数据点属于类别<span
+class="math inline">\(\mathcal{C}_k\)</span>。如果想对新的数据点<span
+class="math inline">\(\mathbf{x}\)</span>进行分类，那么可以以<span
+class="math inline">\(\mathbf{x}\)</span>为中心画一个刚好能包含<span
+class="math inline">\(K\)</span>个数据点的球面，球面围成的体积为<span
+class="math inline">\(V\)</span>，含有每一类<span
+class="math inline">\(\mathcal{C}_k\)</span>的数据点为<span
+class="math inline">\(K_k\)</span>个。那么每一类的概率密度为： <span
+class="math display">\[
+p(\mathbf{x}|\mathcal{C}_k)=\cfrac{K_k}{N_kV}
+\]</span></p>
+<p>则非条件概率密度<span
+class="math inline">\(p(\mathbf{x})\)</span>为每一类的概率密度之和：
+<span class="math display">\[
+p(\mathbf{x})=\frac{K}{N V}
+\]</span></p>
+<p>每一类的先验概率为： <span class="math display">\[
+p\left(\mathcal{C}_{k}\right)=\frac{N_{k}}{N}
+\]</span></p>
+<p>于是，每一类别的后验概率为： <span class="math display">\[
+p\left(\mathcal{C}_{k} \mid \mathbf{x}\right)=\frac{p\left(\mathbf{x}
+\mid \mathcal{C}_{k}\right)
+p\left(\mathcal{C}_{k}\right)}{p(\mathbf{x})}=\frac{K_{k}}{K}
+\]</span></p>
+<p>如果我们想最小化错误分类的概率，可以把新数据点分配给后验概率最大的类别（即<span
+class="math inline">\(K_{k}/K\)</span>最大）。</p>
+<p>特殊的，当<span
+class="math inline">\(K=1\)</span>时，称为<strong>最近邻方法（nearest-neighbour
+rule）</strong>。新数据点被简单的分给数据集中距离最近的点的类别。</p>
+<p><span
+class="math inline">\(K\)</span>近邻⽅法和核密度估计方法都需要存储整个训练数据。如果数据集很大的话，会造成很大的计算代价。通过建⽴⼀个基于树的搜索结构（kd树），使得近邻可以⾼效地被找到，而不必遍历整个数据集，这种计算代价可以被抵消，代价就是需要进行⼀次性的额外计算量。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/02/15/ch2-2-5-%E9%9D%9E%E5%8F%82%E6%95%B0%E5%88%86%E5%B8%83/" title="ch2-2.5 非参数分布">https://ehehe.cn/2022/02/15/ch2-2-5-非参数分布/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PRML/" rel="tag"># PRML</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch2-2-4-%E6%8C%87%E6%95%B0%E6%97%8F%E5%88%86%E5%B8%83/" rel="prev" title="ch2-2.4 指数族分布">
+                  <i class="fa fa-angle-left"></i> ch2-2.4 指数族分布
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch3-3-1-%E7%BA%BF%E6%80%A7%E5%9F%BA%E5%87%BD%E6%95%B0%E6%A8%A1%E5%9E%8B/" rel="next" title="ch3-3.1 线性基函数模型">
+                  ch3-3.1 线性基函数模型 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

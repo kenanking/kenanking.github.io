@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="GDAL3.1.3+PROJ7.1.1编译说明 由于测绘程序开发大赛的需要，所以尝试编译了GDAL，这里记录一些编译GDAL的过程和遇到的坑。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GDAL3.1.3+PROJ7.1.1编译说明">
+<meta property="og:url" content="https://ehehe.cn/2020/09/19/GDAL3-1-3-PROJ7-1-1%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="GDAL3.1.3+PROJ7.1.1编译说明 由于测绘程序开发大赛的需要，所以尝试编译了GDAL，这里记录一些编译GDAL的过程和遇到的坑。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-19T11:05:51.000Z">
+<meta property="article:modified_time" content="2021-01-21T14:30:45.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="GADL">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ehehe.cn/2020/09/19/GDAL3-1-3-PROJ7-1-1%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2020/09/19/GDAL3-1-3-PROJ7-1-1%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E/","path":"2020/09/19/GDAL3-1-3-PROJ7-1-1编译说明/","title":"GDAL3.1.3+PROJ7.1.1编译说明"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>GDAL3.1.3+PROJ7.1.1编译说明 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#gdal3.1.3proj7.1.1%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E"><span class="nav-text">GDAL3.1.3+PROJ7.1.1编译说明</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80sqlite%E7%BC%96%E8%AF%91"><span class="nav-text">一、SQLite编译</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD"><span class="nav-text">文件下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91"><span class="nav-text">编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E7%90%86%E7%BC%96%E8%AF%91%E5%BE%97%E5%88%B0%E6%96%87%E4%BB%B6"><span class="nav-text">整理编译得到文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8Clibtiff%E7%BC%96%E8%AF%91"><span class="nav-text">二、libtiff编译</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD-1"><span class="nav-text">文件下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91-1"><span class="nav-text">编译</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89proj7.1.1%E7%BC%96%E8%AF%91"><span class="nav-text">三、PROJ7.1.1编译</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD-2"><span class="nav-text">文件下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91-2"><span class="nav-text">编译</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9Bgdal3.1.3%E7%BC%96%E8%AF%91"><span class="nav-text">四、GDAL3.1.3编译</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD-3"><span class="nav-text">文件下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91-3"><span class="nav-text">编译</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2020/09/19/GDAL3-1-3-PROJ7-1-1%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="GDAL3.1.3+PROJ7.1.1编译说明 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          GDAL3.1.3+PROJ7.1.1编译说明
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-09-19 19:05:51" itemprop="dateCreated datePublished" datetime="2020-09-19T19:05:51+08:00">2020-09-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-01-21 22:30:45" itemprop="dateModified" datetime="2021-01-21T22:30:45+08:00">2021-01-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="gdal3.1.3proj7.1.1编译说明">GDAL3.1.3+PROJ7.1.1编译说明</h1>
+<p>由于测绘程序开发大赛的需要，所以尝试编译了GDAL，这里记录一些编译GDAL的过程和遇到的坑。</p>
+<span id="more"></span>
+<h2 id="一sqlite编译">一、SQLite编译</h2>
+<h3 id="文件下载">文件下载</h3>
+<p>下载<code>SQLite</code>源代码：<a
+target="_blank" rel="noopener" href="https://www.sqlite.org/download.html">https://www.sqlite.org/download.html</a>，这里选择的是<code>sqlite-amalgamation-3330000.zip</code>文件。</p>
+<p>解压到本地后目录中存在以下文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">|-- ProgrammingLibrary</span><br><span class="line">    |-- sqlite-amalgamation-3330000</span><br><span class="line">        |-- shell.c</span><br><span class="line">        |-- sqlite3.c</span><br><span class="line">        |-- sqlite3.h</span><br><span class="line">        |-- sqlite3ext.h</span><br></pre></td></tr></table></figure>
+<h3 id="编译">编译</h3>
+<ol type="1">
+<li>在解压后的目录中，创建c++空工程</li>
+</ol>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/SQLite%E5%88%9B%E5%BB%BA%E6%96%B0%E9%A1%B9%E7%9B%AE.png"
+alt="SQLite创建新项目" />
+<figcaption aria-hidden="true">SQLite创建新项目</figcaption>
+</figure>
+<ol start="2" type="1">
+<li>在新建工程中，添加下载得到的源文件</li>
+</ol>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95%E7%AA%97%E5%8F%A3.png"
+alt="解决方法窗口" />
+<figcaption aria-hidden="true">解决方法窗口</figcaption>
+</figure>
+<ol start="3" type="1">
+<li>修改工程属性（记得将<strong>配置改为<code>Release</code>，平台改为<code>x64</code></strong>），增加预处理定义（C/C++
+==&gt; 预处理器 ==&gt; 预处理定义）</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">_USRDLL</span><br><span class="line">SQLITE_ENABLE_RTREE</span><br><span class="line">SQLITE_ENABLE_COLUMN_METADATA</span><br><span class="line">SQLITE_ENABLE_FTS5</span><br><span class="line">SQLITE_ENABLE_UNLOCK_NOTIFY</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/%E5%A2%9E%E5%8A%A0%E9%A2%84%E5%A4%84%E7%90%86%E5%AE%9A%E4%B9%89.png"
+alt="增加预处理定义" />
+<figcaption aria-hidden="true">增加预处理定义</figcaption>
+</figure>
+<ol start="4" type="1">
+<li>在生成菜单中，选择生成SQLite，就会生成<code>SQLite.exe</code></li>
+</ol>
+<p>生成的<code>SQLite.exe</code>其路径为：<code>D:\ProgrammingLibrary\sqlite-amalgamation-3330000\SQLite\x64\Release\SQLite.exe</code>。</p>
+<ol start="5" type="1">
+<li>在项目属性中，修改配置类型为<code>静态库(.lib)</code>，编译得到<code>SQLite.lib</code></li>
+</ol>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E7%B1%BB%E5%9E%8B.png"
+alt="修改配置类型" />
+<figcaption aria-hidden="true">修改配置类型</figcaption>
+</figure>
+<p>在生成菜单中，选择生成SQLite，就会生成<code>SQLite.lib</code>，其路径为：<code>D:\ProgrammingLibrary\sqlite-amalgamation-3330000\SQLite\x64\Release\SQLite.lib</code>。</p>
+<h3 id="整理编译得到文件">整理编译得到文件</h3>
+<p>最后整理一下编译得到的文件。新建文件夹<code>sqlite</code>，其中新建子文件夹<code>bin</code>，<code>include</code>和<code>lib</code>，将<code>sqlite-amalgamation-3330000</code>中的文件整理进去，最后得到的文件目录如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">|-- sqlite</span><br><span class="line">    |-- bin</span><br><span class="line">    |   |-- SQLite.exe</span><br><span class="line">    |-- include</span><br><span class="line">    |   |-- sqlite3.h</span><br><span class="line">    |   |-- sqlite3ext.h</span><br><span class="line">    |-- lib</span><br><span class="line">        |-- SQLite.lib</span><br></pre></td></tr></table></figure>
+<h2 id="二libtiff编译">二、libtiff编译</h2>
+<h3 id="文件下载-1">文件下载</h3>
+<p>下载<code>libtiff</code>源代码：<a
+target="_blank" rel="noopener" href="http://download.osgeo.org/libtiff/">http://download.osgeo.org/libtiff/</a>，这里选择的是：<code>tiff-4.1.0.zip</code>文件。</p>
+<h3 id="编译-1">编译</h3>
+<ol type="1">
+<li>解压到文件夹后，打开Cmake，进行如下设置：</li>
+</ol>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20200919172003060.png"
+alt="Cmake配置1" />
+<figcaption aria-hidden="true">Cmake配置1</figcaption>
+</figure>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20200919172116356.png"
+alt="Cmake配置2" />
+<figcaption aria-hidden="true">Cmake配置2</figcaption>
+</figure>
+<p>最后点击Finish。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20200919172420785.png"
+alt="Cmake配置3" />
+<figcaption aria-hidden="true">Cmake配置3</figcaption>
+</figure>
+<p>Configure完成后，可以看到TIFF库包含很多选项，大多数配置都不是必须的，如果有已经编译好的相关库，就可以添加支持，否则就取消勾选。</p>
+<p>这里取消了对jbig、jpeg12、lzma、zstd的支持，添加了对zlib、jpeg、webp的支持（可以选择自己编译，也可以下载网络上已经编译好的：<a
+target="_blank" rel="noopener" href="https://windows.php.net/downloads/php-sdk/deps/vs16/x64/">https://windows.php.net/downloads/php-sdk/deps/vs16/x64/</a>）。首先需要勾选<code>Advanced</code>，进行相关配置。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20200919173656829.png"
+alt="jpeg相关路径" />
+<figcaption aria-hidden="true">jpeg相关路径</figcaption>
+</figure>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20200919173736701.png"
+alt="webp相关路径" />
+<figcaption aria-hidden="true">webp相关路径</figcaption>
+</figure>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20200919173800533.png"
+alt="zlib相关路径" />
+<figcaption aria-hidden="true">zlib相关路径</figcaption>
+</figure>
+<p>再更改一下安装目录：</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20200919173851293.png"
+alt="更改安装目录" />
+<figcaption aria-hidden="true">更改安装目录</figcaption>
+</figure>
+<p>最后，再Configure一次，然后点击Generate生成项目工程，打开项目。</p>
+<ol start="2" type="1">
+<li>首先将配置更改为<code>Release</code>，平台为<code>x64</code>，然后在Visual
+Studio解决方案窗口中右键<code>ALL_BUILD</code>，选择生成。等待编译结束后，右键<code>INSTALL</code>，选择生成，即可以在安装目录看到编译好的文件。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">|-- libtiff-4.1.0</span><br><span class="line">    |-- bin</span><br><span class="line">    |   |-- fax2ps.exe</span><br><span class="line">    |   |-- fax2tiff.exe</span><br><span class="line">    |   |-- pal2rgb.exe</span><br><span class="line">    |   |-- ......</span><br><span class="line">    |-- include</span><br><span class="line">    |   |-- tiff.h</span><br><span class="line">    |   |-- tiffconf.h</span><br><span class="line">    |   |-- tiffio.h</span><br><span class="line">    |   |-- tiffio.hxx</span><br><span class="line">    |   |-- tiffvers.h</span><br><span class="line">    |-- lib</span><br><span class="line">    |   |-- tiff.lib</span><br><span class="line">    |   |-- pkgconfig</span><br><span class="line">    |       |-- libtiff-4.pc</span><br><span class="line">    |-- share</span><br><span class="line">        |-- doc</span><br><span class="line">        |   |-- tiff</span><br><span class="line">        |       |-- html</span><br><span class="line">        |           |-- addingtags.html</span><br><span class="line">        |           |-- bugs.html</span><br><span class="line">        |           |-- build.html</span><br><span class="line">        |           |-- ......</span><br><span class="line">        |-- man</span><br><span class="line">            |-- man1</span><br><span class="line">            |   |-- fax2ps.1</span><br><span class="line">            |   |-- fax2tiff.1</span><br><span class="line">            |   |-- pal2rgb.1</span><br><span class="line">            |   |-- ......</span><br><span class="line">            |-- man3</span><br><span class="line">                |-- libtiff.3tiff</span><br><span class="line">                |-- TIFFbuffer.3tiff</span><br><span class="line">                |-- TIFFClose.3tiff</span><br><span class="line">                |-- ......</span><br></pre></td></tr></table></figure>
+<h2 id="三proj7.1.1编译">三、PROJ7.1.1编译</h2>
+<h3 id="文件下载-2">文件下载</h3>
+<p>下载<code>PROJ7.1.1</code>源代码：<a
+target="_blank" rel="noopener" href="https://proj.org/download.html">https://proj.org/download.html</a>，这里选择的是<code>proj-7.1.1.tar.gz</code>文件。</p>
+<h3 id="编译-2">编译</h3>
+<p>可以从官网的<strong>Build
+requirements</strong>中看到编译PROJ7相关的要求。其中，SQLite3和libtiff在上面已经编译过了，curl为可选项所以就不支持了（curl为projsync的依赖库，所以需要取消生成projsync）（事实上，如果编译PROJ7.1.1时加入了curl，在编译GDAL3.1.3时会发生错误，并且我无法解决，所以就取消了）。</p>
+<ul>
+<li>C99 compiler</li>
+<li>C++11 compiler</li>
+<li>SQLite3 &gt;= 3.11 (headers, library and executable)</li>
+<li>libtiff &gt;= 4.0 (headers and library)</li>
+<li>optional (but recommended): curl &gt;= 7.29.0</li>
+<li>GNU make for autotools build or CMake &gt;= 3.9</li>
+</ul>
+<ol type="1">
+<li>在解压后的文件中创建<code>build</code>文件夹，打开Cmake，进行如下设置：</li>
+</ol>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/Cmake%E9%85%8D%E7%BD%AE1.png"
+alt="Cmake配置1" />
+<figcaption aria-hidden="true">Cmake配置1</figcaption>
+</figure>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/Cmake%E9%85%8D%E7%BD%AE2.png"
+alt="Cmake配置2" />
+<figcaption aria-hidden="true">Cmake配置2</figcaption>
+</figure>
+<p>最后点击Finish，很快就会提示错误信息，因为缺少了相关的文件。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20200919082308636.png"
+alt="报错信息" />
+<figcaption aria-hidden="true">报错信息</figcaption>
+</figure>
+<ol start="2" type="1">
+<li>添加相关文件</li>
+</ol>
+<p>首先添加SQLite3相关文件。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20200919082610853.png"
+alt="SQLite3相关文件" />
+<figcaption aria-hidden="true">SQLite3相关文件</figcaption>
+</figure>
+<p>然后，根据提示添加libtiff相关文件（TIFF_LIBRARY没有显示在条目中，需要勾选<code>Advanced</code>后才会显示）。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20200919175915639.png"
+alt="libtiff相关文件" />
+<figcaption aria-hidden="true">libtiff相关文件</figcaption>
+</figure>
+<p>再次点击Configure，会提示添加curl相关文件，这里直接取消勾选<code>ENABLE_CURL</code>。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20200919180049077.png"
+alt="取消curl" />
+<figcaption aria-hidden="true">取消curl</figcaption>
+</figure>
+<p>再次点击Configure，并且取消勾选<code>BUILD_PROJSYNC</code>。</p>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20200919180920783.png"
+alt="取消勾选PROJSYNC" />
+<figcaption aria-hidden="true">取消勾选PROJSYNC</figcaption>
+</figure>
+<p>再次点击Configure后点击Generate，生成项目后，以<strong>管理员权限</strong>（否则无法对C盘进行读写）使用Visual
+Studio2019打开。</p>
+<ol start="3" type="1">
+<li>首先将配置更改为<code>Release</code>，平台为<code>x64</code>，然后在Visual
+Studio解决方案窗口中右键<code>ALL_BUILD</code>，选择生成。等待编译结束后，右键<code>INSTALL</code>，选择生成，即可以在安装目录（不做更改的话默认为<code>C:/Program Files (x86)/PROJ</code>）看到编译好的文件。下一步可以把编译好的文件复制到我们想要的目录中。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">|-- proj-7.1.1-no-curl</span><br><span class="line">    |-- bin</span><br><span class="line">    |   |-- cct.exe</span><br><span class="line">    |   |-- cs2cs.exe</span><br><span class="line">    |   |-- geod.exe</span><br><span class="line">    |   |-- ......</span><br><span class="line">    |-- include</span><br><span class="line">    |   |-- geodesic.h</span><br><span class="line">    |   |-- proj.h</span><br><span class="line">    |   |-- proj_api.h</span><br><span class="line">    |   |-- ......</span><br><span class="line">    |       |-- common.hpp</span><br><span class="line">    |       |-- coordinateoperation.hpp</span><br><span class="line">    |       |-- coordinatesystem.hpp</span><br><span class="line">    |       |-- ......</span><br><span class="line">    |-- lib</span><br><span class="line">    |   |-- proj.lib</span><br><span class="line">    |   |-- cmake</span><br><span class="line">    |       |-- proj</span><br><span class="line">    |       |   |-- proj-config-version.cmake</span><br><span class="line">    |       |   |-- proj-config.cmake</span><br><span class="line">    |       |   |-- proj-targets-release.cmake</span><br><span class="line">    |       |   |-- .......</span><br><span class="line">    |-- share</span><br><span class="line">        |-- man</span><br><span class="line">        |   |-- man1</span><br><span class="line">        |       |-- cct.1</span><br><span class="line">        |       |-- cs2cs.1</span><br><span class="line">        |       |-- geod.1</span><br><span class="line">        |       |-- ......</span><br><span class="line">        |-- proj</span><br><span class="line">            |-- CH</span><br><span class="line">            |-- GL27</span><br><span class="line">            |-- ITRF2000</span><br><span class="line">            |-- ......</span><br></pre></td></tr></table></figure>
+<h2 id="四gdal3.1.3编译">四、GDAL3.1.3编译</h2>
+<h3 id="文件下载-3">文件下载</h3>
+<p>下载<code>GDAL</code>源代码：<a
+target="_blank" rel="noopener" href="https://gdal.org/download.html">https://gdal.org/download.html</a>，这里选择的是<code>2020-09-01 gdal-3.1.3.tar.gz</code>文件。</p>
+<h3 id="编译-3">编译</h3>
+<ol type="1">
+<li>以<strong>管理员权限</strong>打开<code>x64 Native Tools Command Prompt for VS 2019</code>，<strong>这一步比较重要</strong>，如果不这样，后面是会报错的。进入解压后的文件夹，运行<code>generate_vcxproj.bat</code>。根据提示，生成VS2019项目文件：</li>
+</ol>
+<figure>
+<img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/image-20200919184536494.png"
+alt="生成VS2019项目文件" />
+<figcaption aria-hidden="true">生成VS2019项目文件</figcaption>
+</figure>
+<ol start="2" type="1">
+<li>双击打开目录中生成的<code>gdal_vs2019.vcxproj</code>文件，在解决方案窗口中展开<code>gdal_vs2019</code>，打开<code>nmake.opt</code>，主要修改如下：</li>
+</ol>
+<p>① 修改MSVC版本，VS2019对应为1920</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">!IFNDEF MSVC_VER</span><br><span class="line">#assume msvc VS2015.</span><br><span class="line">MSVC_VER=1900</span><br><span class="line">!ENDIF</span><br><span class="line"></span><br><span class="line">修改为：</span><br><span class="line">!IFNDEF MSVC_VER</span><br><span class="line">#assume msvc VS2015.</span><br><span class="line">MSVC_VER=1920</span><br><span class="line">!ENDIF</span><br></pre></td></tr></table></figure>
+<p>② 取消WIN64=YES前面的注释</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># Uncomment the following if you are building for 64-bit windows</span><br><span class="line"># (x64). You&#x27;ll need to have PATH, INCLUDE and LIB set up for 64-bit</span><br><span class="line"># compiles.</span><br><span class="line">#WIN64=YES</span><br><span class="line"># Capture WIN64=1 if specified in NMAKE command line</span><br><span class="line">!IFDEF WIN64</span><br><span class="line">WIN64=YES</span><br><span class="line">!ENDIF</span><br><span class="line"></span><br><span class="line">取消WIN64=YES前面的注释</span><br><span class="line"># Uncomment the following if you are building for 64-bit windows</span><br><span class="line"># (x64). You&#x27;ll need to have PATH, INCLUDE and LIB set up for 64-bit</span><br><span class="line"># compiles.</span><br><span class="line">WIN64=YES</span><br><span class="line"># Capture WIN64=1 if specified in NMAKE command line</span><br><span class="line">!IFDEF WIN64</span><br><span class="line">WIN64=YES</span><br><span class="line">!ENDIF</span><br></pre></td></tr></table></figure>
+<p>③ 添加proj依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># PROJ stuff (required dependency: PROJ &gt;= 6)</span><br><span class="line">#PROJ_INCLUDE = -Id:\install-proj\local\include</span><br><span class="line"># Note: add shell32.lib is needed starting with PROJ 7.0 in some circumstances</span><br><span class="line"># for static linking. See https://github.com/OSGeo/gdal/issues/2488</span><br><span class="line"># And ole32.lib also since PROJ 7.1 (see https://github.com/OSGeo/gdal/issues/2743)</span><br><span class="line">#PROJ_LIBRARY = d:\install-proj\local\lib\proj_6_0.lib shell32.lib ole32.lib</span><br><span class="line"></span><br><span class="line">改为自己本地的目录并取消注释（后面的shell32.lib以及ole32.lib不要删除）：</span><br><span class="line"># PROJ stuff (required dependency: PROJ &gt;= 6)</span><br><span class="line">PROJ_INCLUDE = -ID:\ProgrammingLibrary\proj-7.1.1-no-curl\include</span><br><span class="line"># Note: add shell32.lib is needed starting with PROJ 7.0 in some circumstances</span><br><span class="line"># for static linking. See https://github.com/OSGeo/gdal/issues/2488</span><br><span class="line"># And ole32.lib also since PROJ 7.1 (see https://github.com/OSGeo/gdal/issues/2743)</span><br><span class="line">PROJ_LIBRARY = D:\ProgrammingLibrary\proj-7.1.1-no-curl\lib\proj.lib shell32.lib ole32.lib</span><br></pre></td></tr></table></figure>
+<p>④ 添加SQLite依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># SQLite Libraries</span><br><span class="line">#SQLITE_INC=-IN:\pkg\sqlite-win32</span><br><span class="line">#SQLITE_LIB=N:\pkg\sqlite-win32\sqlite3_i.lib</span><br><span class="line"></span><br><span class="line">改为自己本地的目录并取消注释</span><br><span class="line"># SQLite Libraries</span><br><span class="line">SQLITE_INC=-ID:\ProgrammingLibrary\sqlite\include</span><br><span class="line">SQLITE_LIB=D:\ProgrammingLibrary\sqlite\lib\SQLite.lib</span><br></pre></td></tr></table></figure>
+<p>修改完成后保存并关闭。</p>
+<ol start="3" type="1">
+<li>最后，在之前的<code>x64 Native Tools Command Prompt for VS 2019</code>命令行窗口中，依次输入下面命令：</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nmake -f makefile.vc MSVC_VER=1920 WIN64=1 ANALYZE=1 WITH_PDB=1</span><br><span class="line">nmake -f makefile.vc MSVC_VER=1910 WIN64=1 install</span><br><span class="line">nmake -f makefile.vs MSVC_VER=1910 WIN64=1 devinstall</span><br></pre></td></tr></table></figure>
+<p>第一行命令用于编译GDAL库；</p>
+<p>第二行命令用于编译GDAL库，并将生成的dll和exe等文件复制到<code>C:\warmerda\bld</code>；</p>
+<p>第三行命令用于编译GDAL库，并将开发用的include和lib文件夹复制到<code>C:\warmerda\bld</code>。</p>
+<p>至此，GDAL3.1.3编译完毕。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2020/09/19/GDAL3-1-3-PROJ7-1-1%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E/" title="GDAL3.1.3+PROJ7.1.1编译说明">https://ehehe.cn/2020/09/19/GDAL3-1-3-PROJ7-1-1编译说明/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/GADL/" rel="tag"># GADL</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/09/10/IDL%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/" rel="prev" title="IDL基础语法">
+                  <i class="fa fa-angle-left"></i> IDL基础语法
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/01/26/Nand2Tetris-Project-1/" rel="next" title="Nand2Tetris Project 1">
+                  Nand2Tetris Project 1 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

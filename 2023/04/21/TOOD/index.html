@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="作者：Chengjian Feng, Yujie Zhong, Yu Gao, Matthew R. Scott, Weilin Huang TOOD 背景 单阶段的目标检测算法通常通过优化两个子任务——分类（object classification）和定位（localization）来实现。分类任务的目标是学习物体具有区分力的特征，定位任务的目标是对物体的边界进行准确定位。这两个任务使用两个并">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Note] TOOD: Task-aligned One-stage Object Detection (ICCV 2021)">
+<meta property="og:url" content="https://ehehe.cn/2023/04/21/TOOD/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="作者：Chengjian Feng, Yujie Zhong, Yu Gao, Matthew R. Scott, Weilin Huang TOOD 背景 单阶段的目标检测算法通常通过优化两个子任务——分类（object classification）和定位（localization）来实现。分类任务的目标是学习物体具有区分力的特征，定位任务的目标是对物体的边界进行准确定位。这两个任务使用两个并">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/prediction_distribution.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/TOOD%E6%95%B4%E4%BD%93%E5%AD%A6%E4%B9%A0%E6%9C%BA%E5%88%B6.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/T-Head%E4%B8%8E%E5%B9%B6%E8%A1%8C%E5%A4%B4%E7%9A%84%E5%AF%B9%E6%AF%94.png">
+<meta property="article:published_time" content="2023-04-21T14:01:32.000Z">
+<meta property="article:modified_time" content="2023-04-22T06:50:50.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="论文笔记">
+<meta property="article:tag" content="目标检测">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/prediction_distribution.jpg">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/04/21/TOOD/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/04/21/TOOD/","path":"2023/04/21/TOOD/","title":"[Note] TOOD: Task-aligned One-stage Object Detection (ICCV 2021)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Note] TOOD: Task-aligned One-stage Object Detection (ICCV 2021) | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#tood"><span class="nav-text">TOOD</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tood-1"><span class="nav-text">TOOD</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#t-head"><span class="nav-text">T-Head</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E5%AF%B9%E9%BD%90%E9%A2%84%E6%B5%8B%E5%99%A8tap"><span class="nav-text">任务对齐预测器（TAP）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%A2%84%E6%B5%8B%E7%BB%93%E6%9E%9C%E5%AF%B9%E9%BD%90"><span class="nav-text">预测结果对齐</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tal"><span class="nav-text">TAL</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E5%AF%B9%E9%BD%90%E7%9A%84%E6%A0%B7%E6%9C%AC%E5%88%86%E9%85%8D"><span class="nav-text">任务对齐的样本分配</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E5%AF%B9%E9%BD%90%E7%9A%84%E6%8D%9F%E5%A4%B1"><span class="nav-text">任务对齐的损失</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/04/21/TOOD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[Note] TOOD: Task-aligned One-stage Object Detection (ICCV 2021) | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Note] TOOD: Task-aligned One-stage Object Detection (ICCV 2021)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-21 22:01:32" itemprop="dateCreated datePublished" datetime="2023-04-21T22:01:32+08:00">2023-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-04-22 14:50:50" itemprop="dateModified" datetime="2023-04-22T14:50:50+08:00">2023-04-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>作者：Chengjian Feng, Yujie Zhong, Yu Gao, Matthew R. Scott, Weilin
+Huang</p>
+<h2 id="tood">TOOD</h2>
+<h3 id="背景">背景</h3>
+<p>单阶段的目标检测算法通常通过优化两个子任务——<strong>分类（object
+classification）</strong>和<strong>定位（localization）</strong>来实现。分类任务的目标是学习物体具有区分力的特征，定位任务的目标是对物体的边界进行准确定位。这两个任务使用两个并行的分支进行，因而可能会导致两个任务之间的预测存在一定程度的<strong>空间不对齐（spatial
+misalignment）</strong>。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/prediction_distribution.jpg" alt="prediction_distribution" style="zoom:6%;" /></p>
+<p>上图中第一行是ATSS<a href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a>预测的Dining
+table，第二行是TOOD预测的Dining
+table。第二列是预测结果的分类（Score）置信度，第三列是定位（IoU）的置信度。<strong>从ATSS的预测结果看，Score最高的位置，并不是定位最准确的位置。</strong>这样的情况，可能会导致在NMS的时候，预测更准的边界框会被过滤掉。</p>
+<p>现有的单阶段方法通过<strong>目标的中心点</strong>来试图实现两个任务的统一，这些方法假设在物体中心点处的锚框（或锚点）能给出更准确的预测结果。例如FCOS<a
+href="#fn2" class="footnote-ref" id="fnref2"
+role="doc-noteref"><sup>2</sup></a>和ATSS<a href="#fn3"
+class="footnote-ref" id="fnref3"
+role="doc-noteref"><sup>3</sup></a>都使用<strong>中心性（centerness）分支</strong>来提高在物体中心附近的锚框（或锚点）的分类得分，并且给对应的锚框（或锚点）的定位损失更多的权重。但是，这些方法存在两个问题：</p>
+<ol type="1">
+<li><strong>分类和定位是独立的</strong>：这种双分支设计可能会导致两个任务之间缺乏交互，从而导致预测不一致。</li>
+<li><strong>与任务无关（Task-agnostic）的样本分配</strong>：大多数的无需锚框的方法使用基于几何距离的样本分配方法，基于锚框的方法使用基于IoU的样本分配方法。然而，<strong>用于分类和定位的最佳锚框（或锚点）通常不一致，并且可能会根据对象的形状和特征而有很大差异</strong>。常用的与任务无关的样本分配方法难以对两个任务进行准确而一致的预测。</li>
+</ol>
+<p>本文提出<strong>任务对齐的单阶段目标检测（TOOD）</strong>方法，通过学习的方式自动对齐两个任务。</p>
+<ul>
+<li><strong>Task-Aligned Head（T-Head）</strong></li>
+</ul>
+<p>T-Head在学习用于<strong>任务交互的特征（task-interactive
+features）</strong>和<strong>任务特定的特征（task-specific
+features）</strong>之间提供了更好的平衡，并且通过<strong>任务对齐的预测器（Task-Aligned
+Predictor）</strong>在模型学习中达到更高的灵活性。</p>
+<ul>
+<li><strong>Task-Aligned Learning（TAL）</strong></li>
+</ul>
+<p>为了进一步解决不对齐问题，TAL通过设计的<strong>样本分配方案</strong>和<strong>任务对齐损失</strong>，在训练期间明确地拉近（甚至统一）两个任务的最优锚点。样本分配通过计算每个锚点的任务对齐程度来收集训练样本（即正样本或负样本），而任务对齐损失在训练期间逐渐统一最佳锚点，以预测分类和定位。因此，在推理时，可以保留具有最高分类分数和最精确定位的边界框。</p>
+<span id="more"></span>
+<h3 id="tood-1">TOOD</h3>
+<p>与现有单阶段方法类似，本文提出的TOOD也采用了<strong>“backbone-FPN-head”</strong>的结构，并且为了高效性，TOOD采用了类似于ATSS<a
+href="#fn4" class="footnote-ref" id="fnref4"
+role="doc-noteref"><sup>4</sup></a>的锚框生成方法，即在每个位置生成一个锚框，这里的锚框在无需锚框（Anchor-Free）方法中表示锚点（anchor
+point），在基于锚框（Anchor-Based）方法中表示锚框（anchor box）。</p>
+<ul>
+<li>T-head会在FPN特征上进行预测。</li>
+<li>预测结果用于计算每个锚点的任务对齐度量（task alignment
+metric），基于此，TAL为T-head产生学习信号（task alignment
+signals）。</li>
+<li>T-head根据需要动态调整分类和定位的分布。</li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/TOOD%E6%95%B4%E4%BD%93%E5%AD%A6%E4%B9%A0%E6%9C%BA%E5%88%B6.jpg" alt="TOOD整体学习机制" style="zoom:8%;" /></p>
+<h4 id="t-head">T-Head</h4>
+<p>为了实现高效的检测头，TOOD中考虑了一下设计：</p>
+<ol type="1">
+<li>增加两个任务之间的交互</li>
+<li>增加检测器学习对齐的能力</li>
+</ol>
+<p>T-Head的结构如下图中的（b）所示，由一个<strong>特征提取器</strong>和两个<strong>任务对齐的预测器（TAP）</strong>组成。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/T-Head%E4%B8%8E%E5%B9%B6%E8%A1%8C%E5%A4%B4%E7%9A%84%E5%AF%B9%E6%AF%94.png" alt="T-Head与并行头的对比" style="zoom:33%;" /></p>
+<p>为了增强分类和定位之间的交互，通过堆叠多个卷积层学习任务交互的特征。具体来说，对于FPN特征<span
+class="math inline">\(X^{fpn} \in \mathbb{R}^{H \times W \times
+C}\)</span>，使用<span
+class="math inline">\(N\)</span>个连续卷积可以任务交互特征： <span
+class="math display">\[
+X_k^{inter}=\left\{\begin{array}{l}
+\delta\left(\operatorname{conv}_k\left(X^{fpn}\right)\right), k=1 \\
+\delta\left(\operatorname{conv}_k\left(X_{k-1}^{\text {inter
+}}\right)\right), k&gt;1
+\end{array}, \forall k \in\{1,2, \ldots, N\}\right.
+\]</span>
+然后，计算出的任务交互特征将送入到两个TAP中，以对齐分类和定位。</p>
+<h5 id="任务对齐预测器tap">任务对齐预测器（TAP）</h5>
+<p>在学习任务交互特征的时候，会同时使用分类和定位的特征，这样也会使得两个任务更好地相互学习。然而，由于是单个分支，<strong>任务交互特征会不可避免地引入冲突的特征，因为这两个任务的侧重点是不同的</strong>。因此，本文提出了一种<strong>层级注意力机制（layer
+attention）</strong>，通过在层级别动态计算这些任务相关的特征来进行任务分解。</p>
+<p>针对分类或定位的任务相关特征计算为： <span class="math display">\[
+X_k^{t a s k}=\boldsymbol{w}_k \cdot X_k^{inter}, \forall k \in\{1,2,
+\ldots, N\}
+\]</span> <span
+class="math inline">\(\boldsymbol{w}_k\)</span>是学习到的层级注意力中<span
+class="math inline">\(\boldsymbol{w}\)</span>的第<span
+class="math inline">\(k\)</span>个元素，<span
+class="math inline">\(\boldsymbol{w} \in
+\mathbb{R}^{N}\)</span>由任务交互特征计算得到： <span
+class="math display">\[
+\boldsymbol{w}=\sigma\left({fc}_2\left(\delta\left({fc}_1\left(\boldsymbol{x}^{inter
+}\right)\right)\right)\right)
+\]</span> 最终的分类或定位结果由<span
+class="math inline">\(X^{task}\)</span>预测得到： <span
+class="math display">\[
+Z^{task}=\operatorname{conv}_2\left(\delta\left(\operatorname{conv}_1\left(X^{task}\right)\right)\right)
+\]</span> 其中，<span class="math inline">\(X^{task}\)</span>由<span
+class="math inline">\(X_k^{task}\)</span>合并而成。<span
+class="math inline">\(Z^{task}\)</span>在分类分支中使用sigmoid函数进而得到置信度<span
+class="math inline">\(P \in \mathbb{R}^{H \times W \times
+80}\)</span>，在定位分支中得到<span class="math inline">\(B \in
+\mathbb{R}^{H \times W \times 4}\)</span>的边界框预测结果。</p>
+<h5 id="预测结果对齐">预测结果对齐</h5>
+<p>在预测步骤中，文中通过调整两个预测的空间分布（<span
+class="math inline">\(P\)</span>和<span
+class="math inline">\(B\)</span>）来明确地进一步对齐这两个任务。</p>
+<ul>
+<li>分类</li>
+</ul>
+<p>文中使用<strong>空间概率图（spatial probability map）</strong><span
+class="math inline">\(M \in \mathbb{R}^{H \times W \times
+1}\)</span>来调整（对齐）分类结果： <span class="math display">\[
+P^{align} = \sqrt{P \times M}
+\]</span></p>
+<ul>
+<li>定位</li>
+</ul>
+<p>文中使用<strong>空间偏移图（spatial offset maps）</strong><span
+class="math inline">\(O \in \mathbb{R}^{H \times W \times
+8}\)</span>来调整（对齐）每个位置处的边界框预测结果： <span
+class="math display">\[
+B^{align}(i, j, c)=B(i+O(i, j, 2 \times c), j+O(i, j, 2 \times c+1), c),
+\]</span> 其中索引<span
+class="math inline">\((i,j,c)\)</span>表示张量中第<span
+class="math inline">\(c\)</span>个通道中的第<span
+class="math inline">\((i,j)\)</span>个空间位置。上式由双线性插值的方式计算。</p>
+<p><span class="math inline">\(M\)</span>和<span
+class="math inline">\(O\)</span>由任务交互特征计算： <span
+class="math display">\[
+\begin{gathered}
+M=\sigma\left(\operatorname{conv}_2\left(\delta\left(\operatorname{conv}_1\left(X^{inter}\right)\right)\right)\right)
+\\
+O=\operatorname{conv}_4\left(\delta\left(\operatorname{conv}_3\left(X^{inter
+}\right)\right)\right)
+\end{gathered}
+\]</span> <span class="math inline">\(M\)</span>和<span
+class="math inline">\(O\)</span>的学习是通过使用提出的<strong>任务对齐学习（TAL）</strong>进行的。</p>
+<h4 id="tal">TAL</h4>
+<p>首先，从任务对齐的角度来看，它根据设计的度量动态选择高质量的锚点。其次，它同时考虑了锚点分配和加权。它包括一个<strong>样本分配策略</strong>和<strong>专门设计用于对齐这两个任务的新损失</strong>。</p>
+<h5 id="任务对齐的样本分配">任务对齐的样本分配</h5>
+<p>为了应对NMS，对于一个物体，它分配的锚框应该满足以下规则：</p>
+<ol type="1">
+<li>对齐好的锚框应该同时具有较高的分类置信度和定位准确度。</li>
+<li>未对齐的锚框应该有较低的分类置信度，并逐渐被抑制。</li>
+</ol>
+<p>为了实现这两个目标，本文设计了一种新的锚框对齐度量方法，以明确衡量锚点级别的任务对齐程度。对齐度量被整合到样本分配和损失函数中，以动态地优化每个锚点的预测。</p>
+<ul>
+<li><strong>锚框对齐度量</strong></li>
+</ul>
+<p>考虑到预测边界框和实际边界框之间的分类置信度和IoU表示两个任务的预测质量，本文使用<strong>分类置信度和IoU的高阶组合</strong>来衡量任务对齐的程度。具体而言，本文设计了以下指标来计算每个物体的锚框级别对齐：
+<span class="math display">\[
+t = s^{\alpha} \times u^{\beta}
+\]</span> 其中，<span class="math inline">\(s\)</span>和<span
+class="math inline">\(u\)</span>分别表示分类置信度和IoU，<span
+class="math inline">\(\alpha\)</span>和<span
+class="math inline">\(\beta\)</span>用于控制两个任务的权重。</p>
+<ul>
+<li><strong>训练样本分配</strong></li>
+</ul>
+<p>训练样本分配对于目标检测算法的训练至关重要，为了改善两个任务的对齐，本文专注于任务对齐的锚框，并采用简单的分配规则来选择训练样本：<strong>对于每个物体，选择具有最大<span
+class="math inline">\(t\)</span>值的<span
+class="math inline">\(m\)</span>个锚点作为正样本，而使用其余的锚点作为负样本。</strong></p>
+<h5 id="任务对齐的损失">任务对齐的损失</h5>
+<ul>
+<li><strong>分类目标函数</strong></li>
+</ul>
+<p>为了明确地增加对齐锚框的分类置信度、降低未对齐的分类置信度，本文在训练过程中使用<span
+class="math inline">\(t\)</span>来替换正样本的标签值。然而，当正样本的标签（比如<span
+class="math inline">\(t\)</span>）随着<span
+class="math inline">\(\alpha\)</span>和<span
+class="math inline">\(\beta\)</span>的增大而减小的时候，网络会无法收敛。所以，文中使用了标准化的<span
+class="math inline">\(t\)</span>，称为<span
+class="math inline">\(\hat{t}\)</span>，来代替正样本的标签值。<span
+class="math inline">\(\hat{t}\)</span>具有两个性质：</p>
+<ol type="1">
+<li>确保困难样本能更有效的学习；</li>
+<li>根据预测框的精度保留不同示例之间的差别。</li>
+</ol>
+<p>因此，<strong><span
+class="math inline">\(\hat{t}\)</span>的标准化原则为：<span
+class="math inline">\(\hat{t}\)</span>等于最大的IoU值</strong>。</p>
+<p>于是，正样本的分类目标函数可以写成： <span class="math display">\[
+L_{cls\_pos}=\sum_{i=1}^{N_{pos}} BCE\left(s_i, \hat{t}_i\right)
+\]</span> 为了缓解训练过程中正负样本之间不均衡的问题，文中采用了Focal
+Loss的形式处理整体的损失： <span class="math display">\[
+L_{c l s}=\sum_{i=1}^{N_{pos}}\left|\hat{t}_i-s_i\right|^\gamma B C
+E\left(s_i, \hat{t}_i\right)+\sum_{j=1}^{N_{neg}} s_j^\gamma B C
+E\left(s_j, 0\right)
+\]</span></p>
+<ul>
+<li><strong>定位目标函数</strong></li>
+</ul>
+<p>对齐号的锚框（较大的<span
+class="math inline">\(t\)</span>）预测出来的边界框通常会同时具有较高的分类置信度和准确的定位结果，并且这样的预测框通常也会在NMS过程中保留下来。因此，<span
+class="math inline">\(t\)</span>也可以用于选择更高质量的边界框，通过使用<span
+class="math inline">\(t\)</span>对损失进行加权，来改进训练。 <span
+class="math display">\[
+L_{r e g}=\sum_{i=1}^{N_{pos}} \hat{t}_i L_{G I o U}\left(b_i,
+\overline{b}_i\right)
+\]</span></p>
+<aside id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Zhang, Shifeng, Cheng Chi, Yongqiang Yao, Zhen Lei and
+Stan Z. Li. “Bridging the Gap Between Anchor-Based and Anchor-Free
+Detection via Adaptive Training Sample Selection.” <em>2020 IEEE/CVF
+Conference on Computer Vision and Pattern Recognition (CVPR)</em>
+(2019): 9756-9765.<a href="#fnref1" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Tian, Zhi, Chunhua Shen, Hao Chen and Tong He. “FCOS:
+Fully Convolutional One-Stage Object Detection.” <em>2019 IEEE/CVF
+International Conference on Computer Vision (ICCV)</em> (2019):
+9626-9635.<a href="#fnref2" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>Zhang, Shifeng, Cheng Chi, Yongqiang Yao, Zhen Lei and
+Stan Z. Li. “Bridging the Gap Between Anchor-Based and Anchor-Free
+Detection via Adaptive Training Sample Selection.” <em>2020 IEEE/CVF
+Conference on Computer Vision and Pattern Recognition (CVPR)</em>
+(2019): 9756-9765.<a href="#fnref3" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>Zhang, Shifeng, Cheng Chi, Yongqiang Yao, Zhen Lei and
+Stan Z. Li. “Bridging the Gap Between Anchor-Based and Anchor-Free
+Detection via Adaptive Training Sample Selection.” <em>2020 IEEE/CVF
+Conference on Computer Vision and Pattern Recognition (CVPR)</em>
+(2019): 9756-9765.<a href="#fnref4" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+</ol>
+</aside>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/04/21/TOOD/" title="[Note] TOOD: Task-aligned One-stage Object Detection (ICCV 2021)">https://ehehe.cn/2023/04/21/TOOD/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" rel="tag"># 论文笔记</a>
+              <a href="/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/" rel="tag"># 目标检测</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/20/RT-DETR/" rel="prev" title="[Note] DETRs Beat YOLOs on Real-time  Object Detection">
+                  <i class="fa fa-angle-left"></i> [Note] DETRs Beat YOLOs on Real-time  Object Detection
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/26/A-Cookbook-of-Self-Supervised-Learning/" rel="next" title="A Cookbook of Self-Supervised Learning （自监督学习指南）">
+                  A Cookbook of Self-Supervised Learning （自监督学习指南） <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

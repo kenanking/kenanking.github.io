@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="NeRF &#x3D; Neural Radiance Fields 背景 经典三维场景表征与神经表征  经典的三维场景表征方法有体素表示、点云表示和网格表示，这三种表示是直接的、显而易见的，因此归为显式的场景表示类别。这里介绍的NeRF（Neural Radiance Fields）其实也是一种三维场景表征，但是是一种隐式的场景表示（implicit scene representation），因为它不能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于NeRF的三维场景生成">
+<meta property="og:url" content="https://ehehe.cn/2023/04/18/NeRF/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="NeRF &#x3D; Neural Radiance Fields 背景 经典三维场景表征与神经表征  经典的三维场景表征方法有体素表示、点云表示和网格表示，这三种表示是直接的、显而易见的，因此归为显式的场景表示类别。这里介绍的NeRF（Neural Radiance Fields）其实也是一种三维场景表征，但是是一种隐式的场景表示（implicit scene representation），因为它不能">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E4%B8%89%E7%BB%B4%E5%9C%BA%E6%99%AF%E8%A1%A8%E5%BE%81.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E7%BB%8F%E5%85%B8SFM%E9%87%8D%E5%BB%BA%E6%96%B9%E6%B3%95.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E7%A8%80%E7%96%8F%E9%87%87%E6%A0%B7%E5%9B%BE%E5%83%8F.gif">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E5%90%8C%E4%B8%80%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E6%96%B0%E8%A7%86%E8%A7%92.gif">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E4%B8%89%E7%BB%B4%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E6%B7%B1%E5%BA%A6%E4%BC%B0%E8%AE%A1.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E6%96%B9%E6%B3%95.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E5%9B%BE%E5%83%8F%E5%9B%9E%E5%BD%92%E7%A4%BA%E4%BE%8B.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E7%9C%9F%E5%AE%9E%E5%9B%BE%E7%89%87.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E8%BE%93%E5%85%A5%E4%B8%8E%E8%BE%93%E5%87%BA.png">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E7%AB%8B%E4%BD%93%E6%B8%B2%E6%9F%93.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E6%B8%B2%E6%9F%93%E6%8D%9F%E5%A4%B1.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E5%8A%A0%E5%85%A5%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81%E5%90%8E%E7%9A%84%E5%9B%BE%E5%83%8F%E5%9B%9E%E5%BD%92%E7%A4%BA%E4%BE%8B.jpg">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81.gif">
+<meta property="article:published_time" content="2023-04-18T14:24:10.000Z">
+<meta property="article:modified_time" content="2023-04-20T15:29:30.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="NeRF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E4%B8%89%E7%BB%B4%E5%9C%BA%E6%99%AF%E8%A1%A8%E5%BE%81.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2023/04/18/NeRF/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2023/04/18/NeRF/","path":"2023/04/18/NeRF/","title":"基于NeRF的三维场景生成"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>基于NeRF的三维场景生成 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#nerf-neural-radiance-fields"><span class="nav-text">NeRF
+&#x3D; Neural Radiance Fields</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-text">背景</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%8F%E5%85%B8%E4%B8%89%E7%BB%B4%E5%9C%BA%E6%99%AF%E8%A1%A8%E5%BE%81%E4%B8%8E%E7%A5%9E%E7%BB%8F%E8%A1%A8%E5%BE%81"><span class="nav-text">经典三维场景表征与神经表征</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%8F%E5%85%B8%E7%9A%84sfm%E9%87%8D%E5%BB%BA%E6%96%B9%E6%B3%95"><span class="nav-text">经典的SFM重建方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nerf%E6%96%B9%E6%B3%95%E7%9A%84%E6%80%9D%E6%83%B3"><span class="nav-text">NeRF方法的思想</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nerf%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-text">NeRF的作用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nerf%E6%96%B9%E6%B3%95"><span class="nav-text">NeRF方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#nerf%E4%BD%BF%E7%94%A8%E8%BF%9E%E7%BB%AD%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%A1%A8%E7%A4%BA%E4%B8%89%E7%BB%B4%E5%9C%BA%E6%99%AF"><span class="nav-text">NeRF——使用连续神经网络表示三维场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#d-3d%E7%B1%BB%E6%AF%94"><span class="nav-text">2D-&gt;3D类比</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AB%8B%E4%BD%93%E6%B8%B2%E6%9F%93"><span class="nav-text">立体渲染</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E4%BC%98%E5%8C%96%E6%B8%B2%E6%9F%93%E6%8D%9F%E5%A4%B1"><span class="nav-text">使用梯度下降优化渲染损失</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81"><span class="nav-text">位置编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88fourier%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81%E6%9C%89%E6%95%88"><span class="nav-text">为什么Fourier位置编码有效？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C"><span class="nav-text">实验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2023/04/18/NeRF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="基于NeRF的三维场景生成 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于NeRF的三维场景生成
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-18 22:24:10" itemprop="dateCreated datePublished" datetime="2023-04-18T22:24:10+08:00">2023-04-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-04-20 23:29:30" itemprop="dateModified" datetime="2023-04-20T23:29:30+08:00">2023-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>12 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="nerf-neural-radiance-fields"><strong>NeRF</strong>
+<strong>=</strong> Neural Radiance Fields</h2>
+<h3 id="背景">背景</h3>
+<h4 id="经典三维场景表征与神经表征">经典三维场景表征与神经表征</h4>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E4%B8%89%E7%BB%B4%E5%9C%BA%E6%99%AF%E8%A1%A8%E5%BE%81.png" alt="三维场景表征" style="zoom: 15%;" /></p>
+<p>经典的三维场景表征方法有<strong>体素表示</strong>、<strong>点云表示</strong>和<strong>网格表示</strong>，这三种表示是直接的、显而易见的，因此归为<strong>显式的</strong>场景表示类别。这里介绍的NeRF（Neural
+Radiance
+Fields）其实也是一种三维场景表征，但是是一种<strong>隐式的</strong>场景表示（implicit
+scene
+representation），因为它不能像点云、网格、体素一样直接看见一个三维模型，需要将神经表征转换到显示的表征或渲染成可见的图像才可以被看到。</p>
+<p>显示场景表征的特点是，它表示的<strong>信号是离散的</strong>。相反，隐式神经表征<strong>将信号参数化为连续函数</strong>，通常来说，普通的函数不可能做到这样一件事，因此用神经网络来逼近这样一个复杂的“自然函数”。</p>
+<ul>
+<li><p><strong>显示</strong>场景表征——<strong>离散</strong></p></li>
+<li><p><strong>隐式</strong>场景表征——<strong>连续</strong></p></li>
+</ul>
+<h4 id="经典的sfm重建方法">经典的SFM重建方法</h4>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E7%BB%8F%E5%85%B8SFM%E9%87%8D%E5%BB%BA%E6%96%B9%E6%B3%95.png" alt="经典SFM重建方法" style="zoom:20%;" /></p>
+<ol type="1">
+<li>基于输入图像对相应特征进行提取，并根据特征相似性进行匹配；使用一些几何先验性知识，对匹配结果进行确认。这个过程是特征匹配的过程。经过以上步骤之后可以获得相机的位姿。</li>
+<li>使用相机位姿投影并经过图像配准、三角化测量等步骤反复迭代，可以获得特征点的三维空间坐标。</li>
+<li>再经过bundle
+adjustment（BA）和噪声过滤的操作，便可以获得三维重建的最终结果。</li>
+</ol>
+<h4 id="nerf方法的思想">NeRF方法的思想</h4>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.png" alt="工作流程" style="zoom:25%;" /></p>
+<p>使用Nerf进行重建，也是需要相机姿态的，这一步和colmap没有区别。</p>
+<p>NeRF方法的主要想法通过输入稀疏的图像集，来优化底层的连续神经网络，该神经网络将三维场景隐式存储其中，我们只需要通过输入一个相机位姿，就可以获得场景图片，实现了合成复杂场景的全新视图。</p>
+<p>输入图像的位姿是已知的，这一位姿既可以通过外部测量的方式获取，也可以、也是最常用的方法是使用SFM（运动恢复结构）确定每张图像对应相机的外方位元素。</p>
+<span id="more"></span>
+<h4 id="nerf的作用">NeRF的作用</h4>
+<ul>
+<li>三维场景内插</li>
+</ul>
+<p>左侧是输入NeRF中的稀疏采样的图像（大约有五、六张），在NeRF迭代优化后，我们可以得到该场景在新视角下的影像。因此，NeRF解决了三维场景内插的问题。</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E7%A8%80%E7%96%8F%E9%87%87%E6%A0%B7%E5%9B%BE%E5%83%8F.gif" alt="稀疏采样图像" /></th>
+<th><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E5%90%8C%E4%B8%80%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E6%96%B0%E8%A7%86%E8%A7%92.gif" alt="同一场景下的新视角" /></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<ul>
+<li>生成三维模型</li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E4%B8%89%E7%BB%B4%E6%A8%A1%E5%9E%8B.png" alt="三维模型" style="zoom:15%;" /></p>
+<ul>
+<li>深度估计</li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E6%B7%B1%E5%BA%A6%E4%BC%B0%E8%AE%A1.png" alt="深度估计" style="zoom:15%;" /></p>
+<h3 id="nerf方法">NeRF方法</h3>
+<h4
+id="nerf使用连续神经网络表示三维场景">NeRF——使用连续神经网络表示三维场景</h4>
+<p>NeRF是一种三维场景的神经表征，通过输入稀疏图像训练，NeRF可以内插出同一场景的不同影像。</p>
+<p>下面，我们来看一下NeRF的具体内容。NeRF是Neural Radiance
+Fields的缩写，神经是指神经网络，辐射是因为这个神经网络表示了场景中的辐射信息。其中的场是指一个连续的函数映射，也就是这里的<span
+class="math inline">\(F_\Theta\)</span>，神经辐射场使用一个神经网络作为这里的函数映射。另外，也需要说明这里使用的不是卷积神经网络，而是一个相对浅层的多层感知机：
+<span class="math display">\[
+F_\Theta : (\mathbf{x}, \mathbf{b}) \rightarrow (\mathbf{c}, \sigma)
+\]</span></p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E6%96%B9%E6%B3%95.png" alt="方法" style="zoom:15%;" /></p>
+<p>映射的输入是三维空间点的坐标<span class="math inline">\(\mathbf{x} =
+(x,y,z)\)</span>和观察的角度（或方向）<span
+class="math inline">\(\mathbf{b} = (\theta,\phi)\)</span> 。</p>
+<p>映射的输出是颜色值<span class="math inline">\(\mathbf{c} =
+(R,G,B)\)</span>和密度<span
+class="math inline">\((\sigma)\)</span>这里的密度也可以简单理解为不透明度。</p>
+<h4 id="d-3d类比">2D-&gt;3D类比</h4>
+<p>NeRF的问题，如果简化到二维，其实就是图像回归问题。给定一个神经网络，它的输入是平面上的坐标<span
+class="math inline">\(x\)</span>和<span
+class="math inline">\(y\)</span>，表示了一个像素，输出是该点处的颜色值<span
+class="math inline">\((R,G,B)\)</span>。为了能够完整地映射出原图像，这个神经网络需要记忆下原图像信息，因此在这里的神经网络是过拟合的。
+<span class="math display">\[
+F_\Theta : \mathbf{x} \rightarrow \mathbf{c}
+\]</span></p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E5%9B%BE%E5%83%8F%E5%9B%9E%E5%BD%92%E7%A4%BA%E4%BE%8B.jpg" alt="图像回归示例" style="zoom:25%;" /></p>
+<p>这一问题在二维情况下，看起来是没有意义的，但这是对NeRF的一个很好的类推。在NeRF中，我们也用一个神经网络记忆了不同视角下图像信息，从而能够内插出新视角下的新图像。在NeRF中，我们需要神经网络是过拟合的，要求它能较好地学习到图像中的高频信息。</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E7%9C%9F%E5%AE%9E%E5%9B%BE%E7%89%87.png" alt="真实图片"/></th>
+<th><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E4%B8%8D%E4%BD%BF%E7%94%A8%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81.gif"
+alt="不使用位置编码" /></th>
+<th><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E4%BD%BF%E7%94%A8%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81.gif"
+alt="使用位置编码" /></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<p>不过，我们看到在这个二维情况下，图像信息虽然好像恢复了，但没有完全恢复，图像仍然很模糊。这个问题在后面会提到如何解决（位置编码）。</p>
+<h4 id="立体渲染">立体渲染</h4>
+<p>NeRF如何生成特定视角下的图像？——<strong>立体渲染（volume
+rendering）</strong></p>
+<ul>
+<li>在光线上采样一系列点</li>
+<li>通过神经网络输出颜色值和密度</li>
+<li>将颜色值和密度累加生成图像</li>
+</ul>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E8%BE%93%E5%85%A5%E4%B8%8E%E8%BE%93%E5%87%BA.png" alt="输入与输出" style="zoom: 40%;" /></p>
+<p>从这张图我们可以看到NeRF的输入和输出对应的具体含义。对于从左边相机拍摄的图像，以光线1为例，我们在上面均匀采样一系列点，这每一个点对应神经网络的输入，通过神经网络的映射，我们得到了右边对应的输出。</p>
+<p>在得到了这一条射线上采样点的颜色值和透明度后，我们希望能得到该光线在图像上成像后的颜色值。这就需要用到<strong>渲染</strong>。</p>
+<p><strong>渲染就是用计算机模拟拍照这一过程，模拟“拍照”的对象是已存在的某种三维场景表示。</strong></p>
+<p>NeRF将场景表示为空间中任何点的密度<span
+class="math inline">\(\sigma\)</span>和颜色值<span
+class="math inline">\(\mathbf{c}\)</span>。
+有了以NeRF形式存在的场景表示后，可以对该场景进行渲染，模拟生成新视角的图片。论文使用经典<strong>立体渲染（volume
+rendering）</strong>的原理，对经过相机的光线进行均匀采样，然后积分求和得到该光线的颜色。通过求解穿过场景的任何光线的颜色，就可以渲染合成新的图像。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E7%AB%8B%E4%BD%93%E6%B8%B2%E6%9F%93.jpg" alt="立体渲染" style="zoom:15%;" /></p>
+<ul>
+<li>渲染一条光线：<span
+class="math inline">\(\mathbf{r}(t)=\mathbf{o}+t\mathbf{d}\)</span></li>
+</ul>
+<p><span class="math display">\[
+C \approx \sum_{i=1}^{N} T_i \alpha_i c_i
+\]</span></p>
+<ul>
+<li>从<span class="math inline">\(t_1\)</span>起被遮挡的光线量：</li>
+</ul>
+<p><span class="math display">\[
+T_i = \prod_{j=1}^{i-1}(1 - \alpha_j)
+\]</span></p>
+<ul>
+<li>第<span class="math inline">\(i\)</span>段贡献的光线量：</li>
+</ul>
+<p><span class="math display">\[
+\alpha_i = 1 - e^{-\sigma_i \delta t_i}
+\]</span></p>
+<p>从这里的公式可以看到，<strong>渲染一条光线的颜色，就是对光线上个点的颜色值进行加权求和，权由光线的路径和路径上各段的透明度确定</strong>。</p>
+<video src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF%E6%96%B9%E6%B3%95%E4%BB%8B%E7%BB%8D.mp4" controls="controls" style="max-width: 100%; display: block; margin-left: auto; margin-right: auto;">
+Your browser does not support the video
+</video>
+<h4 id="使用梯度下降优化渲染损失">使用梯度下降优化渲染损失</h4>
+<p>在渲染出一条光线的颜色后，与该光线的真实颜色对比，就可以计算出渲染的损失值。该光线的真实颜色由输出的图像确定。
+<span class="math display">\[
+\min _{\Theta}
+\sum_i\left\|\operatorname{render}^{(i)}\left(F_{\Theta}\right)-I_{\mathrm{gt}}^{(i)}\right\|^2
+\]</span>
+<img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E6%B8%B2%E6%9F%93%E6%8D%9F%E5%A4%B1.jpg" alt="渲染损失" style="zoom:25%;" /></p>
+<p>我们看到立体渲染的公式仅包含了简单的乘加和指数运算，每一步都是可微的，因此可以使用梯度下降的方式进行优化。</p>
+<p>训练完成后，就可以得到一个以多层感知机表示的三维场景。</p>
+<h4 id="位置编码">位置编码</h4>
+<p>通过前面的介绍，我们已经可以实现一个简单的NeRF了，这里可以看到简单实现的结果。不过我们会发现这个图像有点模糊，NeRF模型没有很好地学习到图像中的高频信息。在论文中，作者使用了<strong>位置编码</strong>的方法，让神经网络能够更好地学习高频信息。</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_naive.gif"
+alt="naive" /></th>
+<th><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_encoding.gif"
+alt="encoding" /></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<p>在论文中，使用了<strong>傅里叶基函数</strong>，对输入空间坐标坐标<span
+class="math inline">\((x,y,z)\)</span>和方向<span
+class="math inline">\((\theta,\phi)\)</span>进行编码。这里以二维为例，左图是之前的神经网络，这里多了一个<span
+class="math inline">\(\gamma (x,y)\)</span>的环节，也就是对输入<span
+class="math inline">\(x\)</span>，<span
+class="math inline">\(y\)</span>进行位置编码。编码的方式可以从右图中看到。<span
+class="math inline">\(x\)</span>和<span
+class="math inline">\(y\)</span>表示了图像中像素的位置，首先将<span
+class="math inline">\(x\)</span>和<span
+class="math inline">\(y\)</span>归一化到<span
+class="math inline">\([-1,1]\)</span>的区间，然后分别用傅里叶基函数进行编码，最后将两者编码的结果合并在一起。
+<span class="math display">\[
+\gamma(\mathrm{x})=\left(\sin \left(2^0 \pi \mathrm{x}\right), \cos
+\left(2^0 \pi \mathrm{x}\right), \cdots, \sin \left(2^{L-1} \pi
+\mathrm{x}\right), \cos \left(2^{L-1} \pi \mathrm{x}\right)\right)
+\]</span></p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E5%8A%A0%E5%85%A5%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81%E5%90%8E%E7%9A%84%E5%9B%BE%E5%83%8F%E5%9B%9E%E5%BD%92%E7%A4%BA%E4%BE%8B.jpg" alt="加入位置编码后的图像回归示例" style="zoom:36%;" /></th>
+<th><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/NeRF_%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81.gif" alt="位置编码" style="zoom:40%;" /></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<p>原来神经网络的输入是只有<span class="math inline">\(x\)</span>，<span
+class="math inline">\(y\)</span>的一个二维向量，现在的输入变成了一个高维向量。</p>
+<p>在上文中已经展示了使用位置编码后神经网络对二维图像的拟合结果，明显可以看到位置编码的结果更加清晰。</p>
+<h4 id="为什么fourier位置编码有效">为什么Fourier位置编码有效？</h4>
+<p>这里主要是为了解释为什么傅里叶位置编码会有效？这部分偏向我个人的看法。这里进一步把二维图像回归的问题，简化为一维曲线拟合的问题。</p>
+<p>在曲线拟合问题中，如果只输入<span
+class="math inline">\(x\)</span>，我们可以拟合一条直线，为了拟合复杂的曲线，我们从用二次曲线或三次曲线等，也就是使用<strong>多项式基函数</strong>，将输入<span
+class="math inline">\(x\)</span>，变换为<span
+class="math inline">\((x^0,x^1,…,x^N )\)</span>等。</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/curve_fitting_poly.gif"
+alt="多项式基函数" /></th>
+<th><img
+src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/curve_fitting_fourier.gif"
+alt="Fourier基函数" /></th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<p>为了更好地拟合图像中的高频信息，可以使用<strong>高频的基函数</strong>，如<strong>傅里叶基函数</strong>作为输入。从右图中可以看到，当<span
+class="math inline">\(L=8\)</span>时，傅里叶基函数对高频信息有较好的拟合。不过，这里的<span
+class="math inline">\(N\)</span>也不宜选择过大，会增加图像中的噪声。</p>
+<h3 id="实验">实验</h3>
+<ul>
+<li>colmap (github.com/colmap/colmap)</li>
+</ul>
+<p>Colmap是一个开源的三维重建框架，提供了通用的运动恢复结构（SFM）和立体几何重建的相关功能。在实验中可用于获取相机的真实位姿。</p>
+<ul>
+<li>instant-ngp (github.com/NVlabs/instant-ngp)</li>
+</ul>
+<p>instant-ngp是英伟达实验室发布的一个使用NeRF快速三维重建的项目，能够在几秒内实现NeRF训练的收敛，在实际测试中，通常2-3秒可以看到结果，在2分钟内基本可以稳定下来。</p>
+<h3 id="参考资料">参考资料</h3>
+<ol type="1">
+<li><p>Mildenhall, Ben, Pratul P. Srinivasan, Matthew Tancik, Jonathan
+T. Barron, Ravi Ramamoorthi and Ren Ng. 2020. “NeRF: Representing Scenes
+as Neural Radiance Fields for View Synthesis.” In
+<em>ECCV</em>.</p></li>
+<li><p>Tancik, Matthew, Pratul Srinivasan, Ben Mildenhall, Sara
+Fridovich-Keil, Nithin Raghavan, Utkarsh Singhal, Ravi Ramamoorthi,
+Jonathan Barron, and Ren Ng. 2020. “Fourier Features Let Networks Learn
+High Frequency Functions in Low Dimensional Domains.” In
+<em>NIPS</em>.</p></li>
+<li><p>Mescheder, Lars, Michael Oechsle, Michael Niemeyer, Sebastian
+Nowozin, and Andreas Geiger. 2019. “Occupancy Networks: Learning 3D
+Reconstruction in Function Space.” In <em>CVPR</em>.</p></li>
+<li><p>“NeRF: Neural Radiance Fields.”
+https://www.youtube.com/watch?v=LRAqeM8EjOo.</p></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2023/04/18/NeRF/" title="基于NeRF的三维场景生成">https://ehehe.cn/2023/04/18/NeRF/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/NeRF/" rel="tag"># NeRF</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/16/block-selection-for-OOD-detection/" rel="prev" title="[Note] Block Selection Method for Using Feature Norm  in Out-of-distribution Detection (CVPR 2023)">
+                  <i class="fa fa-angle-left"></i> [Note] Block Selection Method for Using Feature Norm  in Out-of-distribution Detection (CVPR 2023)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/20/RT-DETR/" rel="next" title="[Note] DETRs Beat YOLOs on Real-time  Object Detection">
+                  [Note] DETRs Beat YOLOs on Real-time  Object Detection <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

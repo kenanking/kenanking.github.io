@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.css" integrity="sha256-RvRHGSuWAxZpXKV9lLDt2e+rZ+btzn48Wp4ueS3NZKs=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ehehe.cn","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"default"},"fold":{"enable":true,"height":300},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="径向基函数网络 径向基函数 在第三章，我们讨论了基于固定基函数的线性回归模型，但是我们没有具体讨论可以选取哪种基函数。一种广泛使用的基函数是径向基函数（radial basis functions）。在径向基函数中，每个基函数只依赖于样本和一个中心点\(\boldsymbol{\mu}_{j}\)之间的距离（通常用欧氏距离），于是可以得到基函数为：\(\phi_{j}(\mathbf{x}) &#x3D;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ch6-6.3 径向基函数网络">
+<meta property="og:url" content="https://ehehe.cn/2022/02/15/ch6-6-3-%E5%BE%84%E5%90%91%E5%9F%BA%E5%87%BD%E6%95%B0%E7%BD%91%E7%BB%9C/index.html">
+<meta property="og:site_name" content="YanTang&#39;s Blog">
+<meta property="og:description" content="径向基函数网络 径向基函数 在第三章，我们讨论了基于固定基函数的线性回归模型，但是我们没有具体讨论可以选取哪种基函数。一种广泛使用的基函数是径向基函数（radial basis functions）。在径向基函数中，每个基函数只依赖于样本和一个中心点\(\boldsymbol{\mu}_{j}\)之间的距离（通常用欧氏距离），于是可以得到基函数为：\(\phi_{j}(\mathbf{x}) &#x3D;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Nadaraya-Watson%E6%A8%A1%E5%9E%8B%E4%BE%8B%E5%AD%90.png">
+<meta property="article:published_time" content="2022-02-15T06:14:58.000Z">
+<meta property="article:modified_time" content="2022-02-15T06:14:58.000Z">
+<meta property="article:author" content="YanTang">
+<meta property="article:tag" content="PRML">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Nadaraya-Watson%E6%A8%A1%E5%9E%8B%E4%BE%8B%E5%AD%90.png">
+
+
+<link rel="canonical" href="https://ehehe.cn/2022/02/15/ch6-6-3-%E5%BE%84%E5%90%91%E5%9F%BA%E5%87%BD%E6%95%B0%E7%BD%91%E7%BB%9C/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ehehe.cn/2022/02/15/ch6-6-3-%E5%BE%84%E5%90%91%E5%9F%BA%E5%87%BD%E6%95%B0%E7%BD%91%E7%BB%9C/","path":"2022/02/15/ch6-6-3-径向基函数网络/","title":"ch6-6.3 径向基函数网络"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ch6-6.3 径向基函数网络 | YanTang's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">YanTang's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%84%E5%90%91%E5%9F%BA%E5%87%BD%E6%95%B0%E7%BD%91%E7%BB%9C"><span class="nav-text">径向基函数网络</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%84%E5%90%91%E5%9F%BA%E5%87%BD%E6%95%B0"><span class="nav-text">径向基函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%84%E5%90%91%E5%9F%BA%E5%87%BD%E6%95%B0%E7%9A%84%E5%8E%86%E5%8F%B2"><span class="nav-text">径向基函数的历史</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%BE%84%E5%90%91%E5%9F%BA%E5%87%BD%E6%95%B0%E7%9A%84%E5%8F%A6%E4%B8%80%E4%B8%AA%E5%8A%A8%E6%9C%BA"><span class="nav-text">使用径向基函数的另一个动机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%95%88%E7%8E%87"><span class="nav-text">计算效率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nadarya-waston%E6%A8%A1%E5%9E%8B"><span class="nav-text">6.3.1 Nadarya-Waston模型</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="YanTang"
+      src="/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">YanTang</p>
+  <div class="site-description" itemprop="description">The Journey Is the Reward.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">79</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/kenanking" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;kenanking" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:360383464@qq.com" title="E-Mail → mailto:360383464@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/YanTang_TJ" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;YanTang_TJ" rel="noopener me" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ehehe.cn/2022/02/15/ch6-6-3-%E5%BE%84%E5%90%91%E5%9F%BA%E5%87%BD%E6%95%B0%E7%BD%91%E7%BB%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpeg">
+      <meta itemprop="name" content="YanTang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YanTang's Blog">
+      <meta itemprop="description" content="The Journey Is the Reward.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ch6-6.3 径向基函数网络 | YanTang's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ch6-6.3 径向基函数网络
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+  
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-15 14:14:58" itemprop="dateCreated datePublished" datetime="2022-02-15T14:14:58+08:00">2022-02-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%BC%8F%E8%AF%86%E5%88%AB%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">模式识别与机器学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="径向基函数网络">径向基函数网络</h2>
+<h3 id="径向基函数">径向基函数</h3>
+<p>在第三章，我们讨论了基于固定基函数的线性回归模型，但是我们没有具体讨论可以选取哪种基函数。一种广泛使用的基函数是<strong>径向基函数（radial
+basis
+functions）</strong>。在径向基函数中，<strong>每个基函数只依赖于样本和一个中心点<span
+class="math inline">\(\boldsymbol{\mu}_{j}\)</span>之间的距离（通常用欧氏距离）</strong>，于是可以得到基函数为：<span
+class="math inline">\(\phi_{j}(\mathbf{x}) = h(\|\mathbf{x} -
+\boldsymbol{\mu}_{j}\|)\)</span>。</p>
+<span id="more"></span>
+<h3 id="径向基函数的历史">径向基函数的历史</h3>
+<p>历史上，引入径向基函数是为了进行精确的<strong>函数插值</strong>。给出一组输入向量<span
+class="math inline">\(\{\mathbf{x}_{1}, \dots,
+\mathbf{x}_{N}\}\)</span>及对应的目标值<span
+class="math inline">\(\{t_{1}, \dots,
+t_{N}\}\)</span>，目标是找到一个函数<span
+class="math inline">\(f(\mathbf{x})\)</span>可以精确地拟合每个目标值，即：<span
+class="math inline">\(f(\mathbf{x}_{n}) = t_{n}\)</span>，其中<span
+class="math inline">\(n=1, \dots, N\)</span>。</p>
+<p>上面的目标可以通过使用以数据点为中心的径向基函数的线性组合来实现，可以构造如下的<span
+class="math inline">\(f(\mathbf{x})\)</span>： <span
+class="math display">\[
+f(\mathbf{x}) = \sum_{n=1}^{N}w_{n}h(\|\mathbf{x} - \mathbf{x}_{n}\|)
+\]</span></p>
+<p>其中，系数<span
+class="math inline">\(\{w_{n}\}\)</span>的值通过最小二乘方式求得。通过上面的方式得到的函数可以精确拟合每个目标值，然而在模式识别中，目标值通常含有噪声，所以<strong>精确插值得到的解对应于过拟合的解</strong>。</p>
+<h3 id="使用径向基函数的另一个动机">使用径向基函数的另一个动机</h3>
+<p>另一个使用径向基函数的动机来自于<strong>当输入（而不是输出）具有噪声</strong>。如果输入变量<span
+class="math inline">\(\mathbf{x}\)</span>上的噪声使用随机变量<span
+class="math inline">\(\boldsymbol{\xi}\)</span>表示，<span
+class="math inline">\(\boldsymbol{\xi}\)</span>服从分布<span
+class="math inline">\(\nu(\boldsymbol{\xi})\)</span>，则平方和误差函数为：
+<span class="math display">\[
+E = \frac{1}{2} \sum_{1}^{N} \int
+\{y(\mathbf{x}_{n}+\boldsymbol{\xi})-t_{n}\}^{2}\nu(\boldsymbol{\xi})\mathrm{d}\boldsymbol{\xi}
+\]</span></p>
+<p>使用变分法，我们关于函数<span
+class="math inline">\(y(\mathbf{x})\)</span>进行最优化，得到： <span
+class="math display">\[
+y(\mathbf{x}_{n}) = \sum_{n=1}^{N}t_{n}h(\mathbf{x}-\mathbf{x}_{n})
+\]</span></p>
+<p>其中，基函数由下式给出： <span class="math display">\[
+h(\mathbf{x}-\mathbf{x}_{n}) =
+\frac{\nu(\mathbf{x}-\mathbf{x}_{n})}{\sum_{n=1}^{N}\nu(\mathbf{x}-\mathbf{x}_{n})}
+\]</span></p>
+<p>我们可以看到，这是一个以每个数据点为中心的基函数。这被称为<strong>Nadarya-Waston模型</strong>。如果噪声分布<span
+class="math inline">\(\nu(\boldsymbol{\xi})\)</span>是各向同性的，那么它只是<span
+class="math inline">\(\|\boldsymbol{\xi}\|\)</span>的函数，则基函数是径向基函数。</p>
+<p>我们可以注意到，上面的<strong>基函数是归一化</strong>的，即：对于任意的<span
+class="math inline">\(\mathbf{x}\)</span>，满足<span
+class="math inline">\(\sum_{n}h(\mathbf{x}-\mathbf{x}_{n}) =
+1\)</span>。归一化可以避免输入空间中基函数都取较小值的区域，在这些区域的预测要么很小，要么完全由偏移量（bias）控制。</p>
+<h3 id="计算效率">计算效率</h3>
+<p><strong>由于每个数据点都对应了一个基函数，因此在对新数据点进行预测时，模型的计算开销会非常大。</strong></p>
+<p>一种方式是另基函数的数量<span
+class="math inline">\(M\)</span>小于输入数据的数量<span
+class="math inline">\(N\)</span>，通常由下面几种做法： -
+<strong>随机选取数据点的子集</strong>； -
+<strong>正交最小二乘方法</strong>，这是一个顺序选择的过程，在每一步中，选择能够最大程度减小平方和误差的数据点作为基函数中心；
+- <strong>聚类方法</strong>获取新的基函数中心。</p>
+<h3 id="nadarya-waston模型">6.3.1 Nadarya-Waston模型</h3>
+<p>在3.3.3节中（[[ch3-3-3-贝叶斯线性回归#3 3 3
+等价核]]），我们看到在线性模型中，新输入<span
+class="math inline">\(\mathbf{x}\)</span>的预测由训练集目标变量<span
+class="math inline">\(t_{n}\)</span>的线性组合给出，线性组合的系数由等价核计算得到，并且等价核满足求和为<span
+class="math inline">\(1\)</span>的限制。</p>
+<p>我们可以从核密度估计的角度来研究核回归模型。假设我们有一个训练集<span
+class="math inline">\(\{\mathbf{x}_{n},
+t_{n}\}\)</span>，我们使用Parzen密度估计（[[ch2-2-5-非参数分布#2 5 1
+核密度估计（Kernel density estimators）]]）来对联合分布<span
+class="math inline">\(p(\mathbf{x}, t)\)</span>进行建模： <span
+class="math display">\[
+p(\mathbf{x}, t) = \frac{1}{N} \sum_{n=1}^{N}
+f(\mathbf{x}-\mathbf{x}_{n}, t-t_{n})
+\]</span></p>
+<p>其中，<span class="math inline">\(f(\mathbf{x},
+t)\)</span>为<strong>分量密度函数（component density
+function）</strong>，在每个数据点上都有一个以它为中心的分量。</p>
+<p>我们现在可以找到回归函数<span
+class="math inline">\(y(\mathbf{x})\)</span>的表达式，对应于目标变量在输入变量上的条件均值：
+<span class="math display">\[
+\begin{align}
+y(\mathbf{x})
+&amp;= \mathbb{E}[t \mid \mathbf{x}] = \int_{-\infty}^{\infty} t p(t
+\mid \mathbf{x}) \mathrm{d}t \\
+&amp;= \frac{\int t p(\mathbf{x} \mid t) \mathrm{d}t}{\int p(\mathbf{x},
+t) \mathrm{d} t} \\
+&amp;= \frac{\sum_{n} \int t f\left(\mathbf{x}-\mathbf{x}_{n},
+t-t_{n}\right) \mathrm{d} t}{\sum_{m} \int
+f\left(\mathbf{x}-\mathbf{x}_{m}, t-t_{m}\right) \mathrm{d} t}
+\end{align}
+\]</span></p>
+<p>简单起见，我们假设分量密度函数的均值为零，即： <span
+class="math display">\[
+\int_{-\infty}^{\infty} f(\mathbf{x}, t)t \mathrm{d}t = 0
+\]</span></p>
+<p>使用变量替换，我们可以得到： <span class="math display">\[
+\begin{align}
+y(\mathbf{x})
+&amp;=
+\frac{\sum_{n}g(\mathbf{x}-\mathbf{x}_{n})t_{n}}{\sum_{m}g(\mathbf{x}-\mathbf{x}_{m})}
+\\
+&amp;= \sum_{n}k(\mathbf{x}, \mathbf{x}_{n})t_{n}
+\end{align}
+\]</span></p>
+<p>其中，<span class="math inline">\(n, m = 1, \dots,
+N\)</span>，核函数<span class="math inline">\(k(\mathbf{x},
+\mathbf{x}_{n})\)</span>为： <span class="math display">\[
+k(\mathbf{x}, \mathbf{x}_{n}) =
+\frac{g(\mathbf{x}-\mathbf{x}_{n})}{\sum_{m}g(\mathbf{x}-\mathbf{x}_{m})}
+\]</span></p>
+<p>并且我们定义了： <span class="math display">\[
+g(\mathbf{x}) = \int_{-\infty}^{\infty} f(\mathbf{x}, t) \mathrm{d} t
+\]</span></p>
+<p>上面的回归函数<span
+class="math inline">\(y(\mathbf{x})\)</span>被称为<strong>Nadaraya-Watson模型</strong>，也叫做<strong>核回归（kernel
+regression）</strong>。对于局部核函数，它具有<strong>给距离<span
+class="math inline">\(\mathbf{x}\)</span>较近的数据点<span
+class="math inline">\(\mathbf{x}_{n}\)</span>较高的权重的性质</strong>。注意上面的核函数满足求和约束：
+<span class="math display">\[
+\sum_{n=1}^{N}k(\mathbf{x}, \mathbf{x}_{n}) = 1
+\]</span></p>
+<p>实际上，该模型不仅定义了条件期望，还定义了完整的条件分布： <span
+class="math display">\[
+p(t \mid \mathbf{x}) = \frac{p(t, \mathbf{x})}{\int p(t, \mathbf{x})
+\mathrm{d}t} = \frac{\sum_{n} f(\mathbf{x}-\mathbf{x}_{n},
+t-t_{n})}{\sum_{m} \int f(\mathbf{x}-\mathbf{x}_{m}, t-t_{m})}
+\]</span></p>
+<p>举例说明，考虑一元输入变量<span
+class="math inline">\(x\)</span>，其中<span
+class="math inline">\(f(x,t)\)</span>由均值为<span
+class="math inline">\(0\)</span>，方差为<span
+class="math inline">\(\sigma^{2}\)</span>的各向同性高斯分布<span
+class="math inline">\(z=(x,t)\)</span>给出。下图中展示了在人工生成的正弦数据集上对应的条件分布（由高斯混合模型给出）和条件均值。</p>
+<p><img src="https://ty-images.oss-cn-hangzhou.aliyuncs.com/img/Nadaraya-Watson模型例子.png" alt="Nadaraya-Watson模型例子" style="zoom:67%;" /></p>
+<p>Nadaraya-Watson模型的一个显而易见的推广形式是该模型<strong>允许更加灵活的高斯分量</strong>，例如我们可以让输入变量和目标变量之间具有不同的方差。</p>
+<p>更一般地，我们可以<strong>用高斯混合模型对联合分布<span
+class="math inline">\(p(t,
+\mathbf{x})\)</span>进行建模</strong>，使用第九章中的方法来训练模型，<strong>然后找到对应的条件分布<span
+class="math inline">\(p(t \mid
+\mathbf{x})\)</span></strong>。在后一种情况下，模型不再有训练集数据点处的核函数表示。但是，<strong>混合模型中的分量数量会小于训练集点的数量，从而使模型可以更快地计算测试数据点</strong>。因此，我们接受了在训练阶段增加的计算成本，以便拥有一个能更快做出预测的模型。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>YanTang
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://ehehe.cn/2022/02/15/ch6-6-3-%E5%BE%84%E5%90%91%E5%9F%BA%E5%87%BD%E6%95%B0%E7%BD%91%E7%BB%9C/" title="ch6-6.3 径向基函数网络">https://ehehe.cn/2022/02/15/ch6-6-3-径向基函数网络/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/PRML/" rel="tag"># PRML</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch6-6-2-%E6%9E%84%E9%80%A0%E6%A0%B8/" rel="prev" title="ch6-6.2 构造核">
+                  <i class="fa fa-angle-left"></i> ch6-6.2 构造核
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/15/ch6-6-4-%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B/" rel="next" title="ch6-6.4 高斯过程">
+                  ch6-6.4 高斯过程 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备19027947号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2020 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">YanTang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">166k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.20/fancybox/fancybox.umd.js" integrity="sha256-q8XkJ6dj5VwSvzI8+nATCHHQG+Xv/dAZBCgqmu93zOY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
