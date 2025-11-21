@@ -1,0 +1,430 @@
+/* SGD Visualization Styles */
+
+/* Use theme variables for automatic light/dark mode support */
+#sgd-visualization-container {
+    --sgd-bg: var(--entry);
+    --sgd-text: var(--primary);
+    --sgd-text-muted: var(--secondary);
+    --sgd-border: var(--border);
+    --sgd-accent: #3498db;
+    --sgd-accent-hover: #2980b9;
+    --sgd-input-bg: var(--theme);
+    --sgd-info-bg: var(--code-bg);
+}
+
+#sgd-visualization-container {
+    width: 100%;
+    max-width: 850px;
+    margin: 1.5rem auto;
+    color: var(--sgd-text);
+}
+
+#sgd-canvas {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+#sgd-canvas svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: none !important;
+}
+
+#sgd-controls {
+    padding: 0.75rem 0;
+}
+
+.control-section {
+    margin-bottom: 1rem;
+}
+
+.control-section:last-child {
+    margin-bottom: 0;
+}
+
+.control-section h3 {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--sgd-text);
+    border-bottom: 2px solid var(--sgd-accent);
+    padding-bottom: 0.4rem;
+}
+
+/* Desktop: Grid layout for SGD parameters section */
+@media (min-width: 769px) {
+    .control-section:nth-child(2) .control-rows-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem 1.5rem;
+    }
+
+    .control-section:nth-child(2) .control-row {
+        margin-bottom: 0;
+    }
+
+    .control-section:nth-child(2) .control-label {
+        flex: 0 0 110px;
+        width: 110px;
+    }
+}
+
+.control-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    gap: 1rem;
+}
+
+.control-row:last-child {
+    margin-bottom: 0;
+}
+
+.control-label {
+    flex: 0 0 100px;
+    width: 100px;
+    font-weight: 500;
+    color: var(--sgd-text-muted);
+    font-size: 0.88rem;
+}
+
+.control-input {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.control-input select,
+.control-input input[type="range"] {
+    flex: 1;
+}
+
+#sgd-visualization-container select {
+    padding: 0.5rem;
+    border: 1px solid var(--sgd-border);
+    border-radius: 4px;
+    background: var(--sgd-input-bg);
+    color: var(--sgd-text);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+#sgd-visualization-container select:hover {
+    border-color: var(--sgd-accent);
+}
+
+#sgd-visualization-container select:focus {
+    outline: none;
+    border-color: var(--sgd-accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--sgd-accent) 20%, transparent);
+}
+
+#sgd-visualization-container select option {
+    background: var(--sgd-input-bg);
+    color: var(--sgd-text);
+}
+
+#sgd-visualization-container input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: color-mix(in srgb, var(--sgd-border) 80%, transparent);
+    border-radius: 3px;
+    outline: none;
+    transition: background 0.2s;
+}
+
+#sgd-visualization-container input[type="range"]:hover {
+    background: color-mix(in srgb, var(--sgd-border) 100%, transparent);
+}
+
+#sgd-visualization-container input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--sgd-accent);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+#sgd-visualization-container input[type="range"]::-webkit-slider-thumb:hover {
+    background: var(--sgd-accent-hover);
+    transform: scale(1.1);
+}
+
+#sgd-visualization-container input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--sgd-accent);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+#sgd-visualization-container input[type="range"]::-moz-range-thumb:hover {
+    background: var(--sgd-accent-hover);
+    transform: scale(1.1);
+}
+
+.control-value {
+    flex: 0 0 60px;
+    text-align: right;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: var(--sgd-text);
+    font-weight: 600;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkbox-container label {
+    font-size: 0.85rem;
+    color: var(--sgd-text);
+    cursor: pointer;
+    user-select: none;
+}
+
+#sgd-visualization-container input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--sgd-accent);
+}
+
+#sgd-visualization-container input[type="checkbox"]:focus {
+    outline: 2px solid color-mix(in srgb, var(--sgd-accent) 40%, transparent);
+    outline-offset: 2px;
+}
+
+.button-group {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--sgd-border);
+}
+
+#sgd-visualization-container button {
+    flex: 1;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#sgd-visualization-container #reset-btn {
+    background: var(--sgd-accent);
+    color: white;
+}
+
+#sgd-visualization-container #reset-btn:hover {
+    background: var(--sgd-accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#sgd-visualization-container #clear-btn {
+    background: #95a5a6;
+    color: white;
+}
+
+#sgd-visualization-container #clear-btn:hover {
+    background: #7f8c8d;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#sgd-visualization-container button:active {
+    transform: translateY(0);
+}
+
+.info-text {
+    margin-top: 0.75rem;
+    padding: 0.65rem 0.75rem;
+    background: var(--sgd-info-bg);
+    border-left: 3px solid var(--sgd-accent);
+    border-radius: 3px;
+    font-size: 0.82rem;
+    color: var(--sgd-text-muted);
+    line-height: 1.5;
+}
+
+.info-text strong {
+    color: var(--sgd-text);
+    font-weight: 600;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+
+    .legend {
+        font-size: 0.75rem;
+        padding: 0.5rem 0.65rem;
+        bottom: 8px;
+        right: 8px;
+    }
+
+    .legend-item {
+        gap: 0.4rem;
+    }
+
+    .legend-marker {
+        width: 10px;
+        height: 10px;
+    }
+
+    /* Mobile layout for control-rows-grid */
+    .control-rows-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .control-rows-grid .control-row {
+        margin-bottom: 0;
+    }
+
+    /* Keep select dropdowns (like loss function) in single row on mobile */
+    .control-row:has(select) {
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+
+    .control-row:has(select) .control-label {
+        flex: 0 0 auto;
+        width: auto;
+        white-space: nowrap;
+        font-size: 0.85rem;
+    }
+
+    .control-row:has(select) .control-input {
+        flex: 1;
+        min-width: 0;
+    }
+
+    /* Range sliders: compact single row layout on mobile */
+    .control-row:has(input[type="range"]) {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .control-row:has(input[type="range"]) .control-label {
+        flex: 0 0 75px;
+        width: 75px;
+        white-space: nowrap;
+        font-size: 0.85rem;
+    }
+
+    .control-row:has(input[type="range"]) .control-input {
+        flex: 1;
+        min-width: 0;
+        gap: 0.5rem;
+    }
+
+    .control-row:has(input[type="range"]) .control-value {
+        flex: 0 0 50px;
+        font-size: 0.85rem;
+    }
+
+    /* Checkbox rows: align with range sliders */
+    .control-row:has(input[type="checkbox"]) {
+        flex-direction: row;
+        font-size: 0.85rem;
+        gap: 0.5rem;
+    }
+
+    .control-row:has(input[type="checkbox"]) .control-label {
+        flex: 0 0 75px;
+        width: 75px;
+        white-space: nowrap;
+    }
+
+    .control-row:has(input[type="checkbox"]) .control-input {
+        flex: 1;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+}
+
+/* Legend for points - positioned in bottom right of canvas */
+.legend {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: color-mix(in srgb, var(--sgd-bg) 85%, transparent);
+    backdrop-filter: blur(6px);
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid color-mix(in srgb, var(--sgd-border) 50%, transparent);
+    box-shadow: 0 2px 6px color-mix(in srgb, var(--primary) 10%, transparent);
+    font-size: 0.8rem;
+    color: var(--sgd-text);
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.legend-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.legend-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.legend-coord {
+    font-size: 0.7rem;
+    color: var(--sgd-text-muted);
+    margin-top: 0.1rem;
+}
+
+.legend-marker {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--sgd-bg);
+}
+
+.legend-marker.start {
+    background: #2ecc71;
+}
+
+.legend-marker.end {
+    background: #3498db;
+}
+
+.legend-marker.path {
+    background: #e74c3c;
+}

@@ -1,0 +1,371 @@
+/* ========= Flappy Bird ========= */
+:root {
+    --bg: var(--theme);
+    --card-bg: var(--entry);
+    --text: var(--primary);
+    --muted: var(--secondary);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --brand: var(--primary);
+    --brand-2: var(--secondary);
+    --block-gap: 14px;
+}
+
+.dark .main-container {
+    --bg: var(--theme);
+    --card-bg: var(--entry);
+    --text: var(--primary);
+    --muted: var(--secondary);
+    --brand: var(--primary);
+    --brand-2: var(--secondary);
+}
+
+/* ===== Layout ===== */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    max-width: var(--nav-width, 1040px);
+    margin: 20px auto;
+    padding: 0 8px;
+    color: var(--text);
+    background: transparent;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.row1,
+.row2 {
+    display: grid;
+    gap: var(--block-gap);
+    grid-template-columns: 1.2fr 1fr;
+    margin-bottom: var(--block-gap);
+}
+
+@media (max-width:960px) {
+
+    .row1,
+    .row2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== Canvas ===== */
+.game-view {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#flappy-canvas {
+    display: block;
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    border-radius: var(--radius);
+}
+
+/* ===== Cards ===== */
+.card,
+.controls-card {
+    background: var(--card-bg);
+    border: none;
+    box-shadow: none;
+    border-radius: var(--radius);
+    padding: 16px;
+}
+
+.card h3 {
+    font-size: 18px;
+    margin: 0 0 8px;
+    letter-spacing: .2px;
+}
+
+/* ===== Stats ===== */
+.stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stat-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 10px;
+}
+
+.stat-row .label {
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.stat-row .value {
+    font-family: var(--mono);
+    font-size: 12px;
+}
+
+.meter {
+    height: 6px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--border) 50%, transparent);
+}
+
+.meter>span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--brand), var(--brand-2));
+    transition: width .25s ease;
+}
+
+/* ===== Parameters ===== */
+.parameters {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.param-row {
+    display: grid;
+    grid-template-columns: 120px 1fr auto;
+    align-items: center;
+    gap: 10px;
+}
+
+.param-row label {
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.param-row .value {
+    font-family: var(--mono);
+    font-size: 12px;
+}
+
+/* ===== Inputs ===== */
+input[type="number"] {
+    width: 110px;
+    padding: 6px 10px;
+    font: inherit;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text);
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+input[type="number"]:hover {
+    border-color: color-mix(in srgb, var(--brand) 40%, var(--border));
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: color-mix(in srgb, var(--brand) 60%, var(--border));
+    background-color: color-mix(in srgb, var(--card-bg) 95%, var(--brand));
+}
+
+select {
+    width: 110px;
+    padding: 6px 30px 6px 10px;
+    font: inherit;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text);
+    cursor: pointer;
+
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+select:hover {
+    border-color: color-mix(in srgb, var(--brand) 40%, var(--border));
+}
+
+select:focus {
+    outline: none;
+    border-color: color-mix(in srgb, var(--brand) 60%, var(--border));
+    background-color: color-mix(in srgb, var(--card-bg) 95%, var(--brand));
+}
+
+select option {
+    background: var(--card-bg);
+    color: var(--text);
+    padding: 8px;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--border) 50%, transparent);
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--brand);
+    border: 2px solid var(--card-bg);
+    cursor: pointer;
+    transition: transform .12s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.06);
+}
+
+/* ===== Controls ===== */
+.row3 {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--block-gap);
+}
+
+.row3 .controls-card {
+    width: 100%;
+    padding: 10px 14px;
+}
+
+.controls-bar {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+}
+
+.primary-controls,
+.secondary-controls {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(140px, 1fr));
+    justify-content: center;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+}
+
+.control-btn {
+    appearance: none;
+    border: 1px solid var(--brand);
+    background: transparent;
+    color: var(--brand);
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform .06s ease, background .15s ease, border-color .15s ease;
+    text-align: center;
+    font-size: 14px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 0;
+    width: 100%;
+}
+
+.control-btn.primary {
+    background: var(--brand);
+    color: var(--theme);
+}
+
+.control-btn.danger {
+    border-color: color-mix(in srgb, #ff4d4f 70%, var(--brand));
+    color: #ff4d4f;
+}
+
+.control-btn.secondary {
+    opacity: 0.85;
+}
+
+.control-btn:hover {
+    transform: translateY(-1px);
+}
+
+.control-btn.secondary:hover {
+    opacity: 1;
+}
+
+.control-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Icon + label inside button */
+.btn-icon { display: none; }
+
+.btn-label {
+    line-height: 1.2;
+}
+
+@media (max-width:520px) {
+    .controls-bar {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .primary-controls,
+    .secondary-controls {
+        display: contents;
+        width: auto;
+    }
+    .control-btn { flex: 1 1 auto; min-width: 0; width: 100%; max-width: none; }
+}
+
+/* ===== Training Log ===== */
+.training-log {
+    max-height: 220px;
+    overflow: auto;
+    border: none;
+    box-shadow: none;
+    background: var(--code-bg);
+    border-radius: var(--radius);
+    padding: 12px;
+    scrollbar-gutter: stable both-edges;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--primary) 30%, var(--border)) color-mix(in srgb, var(--border) 50%, transparent);
+}
+
+/* WebKit scrollbars */
+.training-log::-webkit-scrollbar {
+    width: 12px;
+}
+
+.training-log::-webkit-scrollbar-track {
+    background: color-mix(in srgb, var(--border) 70%, transparent);
+    border-radius: 10px;
+    margin: 4px;
+}
+
+.training-log::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--primary) 30%, var(--border));
+    border-radius: 10px;
+    border: 2px solid var(--code-bg);
+}
+
+.training-log::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--primary) 45%, var(--border));
+}
+
+.training-log::-webkit-scrollbar-thumb:active {
+    background: color-mix(in srgb, var(--primary) 60%, var(--border));
+}
+
+.log-entry {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 2px 0;
+}
+
+.log-entry+.log-entry {
+    margin-top: 2px;
+}

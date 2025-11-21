@@ -1,0 +1,270 @@
+#slicing-example-container {
+    --lejepa-bg: var(--entry);
+    --lejepa-text: var(--primary);
+    --lejepa-text-muted: var(--secondary);
+    --lejepa-border: var(--border);
+    --lejepa-accent: #3498db;
+    --lejepa-accent-hover: #2980b9;
+    --lejepa-input-bg: var(--theme);
+    --lejepa-info-bg: var(--code-bg);
+    --lejepa-grid: rgba(0, 0, 0, 0.1);
+    --lejepa-axis: rgba(0, 0, 0, 0.8);
+
+    padding: 1rem;
+    background: transparent;
+    border-radius: 8px;
+    color: var(--lejepa-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+    #slicing-example-container {
+        --lejepa-grid: rgba(255, 255, 255, 0.1);
+        --lejepa-axis: rgba(255, 255, 255, 0.8);
+    }
+}
+
+[data-theme="dark"] #slicing-example-container,
+.dark #slicing-example-container {
+    --lejepa-grid: rgba(255, 255, 255, 0.1);
+    --lejepa-axis: rgba(255, 255, 255, 0.8);
+}
+
+.slicing-example-controls {
+    background: transparent;
+    padding: 15px 0;
+    border-radius: 6px;
+    border: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    align-items: end;
+    margin-top: 20px;
+    width: 100%;
+    border-top: 1px solid var(--lejepa-border);
+}
+
+#slicing-example-container .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#slicing-example-container label {
+    font-size: 0.9rem;
+    color: var(--lejepa-text);
+    font-weight: 500;
+}
+
+#slicing-example-container input[type=range] {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: color-mix(in srgb, var(--lejepa-border) 80%, transparent);
+    border-radius: 3px;
+    outline: none;
+    transition: background 0.2s;
+}
+
+#slicing-example-container input[type="range"]:hover {
+    background: color-mix(in srgb, var(--lejepa-border) 100%, transparent);
+}
+
+#slicing-example-container input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--lejepa-accent);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+#slicing-example-container input[type="range"]::-webkit-slider-thumb:hover {
+    background: var(--lejepa-accent-hover);
+    transform: scale(1.1);
+}
+
+#slicing-example-container input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--lejepa-accent);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+#slicing-example-container input[type="range"]::-moz-range-thumb:hover {
+    background: var(--lejepa-accent-hover);
+    transform: scale(1.1);
+}
+
+#slicing-example-container .slicing-example-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+#slicing-example-container .slicing-example-panel:nth-child(1),
+#slicing-example-container .slicing-example-panel:nth-child(2) {
+    aspect-ratio: 1 / 1;
+    max-width: 420px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+#slicing-example-container .slicing-example-panel:nth-child(3),
+#slicing-example-container .slicing-example-panel:nth-child(4) {
+    grid-column: 1 / -1;
+    min-height: auto;
+    width: 100%;
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (max-width: 768px) {
+    #slicing-example-container .slicing-example-panels {
+        grid-template-columns: 1fr;
+    }
+
+    #slicing-example-container .slicing-example-panel:nth-child(1),
+    #slicing-example-container .slicing-example-panel:nth-child(2) {
+        aspect-ratio: 1 / 1;
+        max-width: 100%;
+    }
+
+    #slicing-example-container .slicing-example-panel:nth-child(3),
+    #slicing-example-container .slicing-example-panel:nth-child(4) {
+        max-width: 100%;
+    }
+
+    #slicing-example-container .slicing-example-controls {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+}
+
+#slicing-example-container .slicing-example-panel h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: var(--lejepa-text);
+    text-align: center;
+}
+
+#slicing-example-container .slicing-example-panel p {
+    font-size: 0.9rem;
+    color: var(--lejepa-text-muted);
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+#slicing-example-container canvas,
+#slicing-example-container svg {
+    background: var(--lejepa-input-bg);
+    border: none;
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+#slicing-example-container .slicing-example-interactive-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+#slicing-example-container .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    user-select: none;
+}
+
+#slicing-example-container .legend-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+#slicing-example-container .legend-item.inactive {
+    opacity: 0.5;
+}
+
+#slicing-example-container .legend-item .color-box {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+}
+
+#slicing-example-container .legend-item span {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+#slicing-example-container .slicing-example-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--lejepa-text-muted);
+    justify-content: center;
+    margin-top: 10px;
+}
+
+#slicing-example-container .slicing-example-legend .item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+#slicing-example-container .slicing-example-legend .color-box {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+}
+
+#slicing-example-container .axis-label {
+    text-align: center;
+    margin-top: -16px;
+    font-size: 15px;
+    color: var(--lejepa-text);
+    line-height: 1.5;
+    position: relative;
+    z-index: 10;
+}
+
+#slicing-example-container .slicing-example-plot-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 8px;
+}
+
+#slicing-example-container .axis-label-y {
+    position: absolute;
+    left: 0;
+    top: 2px;
+    transform: none;
+    transform-origin: center;
+    font-size: 14px;
+    color: var(--lejepa-text);
+    padding-left: clamp(6px, 5vw, 22px);
+    white-space: nowrap;
+    line-height: 1.4;
+    text-align: left;
+    pointer-events: none;
+}
+
+#slicing-example-container .slicing-example-panel {
+    position: relative;
+}

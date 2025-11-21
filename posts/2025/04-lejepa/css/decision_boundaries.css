@@ -1,0 +1,173 @@
+/* LeJEPA Visualization Styles */
+
+/* Use theme variables for automatic light/dark mode support */
+#lejepa-container {
+    /* Default (Light Mode) */
+    --lejepa-bg: var(--entry);
+    --lejepa-text: var(--primary);
+    --lejepa-text-muted: var(--secondary);
+    --lejepa-border: var(--border);
+    --lejepa-accent: #3498db;
+    --lejepa-accent-hover: #2980b9;
+    --lejepa-input-bg: var(--theme);
+    --lejepa-info-bg: var(--code-bg);
+
+    /* Chart Colors - Explicit Defaults */
+    --lejepa-grid: rgba(0, 0, 0, 0.1);
+    --lejepa-axis: rgba(0, 0, 0, 0.4);
+
+    padding: 1rem;
+    background: transparent;
+    border-radius: 8px;
+    color: var(--lejepa-text);
+}
+
+/* Dark Mode Overrides */
+@media (prefers-color-scheme: dark) {
+    #lejepa-container {
+        --lejepa-grid: rgba(255, 255, 255, 0.1);
+        --lejepa-axis: rgba(255, 255, 255, 0.4);
+    }
+}
+
+/* Hugo Theme Dark Mode Selector */
+[data-theme="dark"] #lejepa-container,
+.dark #lejepa-container {
+    --lejepa-grid: rgba(255, 255, 255, 0.1);
+    --lejepa-axis: rgba(255, 255, 255, 0.4);
+}
+
+#lejepa-container .canvas-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+#lejepa-container .plot-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Flex: Grow, Shrink, Basis */
+    /* Allow shrinking down to 280px for mobile, prefer 300px, max out at 450px */
+    flex: 1 1 300px;
+    min-width: 280px;
+    max-width: 450px;
+    color: var(--lejepa-text);
+}
+
+#lejepa-container canvas {
+    background: var(--lejepa-input-bg);
+    border: 1px solid var(--lejepa-border);
+    border-radius: 4px;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+}
+
+#lejepa-container h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: var(--lejepa-text);
+}
+
+#lejepa-container .stats {
+    margin-top: 5px;
+    font-weight: bold;
+    color: var(--lejepa-text-muted);
+    font-size: 0.9rem;
+}
+
+#lejepa-container .controls {
+    background: transparent;
+    padding: 15px 0;
+    border-radius: 6px;
+    border: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    align-items: end;
+}
+
+#lejepa-container .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#lejepa-container label {
+    font-size: 0.9rem;
+    color: var(--lejepa-text);
+    font-weight: 500;
+}
+
+#lejepa-container input[type=range] {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: color-mix(in srgb, var(--lejepa-border) 80%, transparent);
+    border-radius: 3px;
+    outline: none;
+    transition: background 0.2s;
+}
+
+#lejepa-container input[type="range"]:hover {
+    background: color-mix(in srgb, var(--lejepa-border) 100%, transparent);
+}
+
+#lejepa-container input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--lejepa-accent);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+#lejepa-container input[type="range"]::-webkit-slider-thumb:hover {
+    background: var(--lejepa-accent-hover);
+    transform: scale(1.1);
+}
+
+#lejepa-container input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--lejepa-accent);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+#lejepa-container input[type="range"]::-moz-range-thumb:hover {
+    background: var(--lejepa-accent-hover);
+    transform: scale(1.1);
+}
+
+#lejepa-container .legend {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 0.9rem;
+    color: var(--lejepa-text-muted);
+}
+
+#lejepa-container .legend .item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#lejepa-container .legend .color-box {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    border-radius: 2px;
+}
