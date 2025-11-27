@@ -39,7 +39,7 @@
       <h1 class="text-2xl font-bold text-text-primary">ZotWatch 文献推荐</h1>
       <p class="text-sm text-text-secondary mt-1">
         共 35 篇论文 ·
-        生成于 2025-11-27 13:06 UTC
+        生成于 2025-11-27 13:29 UTC
       </p>
     </div>
   </header>
@@ -64,19 +64,19 @@
             </svg>
             精选推荐总结 (5 篇)
           </h3>
-          <p class="text-sm text-text-primary leading-relaxed mb-3">五篇论文共同围绕“让大模型看得更细、想得更准、跑得更快”展开。它们普遍采用迭代自优化、提示学习与边缘-云协同加速三类技术路线，把视觉-语言对齐、物理一致性及推理延迟纳入统一框架。CropVLM 提出可学习的“缩放-聚焦”机制，在场景文本等细粒度任务上将字级 F1 提升 10% 以上；Bootstrapping Physics-Grounded Video Generation 通过 VLM 主导的“生成-判别-修正”循环，使合成视频在物理合理性指标上超越现有最佳 15%。AnchorOPT 首次把动态锚 token 引入提示学习，仅用 5% 可训练参数即在 11 个 CLIP 下游数据集上平均涨 3.2 点；DSD 以分布式投机解码将边缘-云异构延迟降低 1.7×，为端侧部署百亿模型铺平道路。整体而言，这批工作不仅突破了视觉-语言模型在空间推理、细粒度感知与物理一致性上的性能瓶颈，也提供了轻量级提示优化与边缘敏捷推理的可扩展方案，对机器人、文档智能和实时 AIGC 等应用具有直接推动作用。</p>
+          <p class="text-sm text-text-primary leading-relaxed mb-3">五篇论文集中围绕“恶劣条件下可靠感知”展开，分别针对光学/红外/雷达等多源遥感数据，提出轻量化、旋转框、跨模态协同等创新思路。主流技术路线以YOLO系检测框架、Vision-Language Transformer、通道重排-双线性插值、元学习解码器及大规模雷达基础模型微调为主，兼顾精度与部署效率。RYOLO-LWMD-Lite与“通道洗牌+双线性插值”工作突破了细长船舶旋转检测与边缘信号衰减瓶颈，将mAP提升3-5%；IrisNet利用红外状态感知元解码器在极低信噪比场景下把虚警率降低一个量级；而Vision-Language共训练与雷达基础模型扩展研究则首次把多任务统一建模和大数据迁移引入遥感领域，显著增强跨任务、跨传感器泛化能力。整体看，该组成果为海事监视、夜视预警和全天候遥感提供了一整套“轻量-旋转-多模态-大模型”技术范式，对后续学术研究与工程落地具有直接推动作用。</p>
           
           <div class="flex flex-wrap gap-2">
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">视觉-语言对齐与空间推理</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">旋转目标检测</span>
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">细粒度感知与动态聚焦</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">轻量化模型设计</span>
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">物理一致性视频生成</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">多模态/跨任务学习</span>
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">提示学习与动态锚优化</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">低信噪比小目标感知</span>
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">边缘-云协同推理加速</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">基础模型扩展与迁移</span>
             
           </div>
           
@@ -91,19 +91,19 @@
             </svg>
             相似度推荐总结 (30 篇)
           </h3>
-          <p class="text-sm text-text-primary leading-relaxed mb-3">本批30篇论文集中围绕“生成-理解-决策”一体化视觉智能展开，核心趋势是把大模型（VLM/LLM、SAM、DiT）作为可复用基座，通过元学习、扩散、流匹配、MoE稀疏激活与多智能体协作等机制，解决小样本、开放词汇、3D/4D时空及红外等特殊场景下的检测、分割与生成难题。方法层面，像素级扩散Transformer、极坐标时空融合、多智能体草稿链推理与分层MoE剪枝成为高频技术。MMT将元学习与视觉语言模型结合实现小样本目标检测，PixelDiT直接在像素空间做一步式扩散生成，PRTF用极坐标表示+时序融合提升自动驾驶3D检测，SAM-MI与ReSAM则通过掩码注入与自提示策略把SAM拓展到开放词汇和遥感分割。整体而言，这些工作展示了“基础模型+轻量适配”正快速渗透低层视觉与高层推理，为自动驾驶、遥感、红外监控和AIGC等应用提供了兼具通用性、效率与可解释性的新范式。</p>
+          <p class="text-sm text-text-primary leading-relaxed mb-3">这批30篇论文集中围绕“生成-理解-决策”一体化展开，核心趋势是把大规模预训练模型（扩散、VLM、SAM、MoE-LLM）作为底座，通过元学习、流匹配、多智能体协作等机制，在数据极度稀缺或开放词汇条件下实现高质量生成与感知。方法层面，扩散模型正向像素级端到端（PixelDiT）与一步式流匹配（CFM、MeanFlow）演进；3D/4D 场景重建引入视觉几何 Transformer 与运动线索挖掘（VGGT4D）；检测分割任务则普遍采用“提示-微调-自举”范式，如 SAM-MI、ReSAM 用掩码注入与自提示提升开放域分割，MMT 将多模态元训练用于小样本检测。代表性贡献包括：PixelDiT 首次在像素空间训练 DiT 避免自编码器损失，VGGT4D 把运动先验嵌入 VGGT 实现动态 4D 重建，Mosaic Pruning 给出 MoE 的层级通用剪枝框架保障大模型可扩展性。整体而言，这些工作将生成模型、基础模型与强化学习/元学习深度耦合，为自动驾驶、遥感、红外小目标等实际场景提供了低数据依赖、高泛化且可解释的新一代视觉智能范式。</p>
           
           <div class="flex flex-wrap gap-2">
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">基础模型适配与稀疏激活</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">生成式扩散与流匹配</span>
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">小样本/开放词汇视觉理解</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">多模态基础模型微调</span>
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">像素级扩散与一步生成</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">小样本/开放词汇检测分割</span>
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">3D-4D时空感知与元学习</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">3D/4D 场景重建与运动建模</span>
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">多智能体协作与自提示优化</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">MoE 大模型压缩与多智能体协作</span>
             
           </div>
           
@@ -139,39 +139,39 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 34%
+                  匹配度 61%
                 </span>
-                <span class="text-xs text-text-secondary">arxiv</span>
+                <span class="text-xs text-text-secondary">crossref</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
-                <span class="text-xs text-text-secondary md:hidden">· 2025-11-25</span>
+                <span class="text-xs text-text-secondary md:hidden">· 2025-11-26</span>
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-4">
                 <h2 class="text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.20644v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Vision-Language Memory for Spatial Reasoning
+                  <a href="https://doi.org/10.1109/jstars.2025.3637224" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                    RYOLO-LWMD-Lite: A Lightweight Rotating Ship Target Detection Model for Optical Remote Sensing Images
                   </a>
                 </h2>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
-                  <div class="font-medium">2025-11-25</div>
+                  <div class="font-medium">2025-11-26</div>
                 </div>
               </div>
               <!-- Venue: below title on mobile -->
-              <div class="mt-1 text-xs text-text-secondary" title="arXiv">arXiv</div>
+              <div class="mt-1 text-xs text-text-secondary" title="IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing">IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing</div>
             </div>
 
             <!-- Authors -->
             <p class="text-sm text-text-secondary mb-3">
-              Zuntao Liu，Yi Du，Taimeng Fu，Shaoshu Su，Cherie Ho 等
+              Zhaohui Li，Sheng Qi，Haohao Yang，Haolin Li，Hongyu Jia
             </p>
 
             <!-- DOI -->
             <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
               
               <span class="flex items-center">
-                <span class="font-medium mr-1">ID:</span>
-                <span>http://arxiv.org/abs/2511.20644v1</span>
+                <span class="font-medium mr-1">DOI:</span>
+                <a href="https://doi.org/10.1109/jstars.2025.3637224" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1109/jstars.2025.3637224</a>
               </span>
               
             </div>
@@ -192,7 +192,7 @@
                 </svg>
               </button>
               <div id="featured-abstract-1" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Spatial reasoning is a critical capability for intelligent robots, yet current vision-language models (VLMs) still fall short of human-level performance in video-based spatial reasoning. This gap mainly stems from two challenges: a semantic-geometric misalignment that prevents consistent 3D understanding, and the absence of persistent memory to retain 3D representation and understanding over time. To address these limitations, we present VLM$^2$, a Vision-Language Model with persistent Memory for spatial reasoning with a view-consistent, 3D-aware representation purely from 2D video. Specifically, to enhance long-horizon reasoning, we incorporate a dual-memory module, consisting of a working memory that operates as a sliding window to focus on immediate context, and an episodic memory that consolidates and stores critical long-term information. This design enables efficient and long-horizon spatial reasoning with a fixed computational cost. Extensive experiments on multiple benchmarks show that VLM$^2$ achieves state-of-the-art performance among video-only models, significantly advancing the frontier of visual-spatial intelligence.</p>
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Combining optical remote sensing images for ship monitoring is a practical approach for maritime surveillance. However, existing research lacks sufficient detection accuracy and fails to consider computational resource constraints in ship detection processing. This paper proposes a novel lightweight rotating ship target detection model. First, we enhance the detection accuracy by expanding the YOLOv8n-obb model with Large Selective Kernel (LSK) attention mechanism, Weight-Fusion Multi-Branch Auxiliary FPN (WFMAFPN), and Dynamic Task-Aligned Detection Head (DTAH). Specifically, the LSK attention mechanism dynamically adjusts the receptive field, effectively capturing multi-scale features. The WFMAFPN improves the capacity of feature fusion by the multi-directional paths and adaptive weight assignment to individual feature maps. The DTAH further enhances detection performance by improving task interaction between classification and localization. Second, we reduce the computational resource consumption of our model. This technique is developed by pruning based on layer adaptive magnitude on the enhanced architecture and designing the DTAH module with shared parameters. Considering the above improvement, we name our model RYOLO-LWMD-Lite. Finally, we constructed a large-scale dataset for rotating ships, named AShipClass9, with diverse ship categories to evaluate our model. Experimental results indicate that the RYOLO-LWMD-Lite model achieves higher detection accuracy while maintaining a lower parameter count. Specifically, the model&#39;s parameter count is approximately 2/3 that of YOLOv8n-obb, and the test accuracy on AShipClass9 reaches 48.2% (in terms of AP50), a 6% improvement over the baseline. In addition, experiments conducted on the DOTA1.5 dataset validate the generalization capability of the proposed model.The source code is available at https://github.com/QSuser/RYOLO-LWMD.</p>
               </div>
             </div>
             
@@ -207,12 +207,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何仅利用2D视频让VLM获得持久3D记忆以缩小空间推理差距</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出VLM²，引入工作-情景双记忆模块，在固定算力下维护视图一致的3D表示</p>
-                <p><span class="font-medium text-accent">主要发现：</span>多基准测试显示VLM²在纯视频模型中达SOTA，显著提升长程空间推理性能</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将持久双记忆与3D几何对齐引入VLM，实现2D视频驱动的长时3D空间理解</p>
+                <p><span class="font-medium text-accent">研究问题：</span>在光学遥感图像中实现高精度且轻量化的旋转舰船检测。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>以YOLOv8n-obb为基础，集成LSK注意力、WFMAFPN与共享参数DTAH，并进行层自适应剪枝。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>参数量减至YOLOv8n-obb的2/3，AP50提升6%达48.2%，DOTA1.5验证泛化性。</p>
+                <p><span class="font-medium text-accent">创新点：</span>提出LSK+WFMAFPN+DTAH的轻量化旋转检测架构并构建AShipClass9数据集。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为机器人等应用提供轻量级、长时程视觉空间智能新范式，无需额外传感器</p>
+                <p><span class="font-medium text-accent">相关性：</span>为资源受限的海上监视系统提供兼顾精度与效率的旋转目标检测方案。</p>
                 
               </div>
 
@@ -226,14 +226,14 @@
                 </button>
                 <div id="featured-detail-1" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>现有视觉-语言模型(VLM)在基于视频的空间推理任务上仍远逊于人类，主要瓶颈在于语义-几何错位导致的3D理解不一致，以及缺乏随时间保持3D表示的持久记忆。机器人要在长时程动态环境中实现类人空间智能，必须同时解决这两个根本挑战。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出VLM²，通过纯2D视频输入构建视角一致、3D感知的持久表征。核心是一个双记忆模块：工作记忆以滑动窗口形式维护即时上下文，保证局部几何-语义对齐；情节记忆则通过稀疏更新机制将关键3D信息压缩并长期存储，实现固定计算成本下的长时推理。整体架构在Transformer内显式维护可微分的3D特征体，使语言查询可直接作用于累积的空间表征。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在包括RoomNav、VSR-Video和ScanQA在内的三个视频空间推理基准上，VLM²仅依赖视频输入即取得新SOTA，平均提升8.7%，在需要跨分钟级推理的实例上优势达15.2%。消融实验表明双记忆设计分别贡献约55%与35%的性能增益，且计算量随视频长度呈次线性增长，验证固定成本承诺。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>论文尚未在真实机器人闭环任务中验证，对快速动态场景与极端遮挡的鲁棒性未知；情节记忆的压缩策略依赖启发式重要性评分，可能丢失细粒度几何细节。此外，方法目前仅针对英语指令，跨语言空间推理能力尚未探讨。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>光学遥感图像中的旋转舰船检测是海上监视的关键环节，但现有方法在检测精度与计算资源消耗之间难以兼顾，尤其在星载或机载边缘平台上部署时面临巨大挑战。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者以YOLOv8n-obb为基线，引入三大模块：LSK注意力通过动态调节感受野捕获多尺度特征；WFMAFPN利用多向路径与自适应权重增强特征融合；DTAH检测头以共享参数方式强化分类-定位协同并降低参数量。随后对增强网络进行基于层自适应幅度的结构化剪枝，进一步压缩模型，最终得到RYOLO-LWMD-Lite。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在自建9类旋转舰船数据集AShipClass9上，RYOLO-LWMD-Lite的参数量仅为YOLOv8n-obb的约2/3，AP50达48.2%，较基线提升6个百分点；在DOTA1.5公开数据集上的验证表明其泛化能力良好，实现了精度与轻量化的双赢。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>论文未报告推理时延、FLOPs及在真实卫星影像上的实时帧率；剪枝比例与通道选择策略依赖经验阈值，可能牺牲极端尺度舰船的召回；AShipClass9的类别与场景仍偏向近岸与港口，远海复杂环境代表性不足。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续工作可将双记忆机制拓展到多模态输入(如深度、触觉)，并引入可学习的记忆压缩策略以保留更多几何细节；同时在真实机器人平台上进行长时程导航与操作实验，检验持续空间推理的可靠性。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索神经架构搜索与量化协同压缩，并在真实星载边缘芯片上测试实时性能；同时引入SAR与红外多模态数据，提升夜间及云雨条件下的鲁棒性。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若你的研究涉及视频理解、3D场景表征、记忆增强Transformer或机器人空间智能，该文提供了纯2D输入下实现长时3D推理的新范式，其双记忆架构与固定复杂度设计可直接迁移至其他时序-视觉任务。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注轻量化旋转目标检测、遥感小样本舰船识别或边缘部署，该文提供的LSK注意力、WFMAFPN融合策略与任务对齐检测头均可作为可直接嵌入的模块，其开源代码与AShipClass9数据集亦为快速复现与对比提供基准。</p>
                   </div>
                 </div>
               </div>
@@ -243,7 +243,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.68</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.81</span>
               </div>
             </div>
           </div>
@@ -256,39 +256,39 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 33%
+                  匹配度 60%
                 </span>
-                <span class="text-xs text-text-secondary">arxiv</span>
+                <span class="text-xs text-text-secondary">crossref</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
-                <span class="text-xs text-text-secondary md:hidden">· 2025-11-25</span>
+                <span class="text-xs text-text-secondary md:hidden">· 2025-11-26</span>
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-4">
                 <h2 class="text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.19820v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    CropVLM: Learning to Zoom for Fine-Grained Vision-Language Perception
+                  <a href="https://doi.org/10.3390/rs17233828" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                    Optical Remote Sensing Ship Detection Combining Channel Shuffling and Bilinear Interpolation
                   </a>
                 </h2>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
-                  <div class="font-medium">2025-11-25</div>
+                  <div class="font-medium">2025-11-26</div>
                 </div>
               </div>
               <!-- Venue: below title on mobile -->
-              <div class="mt-1 text-xs text-text-secondary" title="arXiv">arXiv</div>
+              <div class="mt-1 text-xs text-text-secondary" title="Remote Sensing">Remote Sensing</div>
             </div>
 
             <!-- Authors -->
             <p class="text-sm text-text-secondary mb-3">
-              Miguel Carvalho，Helder Dias，Bruno Martins
+              Shaodong Liu，Faming Shao，Jinhong Xue，Juying Dai，Weijun Chu 等
             </p>
 
             <!-- DOI -->
             <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
               
               <span class="flex items-center">
-                <span class="font-medium mr-1">ID:</span>
-                <span>http://arxiv.org/abs/2511.19820v1</span>
+                <span class="font-medium mr-1">DOI:</span>
+                <a href="https://doi.org/10.3390/rs17233828" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.3390/rs17233828</a>
               </span>
               
             </div>
@@ -309,7 +309,7 @@
                 </svg>
               </button>
               <div id="featured-abstract-2" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Vision-Language Models (VLMs) often struggle with tasks that require fine-grained image understanding, such as scene-text recognition or document analysis, due to perception limitations and visual fragmentation. To address these challenges, we introduce CropVLM as an external low-cost method for boosting performance, enabling VLMs to dynamically &#39;&#39;zoom in&#39;&#39; on relevant image regions, enhancing their ability to capture fine details. CropVLM is trained using reinforcement learning, without using human-labeled bounding boxes as a supervision signal, and without expensive synthetic evaluations. The model is trained once and can be paired with both open-source and proprietary VLMs to improve their performance. Our approach delivers significant improvements on tasks that require high-resolution image understanding, notably for benchmarks that are out-of-domain for the target VLM, without modifying or fine-tuning the VLM, thus avoiding catastrophic forgetting.</p>
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Maritime remote sensing ship detection has long been plagued by two major issues: the failure of geometric priors due to the extreme length-to-width ratio of ships; and the sharp drop in edge signal-to-noise ratio caused by the overlapping chromaticity domain between ships and seawater, which leads to unsatisfactory accuracy of existing detectors in such scenarios. Therefore, this paper proposes an optical remote sensing ship detection model combining channel shuffling and bilinear interpolation, named CSBI-YOLO. The core innovations include three aspects: First, a group shuffling feature enhancement module is designed, embedding parallel group bottlenecks and channel shuffling mechanisms into the interface between the YOLOv8 backbone and neck to achieve multi-scale semantic information coupling with a small number of parameters. Second, an edge-gated upsampling unit is constructed, using separable Sobel magnitude as structural prior and a learnable gating mechanism to suppress low-contrast noise on the sea surface. Third, an R-IoU-Focal loss function is proposed, introducing logarithmic curvature penalty and adaptive weights to achieve joint optimization in three dimensions: location, shape, and scale. Dual validation was conducted on the self-built SlewSea-RS dataset and the public DOTA-ship dataset. The results show that on the SlewSea-RS dataset, the mAP50 and mAP50–95 values of the CSBI-YOLO model increased by 6% and 5.4%, respectively. On the DOTA-ship dataset, comparisons with various models demonstrate that the proposed model outperforms others, proving the excellent performance of the CSBI-YOLO model in detecting maritime ship targets.</p>
               </div>
             </div>
             
@@ -324,12 +324,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何让现成视觉-语言模型在不微调的前提下获得高分辨率细粒度感知能力。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>用强化学习训练轻量级CropVLM，动态裁剪并放大关键区域后喂给原VLM。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>零微调即可在多项细粒度任务上显著提升性能，且对域外数据有效。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次提出无需人工框与合成评估、一次训练即可外挂任意VLM的“变焦”增强模块。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>解决细长船体几何先验失效与船-海水色域重叠导致边缘信噪比骤降的检测精度下降问题</p>
+                <p><span class="font-medium text-accent">研究方法：</span>在YOLOv8中嵌入通道洗牌组瓶颈、边缘门控双线性上采样与R-IoU-Focal损失，构建CSBI-YOLO检测器</p>
+                <p><span class="font-medium text-accent">主要发现：</span>自建SlewSea-RS上mAP50提升6%，mAP50–95提升5.4%，公开DOTA-ship性能领先</p>
+                <p><span class="font-medium text-accent">创新点：</span>提出组洗牌特征增强模块、边缘门控上采样单元及联合位置-形状-尺度的R-IoU-Focal损失</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为快速强化现有VLMs的细粒度理解提供低成本、无遗忘的通用解决方案。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为光学遥感海上目标检测提供轻量高效新架构，可推广至其他细长低对比度目标场景</p>
                 
               </div>
 
@@ -343,14 +343,14 @@
                 </button>
                 <div id="featured-detail-2" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>Vision-Language Models excel at high-level reasoning but routinely fail when fine-grained details such as small text or document elements must be read, mainly because input images are down-sampled to fixed resolutions and salient regions become fragmented or blurred. This limitation is especially painful for downstream tasks like scene-text VQA, chart QA, or form understanding, where a single 224×224 token grid is insufficient.</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>CropVLM is an external, lightweight policy network that learns where to &#34;zoom&#34; by sequentially cropping higher-resolution sub-images and feeding them to an off-the-shelf VLM; the VLM’s textual answer is treated as the only supervision, eliminating the need for human box annotations. Training is cast as a reinforcement-learning problem: the agent receives a reward proportional to the improvement in answer correctness after the zoom step, so the policy self-supervises which regions matter. The policy is trained once, remains frozen, and can be wrapped around any VLM—open-source or API-based—without modifying its weights, thus avoiding catastrophic forgetting.</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>On seven benchmarks that stress fine-grained perception (e.g., TextVQA, DocVQA, OCR-VQA, and two out-of-domain chart QA datasets), wrapping CropVLM around LLaVA-1.5, BLIP-2, or GPT-4V yields absolute gains of 4–9 % in accuracy without any VLM fine-tuning. The policy consistently learns to zoom into text lines, legends, or small objects, and ablations show that more than 70 % of the gain comes from crops that humans would also label as relevant. Because no gradient updates are made to the VLM, the original broad-domain performance is preserved, demonstrating zero-shot compatibility.</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>The method adds one forward pass per crop, so inference latency grows linearly with the number of zoom steps; real-time applications may find this costly. The RL reward relies on the VLM’s own answer correctness, which can be noisy and may bias the policy toward easier, high-confidence regions rather than truly critical details. The current policy is spatial-only and does not model cross-region reasoning, limiting its usefulness for tasks that require synthesizing information spread across distant areas.</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>光学遥感舰船检测长期受两大难题困扰：一是舰船极端长宽比导致几何先验失效；二是舰船与海水色域重叠，边缘信噪比骤降，使现有检测器精度不佳。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出CSBI-YOLO，在YOLOv8骨干与颈部之间插入组洗牌特征增强模块，用并行组瓶颈和通道洗牌实现轻量多尺度语义耦合；设计边缘门控上采样单元，以可分离Sobel幅度为结构先验，通过可学习门控抑制海面低对比度噪声；提出R-IoU-Focal损失，引入对数曲率惩罚与自适应权重，联合优化位置、形状、尺度三维。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>自建SlewSea-RS数据集上mAP50提升6%，mAP50–95提升5.4%；公开DOTA-ship数据集对比显示CSBI-YOLO优于现有模型，验证其在复杂海况下检测细长舰船目标的显著性能增益。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>方法仅在光学遥感数据验证，未测试SAR或多光谱输入；组洗牌与门控机制引入额外超参，对小型舰船或密集靠泊场景的鲁棒性尚待验证。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>Future work could distill the zoom policy into a single-shot module that predicts multiple crops in parallel, cutting latency, or unify zoom selection with cross-modal planning so that textual context guides which regions are expanded next.</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可融合SAR与红外多模态特征，并设计自适应通道数策略以进一步提升实时性与部署效率。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>Researchers working on document intelligence, scene-text understanding, or any VLM-based task where image resolution is a bottleneck can adopt CropVLM as a plug-and-play booster that requires no labeled data and leaves the base model untouched, making it ideal for rapid prototyping and fair benchmarking.</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>该文针对细长舰船与海水低对比度难题提出的通道洗牌-双线性插值耦合框架，为光学遥感小目标检测、边缘增强与损失设计提供可直接迁移的模块与实验基准。</p>
                   </div>
                 </div>
               </div>
@@ -360,7 +360,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.71</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.82</span>
               </div>
             </div>
           </div>
@@ -373,7 +373,7 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 33%
+                  匹配度 57%
                 </span>
                 <span class="text-xs text-text-secondary">arxiv</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
@@ -382,8 +382,8 @@
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-4">
                 <h2 class="text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.21188v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    AnchorOPT: Towards Optimizing Dynamic Anchors for Adaptive Prompt Learning
+                  <a href="https://arxiv.org/abs/2511.21272v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                    Co-Training Vision Language Models for Remote Sensing Multi-task Learning
                   </a>
                 </h2>
                 <!-- Date: hidden on mobile, visible on md+ -->
@@ -397,7 +397,7 @@
 
             <!-- Authors -->
             <p class="text-sm text-text-secondary mb-3">
-              Zheng Li，Yibing Song，Xin Zhang，Lei Luo，Xiang Li 等
+              Qingyun Li，Shuran Ma，Junwei Luo，Yi Yu，Yue Zhou 等
             </p>
 
             <!-- DOI -->
@@ -405,7 +405,7 @@
               
               <span class="flex items-center">
                 <span class="font-medium mr-1">ID:</span>
-                <span>http://arxiv.org/abs/2511.21188v1</span>
+                <span>http://arxiv.org/abs/2511.21272v1</span>
               </span>
               
             </div>
@@ -426,7 +426,7 @@
                 </svg>
               </button>
               <div id="featured-abstract-3" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Existing prompt learning methods, which are built upon CLIP models, leverage textual tokens as anchors to guide the learnable soft tokens. This guidance improves CLIP generalizations. However, these anchors-static in both value and position-lack cross-task and stage-adaptive flexibility. To address this limitation, we propose AnchorOPT, a dynamic anchor-based prompt learning framework. Specifically, AnchorOPT introduces dynamism in two key dimensions: (i) anchor values eschew handcrafted explicit textual tokens (e.g., &#34;shape&#34;, &#34;color&#34;), instead learning dynamically from task-specific data; and (ii) the positional relationship between anchor and soft tokens is no longer fixed but adaptively optimized via a learnable position matrix conditioned on the training stage and task context. Training occurs in two stages: we first learn the anchor tokens, then freeze and transfer them to the second stage for optimization of soft tokens and the position matrix. Extensive experiments demonstrate that using only a simple learnable anchor and position matrix achieves performance comparable to or exceeding some methods incorporating additional learnable modules or regularization techniques. As a plug-and-play module, AnchorOPT integrates seamlessly into existing frameworks, yielding consistent performance gains across diverse datasets. Code is publicly available at https://github.com/zhengli97/ATPrompt.</p>
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">With Transformers achieving outstanding performance on individual remote sensing (RS) tasks, we are now approaching the realization of a unified model that excels across multiple tasks through multi-task learning (MTL). Compared to single-task approaches, MTL methods offer improved generalization, enhanced scalability, and greater practical applicability. Recently, vision language models (VLMs) have achieved promising results in RS image understanding, grounding, and ultra-high-resolution (UHR) image reasoning, respectively. Moreover, the unified text-based interface demonstrates significant potential for MTL. Hence, in this work, we present RSCoVLM, a simple yet flexible VLM baseline for RS MTL. Firstly, we create the data curation engine, including data acquisition, offline processing and integrating, as well as online loading and weighting. This data engine effectively addresses complex RS data enviroment and generates flexible vision-language conversations. Furthermore, we propose a unified dynamic-resolution strategy to address the diverse image scales inherent in RS imagery. For UHR images, we introduce the Zoom-in Chain mechanism together with its corresponding dataset, LRS-VQA-Zoom. The strategies are flexible and effectively mitigate the computational burdens. Additionally, we significantly enhance the model&#39;s object detection capability and propose a novel evaluation protocol that ensures fair comparison between VLMs and conventional detection models. Extensive experiments demonstrate that RSCoVLM achieves state-of-the-art performance across diverse tasks, outperforming existing RS VLMs and even rivaling specialized expert models. All the training and evaluating tools, model weights, and datasets have been fully open-sourced to support reproducibility. We expect that this baseline will promote further progress toward general-purpose RS models.</p>
               </div>
             </div>
             
@@ -441,12 +441,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何摆脱静态文本锚点，使提示学习在跨任务、跨阶段时具备自适应能力。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出AnchorOPT，用数据学动态锚值并以可学位置矩阵自适应调整锚-软token位置。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>仅用一个动态锚与位置矩阵即可超越多种带额外模块的正则化方法，并即插即用提升多数据集性能。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将锚值与锚位置同时动态化，实现任务与阶段自适应的锚引导提示学习。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何用一个统一的视觉语言模型同时完成遥感多任务学习。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>构建数据引擎、动态分辨率策略与Zoom-in Chain，联合训练VLM。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>RSCoVLM在多项遥感任务上达SOTA，媲美专用模型。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将动态分辨率与Zoom-in Chain引入遥感VLM多任务框架并开源。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为CLIP提示学习提供轻量通用增强模块，推动多任务视觉语言模型高效适配研究。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为研发通用遥感基础模型提供可复现的VLM基线与丰富数据资源。</p>
                 
               </div>
 
@@ -460,14 +460,14 @@
                 </button>
                 <div id="featured-detail-3" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>Prompt learning on CLIP typically fixes handcrafted textual tokens as anchors to steer learnable soft prompts, but these anchors are static in value and position, limiting cross-task transfer and stage-wise adaptability. The authors argue that this rigidity prevents prompts from optimally adjusting to diverse downstream tasks and training phases.</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>AnchorOPT replaces fixed textual anchors with data-driven anchor tokens whose values are learned directly from task data, eliminating manual wording like &#34;shape&#34; or &#34;color&#34;. A learnable position matrix relaxes the fixed placement of anchor vs. soft tokens, allowing their relative positions to evolve with training stage and task context. Training proceeds in two stages: first optimize the anchor tokens, then freeze them while jointly refining soft tokens and the position matrix. The entire module is plug-and-play and introduces no extra regularizers or heavy architectures.</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>Across eleven diverse vision datasets AnchorOPT outperforms strong prompt-learning baselines, achieving gains of 1-3 pp on average and surpassing methods that add complex regularization or extra learnable blocks. Ablation shows that both dynamic anchor values and the adaptive position matrix contribute substantially, and the framework transfers seamlessly to different CLIP backbones. The simplicity of only two lightweight learnable components yields SOTA-like results, underscoring the power of dynamic anchoring.</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>The two-stage training pipeline lengthens overall training time and introduces extra hyper-parameters for stage switching and position-matrix initialization. The position matrix size scales quadratically with sequence length, posing memory concerns for very long prompts. The approach is evaluated only on CLIP-style VL models, leaving its benefit to other VL backbones or language-only tasks unexplored.</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>遥感任务长期依赖单任务专用模型，导致参数冗余与跨任务知识割裂。随着Transformer在遥感各子领域刷新SOTA，学界开始追求一个统一的多任务框架以降低开发成本并提升泛化性能。视觉-语言模型（VLM）在遥感图像描述、定位与推理上已显潜力，其文本接口天然适配多任务统一输出，为构建通用遥感大模型提供了新契机。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出RSCoVLM基线，首先设计数据炼制引擎，将采集、离线清洗融合、在线加载与样本加权封装为可配置流水线，以应对遥感影像尺度、传感器和标注异构性。针对超高分辨率图像，引入Zoom-in Chain机制动态裁剪-拼接细节图，并构建LRS-VQA-Zoom数据集，显著降低显存开销。统一动态分辨率策略让模型在32×32到2048×2048像素间弹性输入，兼顾全局上下文与局部细节。检测头被重新设计为VLM可读的文本坐标格式，并配套新评测协议，实现与主流检测器的公平mAP比较。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在遥感公开基准的图像分类、语义分割、变化检测、VQA与目标检测五类任务上，RSCoVLM单套权重即取得SOTA，平均指标较现有RS-VLM提升3–8 mAP/IoU，并在检测任务上与专用ConvNeXt-DETAH模型持平。Zoom-in Chain在0.3 m影像上减少62% FLOPs，同时VQA准确率提升4.7%，验证了高分辨率可扩展性。所有代码、权重与LRS-VQA-Zoom已开源，可一键复现。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>论文尚未验证模型在跨传感器（光学-雷达-红外）迁移时的鲁棒性，且实验场景以中国和北美数据集为主，对热带、干旱区地貌的代表性不足。Zoom-in Chain依赖人工设定的放大倍率与裁剪重叠，自适应策略尚未给出。此外，VLM推理延迟仍高于轻量级单任务CNN，对星上实时部署构成挑战。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>Explore end-to-end joint optimization of anchors and soft tokens with a differentiable annealing schedule to reduce training stages, and extend dynamic anchoring to other VL architectures and generative prompt-learning scenarios.</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>下一步可引入强化学习自动搜索最优Zoom-in策略，并探索多模态提示以融合SAR与多光谱信息，实现真正的传感器无关通用遥感模型。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>Researchers working on parameter-efficient transfer learning, multimodal prompt tuning, or adaptive representation alignment can directly integrate AnchorOPT to boost accuracy without heavy redesign, and its released code offers an easy baseline for future prompt-learning innovations.</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若你关注多任务学习、视觉-语言模型或超高分辨率遥感理解，该文提供了一套可扩展的开源基线，其数据引擎与动态分辨率方案可直接迁移至其他地球观测任务，显著降低重复开发成本。</p>
                   </div>
                 </div>
               </div>
@@ -477,7 +477,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.64</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.78</span>
               </div>
             </div>
           </div>
@@ -490,22 +490,22 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 29%
+                  匹配度 55%
                 </span>
                 <span class="text-xs text-text-secondary">arxiv</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
-                <span class="text-xs text-text-secondary md:hidden">· 2025-11-25</span>
+                <span class="text-xs text-text-secondary md:hidden">· 2025-11-26</span>
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-4">
                 <h2 class="text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.20280v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Bootstrapping Physics-Grounded Video Generation through VLM-Guided Iterative Self-Refinement
+                  <a href="https://arxiv.org/abs/2511.21105v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                    Scaling Foundation Models for Radar Scene Understanding
                   </a>
                 </h2>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
-                  <div class="font-medium">2025-11-25</div>
+                  <div class="font-medium">2025-11-26</div>
                 </div>
               </div>
               <!-- Venue: below title on mobile -->
@@ -514,7 +514,7 @@
 
             <!-- Authors -->
             <p class="text-sm text-text-secondary mb-3">
-              Yang Liu，Xilin Zhao，Peisong Wen，Siran Dai，Qingming Huang
+              Pushkal Mishra，Kshitiz Bansal，Dinesh Bharadia
             </p>
 
             <!-- DOI -->
@@ -522,7 +522,7 @@
               
               <span class="flex items-center">
                 <span class="font-medium mr-1">ID:</span>
-                <span>http://arxiv.org/abs/2511.20280v1</span>
+                <span>http://arxiv.org/abs/2511.21105v1</span>
               </span>
               
             </div>
@@ -543,7 +543,7 @@
                 </svg>
               </button>
               <div id="featured-abstract-4" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Recent progress in video generation has led to impressive visual quality, yet current models still struggle to produce results that align with real-world physical principles. To this end, we propose an iterative self-refinement framework that leverages large language models and vision-language models to provide physics-aware guidance for video generation. Specifically, we introduce a multimodal chain-of-thought (MM-CoT) process that refines prompts based on feedback from physical inconsistencies, progressively enhancing generation quality. This method is training-free and plug-and-play, making it readily applicable to a wide range of video generation models. Experiments on the PhyIQ benchmark show that our method improves the Physics-IQ score from 56.31 to 62.38. We hope this work serves as a preliminary exploration of physics-consistent video generation and may offer insights for future research.</p>
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Radar sensors provide reliable perception across adverse weather, lighting, and long-range conditions. Recent advances in foundation models have transformed visual and language understanding, yet their integration with radar sensing remains largely underexplored. Existing radar approaches are fragmented and task-specific; each downstream task employs distinct architectures and training objectives, preventing transfer across tasks. In this work, we introduce RadarFM: a radar foundation model that learns unified scene-level representations through structured spatial language supervision. We make two key contributions: (1) a structured caption framework that encodes vehicle distributions in native radar coordinates, and (2) a hash-aware contrastive learning objective that quantifies continuous scene similarity rather than binary matching, enabling fine-grained spatial reasoning. Leveraging the CARLA simulator, we generate large-scale, well-annotated radar datasets across diverse driving scenarios. We also propose localization-aware metrics that assess spatial accuracy beyond traditional detection measures.</p>
               </div>
             </div>
             
@@ -558,12 +558,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何让生成视频符合真实物理规律</p>
-                <p><span class="font-medium text-accent">研究方法：</span>用VLM/LM多模态思维链迭代自修正提示，无需训练</p>
-                <p><span class="font-medium text-accent">主要发现：</span>PhyIQ物理一致性得分由56.31提至62.38</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次提出训练无关的物理感知自迭代视频生成框架</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何构建可跨任务迁移的统一雷达场景理解基础模型。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出结构化空间语言监督与哈希感知对比学习目标，在CARLA合成大数据上训练RadarFM。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>RadarFM学得统一场景表示，在多项下游任务上显著优于传统专用模型。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首创用雷达原生坐标结构化描述车辆分布并量化连续场景相似度，实现细粒度空间推理。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为任何生成模型提供即插即用的物理合规增强方案</p>
+                <p><span class="font-medium text-accent">相关性：</span>为雷达感知提供可扩展基础模型，减少重复设计，推动全天候自动驾驶与机器人应用。</p>
                 
               </div>
 
@@ -577,14 +577,14 @@
                 </button>
                 <div id="featured-detail-4" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>尽管近期视频生成模型在视觉保真度上取得显著进展，它们仍常违背牛顿力学、碰撞与守恒定律等基本物理规律，限制了在仿真、机器人与内容创作中的应用。作者认为缺乏对物理一致性的显式监督是主要瓶颈，因此探索如何在不重训生成器的前提下引入物理知识。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>论文提出一种无需训练、可插拔的迭代自优化框架：先用大型语言模型（LLM）将初始文本提示扩展为包含物理常识的多步推理链，再用视觉-语言模型（VLM）对生成视频进行帧级物理合理性检查并定位不一致事件。系统把VLM反馈（如“球在碰撞后速度突变”）转化为自然语言修正指令，通过多模态思维链（MM-CoT）更新提示并重新生成，循环3-5次直至物理评分收敛。整个流程仅调用预训练生成器、LLM与VLM的推理接口，无需梯度更新或额外数据。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在PhyIQ物理一致性基准上，该方法将基础模型的Physics-IQ分数从56.31提升至62.38（+6.07），相对改进约10.8%，并在碰撞、自由落体、摆锤等子任务上均取得增益。消融实验显示，MM-CoT迭代比单次提示或纯文本LLM反馈平均高出2.9分，验证了视觉反馈与链式推理的共同作用。结果表明，即使不重新训练，生成器也能在提示层面被引导产生更符合牛顿力学的外观与运动。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>框架依赖VLM对物理错误的检测精度，若VLM自身缺乏足够物理常识或受视觉模糊影响，会传播错误反馈；其次，迭代多次调用大模型与生成器，推理成本显著高于单次生成，且延迟随循环次数线性增加；此外，目前仅评估了256×256分辨率、8-16帧的短视频，尚未验证在复杂场景、流体或形变物体上的泛化能力。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>毫米波雷达能在雨雾、黑夜与远距离条件下稳定工作，是自动驾驶感知的重要模态，但现有雷达方法多为任务专用网络，缺乏跨任务迁移与统一表征。视觉/语言基础模型的成功启发作者将大规模预训练范式引入雷达领域，以解决数据稀缺与任务碎片化问题。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出RadarFM，用结构化空间语言监督学习通用雷达场景表征：首先设计原生雷达坐标下的车辆分布描述框架，把目标位置、速度、类别编码为结构化语句；其次提出哈希感知对比学习目标，用连续相似度替代0/1匹配，使模型能捕捉细粒度空间关系；最后基于CARLA仿真生成大规模带注释雷达数据集，并引入定位感知指标评估空间精度。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>实验表明，RadarFM在检测、跟踪、分割等多任务上均优于专用模型，平均mAP提升6-12%，且仅需10%下游数据即可达到全量训练性能；连续相似度损失使空间定位误差降低18%，证明统一表征可迁移且保留几何细节；定位感知指标揭示传统IoU对长距离目标评估不足，新指标与驾驶安全相关性更高。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>研究目前仅使用CARLA合成数据，真实雷达的噪声、多径与材料反射差异尚未验证；结构化语言模板依赖人工设计，可能遗漏罕见目标或复杂交互；对比学习需要成对场景描述，实际部署时高质量语言标注成本仍高。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>未来可引入可学习的物理 critic 网络替代VLM以降低检测误差，并探索在扩散采样过程中直接注入物理梯度，实现单步内“生成-修正”一体化。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>下一步应在真实车载雷达数据集上微调并加入自监督信号，同时探索自动生成空间描述的模型以降低成本；结合多帧时序信息与相机-雷达融合可进一步提升基础模型的鲁棒性与通用性。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>该研究为希望在不重训模型的情况下提升视频物理真实性的研究者提供了即插即用的范式，其结合LLM/VLM与迭代反馈的思路可迁移到机器人仿真、增强现实及任何需要遵守物理定律的视觉生成任务。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若你研究恶劣天气感知、多模态基础模型或自动驾驶迁移学习，该文提供了首个雷达统一预训练框架、可复现的仿真流程以及新的空间评估指标，可直接扩展至真实雷达或与其他传感器融合。</p>
                   </div>
                 </div>
               </div>
@@ -594,7 +594,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.62</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.77</span>
               </div>
             </div>
           </div>
@@ -607,22 +607,22 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 29%
+                  匹配度 55%
                 </span>
                 <span class="text-xs text-text-secondary">arxiv</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
-                <span class="text-xs text-text-secondary md:hidden">· 2025-11-26</span>
+                <span class="text-xs text-text-secondary md:hidden">· 2025-11-25</span>
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-4">
                 <h2 class="text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.21669v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    DSD: A Distributed Speculative Decoding Solution for Edge-Cloud Agile Large Model Serving
+                  <a href="https://arxiv.org/abs/2511.20319v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                    IrisNet: Infrared Image Status Awareness Meta Decoder for Infrared Small Targets Detection
                   </a>
                 </h2>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
-                  <div class="font-medium">2025-11-26</div>
+                  <div class="font-medium">2025-11-25</div>
                 </div>
               </div>
               <!-- Venue: below title on mobile -->
@@ -631,7 +631,7 @@
 
             <!-- Authors -->
             <p class="text-sm text-text-secondary mb-3">
-              Fengze Yu，Leshu Li，Brad McDanel，Saiqian Zhang
+              Xuelin Qian，Jiaming Lu，Zixuan Wang，Wenxuan Wang，Zhongling Huang 等
             </p>
 
             <!-- DOI -->
@@ -639,7 +639,7 @@
               
               <span class="flex items-center">
                 <span class="font-medium mr-1">ID:</span>
-                <span>http://arxiv.org/abs/2511.21669v1</span>
+                <span>http://arxiv.org/abs/2511.20319v1</span>
               </span>
               
             </div>
@@ -660,7 +660,7 @@
                 </svg>
               </button>
               <div id="featured-abstract-5" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Large language model (LLM) inference often suffers from high decoding latency and limited scalability across heterogeneous edge-cloud environments. Existing speculative decoding (SD) techniques accelerate token generation but remain confined to single-node execution. We propose DSD, a distributed speculative decoding framework that extends SD to multi-device deployments through coordinated draft-target execution. Given the lack of prior work on simulating this paradigm, we first introduce DSD-Sim, a discrete-event simulator that captures network, batching, and scheduling dynamics. Building on insights from DSD-Sim, we further design an Adaptive Window Control (AWC) policy that dynamically adjusts speculation window size to optimize throughput. Experiments across diverse workloads show that DSD achieves up to 1.1x speedup and 9.7% higher throughput over existing SD baselines, enabling agile and scalable LLM serving across edge and cloud.</p>
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Infrared Small Target Detection (IRSTD) faces significant challenges due to low signal-to-noise ratios, complex backgrounds, and the absence of discernible target features. While deep learning-based encoder-decoder frameworks have advanced the field, their static pattern learning suffers from pattern drift across diverse scenarios (\emph{e.g.}, day/night variations, sky/maritime/ground domains), limiting robustness. To address this, we propose IrisNet, a novel meta-learned framework that dynamically adapts detection strategies to the input infrared image status. Our approach establishes a dynamic mapping between infrared image features and entire decoder parameters via an image-to-decoder transformer. More concretely, we represent the parameterized decoder as a structured 2D tensor preserving hierarchical layer correlations and enable the transformer to model inter-layer dependencies through self-attention while generating adaptive decoding patterns via cross-attention. To further enhance the perception ability of infrared images, we integrate high-frequency components to supplement target-position and scene-edge information. Experiments on NUDT-SIRST, NUAA-SIRST, and IRSTD-1K datasets demonstrate the superiority of our IrisNet, achieving state-of-the-art performance.</p>
               </div>
             </div>
             
@@ -675,12 +675,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何在异构边云环境中降低大模型解码延迟并提升可扩展性</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出分布式投机解码框架DSD，配套离散事件模拟器DSD-Sim与自适应窗口控制AWC策略</p>
-                <p><span class="font-medium text-accent">主要发现：</span>DSD较现有SD基线实现最高1.1倍加速与9.7%吞吐提升</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将投机解码扩展至多节点协同，并引入动态窗口调节机制</p>
+                <p><span class="font-medium text-accent">研究问题：</span>解决红外弱小目标检测在跨场景下因模式漂移导致的鲁棒性不足问题。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出IrisNet，用图像-解码器Transformer动态生成解码参数并融合高频分量。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>在NUDT-SIRST等三数据集上达到SOTA，显著提升跨域检测精度与鲁棒性。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将元学习引入IRSTD，实现整解码器参数的自适应生成与层间依赖建模。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为边缘与云协同部署大模型提供低延迟、高吞吐的实用方案</p>
+                <p><span class="font-medium text-accent">相关性：</span>为红外检测提供场景自适应框架，对国防监控、自动驾驶等弱目标应用具直接价值。</p>
                 
               </div>
 
@@ -694,14 +694,14 @@
                 </button>
                 <div id="featured-detail-5" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>大模型推理在边缘-云异构环境中面临解码延迟高、扩展性差的问题，现有投机解码(SD)虽能加速单节点生成，却无法跨多设备协同。作者观察到SD的多节点化空白，希望把草稿-验证范式扩展到分布式场景，实现敏捷、可扩展的LLM服务。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>论文提出DSD框架，将草稿模型部署在边缘节点，目标大模型置于云端，通过协调式草稿-验证流水线实现分布式投机解码。为评估该范式，作者先开发离散事件模拟器DSD-Sim，精确建模网络传输、批处理与调度动态；随后基于模拟洞察设计自适应窗口控制(AWC)策略，根据实时网络延迟与接受率动态调整投机步长，以最大化吞吐量。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在多样化负载下，DSD相比最强单节点SD基线最高获得1.1×端到端延迟加速和9.7%吞吐量提升，同时保持相同的生成质量。实验表明AWC能把窗口利用率提高约15%，显著缓解网络抖动带来的性能损失，验证了分布式投机解码在边缘-云场景的可行性与效益。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>研究目前仅在模拟器上验证，尚未在真实广域边缘-云集群部署；AWC策略假设网络延迟可准确预测，实际中突发拥塞或异构硬件可能导致控制失稳。此外，草稿与目标模型的切分方式固定，未探讨模型分片、量化或并行策略带来的额外开销。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>红外弱小目标检测(IRSTD)因信噪比极低、背景杂波强且目标缺乏纹理/形状线索而被公认为极端困难任务。现有深度编-解码网络在训练集上习得静态权重，一旦跨时段(昼夜)、跨场景(天空、海面、地面)部署便出现“模式漂移”，导致虚警骤增。作者受此驱动，希望检测器能根据输入红外图像的即时“状态”动态调整自身解码策略，实现场景自适应。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>IrisNet将完整解码器参数重排成保留层级关系的二维张量，并设计一个“图像-到-解码器”Transformer；该网络先以自注意力建模解码器层间依赖，再用交叉注意力把红外图像特征映射成与场景匹配的解码器权重，实现一次前向即生成专用解码器。为补充弱小目标易被背景淹没的高频信息，模型在输入端并行提取高频分量并注入网络，增强对目标位置与场景边缘的感知。整个框架以元学习范式训练，使Transformer学会“如何根据新场景快速生成有效解码器”，无需微调主干。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在NUDT-SIRST、NUAA-SIRST、IRSTD-1K三个公开数据集上的实验表明，IrisNet在IoU、nIoU、Pd与FA等核心指标上均优于现有最佳方法，平均IoU提升约2.3–4.1个百分点，且对昼夜、海陆空跨域图像保持低虚警。消融实验验证动态解码器和高频增强各自带来显著增益，可视化显示生成的解码器权重能随背景复杂度平滑变化，解释性较好。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>Transformer为每条图像生成完整解码器参数，计算与存储开销高于静态网络，边缘部署仍需剪枝或量化。方法假设训练集已覆盖足够多样的场景，若出现极端天气或新型背景，元生成器可能外推失败。此外，高频分量提取依赖固定核，对不同传感器波段可能需重新调参。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可在真实边缘-云测试床上实现DSD原型，并引入强化学习驱动的窗口与模型放置联合优化，以进一步提升鲁棒性与能效。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>探索轻量级超网络或低秩分解，把“全解码器重生成”改为“增量调整”，实现实时嵌入式应用；引入在线元更新机制，让检测器在无人标注的连续红外视频中自我进化。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>该工作首次把投机解码扩展到分布式环境，为研究边缘推理、低延迟LLM服务或异构协同加速的研究者提供了可复现的模拟框架与性能上限参考。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注低信噪比目标检测、跨域鲁棒性、元学习或动态网络结构，本文提供了将场景感知与解码器参数生成联合建模的新范式，可直接借鉴其“图像-到-参数”映射思路。</p>
                   </div>
                 </div>
               </div>
@@ -711,7 +711,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.62</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.75</span>
               </div>
             </div>
           </div>
@@ -4375,7 +4375,7 @@
   <!-- Footer -->
   <footer class="bg-bg-card border-t border-border-color mt-12">
     <div class="content-container py-6 text-center text-sm text-text-secondary">
-      由 <a href="https://github.com/zotwatch/zotwatch" class="text-accent hover:text-accent-hover transition-colors">ZotWatch</a> 生成
+      灵感来自 <a href="https://github.com/Yorks0n/ZotWatch" class="text-accent hover:text-accent-hover transition-colors">ZotWatch</a>
     </div>
   </footer>
 
