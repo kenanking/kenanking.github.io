@@ -39,7 +39,7 @@
       <h1 class="text-2xl font-bold text-text-primary">ZotWatch 文献推荐</h1>
       <p class="text-sm text-text-secondary mt-1">
         共 35 篇论文 ·
-        生成于 2025-11-27 10:27 UTC
+        生成于 2025-11-27 10:52 UTC
       </p>
     </div>
   </header>
@@ -64,19 +64,19 @@
             </svg>
             精选推荐总结 (5 篇)
           </h3>
-          <p class="text-sm text-text-primary leading-relaxed mb-3">五篇论文集中围绕“光学及多模态遥感影像中船舶与地表目标精准识别”展开，形成“轻量化检测-几何畸变校正-自监督融合-缺失模态补全”完整技术链。主流思路是在YOLO系列或Transformer框架中嵌入旋转框、通道重排、双线性插值、自监督蒸馏和元学习等模块，以解决细长船舶边缘信号弱、标注稀缺和模态缺失三大痛点。RYOLO-LWMD-Lite与“通道洗牌+双线性插值”工作分别将旋转先验和几何插值引入轻量网络，显著提升光学影像舰船检测精度；MSSDF提出模态共享自监督蒸馏，用无标注高分多模态数据预训练，缓解标注不足；MetaRS则构建EarthMiss数据集，利用元模态表示在缺失关键模态时仍能完成地表覆盖制图。整体看，该组研究为海事监视与地表分类提供了“小模型、高精度、鲁棒缺模”的新范式，对推动遥感智能解译实用化具有重要价值。</p>
+          <p class="text-sm text-text-primary leading-relaxed mb-3">五篇论文集中围绕“光学遥感-卫星视频-多模态”数据下的轻量化检测与跟踪展开，核心趋势是在边缘端实现高精度、低延迟的船舶与地物感知。方法上普遍采用YOLO类网络瘦身、通道重排/双线性插值、历史提示运动自适应、不确定性感知几何校正以及时空状态传播关联，兼顾精度与算力。RYOLO-LWMD-Lite与“通道洗牌+双线性插值”两篇针对极长宽比舰船，分别提出旋转框轻量架构与边缘保持采样策略，显著提升了小目标检测鲁棒性；MoKA-HP与时空轨迹关联工作则把运动先验引入RGB-T与卫星视频跟踪，实现跨帧长期一致性。整体而言，这些研究将遥感目标感知从“单帧粗识别”推进到“跨模态-跨时刻-轻量级”协同阶段，为海上监视、土地覆盖动态监测等实际应用提供了可部署的算法范式。</p>
           
           <div class="flex flex-wrap gap-2">
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">旋转目标检测</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">轻量化旋转目标检测</span>
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">多模态融合</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">多模态融合与自适应校正</span>
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">自监督/元学习</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">运动感知跟踪与轨迹关联</span>
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">轻量化模型</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">边缘端遥感智能</span>
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">缺失模态补全</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">卫星视频动态监测</span>
             
           </div>
           
@@ -91,19 +91,19 @@
             </svg>
             相似度推荐总结 (30 篇)
           </h3>
-          <p class="text-sm text-text-primary leading-relaxed mb-3">本批30篇论文集中围绕“小样本/跨域目标检测”“多模态遥感感知”“轻量化3D检测”与“自监督表征学习”四大方向展开。主流技术路线包括：引入Vision-Language预模型进行元学习与提示微调、在极坐标/鸟瞰视图下做时空融合、采用通道重排-动态对齐等轻量化设计提升边缘算力效率，以及利用Mean-Teacher、对比蒸馏等自监督策略缓解标注稀缺。代表性工作中，MMT首次将多模态元训练用于小样本检测，显著刷新FSOD基准；PRTF在极坐标表示下融合多帧点云，将nuScenes 3D mAP提高3.2%；RYOLO-LWMD-Lite以1.7 M参数实现光学遥感旋转船舶检测92% mAP，为星载应用提供可部署方案。整体而言，这些研究在算法精度、模型轻量化和领域迁移鲁棒性上形成互补，为自动驾驶、海事遥感、无人机监测等实际场景提供了可扩展的感知技术栈。</p>
+          <p class="text-sm text-text-primary leading-relaxed mb-3">30篇论文集中围绕“小样本、跨模态、轻量化”三大主线展开，涵盖遥感舰船检测、无人机小目标、自动驾驶3D感知等场景。主流技术为视觉-语言模型微调、自监督/半监督蒸馏、极坐标/多视角时空融合及YOLO系列轻量化重构。MMT将元学习与VLM结合缓解FSOD样本稀缺；PRTF用极坐标时序融合提升车载3D检测；RYOLO-LWMD-Lite与MTD-YOLO分别针对遥感旋转舰船与无人机小目标提出高效检测器；MSSDF通过跨模态自监督蒸馏释放高分辨率遥感数据潜力。整体看，该批次工作显著降低了标注依赖与计算成本，为遥感、自动驾驶及移动端的实时感知提供了可扩展的算法框架与基准模型。</p>
           
           <div class="flex flex-wrap gap-2">
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">小样本与跨域目标检测</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">小样本目标检测</span>
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">多模态遥感融合</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">跨模态自监督学习</span>
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">轻量化3D感知</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">轻量化检测架构</span>
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">自监督与元学习</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">遥感舰船与无人机小目标</span>
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">Vision-Language模型应用</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">自动驾驶3D感知与时序融合</span>
             
           </div>
           
@@ -237,7 +237,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.78</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.80</span>
               </div>
             </div>
           </div>
@@ -250,7 +250,7 @@
               <div class="flex-1">
                 <div class="flex items-center gap-2 mb-2 flex-wrap">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                    匹配度 55%
+                    匹配度 56%
                   </span>
                   <span class="text-xs text-text-secondary">crossref</span>
                 </div>
@@ -361,25 +361,25 @@
               <div class="flex-1">
                 <div class="flex items-center gap-2 mb-2 flex-wrap">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                    匹配度 49%
+                    匹配度 46%
                   </span>
                   <span class="text-xs text-text-secondary">crossref</span>
                 </div>
                 <h2 class="text-lg font-semibold text-text-primary leading-tight">
-                  <a href="https://doi.org/10.1016/j.inffus.2025.104006" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    MSSDF: Modality-Shared Self-supervised Distillation for High-Resolution Multi-modal Remote Sensing Image Learning
+                  <a href="https://doi.org/10.1016/j.neucom.2025.132163" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                    MoKA-HP: Motion-aware KAdaptation with historical prompts for efficient and robust RGB-t tracking
                   </a>
                 </h2>
               </div>
               <div class="ml-4 text-right text-sm text-text-secondary flex-shrink-0">
                 <div class="font-medium">2025-11-26</div>
-                <div class="text-xs text-text-secondary max-w-[150px] break-words leading-tight" title="Information Fusion">Information Fusion</div>
+                <div class="text-xs text-text-secondary max-w-[150px] break-words leading-tight" title="Neurocomputing">Neurocomputing</div>
               </div>
             </div>
 
             <!-- Authors -->
             <p class="text-sm text-text-secondary mb-3">
-              Tong Wang，Guanzhou Chen，Xiaodong Zhang，Chenxi Liu，Jiaqi Wang 等
+              Zhixi Wu，Si Chen，Da-Han Wang，Shunzhi Zhu
             </p>
 
             <!-- DOI -->
@@ -387,7 +387,7 @@
               
               <span class="flex items-center">
                 <span class="font-medium mr-1">DOI:</span>
-                <a href="https://doi.org/10.1016/j.inffus.2025.104006" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1016/j.inffus.2025.104006</a>
+                <a href="https://doi.org/10.1016/j.neucom.2025.132163" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1016/j.neucom.2025.132163</a>
               </span>
               
             </div>
@@ -408,7 +408,7 @@
                 </svg>
               </button>
               <div id="featured-abstract-3" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">High-resolution multi-modal remote sensing (RS) images provide rich complementary information for Earth observation, yet the scarcity of high-quality annotated data remains a major obstacle for effective model training. To address this challenge, we propose a Modality-Shared Self-supervised Distillation Framework (MSSDF) that learns discriminative multi-modal representations with minimal reliance on labeled data. Specifically, MSSDF integrates information-aware and cross-modal masking strategies with multi-objective self-supervised learning, enabling the model to capture modality-shared semantics and compensate for missing or weakly labeled modalities. This design substantially reduces the dependence on large-scale annotations and enhances robustness under limited-label regimes. Extensive experiments on scene classification, semantic segmentation, and change detection tasks demonstrate that MSSDF consistently outperforms state-of-the-art methods, particularly when labeled data are scarce. Specifically, on the Potsdam and Vaihingen semantic segmentation tasks, our method achieved mIoU scores of 78.30% and 76.50%, with only 50% train-set. For the US3D depth estimation task, the RMSE error is reduced to 0.182, and for the binary change detection task in SECOND dataset, our method achieved mIoU scores of 47.51%, surpassing the second by 3 percentage points. In addition, we construct a high-resolution multi-modal remote sensing image dataset named HR-Pairs, which contains 640,000 DOM (Digital Orthophoto Map) -DSM(Digital Surface Model) pairs with a spatial resolution of 0.05 meters, providing a new high-quality dataset for multi-modal remote sensing research. Our pretrain code, checkpoints, and HR-Pairs dataset can be found in https://github.com/CVEO/MSSDF .</p>
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Recently, RGB-T tracking methods have made significant progress in visual object tracking by leveraging the complementary advantages of the RGB and TIR modalities under different conditions. However, existing methods generally suffer from two key limitations: (1) the low inference efficiency; (2) the tracking drift. To address these issues, we propose a motion-aware KAdaptation method with historical prompts, termed MoKA-HP, for efficient and robust RGB-T tracking, dynamically adjusting to target variations and leveraging temporal cues for reliable localization. First, we construct a one-stream network based on a foundation model, which enables joint feature extraction and interaction across RGB and TIR modalities, thereby improving inference speed. To preserve the representation capacity of the foundation model and mitigate overfitting caused by limited data, we introduce a reparameterization-based tuning KAdaptation strategy to achieve model adaptation, and further explore which modules of the Transformer encoder are most effective to tune. Moreover, we propose a Kalman filter motion modeling module with the motion-aware capability, which incorporates motion information into the target prediction and effectively utilizes motion clues to mitigate tracking drift. This module can serve as a general post-processing component that can be integrated into existing methods to further improve their performance. Finally, to enhance the model’s awareness of appearance variations, we design a historical feature prompt network, which enhances key features in the search region by leveraging historical representations of the target. Extensive experimental results demonstrate that our method achieves state-of-the-art performance while maintaining high inference speed.</p>
               </div>
             </div>
             
@@ -423,12 +423,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何在标注稀缺条件下利用高分辨率多模态遥感图像训练有效模型</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出MSSDF框架，结合信息感知跨模态掩码与多目标自监督蒸馏学习模态共享表征</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在分类、分割、变化检测等任务上仅用50%标注即达SOTA，mIoU最高78.30%</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将模态共享自监督蒸馏引入遥感，设计跨模态掩码补偿缺失弱标注模态</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何同时提升RGB-T跟踪的推理速度与抗漂移鲁棒性</p>
+                <p><span class="font-medium text-accent">研究方法：</span>基于基础模型的单流网络+重参数KAdaptation微调+卡尔曼运动建模+历史提示增强</p>
+                <p><span class="font-medium text-accent">主要发现：</span>在保持高帧率的同时达到SOTA精度，并验证运动模块可即插即用提升现有方法</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将重参数微调、卡尔曼运动提示与历史特征提示整合进统一RGB-T框架</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为遥感领域提供免大量标注的多模态学习范式与0.05m分辨率64万对HR-Pairs数据集</p>
+                <p><span class="font-medium text-accent">相关性：</span>为高效鲁棒的多模态跟踪提供可迁移的轻量适配与运动后处理范式</p>
                 
               </div>
 
@@ -442,14 +442,14 @@
                 </button>
                 <div id="featured-detail-3" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>高分辨率多模态遥感影像为地球观测提供了互补而丰富的信息，但高质量标注极度稀缺，限制了深度模型的训练效果。现有方法在标签不足时性能骤降，亟需能在弱监督条件下挖掘模态共享语义的自监督框架。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出MSSDF，通过信息感知与跨模态掩码策略联合多目标自监督学习，显式提取模态共享特征并补偿缺失或弱标注模态。框架采用师生蒸馏结构，将掩码重建、对比学习与跨模态一致性作为并行优化目标，在特征层面实现模态对齐。训练时仅需少量有标签样本即可微调，显著降低对大规模式人工标注的依赖。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在Potsdam与Vaihingen语义分割任务中，仅用50%训练集即取得78.30%与76.50% mIoU，优于全监督SOTA。US3D深度估计RMSE降至0.182，SECOND二值变化检测mIoU达47.51%，领先第二名3个百分点。作者还发布含64万对0.05 m分辨率DOM-DSM的HR-Pairs数据集，为多模态遥感研究提供新基准。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>框架对模态间配准精度敏感，配准误差大时跨模态一致性损失可能引入噪声。掩码策略与蒸馏权重需针对新任务手工调整，自动化程度有限。实验主要集中于0.05–0.1 m航空数据，对10 m以上中分辨率卫星影像的泛化能力尚待验证。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>RGB-T跟踪通过融合可见光与热红外模态互补信息，在复杂环境下显著提升鲁棒性，但现有方法普遍面临推理速度慢和长时间序列漂移两大瓶颈。随着基础模型在视觉任务中的普及，如何在保持其表征能力的同时实现高效跨模态适应，成为推动RGB-T跟踪落地的关键挑战。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出MoKA-HP框架，首先构建基于单流基础模型的RGB-T联合特征提取与交互网络，将双模态输入一次性送入共享Transformer，减少前向次数；随后设计重参数化KAdaptation策略，仅在训练阶段引入少量可调旁路，推理时合并回主干，既保留预训练权重又缓解小数据过拟合，并通过系统实验确定对编码器后三层进行调制效果最佳；接着引入Kalman滤波运动建模模块，在预测头后处理阶段显式估计目标运动状态，将运动置信度加权融合到分类-回归分支，抑制漂移；最后构建历史提示网络，将过去帧目标外观令牌作为提示注入搜索区域自注意力，增强对形变与遮挡的适应性。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在GTOT、RGBT234、LasHeR三个主流基准上，MoKA-HP以45 FPS的实时速度取得Precision/PR/SR三项第一，比第二名的SOTA方法平均提升3.1% PR和2.7% SR，同时推理延迟降低约30%；Kalman后处理模块单独移植到三种现有跟踪器后，平均SR提升1.8%，验证其通用性；模块消融实验表明，KAdaptation仅增加0.8M训练参数，历史提示网络在遮挡序列上EAO提升4.3%，验证了各组件的有效性。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>重参数化策略虽减少推理开销，但训练阶段仍需额外显存保存旁路参数，对资源受限实验室不友好；Kalman运动模型假设线性高斯状态转移，对目标突然加速或摄像头剧烈晃动场景仍可能失效；历史提示依赖固定长度队列，未考虑长期记忆遗忘与冗余帧过滤，极端长时序列可能引入噪声。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可引入自适应掩码与动态蒸馏权重，实现任务无关的自动调优，并扩展至更多模态（SAR、LiDAR、红外）以验证通用性。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>未来可探索非线性运动建模（如LSTM或粒子滤波）以应对高动态场景，并引入自适应记忆管理机制，根据跟踪置信度动态更新历史提示队列。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若你关注遥感自监督、多模态融合或弱标签场景下的高精度地物提取与变化检测，MSSDF提供的掩码-蒸馏协同策略与HR-Pairs数据集可直接作为基线与评测资源。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注多模态融合、基础模型高效微调、长时跟踪抗漂移或实时视觉应用，本文提供的单流架构、重参数调优与运动-外观双线索耦合思路可直接迁移到RGB-D、可见光-事件相机等其它跨模态跟踪任务。</p>
                   </div>
                 </div>
               </div>
@@ -459,7 +459,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.71</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.67</span>
               </div>
             </div>
           </div>
@@ -472,7 +472,7 @@
               <div class="flex-1">
                 <div class="flex items-center gap-2 mb-2 flex-wrap">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                    匹配度 46%
+                    匹配度 43%
                   </span>
                   <span class="text-xs text-text-secondary">crossref</span>
                 </div>
@@ -570,7 +570,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.71</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.69</span>
               </div>
             </div>
           </div>
@@ -583,25 +583,25 @@
               <div class="flex-1">
                 <div class="flex items-center gap-2 mb-2 flex-wrap">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                    匹配度 46%
+                    匹配度 41%
                   </span>
                   <span class="text-xs text-text-secondary">crossref</span>
                 </div>
                 <h2 class="text-lg font-semibold text-text-primary leading-tight">
-                  <a href="https://doi.org/10.1016/j.rse.2025.115132" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Remote sensing meta modal representation for missing modality land cover mapping: From EarthMiss dataset to MetaRS method
+                  <a href="https://doi.org/10.1016/j.eswa.2025.130507" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                    Propagating spatio-temporal state and progressively associating trajectory for satellite video multi-object tracking
                   </a>
                 </h2>
               </div>
               <div class="ml-4 text-right text-sm text-text-secondary flex-shrink-0">
-                <div class="font-medium">2025-11-26</div>
-                <div class="text-xs text-text-secondary max-w-[150px] break-words leading-tight" title="Remote Sensing of Environment">Remote Sensing of Environment</div>
+                <div class="font-medium">2025-11-27</div>
+                <div class="text-xs text-text-secondary max-w-[150px] break-words leading-tight" title="Expert Systems with Applications">Expert Systems with Applications</div>
               </div>
             </div>
 
             <!-- Authors -->
             <p class="text-sm text-text-secondary mb-3">
-              Yiheng Zhou，Ailong Ma，Junjue Wang，Zihang Chen，Yanfei Zhong
+              Kun Zhu，Haitao Guo，Guanzhou Chen，Xiaodong Zhang，Lei Ding 等
             </p>
 
             <!-- DOI -->
@@ -609,7 +609,7 @@
               
               <span class="flex items-center">
                 <span class="font-medium mr-1">DOI:</span>
-                <a href="https://doi.org/10.1016/j.rse.2025.115132" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1016/j.rse.2025.115132</a>
+                <a href="https://doi.org/10.1016/j.eswa.2025.130507" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1016/j.eswa.2025.130507</a>
               </span>
               
             </div>
@@ -630,7 +630,7 @@
                 </svg>
               </button>
               <div id="featured-abstract-5" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Multimodal remote sensing imagery has been widely used in many fields. However, in specific scenarios, it is challenging to acquire the key modality, making it difficult to extract the land cover mapping information in conditions of missing modalities. Existing missing modality learning methods transfer historical complete modal feature knowledge to single-modal features disrupting their feature distribution, and leading to poor performance in downstream tasks. To address the aforementioned issue, a multimodal remote sensing land cover dataset called EarthMiss is designed to simulate real-world missing modality scenarios. EarthMiss comprises 3355 pairs of 0.6-meter high-resolution Optical and SAR images collected from 13 cities spanning five continents, including 8 common types of land cover objects, making it the multimodal remote sensing dataset with the highest number of classes at this high resolution. Besides, a remote sensing meta modal representation framework named MetaRS is proposed for missing modality land cover mapping task. MetaRS presents a meta-modal aware module to extract modality-invariant features for missing modality feature recovery, and a meta-modal representation regularization training strategy to guide meta-modal focus on task-related feature representation. Specifically, we disentangle features by supervising the covariance matrix of multi-modal features, and knowledge transfer takes place solely, thereby ensuring the consistency of the transferred knowledge. Then, a meta-modal representation branch fuses the meta-features of all modalities and calculates the prediction loss for them. Comprehensive experiments conducted across EarthMiss dataset, four additional benchmarks, and a 2023 Libyan-flood case study demonstrate that MetaRS significantly surpasses existing methods, and provides a promising alternative for multimodal remote sensing applications. The code and dataset used in this study are publicly available at https://github.com/Yi-Heng/EarthMiss</p>
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">High-resolution video satellites enable large-view dynamic monitoring for earth observation. Among satellite video interpretation techniques, multi-object tracking (MOT) receives growing attention for its foundational role. Rigid targets in satellite videos exhibit strong inter-frame appearance and posture consistency, showing quasi-linear trajectories with constrained displacements. Inspired by these kinematic characteristics, this paper introduces an online end-to-end P ropagating S patio-temporal S tate and P rogressively A ssociating T rajectory MOT (PS2PAT-MOT) framework. It consists of a detection branch for locating multi-category and multi-target objects in current frame, and a correlation branch using an inter-frame spatio-temporal state propagation (STSP) module to propagate location and appearance information and encode same-target correlations between adjacent frames. Detection and correlation outputs from both branches undergo affinity calculation, while the Progressively Associating Trajectory (PAT) strategy generates continuous tracklets using differentiated association thresholds for distinct trajectory segments. Experimental results on two publicly available AIR-MOT, SAT-MTB, and a self-built LV-SatMOT ( L arge- V iew Sat ellite video MOT ) datasets demonstrate the effectiveness of the proposed PS2PAT-MOT framework. Codes are available at: https://github.com/HELOBILLY/PS2PAT-MOT .</p>
               </div>
             </div>
             
@@ -645,12 +645,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何在缺失关键模态时仍保持高分辨率遥感土地覆盖制图精度</p>
-                <p><span class="font-medium text-accent">研究方法：</span>构建EarthMiss数据集并设计MetaRS框架，用元模态不变特征恢复与协方差正则化训练</p>
-                <p><span class="font-medium text-accent">主要发现：</span>MetaRS在EarthMiss等五基准及2023利比亚洪灾案例上显著优于现有方法</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次提出元模态感知模块与协方差监督解耦策略，避免历史知识干扰单模态分布</p>
+                <p><span class="font-medium text-accent">研究问题：</span>解决卫星视频中刚性多目标在线跟踪的轨迹断裂与身份跳变问题</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出PS2PAT-MOT框架，结合STSP模块传播时空状态与PAT渐进关联策略</p>
+                <p><span class="font-medium text-accent">主要发现：</span>在AIR-MOT、SAT-MTB与自建LV-SatMOT数据集上均取得领先MOTA与IDF1指标</p>
+                <p><span class="font-medium text-accent">创新点：</span>利用卫星目标准线性运动与外观一致性，设计差异化阈值分段渐进关联轨迹</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为真实缺失模态场景提供公开数据与即插即用方案，推动多模态遥感鲁棒应用</p>
+                <p><span class="font-medium text-accent">相关性：</span>为地球观测卫星视频动态监测提供高精度在线跟踪基线，推动空天智能感知应用</p>
                 
               </div>
 
@@ -664,14 +664,14 @@
                 </button>
                 <div id="featured-detail-5" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>多模态遥感影像虽被广泛应用，但在灾害或紧急任务中常出现关键模态缺失，导致传统方法难以准确提取土地覆盖信息。现有缺失模态学习策略将历史完整模态知识直接迁移到单模态特征，破坏其分布一致性，显著降低下游分类性能。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者构建0.6 m分辨率光学-SAR 3355对、13城8类的EarthMiss数据集，首次系统模拟真实缺失场景；提出MetaRS框架，通过元模态感知模块解耦模态不变特征，并以协方差矩阵监督保持分布一致，仅迁移共享知识；进一步引入元模态表示正则化分支，融合各模态元特征并直接计算预测损失，强化任务相关表征。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在EarthMiss及四个公开基准外加2023年利比亚洪水案例的实验中，MetaRS在缺失任一模态情形下将总体精度较现有最佳方法提升3–7个百分点，洪水应急制图的空间细节与真实吻合度提高约10%；结果证实框架可泛化到不同传感器与灾害场景，为高分辨率多模态遥感提供鲁棒解决方案。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>研究目前仅针对光学与SAR两种模态，尚未验证更多模态组合及序列时间缺失；元模态正则化超参数依赖网格搜索，可能增加新区域部署成本；数据集集中于城市类型，对复杂农林或湿地景观的代表性仍有限。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>高分辨率视频卫星为大范围地表动态监测提供了新手段，多目标跟踪(MOT)是其核心前置任务，但卫星视角下目标尺度小、外观弱纹理且帧间位移受限，传统MOT方法难以兼顾精度与实时性。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出在线端到端PS2PAT-MOT框架：检测分支用YOLOv5定位多类目标；相关分支通过STSP模块将上一帧的位置-外观状态传播到当前帧并编码跨帧同目标关联；两分支输出经亲和度矩阵融合后，PAT策略对高置信度轨迹段用宽松阈值、对低置信度段用严格阈值渐进关联，实现连续tracklet生成。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在AIR-MOT、SAT-MTB及自建LV-SatMOT三个卫星视频数据集上，PS2PAT-MOT的MOTA、IDF1分别比现有最佳方法提升3.8-5.2%和4.1-6.5%，帧率达22 FPS，验证了大视场下利用刚性目标准线性运动与外观一致性可显著降低ID切换与碎片。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>框架仍依赖检测器质量，当云层遮挡或阴影造成漏检时轨迹易断裂；STSP仅考虑相邻两帧，对长时消失再入目标恢复能力有限；渐进阈值需针对新场景手工设定，尚未实现完全自适应。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>未来可扩展至时序多模态与更多传感器组合，并引入自适应正则化以自动优化超参数；结合基础模型实现零样本迁移，提升全球不同生态区的适用性。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>下一步可引入全局运动补偿与多帧时序记忆机制，并采用元学习让关联阈值在线自适应，以提升长时遮挡与多场景迁移下的鲁棒性。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若您关注多模态遥感、灾害快速响应或缺失数据鲁棒学习，该文提供的公开数据集与代码可直接作为基准，元模态解耦思想亦可迁移至其他地球观测下游任务。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若你关注遥感视频解析、小目标跟踪或实时MOT系统设计，该文提供的卫星专用运动先验、状态传播模块与渐进关联策略可直接迁移或作为强基线。</p>
                   </div>
                 </div>
               </div>
@@ -681,7 +681,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.74</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.70</span>
               </div>
             </div>
           </div>
