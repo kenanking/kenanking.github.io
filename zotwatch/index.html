@@ -39,7 +39,7 @@
       <h1 class="text-2xl font-bold text-text-primary">ZotWatch 文献推荐</h1>
       <p class="text-sm text-text-secondary mt-1">
         共 35 篇论文 ·
-        生成于 2025-11-27 13:29 UTC
+        生成于 2025-11-27 16:15 UTC
       </p>
     </div>
   </header>
@@ -64,19 +64,19 @@
             </svg>
             精选推荐总结 (5 篇)
           </h3>
-          <p class="text-sm text-text-primary leading-relaxed mb-3">五篇论文集中围绕“恶劣条件下可靠感知”展开，分别针对光学/红外/雷达等多源遥感数据，提出轻量化、旋转框、跨模态协同等创新思路。主流技术路线以YOLO系检测框架、Vision-Language Transformer、通道重排-双线性插值、元学习解码器及大规模雷达基础模型微调为主，兼顾精度与部署效率。RYOLO-LWMD-Lite与“通道洗牌+双线性插值”工作突破了细长船舶旋转检测与边缘信号衰减瓶颈，将mAP提升3-5%；IrisNet利用红外状态感知元解码器在极低信噪比场景下把虚警率降低一个量级；而Vision-Language共训练与雷达基础模型扩展研究则首次把多任务统一建模和大数据迁移引入遥感领域，显著增强跨任务、跨传感器泛化能力。整体看，该组成果为海事监视、夜视预警和全天候遥感提供了一整套“轻量-旋转-多模态-大模型”技术范式，对后续学术研究与工程落地具有直接推动作用。</p>
+          <p class="text-sm text-text-primary leading-relaxed mb-3">五篇论文围绕“多模态遥感船舶感知”展开，共同趋势是从单任务CNN走向大核、Transformer与视觉-语言基础模型，并在SAR、光学及雷达三种传感器上追求恶劣天气下的鲁棒检测与分类。方法层面，大核卷积、旋转框检测、通道重排/双线性插积、协同多任务自监督以及规模化预训练成为主流技术。MBLKNet首次将大核卷积与多任务自监督引入SAR船舶分类，显著提升小样本精度；RYOLO-LWMD-Lite则针对光学图像设计轻量旋转YOLO，兼顾边缘部署与细长船检测；Scaling Foundation Models把雷达场景理解推向基础模型时代，证明跨天气预训练可迁移至下游检测分割。整体而言，这些工作突破了传感器限制，为构建全天候、跨任务、统一架构的海上监视系统提供了新的网络范式与基准模型。</p>
           
           <div class="flex flex-wrap gap-2">
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">旋转目标检测</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">多模态遥感船舶感知</span>
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">轻量化模型设计</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">大核卷积与旋转框检测</span>
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">多模态/跨任务学习</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">多任务自监督与基础模型</span>
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">低信噪比小目标感知</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">全天候鲁棒性</span>
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">基础模型扩展与迁移</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">轻量化部署</span>
             
           </div>
           
@@ -91,19 +91,19 @@
             </svg>
             相似度推荐总结 (30 篇)
           </h3>
-          <p class="text-sm text-text-primary leading-relaxed mb-3">这批30篇论文集中围绕“生成-理解-决策”一体化展开，核心趋势是把大规模预训练模型（扩散、VLM、SAM、MoE-LLM）作为底座，通过元学习、流匹配、多智能体协作等机制，在数据极度稀缺或开放词汇条件下实现高质量生成与感知。方法层面，扩散模型正向像素级端到端（PixelDiT）与一步式流匹配（CFM、MeanFlow）演进；3D/4D 场景重建引入视觉几何 Transformer 与运动线索挖掘（VGGT4D）；检测分割任务则普遍采用“提示-微调-自举”范式，如 SAM-MI、ReSAM 用掩码注入与自提示提升开放域分割，MMT 将多模态元训练用于小样本检测。代表性贡献包括：PixelDiT 首次在像素空间训练 DiT 避免自编码器损失，VGGT4D 把运动先验嵌入 VGGT 实现动态 4D 重建，Mosaic Pruning 给出 MoE 的层级通用剪枝框架保障大模型可扩展性。整体而言，这些工作将生成模型、基础模型与强化学习/元学习深度耦合，为自动驾驶、遥感、红外小目标等实际场景提供了低数据依赖、高泛化且可解释的新一代视觉智能范式。</p>
+          <p class="text-sm text-text-primary leading-relaxed mb-3">30篇论文集中围绕多模态生成、少样本/开集感知与高效模型压缩三大方向展开。主流技术路线包括：将扩散模型、Transformer与SAM类基础模型向像素级、3D/4D时空及红外等特殊域迁移；用元学习、多智能体链式推理与MoE剪枝提升小样本检测与大模型效率。MMT把VLM引入少样本检测，PixelDiT直接在像素空间训练扩散Transformer，SAM-MI与ReSAM分别通过掩码注入与自提示策略把SAM扩展到开放词汇与遥感分割。整体来看，这些工作推动基础模型向“数据更少、模态更多、落地更轻”的实用化阶段迈进，为自动驾驶、遥感、AIGC等领域提供了可迁移且高效的算法框架。</p>
           
           <div class="flex flex-wrap gap-2">
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">生成式扩散与流匹配</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">多模态生成与扩散模型</span>
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">多模态基础模型微调</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">少样本/开集感知</span>
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">小样本/开放词汇检测分割</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">SAM与基础模型迁移</span>
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">3D/4D 场景重建与运动建模</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">3D/4D时空重建</span>
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">MoE 大模型压缩与多智能体协作</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">模型压缩与MoE剪枝</span>
             
           </div>
           
@@ -139,7 +139,124 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 61%
+                  匹配度 75%
+                </span>
+                <span class="text-xs text-text-secondary">crossref</span>
+                <!-- Date: visible on mobile, hidden on md+ -->
+                <span class="text-xs text-text-secondary md:hidden">· 2025-11-27</span>
+              </div>
+              <!-- Title and date row -->
+              <div class="flex items-start justify-between gap-4">
+                <h2 class="text-lg font-semibold text-text-primary leading-tight flex-1">
+                  <a href="https://doi.org/10.1080/10095020.2025.2584937" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                    MBLKNet: a large kernel convolution-driven network with multi-task self-supervised learning for SAR maritime target classification
+                  </a>
+                </h2>
+                <!-- Date: hidden on mobile, visible on md+ -->
+                <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
+                  <div class="font-medium">2025-11-27</div>
+                </div>
+              </div>
+              <!-- Venue: below title on mobile -->
+              <div class="mt-1 text-xs text-text-secondary" title="Geo-spatial Information Science">Geo-spatial Information Science</div>
+            </div>
+
+            <!-- Authors -->
+            <p class="text-sm text-text-secondary mb-3">
+              Shuang Yang，Xiang Zhang，Wentao An，Guiyu Li，Zhiqing Li 等
+            </p>
+
+            <!-- DOI -->
+            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
+              
+              <span class="flex items-center">
+                <span class="font-medium mr-1">DOI:</span>
+                <a href="https://doi.org/10.1080/10095020.2025.2584937" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1080/10095020.2025.2584937</a>
+              </span>
+              
+            </div>
+
+            <!-- Abstract (collapsible) -->
+            
+            <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
+              <button id="btn-featured-abstract-1" onclick="toggleSection('featured-abstract-1')"
+                      class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
+                <span class="flex items-center">
+                  <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                  原文摘要
+                </span>
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-featured-abstract-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div id="featured-abstract-1" class="section-expand collapsed">
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Synthetic aperture radar (SAR) maritime target classification serves as a critical component in modern maritime surveillance. While deep learning networks, particularly convolutional neural networks (CNNs), have driven substantial progress in this domain, three key challenges constrain their performance and practical deployment: 1) In SAR maritime images, complex inshore backgrounds and speckle noise are prevalent. Targets such as ships span a wide range of scales due to different imaging resolutions and intrinsic size variability, exacerbating inter-class similarity and intra-class variability, 2) Labeled data for SAR maritime target classification are scarce, and sensor imaging modes differ markedly across platforms, and 3) Existing CNNs that fuse traditional hand-crafted features often explicitly treat hand-crafted feature extraction as a necessary component of the network and primarily focus on classification performance, overlooking the requirement to efficiently leverage their feature extraction capabilities in downstream tasks. To overcome these challenges, this article proposes a novel SAR maritime target classification network (MBLKNet) based on large kernel convolution and multi-task self-supervised learning. In MBLKNet, four improved designs for network structure are proposed to enhance classification accuracy: 1) macro design, 2) multi-branch large kernel convolution module (MBLKCM), 3) lightweight channel-interactive multi-layer perceptron (LCIMLP), and 4) micro design. In addition, a multi-resolution unlabeled SAR maritime target dataset (SL-SARShip) and a masked image modeling framework, HOGSparK, are proposed to enable the pre-training of MBLKNet under joint supervision of pixel and HOG features. Comparison results on OpenSARShip 2.0 and FUSAR-Ship with state-of-the-art networks, as well as experiments on SSDD for SAR downstream target detection and instance segmentation, demonstrate that the proposed MBLKNet achieves superior performance and strong feature extraction ability.</p>
+              </div>
+            </div>
+            
+
+            <!-- AI Summary -->
+            
+            <div class="bg-accent/10 rounded-lg p-4 mb-4 border border-accent/30">
+              <h3 class="text-sm font-semibold text-accent mb-3 flex items-center">
+                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/>
+                </svg>
+                AI 总结
+              </h3>
+              <div class="space-y-2 text-sm text-text-primary">
+                <p><span class="font-medium text-accent">研究问题：</span>解决SAR舰船分类中背景复杂、尺度差异大、标注稀缺及特征复用难三大瓶颈。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>构建大卷积核网络MBLKNet，结合多任务自监督预训练框架HOGSparK与像素-HOG联合重建。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>在OpenSARShip 2.0、FUSAR-Ship分类及SSDD检测/分割任务上均取得SOTA性能与强泛化特征。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将大核卷积、轻量通道交互MLP与HOG掩码建模引入SAR舰船自监督学习，提出SL-SARShip数据集。</p>
+                
+                <p><span class="font-medium text-accent">相关性：</span>为少样本、多分辨率SAR舰船理解提供高精度通用 backbone，可直接提升监视与下游应用效能。</p>
+                
+              </div>
+
+              <div class="mt-3 pt-3 border-t border-accent/30">
+                <button id="btn-featured-detail-1" onclick="toggleSection('featured-detail-1')"
+                        class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
+                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                  查看详细分析
+                </button>
+                <div id="featured-detail-1" class="section-expand collapsed mt-3">
+                  <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
+                    <p><span class="font-medium text-text-primary">研究背景：</span>合成孔径雷达(SAR)船舶目标分类是海上监视的核心环节，但现有深度模型受困于近岸复杂背景与斑点噪声、成像分辨率差异导致的目标尺度跨度大、以及标注稀缺三大瓶颈。作者指出，传统CNN将手工特征提取硬编码进网络，仅关注分类指标，却忽视了特征本身对下游任务的泛化价值，因此亟需一种能自监督预训练且兼顾大感受野与轻量化的架构。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>论文提出MBLKNet，其宏观设计采用阶段式降采样与残差捷径；核心是多分支大卷积模块MBLKCM，并行组合7×7、13×1、1×13等超大核分解，可在仅增加3%参数的前提下把有效感受野扩大至91×91。轻量级通道交互MLP(LCIMLP)通过分组-交互-压缩三步实现跨通道信息融合，计算量仅为标准MLP的1/4。微观层面引入可学习门控与稀疏权重衰减，抑制近岸杂波。为破解标注稀缺，作者构建0.4 M张多分辨率无标图集SL-SARShip，并设计HOGSparK掩码建模框架，联合重建像素与HOG梯度直方图，使网络在自监督阶段即学到边缘-纹理-语义三级表征。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在OpenSARShip 2.0与FUSAR-Ship上，MBLKNet以1.7 M参数取得93.8%与91.4%平均F1，分别超过最佳对比方法2.6%与3.1%，且推理速度提升1.4×。冻结骨干后迁移至SSDD检测与实例分割，AP50达到81.7%与78.9%，比ImageNet预训练ResNet50高出6.4 pp，证明其特征泛化性。消融实验显示，去除大卷积或HOG监督任一项，分类F1下降≥2.3 pp，验证了各组件的互补增益。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>论文仅验证近岸-近海场景，未涵盖极端海况与极化SAR；自监督预训练仍依赖单通道幅度图，对多极化、多波段数据的扩展性尚不明确。此外，大核卷积在嵌入式GPU上的实时性未与轻量化Transformer做横向对比，部署成本待进一步评估。</p>
+                    
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索极化-干涉SAR多模态自监督预训练，并将大核分解思想融入Transformer混合结构，以兼顾全球上下文与局部细节；同时构建面向开放集识别的增量学习框架，提升模型在未知舰型上的泛化能力。</p>
+                    
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若你从事SAR目标识别、自监督学习或遥感轻量化网络研究，MBLKNet提供了一套“大感受野+轻量MLP+手工特征自监督”的完整范式，其代码与SL-SARShip数据集已公开，可直接作为基准或预训练骨干，显著降低标注依赖并提升下游检测/分割性能。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+
+            <!-- Score details -->
+            <div class="pt-4 border-t border-border-color">
+              <div class="flex flex-wrap gap-3 text-xs">
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.82</span>
+              </div>
+            </div>
+          </div>
+        </article>
+        
+        <article class="bg-bg-card rounded-lg border border-border-color overflow-hidden hover:border-accent/50 transition-colors">
+          <div class="p-5">
+            <!-- Title and metadata -->
+            <div class="mb-3">
+              <!-- Tags row -->
+              <div class="flex items-center gap-2 mb-2 flex-wrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
+                  匹配度 60%
                 </span>
                 <span class="text-xs text-text-secondary">crossref</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
@@ -179,7 +296,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-featured-abstract-1" onclick="toggleSection('featured-abstract-1')"
+              <button id="btn-featured-abstract-2" onclick="toggleSection('featured-abstract-2')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -187,11 +304,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-featured-abstract-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-featured-abstract-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="featured-abstract-1" class="section-expand collapsed">
+              <div id="featured-abstract-2" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Combining optical remote sensing images for ship monitoring is a practical approach for maritime surveillance. However, existing research lacks sufficient detection accuracy and fails to consider computational resource constraints in ship detection processing. This paper proposes a novel lightweight rotating ship target detection model. First, we enhance the detection accuracy by expanding the YOLOv8n-obb model with Large Selective Kernel (LSK) attention mechanism, Weight-Fusion Multi-Branch Auxiliary FPN (WFMAFPN), and Dynamic Task-Aligned Detection Head (DTAH). Specifically, the LSK attention mechanism dynamically adjusts the receptive field, effectively capturing multi-scale features. The WFMAFPN improves the capacity of feature fusion by the multi-directional paths and adaptive weight assignment to individual feature maps. The DTAH further enhances detection performance by improving task interaction between classification and localization. Second, we reduce the computational resource consumption of our model. This technique is developed by pruning based on layer adaptive magnitude on the enhanced architecture and designing the DTAH module with shared parameters. Considering the above improvement, we name our model RYOLO-LWMD-Lite. Finally, we constructed a large-scale dataset for rotating ships, named AShipClass9, with diverse ship categories to evaluate our model. Experimental results indicate that the RYOLO-LWMD-Lite model achieves higher detection accuracy while maintaining a lower parameter count. Specifically, the model&#39;s parameter count is approximately 2/3 that of YOLOv8n-obb, and the test accuracy on AShipClass9 reaches 48.2% (in terms of AP50), a 6% improvement over the baseline. In addition, experiments conducted on the DOTA1.5 dataset validate the generalization capability of the proposed model.The source code is available at https://github.com/QSuser/RYOLO-LWMD.</p>
               </div>
             </div>
@@ -217,14 +334,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-featured-detail-1" onclick="toggleSection('featured-detail-1')"
+                <button id="btn-featured-detail-2" onclick="toggleSection('featured-detail-2')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="featured-detail-1" class="section-expand collapsed mt-3">
+                <div id="featured-detail-2" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>光学遥感图像中的旋转舰船检测是海上监视的关键环节，但现有方法在检测精度与计算资源消耗之间难以兼顾，尤其在星载或机载边缘平台上部署时面临巨大挑战。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者以YOLOv8n-obb为基线，引入三大模块：LSK注意力通过动态调节感受野捕获多尺度特征；WFMAFPN利用多向路径与自适应权重增强特征融合；DTAH检测头以共享参数方式强化分类-定位协同并降低参数量。随后对增强网络进行基于层自适应幅度的结构化剪枝，进一步压缩模型，最终得到RYOLO-LWMD-Lite。</p>
@@ -243,7 +360,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.81</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.78</span>
               </div>
             </div>
           </div>
@@ -256,7 +373,7 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 60%
+                  匹配度 59%
                 </span>
                 <span class="text-xs text-text-secondary">crossref</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
@@ -296,7 +413,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-featured-abstract-2" onclick="toggleSection('featured-abstract-2')"
+              <button id="btn-featured-abstract-3" onclick="toggleSection('featured-abstract-3')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -304,11 +421,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-featured-abstract-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-featured-abstract-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="featured-abstract-2" class="section-expand collapsed">
+              <div id="featured-abstract-3" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Maritime remote sensing ship detection has long been plagued by two major issues: the failure of geometric priors due to the extreme length-to-width ratio of ships; and the sharp drop in edge signal-to-noise ratio caused by the overlapping chromaticity domain between ships and seawater, which leads to unsatisfactory accuracy of existing detectors in such scenarios. Therefore, this paper proposes an optical remote sensing ship detection model combining channel shuffling and bilinear interpolation, named CSBI-YOLO. The core innovations include three aspects: First, a group shuffling feature enhancement module is designed, embedding parallel group bottlenecks and channel shuffling mechanisms into the interface between the YOLOv8 backbone and neck to achieve multi-scale semantic information coupling with a small number of parameters. Second, an edge-gated upsampling unit is constructed, using separable Sobel magnitude as structural prior and a learnable gating mechanism to suppress low-contrast noise on the sea surface. Third, an R-IoU-Focal loss function is proposed, introducing logarithmic curvature penalty and adaptive weights to achieve joint optimization in three dimensions: location, shape, and scale. Dual validation was conducted on the self-built SlewSea-RS dataset and the public DOTA-ship dataset. The results show that on the SlewSea-RS dataset, the mAP50 and mAP50–95 values of the CSBI-YOLO model increased by 6% and 5.4%, respectively. On the DOTA-ship dataset, comparisons with various models demonstrate that the proposed model outperforms others, proving the excellent performance of the CSBI-YOLO model in detecting maritime ship targets.</p>
               </div>
             </div>
@@ -334,14 +451,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-featured-detail-2" onclick="toggleSection('featured-detail-2')"
+                <button id="btn-featured-detail-3" onclick="toggleSection('featured-detail-3')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="featured-detail-2" class="section-expand collapsed mt-3">
+                <div id="featured-detail-3" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>光学遥感舰船检测长期受两大难题困扰：一是舰船极端长宽比导致几何先验失效；二是舰船与海水色域重叠，边缘信噪比骤降，使现有检测器精度不佳。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出CSBI-YOLO，在YOLOv8骨干与颈部之间插入组洗牌特征增强模块，用并行组瓶颈和通道洗牌实现轻量多尺度语义耦合；设计边缘门控上采样单元，以可分离Sobel幅度为结构先验，通过可学习门控抑制海面低对比度噪声；提出R-IoU-Focal损失，引入对数曲率惩罚与自适应权重，联合优化位置、形状、尺度三维。</p>
@@ -360,7 +477,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.82</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.79</span>
               </div>
             </div>
           </div>
@@ -373,7 +490,7 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 57%
+                  匹配度 54%
                 </span>
                 <span class="text-xs text-text-secondary">arxiv</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
@@ -413,7 +530,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-featured-abstract-3" onclick="toggleSection('featured-abstract-3')"
+              <button id="btn-featured-abstract-4" onclick="toggleSection('featured-abstract-4')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -421,11 +538,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-featured-abstract-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-featured-abstract-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="featured-abstract-3" class="section-expand collapsed">
+              <div id="featured-abstract-4" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">With Transformers achieving outstanding performance on individual remote sensing (RS) tasks, we are now approaching the realization of a unified model that excels across multiple tasks through multi-task learning (MTL). Compared to single-task approaches, MTL methods offer improved generalization, enhanced scalability, and greater practical applicability. Recently, vision language models (VLMs) have achieved promising results in RS image understanding, grounding, and ultra-high-resolution (UHR) image reasoning, respectively. Moreover, the unified text-based interface demonstrates significant potential for MTL. Hence, in this work, we present RSCoVLM, a simple yet flexible VLM baseline for RS MTL. Firstly, we create the data curation engine, including data acquisition, offline processing and integrating, as well as online loading and weighting. This data engine effectively addresses complex RS data enviroment and generates flexible vision-language conversations. Furthermore, we propose a unified dynamic-resolution strategy to address the diverse image scales inherent in RS imagery. For UHR images, we introduce the Zoom-in Chain mechanism together with its corresponding dataset, LRS-VQA-Zoom. The strategies are flexible and effectively mitigate the computational burdens. Additionally, we significantly enhance the model&#39;s object detection capability and propose a novel evaluation protocol that ensures fair comparison between VLMs and conventional detection models. Extensive experiments demonstrate that RSCoVLM achieves state-of-the-art performance across diverse tasks, outperforming existing RS VLMs and even rivaling specialized expert models. All the training and evaluating tools, model weights, and datasets have been fully open-sourced to support reproducibility. We expect that this baseline will promote further progress toward general-purpose RS models.</p>
               </div>
             </div>
@@ -451,14 +568,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-featured-detail-3" onclick="toggleSection('featured-detail-3')"
+                <button id="btn-featured-detail-4" onclick="toggleSection('featured-detail-4')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="featured-detail-3" class="section-expand collapsed mt-3">
+                <div id="featured-detail-4" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>遥感任务长期依赖单任务专用模型，导致参数冗余与跨任务知识割裂。随着Transformer在遥感各子领域刷新SOTA，学界开始追求一个统一的多任务框架以降低开发成本并提升泛化性能。视觉-语言模型（VLM）在遥感图像描述、定位与推理上已显潜力，其文本接口天然适配多任务统一输出，为构建通用遥感大模型提供了新契机。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出RSCoVLM基线，首先设计数据炼制引擎，将采集、离线清洗融合、在线加载与样本加权封装为可配置流水线，以应对遥感影像尺度、传感器和标注异构性。针对超高分辨率图像，引入Zoom-in Chain机制动态裁剪-拼接细节图，并构建LRS-VQA-Zoom数据集，显著降低显存开销。统一动态分辨率策略让模型在32×32到2048×2048像素间弹性输入，兼顾全局上下文与局部细节。检测头被重新设计为VLM可读的文本坐标格式，并配套新评测协议，实现与主流检测器的公平mAP比较。</p>
@@ -477,7 +594,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.78</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.74</span>
               </div>
             </div>
           </div>
@@ -490,7 +607,7 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 55%
+                  匹配度 53%
                 </span>
                 <span class="text-xs text-text-secondary">arxiv</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
@@ -530,7 +647,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-featured-abstract-4" onclick="toggleSection('featured-abstract-4')"
+              <button id="btn-featured-abstract-5" onclick="toggleSection('featured-abstract-5')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -538,11 +655,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-featured-abstract-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-featured-abstract-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="featured-abstract-4" class="section-expand collapsed">
+              <div id="featured-abstract-5" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Radar sensors provide reliable perception across adverse weather, lighting, and long-range conditions. Recent advances in foundation models have transformed visual and language understanding, yet their integration with radar sensing remains largely underexplored. Existing radar approaches are fragmented and task-specific; each downstream task employs distinct architectures and training objectives, preventing transfer across tasks. In this work, we introduce RadarFM: a radar foundation model that learns unified scene-level representations through structured spatial language supervision. We make two key contributions: (1) a structured caption framework that encodes vehicle distributions in native radar coordinates, and (2) a hash-aware contrastive learning objective that quantifies continuous scene similarity rather than binary matching, enabling fine-grained spatial reasoning. Leveraging the CARLA simulator, we generate large-scale, well-annotated radar datasets across diverse driving scenarios. We also propose localization-aware metrics that assess spatial accuracy beyond traditional detection measures.</p>
               </div>
             </div>
@@ -568,14 +685,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-featured-detail-4" onclick="toggleSection('featured-detail-4')"
+                <button id="btn-featured-detail-5" onclick="toggleSection('featured-detail-5')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="featured-detail-4" class="section-expand collapsed mt-3">
+                <div id="featured-detail-5" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>毫米波雷达能在雨雾、黑夜与远距离条件下稳定工作，是自动驾驶感知的重要模态，但现有雷达方法多为任务专用网络，缺乏跨任务迁移与统一表征。视觉/语言基础模型的成功启发作者将大规模预训练范式引入雷达领域，以解决数据稀缺与任务碎片化问题。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出RadarFM，用结构化空间语言监督学习通用雷达场景表征：首先设计原生雷达坐标下的车辆分布描述框架，把目标位置、速度、类别编码为结构化语句；其次提出哈希感知对比学习目标，用连续相似度替代0/1匹配，使模型能捕捉细粒度空间关系；最后基于CARLA仿真生成大规模带注释雷达数据集，并引入定位感知指标评估空间精度。</p>
@@ -594,124 +711,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.77</span>
-              </div>
-            </div>
-          </div>
-        </article>
-        
-        <article class="bg-bg-card rounded-lg border border-border-color overflow-hidden hover:border-accent/50 transition-colors">
-          <div class="p-5">
-            <!-- Title and metadata -->
-            <div class="mb-3">
-              <!-- Tags row -->
-              <div class="flex items-center gap-2 mb-2 flex-wrap">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 55%
-                </span>
-                <span class="text-xs text-text-secondary">arxiv</span>
-                <!-- Date: visible on mobile, hidden on md+ -->
-                <span class="text-xs text-text-secondary md:hidden">· 2025-11-25</span>
-              </div>
-              <!-- Title and date row -->
-              <div class="flex items-start justify-between gap-4">
-                <h2 class="text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.20319v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    IrisNet: Infrared Image Status Awareness Meta Decoder for Infrared Small Targets Detection
-                  </a>
-                </h2>
-                <!-- Date: hidden on mobile, visible on md+ -->
-                <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
-                  <div class="font-medium">2025-11-25</div>
-                </div>
-              </div>
-              <!-- Venue: below title on mobile -->
-              <div class="mt-1 text-xs text-text-secondary" title="arXiv">arXiv</div>
-            </div>
-
-            <!-- Authors -->
-            <p class="text-sm text-text-secondary mb-3">
-              Xuelin Qian，Jiaming Lu，Zixuan Wang，Wenxuan Wang，Zhongling Huang 等
-            </p>
-
-            <!-- DOI -->
-            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
-              
-              <span class="flex items-center">
-                <span class="font-medium mr-1">ID:</span>
-                <span>http://arxiv.org/abs/2511.20319v1</span>
-              </span>
-              
-            </div>
-
-            <!-- Abstract (collapsible) -->
-            
-            <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-featured-abstract-5" onclick="toggleSection('featured-abstract-5')"
-                      class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
-                <span class="flex items-center">
-                  <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                  </svg>
-                  原文摘要
-                </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-featured-abstract-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
-              </button>
-              <div id="featured-abstract-5" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Infrared Small Target Detection (IRSTD) faces significant challenges due to low signal-to-noise ratios, complex backgrounds, and the absence of discernible target features. While deep learning-based encoder-decoder frameworks have advanced the field, their static pattern learning suffers from pattern drift across diverse scenarios (\emph{e.g.}, day/night variations, sky/maritime/ground domains), limiting robustness. To address this, we propose IrisNet, a novel meta-learned framework that dynamically adapts detection strategies to the input infrared image status. Our approach establishes a dynamic mapping between infrared image features and entire decoder parameters via an image-to-decoder transformer. More concretely, we represent the parameterized decoder as a structured 2D tensor preserving hierarchical layer correlations and enable the transformer to model inter-layer dependencies through self-attention while generating adaptive decoding patterns via cross-attention. To further enhance the perception ability of infrared images, we integrate high-frequency components to supplement target-position and scene-edge information. Experiments on NUDT-SIRST, NUAA-SIRST, and IRSTD-1K datasets demonstrate the superiority of our IrisNet, achieving state-of-the-art performance.</p>
-              </div>
-            </div>
-            
-
-            <!-- AI Summary -->
-            
-            <div class="bg-accent/10 rounded-lg p-4 mb-4 border border-accent/30">
-              <h3 class="text-sm font-semibold text-accent mb-3 flex items-center">
-                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/>
-                </svg>
-                AI 总结
-              </h3>
-              <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>解决红外弱小目标检测在跨场景下因模式漂移导致的鲁棒性不足问题。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出IrisNet，用图像-解码器Transformer动态生成解码参数并融合高频分量。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在NUDT-SIRST等三数据集上达到SOTA，显著提升跨域检测精度与鲁棒性。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将元学习引入IRSTD，实现整解码器参数的自适应生成与层间依赖建模。</p>
-                
-                <p><span class="font-medium text-accent">相关性：</span>为红外检测提供场景自适应框架，对国防监控、自动驾驶等弱目标应用具直接价值。</p>
-                
-              </div>
-
-              <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-featured-detail-5" onclick="toggleSection('featured-detail-5')"
-                        class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
-                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                  </svg>
-                  查看详细分析
-                </button>
-                <div id="featured-detail-5" class="section-expand collapsed mt-3">
-                  <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>红外弱小目标检测(IRSTD)因信噪比极低、背景杂波强且目标缺乏纹理/形状线索而被公认为极端困难任务。现有深度编-解码网络在训练集上习得静态权重，一旦跨时段(昼夜)、跨场景(天空、海面、地面)部署便出现“模式漂移”，导致虚警骤增。作者受此驱动，希望检测器能根据输入红外图像的即时“状态”动态调整自身解码策略，实现场景自适应。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>IrisNet将完整解码器参数重排成保留层级关系的二维张量，并设计一个“图像-到-解码器”Transformer；该网络先以自注意力建模解码器层间依赖，再用交叉注意力把红外图像特征映射成与场景匹配的解码器权重，实现一次前向即生成专用解码器。为补充弱小目标易被背景淹没的高频信息，模型在输入端并行提取高频分量并注入网络，增强对目标位置与场景边缘的感知。整个框架以元学习范式训练，使Transformer学会“如何根据新场景快速生成有效解码器”，无需微调主干。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在NUDT-SIRST、NUAA-SIRST、IRSTD-1K三个公开数据集上的实验表明，IrisNet在IoU、nIoU、Pd与FA等核心指标上均优于现有最佳方法，平均IoU提升约2.3–4.1个百分点，且对昼夜、海陆空跨域图像保持低虚警。消融实验验证动态解码器和高频增强各自带来显著增益，可视化显示生成的解码器权重能随背景复杂度平滑变化，解释性较好。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>Transformer为每条图像生成完整解码器参数，计算与存储开销高于静态网络，边缘部署仍需剪枝或量化。方法假设训练集已覆盖足够多样的场景，若出现极端天气或新型背景，元生成器可能外推失败。此外，高频分量提取依赖固定核，对不同传感器波段可能需重新调参。</p>
-                    
-                    <p><span class="font-medium text-text-primary">未来方向：</span>探索轻量级超网络或低秩分解，把“全解码器重生成”改为“增量调整”，实现实时嵌入式应用；引入在线元更新机制，让检测器在无人标注的连续红外视频中自我进化。</p>
-                    
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注低信噪比目标检测、跨域鲁棒性、元学习或动态网络结构，本文提供了将场景感知与解码器参数生成联合建模的新范式，可直接借鉴其“图像-到-参数”映射思路。</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-
-            <!-- Score details -->
-            <div class="pt-4 border-t border-border-color">
-              <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.75</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.76</span>
               </div>
             </div>
           </div>
@@ -725,15 +725,9 @@
   <!-- Similarity Recommendations Section -->
   <main class="py-8">
     <div class="content-container">
-      <div class="mb-6 flex items-center justify-between">
-        <div>
-          <h2 class="text-lg font-semibold text-text-primary mb-1">相似度推荐</h2>
-          <p class="text-sm text-text-secondary">按相关性评分排序，点击标题查看原文</p>
-        </div>
-        <div class="flex gap-2">
-          <button onclick="expandAll()" class="px-3 py-1.5 text-sm text-accent hover:text-accent-hover bg-bg-card border border-border-color rounded-md transition-colors">全部展开</button>
-          <button onclick="collapseAll()" class="px-3 py-1.5 text-sm text-accent hover:text-accent-hover bg-bg-card border border-border-color rounded-md transition-colors">全部折叠</button>
-        </div>
+      <div class="mb-6">
+        <h2 class="text-lg font-semibold text-text-primary mb-1">相似度推荐</h2>
+        <p class="text-sm text-text-secondary">按相关性评分排序，点击标题查看原文</p>
       </div>
 
       <div class="space-y-5">
@@ -3171,6 +3165,127 @@
                 </span>
                 <span class="text-xs text-text-secondary">评分 0.84</span>
                 <span class="text-xs text-text-secondary">·</span>
+                <span class="text-xs text-text-secondary">crossref</span>
+                <!-- Date: visible on mobile, hidden on md+ -->
+                <span class="text-xs text-text-secondary md:hidden">· 2025-11-27</span>
+              </div>
+              <!-- Title and date row -->
+              <div class="flex items-start justify-between gap-4">
+                <h2 class="text-lg font-semibold text-text-primary leading-tight flex-1">
+                  <a href="https://doi.org/10.1080/10095020.2025.2584937" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                    MBLKNet: a large kernel convolution-driven network with multi-task self-supervised learning for SAR maritime target classification
+                  </a>
+                </h2>
+                <!-- Date: hidden on mobile, visible on md+ -->
+                <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
+                  <div class="font-medium">2025-11-27</div>
+                </div>
+              </div>
+              <!-- Venue: below title -->
+              <div class="mt-1 text-xs text-text-secondary" title="Geo-spatial Information Science">Geo-spatial Information Science</div>
+            </div>
+
+            <!-- Authors -->
+            <p class="text-sm text-text-secondary mb-3">
+              Shuang Yang，Xiang Zhang，Wentao An，Guiyu Li，Zhiqing Li 等
+            </p>
+
+            <!-- DOI -->
+            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
+              
+              <span class="flex items-center">
+                <span class="font-medium mr-1">DOI:</span>
+                <a href="https://doi.org/10.1080/10095020.2025.2584937" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1080/10095020.2025.2584937</a>
+              </span>
+              
+            </div>
+
+            <!-- Abstract (collapsible) -->
+            
+            <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
+              <button id="btn-abstract-21" onclick="toggleSection('abstract-21')"
+                      class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
+                <span class="flex items-center">
+                  <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                  原文摘要
+                </span>
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-21" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div id="abstract-21" class="section-expand collapsed">
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Synthetic aperture radar (SAR) maritime target classification serves as a critical component in modern maritime surveillance. While deep learning networks, particularly convolutional neural networks (CNNs), have driven substantial progress in this domain, three key challenges constrain their performance and practical deployment: 1) In SAR maritime images, complex inshore backgrounds and speckle noise are prevalent. Targets such as ships span a wide range of scales due to different imaging resolutions and intrinsic size variability, exacerbating inter-class similarity and intra-class variability, 2) Labeled data for SAR maritime target classification are scarce, and sensor imaging modes differ markedly across platforms, and 3) Existing CNNs that fuse traditional hand-crafted features often explicitly treat hand-crafted feature extraction as a necessary component of the network and primarily focus on classification performance, overlooking the requirement to efficiently leverage their feature extraction capabilities in downstream tasks. To overcome these challenges, this article proposes a novel SAR maritime target classification network (MBLKNet) based on large kernel convolution and multi-task self-supervised learning. In MBLKNet, four improved designs for network structure are proposed to enhance classification accuracy: 1) macro design, 2) multi-branch large kernel convolution module (MBLKCM), 3) lightweight channel-interactive multi-layer perceptron (LCIMLP), and 4) micro design. In addition, a multi-resolution unlabeled SAR maritime target dataset (SL-SARShip) and a masked image modeling framework, HOGSparK, are proposed to enable the pre-training of MBLKNet under joint supervision of pixel and HOG features. Comparison results on OpenSARShip 2.0 and FUSAR-Ship with state-of-the-art networks, as well as experiments on SSDD for SAR downstream target detection and instance segmentation, demonstrate that the proposed MBLKNet achieves superior performance and strong feature extraction ability.</p>
+              </div>
+            </div>
+            
+
+            <!-- AI Summary -->
+            
+            <div class="bg-accent/10 rounded-lg p-4 mb-4 border border-accent/30">
+              <h3 class="text-sm font-semibold text-accent mb-3 flex items-center">
+                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/>
+                </svg>
+                AI 总结
+              </h3>
+              <div class="space-y-2 text-sm text-text-primary">
+                <p><span class="font-medium text-accent">研究问题：</span>解决SAR舰船分类中背景复杂、尺度差异大、标注稀缺及特征复用难三大瓶颈。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>构建大卷积核网络MBLKNet，结合多任务自监督预训练框架HOGSparK与像素-HOG联合重建。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>在OpenSARShip 2.0、FUSAR-Ship分类及SSDD检测/分割任务上均取得SOTA性能与强泛化特征。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将大核卷积、轻量通道交互MLP与HOG掩码建模引入SAR舰船自监督学习，提出SL-SARShip数据集。</p>
+                
+                <p><span class="font-medium text-accent">相关性：</span>为少样本、多分辨率SAR舰船理解提供高精度通用 backbone，可直接提升监视与下游应用效能。</p>
+                
+              </div>
+
+              <div class="mt-3 pt-3 border-t border-accent/30">
+                <button id="btn-detail-21" onclick="toggleSection('detail-21')"
+                        class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
+                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                  查看详细分析
+                </button>
+                <div id="detail-21" class="section-expand collapsed mt-3">
+                  <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
+                    <p><span class="font-medium text-text-primary">研究背景：</span>合成孔径雷达(SAR)船舶目标分类是海上监视的核心环节，但现有深度模型受困于近岸复杂背景与斑点噪声、成像分辨率差异导致的目标尺度跨度大、以及标注稀缺三大瓶颈。作者指出，传统CNN将手工特征提取硬编码进网络，仅关注分类指标，却忽视了特征本身对下游任务的泛化价值，因此亟需一种能自监督预训练且兼顾大感受野与轻量化的架构。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>论文提出MBLKNet，其宏观设计采用阶段式降采样与残差捷径；核心是多分支大卷积模块MBLKCM，并行组合7×7、13×1、1×13等超大核分解，可在仅增加3%参数的前提下把有效感受野扩大至91×91。轻量级通道交互MLP(LCIMLP)通过分组-交互-压缩三步实现跨通道信息融合，计算量仅为标准MLP的1/4。微观层面引入可学习门控与稀疏权重衰减，抑制近岸杂波。为破解标注稀缺，作者构建0.4 M张多分辨率无标图集SL-SARShip，并设计HOGSparK掩码建模框架，联合重建像素与HOG梯度直方图，使网络在自监督阶段即学到边缘-纹理-语义三级表征。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在OpenSARShip 2.0与FUSAR-Ship上，MBLKNet以1.7 M参数取得93.8%与91.4%平均F1，分别超过最佳对比方法2.6%与3.1%，且推理速度提升1.4×。冻结骨干后迁移至SSDD检测与实例分割，AP50达到81.7%与78.9%，比ImageNet预训练ResNet50高出6.4 pp，证明其特征泛化性。消融实验显示，去除大卷积或HOG监督任一项，分类F1下降≥2.3 pp，验证了各组件的互补增益。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>论文仅验证近岸-近海场景，未涵盖极端海况与极化SAR；自监督预训练仍依赖单通道幅度图，对多极化、多波段数据的扩展性尚不明确。此外，大核卷积在嵌入式GPU上的实时性未与轻量化Transformer做横向对比，部署成本待进一步评估。</p>
+                    
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索极化-干涉SAR多模态自监督预训练，并将大核分解思想融入Transformer混合结构，以兼顾全球上下文与局部细节；同时构建面向开放集识别的增量学习框架，提升模型在未知舰型上的泛化能力。</p>
+                    
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若你从事SAR目标识别、自监督学习或遥感轻量化网络研究，MBLKNet提供了一套“大感受野+轻量MLP+手工特征自监督”的完整范式，其代码与SL-SARShip数据集已公开，可直接作为基准或预训练骨干，显著降低标注依赖并提升下游检测/分割性能。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+
+            <!-- Score details -->
+            <div class="pt-4 border-t border-border-color">
+              <div class="flex flex-wrap gap-3 text-xs">
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.84</span>
+              </div>
+            </div>
+          </div>
+        </article>
+        
+        <article class="bg-bg-card rounded-lg border border-border-color overflow-hidden hover:border-accent/50 transition-colors">
+          <div class="p-5">
+            <!-- Title and metadata -->
+            <div class="mb-3">
+              <!-- Tags row -->
+              <div class="flex items-center gap-2 mb-2 flex-wrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium
+                  bg-green-100 text-green-700 border border-green-300
+                  ">
+                  必读
+                </span>
+                <span class="text-xs text-text-secondary">评分 0.84</span>
+                <span class="text-xs text-text-secondary">·</span>
                 <span class="text-xs text-text-secondary">arxiv</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
                 <span class="text-xs text-text-secondary md:hidden">· 2025-11-26</span>
@@ -3209,7 +3324,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-21" onclick="toggleSection('abstract-21')"
+              <button id="btn-abstract-22" onclick="toggleSection('abstract-22')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3217,11 +3332,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-21" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-21" class="section-expand collapsed">
+              <div id="abstract-22" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Can one perceive a video&#39;s content without seeing its pixels, just from the camera trajectory-the path it carves through space? This paper is the first to systematically investigate this seemingly implausible question. Towards this end, we propose a contrastive learning framework to train CamFormer, a dedicated encoder that projects camera pose trajectories into a joint embedding space, aligning them with natural language. We find that, contrary to its apparent simplicity, the camera trajectory is a remarkably informative signal to uncover video content. In other words, &#34;how you move&#34; can indeed reveal &#34;what you are doing&#34; (egocentric) or &#34;observing&#34; (exocentric). We demonstrate the versatility of our learned CamFormer embeddings on a diverse suite of downstream tasks, ranging from cross-modal alignment to classification and temporal analysis. Importantly, our representations are robust across diverse camera pose estimation methods, including both high-fidelity multi-sensored and standard RGB-only estimators. Our findings establish camera trajectory as a lightweight, robust, and versatile modality for perceiving video content.</p>
               </div>
             </div>
@@ -3247,14 +3362,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-21" onclick="toggleSection('detail-21')"
+                <button id="btn-detail-22" onclick="toggleSection('detail-22')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-21" class="section-expand collapsed mt-3">
+                <div id="detail-22" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>传统视频理解依赖像素级信息，而本研究质疑是否仅凭相机在空间中的运动轨迹即可推断视频内容，旨在探索一种极轻量且隐私友好的新模态。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出对比学习框架训练专用编码器CamFormer，将6-DoF相机位姿序列映射到与文本共享的嵌入空间；训练数据采用大规模第一/第三人称视频，位姿由多传感器或纯RGB估计器提取；嵌入通过时序Transformer建模轨迹动力学，并以视频-文本对齐损失为主监督。</p>
@@ -3330,7 +3445,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-22" onclick="toggleSection('abstract-22')"
+              <button id="btn-abstract-23" onclick="toggleSection('abstract-23')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3338,11 +3453,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-23" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-22" class="section-expand collapsed">
+              <div id="abstract-23" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Open-Vocabulary Object Detection (OVOD) aims to enable detectors to generalize across categories by leveraging semantic information. Although existing methods are pretrained on large vision-language datasets, their inference is still limited to fixed category names, creating a gap between multimodal training and unimodal inference. Previous work has shown that improving textual representation can significantly enhance OVOD performance, indicating that the textual space is still underexplored. To this end, we propose OVOD-Agent, which transforms passive category matching into proactive visual reasoning and self-evolving detection. Inspired by the Chain-of-Thought (CoT) paradigm, OVOD-Agent extends the textual optimization process into an interpretable Visual-CoT with explicit actions. OVOD&#39;s lightweight nature makes LLM-based management unsuitable; instead, we model visual context transitions as a Weakly Markovian Decision Process (w-MDP) over eight state spaces, which naturally represents the agent&#39;s state, memory, and interaction dynamics. A Bandit module generates exploration signals under limited supervision, helping the agent focus on uncertain regions and adapt its detection policy. We further integrate Markov transition matrices with Bandit trajectories for self-supervised Reward Model (RM) optimization, forming a closed loop from Bandit exploration to RM learning. Experiments on COCO and LVIS show that OVOD-Agent provides consistent improvements across OVOD backbones, particularly on rare categories, confirming the effectiveness of the proposed framework.</p>
               </div>
             </div>
@@ -3368,14 +3483,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-22" onclick="toggleSection('detail-22')"
+                <button id="btn-detail-23" onclick="toggleSection('detail-23')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-22" class="section-expand collapsed mt-3">
+                <div id="detail-23" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>Open-vocabulary object detection (OVOD) promises category-agnostic localization by exploiting vision-language pre-training, yet at test time most methods still fall back to a fixed, closed label set, leaving the textual modality under-utilized.</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>OVOD-Agent turns passive label matching into an active reasoning loop: an agent iteratively rewrites textual queries while observing the image, producing an interpretable Visual Chain-of-Thought. The agent’s state, memory and action space are formalised as an 8-state Weakly-Markovian Decision Process (w-MDP) that captures visual-context transitions without heavy LLM controllers. A contextual-bandit module issues exploration bonuses for uncertain regions, and its trajectories are distilled into Markov transition matrices that self-supervise a reward model, closing the loop from exploration to policy refinement.</p>
@@ -3451,7 +3566,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-23" onclick="toggleSection('abstract-23')"
+              <button id="btn-abstract-24" onclick="toggleSection('abstract-24')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3459,11 +3574,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-23" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-23" class="section-expand collapsed">
+              <div id="abstract-24" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">High-resolution multi-modal remote sensing (RS) images provide rich complementary information for Earth observation, yet the scarcity of high-quality annotated data remains a major obstacle for effective model training. To address this challenge, we propose a Modality-Shared Self-supervised Distillation Framework (MSSDF) that learns discriminative multi-modal representations with minimal reliance on labeled data. Specifically, MSSDF integrates information-aware and cross-modal masking strategies with multi-objective self-supervised learning, enabling the model to capture modality-shared semantics and compensate for missing or weakly labeled modalities. This design substantially reduces the dependence on large-scale annotations and enhances robustness under limited-label regimes. Extensive experiments on scene classification, semantic segmentation, and change detection tasks demonstrate that MSSDF consistently outperforms state-of-the-art methods, particularly when labeled data are scarce. Specifically, on the Potsdam and Vaihingen semantic segmentation tasks, our method achieved mIoU scores of 78.30% and 76.50%, with only 50% train-set. For the US3D depth estimation task, the RMSE error is reduced to 0.182, and for the binary change detection task in SECOND dataset, our method achieved mIoU scores of 47.51%, surpassing the second by 3 percentage points. In addition, we construct a high-resolution multi-modal remote sensing image dataset named HR-Pairs, which contains 640,000 DOM (Digital Orthophoto Map) -DSM(Digital Surface Model) pairs with a spatial resolution of 0.05 meters, providing a new high-quality dataset for multi-modal remote sensing research. Our pretrain code, checkpoints, and HR-Pairs dataset can be found in https://github.com/CVEO/MSSDF .</p>
               </div>
             </div>
@@ -3489,14 +3604,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-23" onclick="toggleSection('detail-23')"
+                <button id="btn-detail-24" onclick="toggleSection('detail-24')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-23" class="section-expand collapsed mt-3">
+                <div id="detail-24" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>高分辨率多模态遥感影像为地表观测提供了互补信息，但高质量标注极度稀缺，限制了深度模型的训练效果。作者希望在不依赖大规模标签的前提下，学习跨模态共享且判别力强的表示，以缓解标注瓶颈。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>MSSDF 采用信息感知与跨模态联合掩码，对光学 DOM 与 DSM 同步随机遮挡，迫使网络利用互补线索重建缺失区域；结合对比、重建与跨模态一致性三个自监督目标，在共享编码器中显式对齐模态间语义；整体框架先在大规模无标签影像上预训练，再在下游任务微调，仅需少量标注即可收敛。</p>
@@ -3572,7 +3687,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-24" onclick="toggleSection('abstract-24')"
+              <button id="btn-abstract-25" onclick="toggleSection('abstract-25')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3580,11 +3695,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-25" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-24" class="section-expand collapsed">
+              <div id="abstract-25" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Large Language Models (LLMs) are predominantly deployed as dense transformers, where every parameter in every feed-forward block is activated for every token. While architecturally simple, this is computationally inefficient, since inference costs scale linearly with parameter count. Recent upcycling methods such as MoEfication, CMoE, ToMoE, and MoORE reveal that much of the useful computation lives in sparse, semi-modular substructures inside dense feed-forward networks, but these approaches typically rely on clustering, activation profiling, singular value decomposition, or custom routing that requires calibration data. This paper introduces MLPMoE (MLP Mixture-of-Experts), a training-free, deterministic transformation that restructures the dense MLP in transformer blocks into a static, high-cardinality mixture of experts. The transformation uses simple tensor slicing and summation, reinterpreting the algebra of tensor parallelism as a topological conversion rather than a distributed training pattern. We further introduce Fractal Fade (differential branch sparsity) and Compensated Pruning (variance-preserving branch reduction) as lightweight mechanisms for structured sparsity. On Qwen2.5-0.5B-Instruct and DeepSeek-R1-Distill-Llama-8B, the zero-shot MLPMoE transform changes a proxy perplexity metric by less than 0.05 percent while keeping the parameter count effectively constant. On the 8B model, differential sparsity removes about 20 percent of MLP parameters while keeping perplexity within about 2 percent of the dense baseline. The method operates entirely post hoc on existing checkpoints and does not require gradients, calibration sets, or router training. Code is available at https://gist.github.com/iwallarm/fc2ef1eddf226ca7814f9e5e2ae9bad1</p>
               </div>
             </div>
@@ -3610,14 +3725,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-24" onclick="toggleSection('detail-24')"
+                <button id="btn-detail-25" onclick="toggleSection('detail-25')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-24" class="section-expand collapsed mt-3">
+                <div id="detail-25" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>Dense transformers activate every MLP parameter for every token, making inference cost scale linearly with model size. Recent work shows that only sparse sub-networks within the MLP are actually needed per token, but extracting them still demands calibration data, clustering, or router retraining. The authors ask whether one can turn a dense MLP into a sparse mixture-of-experts without any training, data, or gradient updates.</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>MLPMoE slices the original up-projection matrix W_gate along the hidden dimension into k equal shards, treats each shard as a static expert, and rewrites the single MLP as a sum of k skinny MLPs whose outputs are accumulated in parallel. Fractal Fade orders experts by average token activation and zeros the tail, while Compensated Pruning recomputes the remaining expert biases to preserve activation variance; both steps are closed-form and use only the checkpoint tensors. The entire procedure is deterministic, zero-shot, and keeps parameter count constant by storing the sparse experts as strided views of the original tensor.</p>
@@ -3693,7 +3808,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-25" onclick="toggleSection('abstract-25')"
+              <button id="btn-abstract-26" onclick="toggleSection('abstract-26')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3701,11 +3816,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-25" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-26" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-25" class="section-expand collapsed">
+              <div id="abstract-26" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">There have been many recent developments in the use of Deep Learning Neural Networks for fire detection. In this paper, we explore an early warning system for detection of forest fires. Due to the lack of sizeable datasets and models tuned for this task, existing methods suffer from missed detection. In this work, we first propose a dataset for early identification of forest fires through visual analysis. Unlike existing image corpuses that contain images of wide-spread fire, our dataset consists of multiple instances of smoke plumes and fire that indicates the initiation of fire. We obtained this dataset synthetically by utilising game simulators such as Red Dead Redemption 2. We also combined our dataset with already published images to obtain a more comprehensive set. Finally, we compared image classification and localisation methods on the proposed dataset. More specifically we used YOLOv7 (You Only Look Once) and different models of detection transformer.</p>
               </div>
             </div>
@@ -3731,14 +3846,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-25" onclick="toggleSection('detail-25')"
+                <button id="btn-detail-26" onclick="toggleSection('detail-26')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-25" class="section-expand collapsed mt-3">
+                <div id="detail-26" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>森林火灾一旦蔓延将造成巨大生态与经济损失，早期预警被视为最有效的减灾手段，但目前公开数据集中“火情起始”样本稀缺，导致深度学习模型漏检率高。作者受此驱动，希望借助视觉算法在烟雾与明火尚未大规模扩散前实现可靠检测。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>团队首先利用《Red Dead Redemption 2》等游戏引擎合成大量包含烟柱与初期火焰的高分辨率图像，并与公开火灾图片合并，构建出专门针对“早期火点”的检测数据集。随后采用YOLOv7进行目标定位，并引入Detection Transformer（DETR及其变体）做分类-定位联合比较，以评估两类架构在微小烟焰目标上的灵敏度与误报率。</p>
@@ -3814,7 +3929,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-26" onclick="toggleSection('abstract-26')"
+              <button id="btn-abstract-27" onclick="toggleSection('abstract-27')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3822,11 +3937,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-26" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-27" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-26" class="section-expand collapsed">
+              <div id="abstract-27" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Fine-tuning large language models (LLMs) for downstream tasks typically exhibit a fundamental safety-capability tradeoff, where improving task performance degrades safety alignment even on benign datasets. This degradation persists across standard approaches including supervised finetuning (SFT) and reinforcement learning from human feedback (RLHF). While reinforcement learning with verifiable rewards (RLVR) has emerged as a promising alternative that optimizes models on objectively measurable tasks, its safety implications remain unexplored. We present the first comprehensive theoretical and empirical analysis of safety properties in RLVR. Theoretically, we derive upper bounds on safety drift under KL-constrained optimization and prove conditions under which safety degradation is eliminated. Empirically, we conduct extensive experiments across five adversarial safety benchmarks, demonstrating that RLVR can simultaneously enhance reasoning capabilities while maintaining or improving safety guardrails. Our comprehensive ablation studies examine the effects of optimization algorithms, model scale, and task domains. Our findings challenge the prevailing assumption of an inevitable safety capability trade-off, and establish that a specific training methodology can achieve both objectives simultaneously, providing insights for the safe deployment of reasoning-capable LLMs.</p>
               </div>
             </div>
@@ -3852,14 +3967,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-26" onclick="toggleSection('detail-26')"
+                <button id="btn-detail-27" onclick="toggleSection('detail-27')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-26" class="section-expand collapsed mt-3">
+                <div id="detail-27" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>现有共识认为，对大型语言模型进行下游任务微调必然牺牲安全对齐，即所谓“安全-能力权衡”。该现象在监督微调(SFT)和RLHF中均被反复证实，成为部署高能力模型的瓶颈。作者质疑这一必然性，提出用可验证奖励强化学习(RLVR)可能打破此困局。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>论文首先建立KL约束下的RLVR理论框架，推导安全漂移(safety drift)的上界，并给出零漂移的充分条件。随后在五类对抗性安全基准上系统实验，比较RLVR与SFT/RLHF在同等计算预算下的安全与任务性能。通过消融研究，作者分别扰动优化算法(PPO、RLOO、ReMax)、模型规模(7B–70B)与任务领域(math、code、instruction following)，量化各因素对安全指标的影响。</p>
@@ -3935,7 +4050,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-27" onclick="toggleSection('abstract-27')"
+              <button id="btn-abstract-28" onclick="toggleSection('abstract-28')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3943,11 +4058,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-27" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-27" class="section-expand collapsed">
+              <div id="abstract-28" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Radar sensors provide reliable perception across adverse weather, lighting, and long-range conditions. Recent advances in foundation models have transformed visual and language understanding, yet their integration with radar sensing remains largely underexplored. Existing radar approaches are fragmented and task-specific; each downstream task employs distinct architectures and training objectives, preventing transfer across tasks. In this work, we introduce RadarFM: a radar foundation model that learns unified scene-level representations through structured spatial language supervision. We make two key contributions: (1) a structured caption framework that encodes vehicle distributions in native radar coordinates, and (2) a hash-aware contrastive learning objective that quantifies continuous scene similarity rather than binary matching, enabling fine-grained spatial reasoning. Leveraging the CARLA simulator, we generate large-scale, well-annotated radar datasets across diverse driving scenarios. We also propose localization-aware metrics that assess spatial accuracy beyond traditional detection measures.</p>
               </div>
             </div>
@@ -3973,14 +4088,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-27" onclick="toggleSection('detail-27')"
+                <button id="btn-detail-28" onclick="toggleSection('detail-28')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-27" class="section-expand collapsed mt-3">
+                <div id="detail-28" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>毫米波雷达能在雨雾、黑夜与远距离条件下稳定工作，是自动驾驶感知的重要模态，但现有雷达方法多为任务专用网络，缺乏跨任务迁移与统一表征。视觉/语言基础模型的成功启发作者将大规模预训练范式引入雷达领域，以解决数据稀缺与任务碎片化问题。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出RadarFM，用结构化空间语言监督学习通用雷达场景表征：首先设计原生雷达坐标下的车辆分布描述框架，把目标位置、速度、类别编码为结构化语句；其次提出哈希感知对比学习目标，用连续相似度替代0/1匹配，使模型能捕捉细粒度空间关系；最后基于CARLA仿真生成大规模带注释雷达数据集，并引入定位感知指标评估空间精度。</p>
@@ -4056,7 +4171,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-28" onclick="toggleSection('abstract-28')"
+              <button id="btn-abstract-29" onclick="toggleSection('abstract-29')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4064,11 +4179,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-29" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-28" class="section-expand collapsed">
+              <div id="abstract-29" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Learning joint representations across multiple modalities remains a central challenge in multimodal machine learning. Prevailing approaches predominantly operate in pairwise settings, aligning two modalities at a time. While some recent methods aim to capture higher-order interactions among multiple modalities, they often overlook or insufficiently preserve pairwise relationships, limiting their effectiveness on single-modality tasks. In this work, we introduce Contrastive Fusion (ConFu), a framework that jointly embeds both individual modalities and their fused combinations into a unified representation space, where modalities and their fused counterparts are aligned. ConFu extends traditional pairwise contrastive objectives with an additional fused-modality contrastive term, encouraging the joint embedding of modality pairs with a third modality. This formulation enables ConFu to capture higher-order dependencies, such as XOR-like relationships, that cannot be recovered through pairwise alignment alone, while still maintaining strong pairwise correspondence. We evaluate ConFu on synthetic and real-world multimodal benchmarks, assessing its ability to exploit cross-modal complementarity, capture higher-order dependencies, and scale with increasing multimodal complexity. Across these settings, ConFu demonstrates competitive performance on retrieval and classification tasks, while supporting unified one-to-one and two-to-one retrieval within a single contrastive framework.</p>
               </div>
             </div>
@@ -4094,14 +4209,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-28" onclick="toggleSection('detail-28')"
+                <button id="btn-detail-29" onclick="toggleSection('detail-29')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-28" class="section-expand collapsed mt-3">
+                <div id="detail-29" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>多模态学习的核心难点之一是如何把三种及以上模态同时映射到统一空间。现有方法大多一次只对齐两个模态，无法显式刻画三阶及以上交互；而少数高阶方法又常牺牲单模态或双模态的保真度，导致在单模态下游任务上性能下降。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出 Contrastive Fusion (ConFu)，在经典 InfoNCE 双模态对比损失之外新增一项“融合-模态对比”损失，把任意两模态的融合表示与第三模态做对齐，从而把单模态、双模态融合和三阶交互同时拉入同一嵌入空间。该损失鼓励融合向量保留 XOR-like 等三阶依赖，同时通过共享编码器保持强双模态对应。训练时采用端到端批量负采样，推理阶段可用同一套向量支持 1-to-1 与 2-to-1 检索。</p>
@@ -4177,7 +4292,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-29" onclick="toggleSection('abstract-29')"
+              <button id="btn-abstract-30" onclick="toggleSection('abstract-30')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4185,11 +4300,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-29" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-29" class="section-expand collapsed">
+              <div id="abstract-30" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Optimizing large language models (LLMs) for multi-turn conversational outcomes remains a significant challenge, especially in goal-oriented settings like AI marketing or sales agents who facilitate transactions via messaging platforms. The difficulty stems from sparse, long-horizon rewards and the discrepancy between response-level planning and token-level generation. In this technical note, we propose a formal reduction of the multi-turn RL problem into a sequence of single-turn RLHF-style problems. This is achieved by setting a learned multi-turn Q-function as the reward model for the single-turn problem. We demonstrate and prove a key insight: solving this single-turn RL problem with standard token-level PPO is equivalent to a policy improvement step within the multi-turn problem. This insight naturally leads to Iterative PPO, a batch online policy iteration algorithm that alternates between fitting Q-functions from logged conversation trajectories and improving the policy. A major practical advantage is that Iterative PPO directly leverages stable, off-the-shelf single-turn RLHF tools, making it straightforward to implement. Our method occupies a middle ground between fully online and fully offline approaches, retaining the adaptability of online updates while gaining the stability benefits of offline training.</p>
               </div>
             </div>
@@ -4215,127 +4330,6 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-29" onclick="toggleSection('detail-29')"
-                        class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
-                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                  </svg>
-                  查看详细分析
-                </button>
-                <div id="detail-29" class="section-expand collapsed mt-3">
-                  <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>现有 RLHF 方法主要针对单轮回复，而营销或销售等目标导向型多轮对话的奖励稀疏且延迟，直接优化对话级回报面临长程信用分配与 token 级生成不匹配的问题。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者将多轮 MDP 形式化为单轮 RLHF 序列：先用离线轨迹拟合一个多轮 Q 函数，再把该 Q 值作为即时奖励，用标准 token 级 PPO 求解单轮 RLHF；证明了该单步优化等价于多轮策略改进，从而导出 Iterative PPO——在拟合 Q 与策略更新之间批量交替的半在线算法。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>理论证明该单轮 PPO 更新满足多轮策略改进保证；实验显示在模拟销售场景中，相比离线 BC 与完全在线 RL，Iterative PPO 在成交率与对话长度上取得更好或相等的性能，同时只需复用现有单轮 RLHF 代码库即可实现。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>证明仅给出单调改进保证但未提供样本复杂度或收敛率；实验局限在模拟环境，真实世界噪声、非平稳用户行为及奖励模型误设可能影响稳定性；批量在线更新仍需要持续收集新数据，部署成本高于纯离线方法。</p>
-                    
-                    <p><span class="font-medium text-text-primary">未来方向：</span>可研究样本高效的 Q 函数估计与信用分配机制，并将 Iterative PPO 扩展到连续动作空间或结合人类-in-the-loop 反馈以降低真实环境样本需求。</p>
-                    
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注多轮对话策略优化、长程奖励下的 RLHF 或希望在不重写训练栈的情况下把单轮 RLHF 工具直接用于对话系统，该文提供了可立即落地的理论依据与实现框架。</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-
-            <!-- Score details -->
-            <div class="pt-4 border-t border-border-color">
-              <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.83</span>
-              </div>
-            </div>
-          </div>
-        </article>
-        
-        <article class="bg-bg-card rounded-lg border border-border-color overflow-hidden hover:border-accent/50 transition-colors">
-          <div class="p-5">
-            <!-- Title and metadata -->
-            <div class="mb-3">
-              <!-- Tags row -->
-              <div class="flex items-center gap-2 mb-2 flex-wrap">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium
-                  bg-green-100 text-green-700 border border-green-300
-                  ">
-                  必读
-                </span>
-                <span class="text-xs text-text-secondary">评分 0.83</span>
-                <span class="text-xs text-text-secondary">·</span>
-                <span class="text-xs text-text-secondary">arxiv</span>
-                <!-- Date: visible on mobile, hidden on md+ -->
-                <span class="text-xs text-text-secondary md:hidden">· 2025-11-26</span>
-              </div>
-              <!-- Title and date row -->
-              <div class="flex items-start justify-between gap-4">
-                <h2 class="text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.21005v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    ICPO: Intrinsic Confidence-Driven Group Relative Preference Optimization for Efficient Reinforcement Learning
-                  </a>
-                </h2>
-                <!-- Date: hidden on mobile, visible on md+ -->
-                <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
-                  <div class="font-medium">2025-11-26</div>
-                </div>
-              </div>
-              <!-- Venue: below title -->
-              <div class="mt-1 text-xs text-text-secondary" title="arXiv">arXiv</div>
-            </div>
-
-            <!-- Authors -->
-            <p class="text-sm text-text-secondary mb-3">
-              Jinpeng Wang，Chao Li，Ting Ye，Mengyuan Zhang，Wei Liu 等
-            </p>
-
-            <!-- DOI -->
-            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
-              
-              <span class="flex items-center">
-                <span class="font-medium mr-1">ID:</span>
-                <span>http://arxiv.org/abs/2511.21005v1</span>
-              </span>
-              
-            </div>
-
-            <!-- Abstract (collapsible) -->
-            
-            <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-30" onclick="toggleSection('abstract-30')"
-                      class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
-                <span class="flex items-center">
-                  <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                  </svg>
-                  原文摘要
-                </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
-              </button>
-              <div id="abstract-30" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Reinforcement Learning with Verifiable Rewards (RLVR) demonstrates significant potential in enhancing the reasoning capabilities of Large Language Models (LLMs). However, existing RLVR methods are often constrained by issues such as coarse-grained rewards, reward noise, and inefficient exploration, which lead to unstable training and entropy collapse. To address this challenge, we propose the Intrinsic Confidence-Driven Group Relative Preference Optimization method (ICPO). The intuition behind it lies in the fact that the probabilities of an LLM generating different responses can inherently and directly reflect its self-assessment of the reasoning process. Inspired by the idea of preference modeling, ICPO calculates a preference advantage score for each response by comparing the relative generation probabilities of multiple responses under the same input prompt, and integrates this score with verifiable rewards to guide the exploration process. We have discovered that the preference advantage score not only alleviates the issues of coarse-grained rewards and reward noise but also effectively curbs overconfident errors, enhances the relative superiority of undervalued high-quality responses, and prevents the model from overfitting to specific strategies, thereby facilitating more thorough exploration. Comprehensive experiments across four general-domain benchmarks and three mathematical benchmarks demonstrate that ICPO steadily boosts reasoning compared to GRPO.</p>
-              </div>
-            </div>
-            
-
-            <!-- AI Summary -->
-            
-            <div class="bg-accent/10 rounded-lg p-4 mb-4 border border-accent/30">
-              <h3 class="text-sm font-semibold text-accent mb-3 flex items-center">
-                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/>
-                </svg>
-                AI 总结
-              </h3>
-              <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>RLVR训练因粗粒度奖励、噪声与低效探索导致不稳定和熵塌。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>ICPO用同一提示下多回答的相对生成概率算偏好优势，与可验证奖励联合优化。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>ICPO在四通用与三数学基准上稳定超越GRPO，提升推理准确率。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将LLM自评生成概率转化为偏好优势，缓解噪声并抑制过拟合。</p>
-                
-                <p><span class="font-medium text-accent">相关性：</span>为高效强化学习提供无需额外标注的自监督信号，助力LLM推理研究。</p>
-                
-              </div>
-
-              <div class="mt-3 pt-3 border-t border-accent/30">
                 <button id="btn-detail-30" onclick="toggleSection('detail-30')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4345,14 +4339,14 @@
                 </button>
                 <div id="detail-30" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>RLVR 已被证明能显著提升大模型的推理能力，但现有方法普遍依赖可验证奖励，存在粒度粗、噪声大、探索效率低等问题，导致训练不稳定、策略熵崩溃。作者观察到 LLM 对同一 prompt 生成不同回答的概率差异可直接反映其对推理路径的“内在信心”，因而提出用这一置信信号重新加权探索。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>ICPO 在 GRPO 的组内采样框架上，为每条回答计算“偏好优势分”：先让模型对同一 prompt 生成 K 条回答，再用每条回答的归一化对数概率与组内平均概率之差作为相对置信度，并与可验证奖励线性组合得到最终优势。该优势用于 PPO 式 clipped 更新，使高置信且正确的回答被放大，高置信却错误的回答被抑制。训练时动态调整置信与奖励的混合系数，保持熵正则化，防止过早收敛到局部策略。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在 4 个通用推理任务（ARC-C、HellaSwag 等）和 3 个数学竞赛数据集（GSM8K、MATH、OlympiadBench）上，ICPO 平均提升 3.2–6.7 个百分点，相比 GRPO 的绝对增益随模型规模扩大而增大；消融实验显示仅用置信信号即可降低 18% 的“过度自信错误”，并使被低估的高质量回答的采样概率提升 1.8 倍，训练曲线更平滑，策略熵下降速度减缓 35%。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>论文仅在 7B–13B 规模验证，尚未测试更大模型或真实场景下奖励噪声分布的变化；置信度估计依赖模型自身概率，可能因校准不足而引入偏差；方法需对每组样本进行 K 次前向，推理成本增加 K 倍，且未讨论如何自适应选择 K。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>现有 RLHF 方法主要针对单轮回复，而营销或销售等目标导向型多轮对话的奖励稀疏且延迟，直接优化对话级回报面临长程信用分配与 token 级生成不匹配的问题。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者将多轮 MDP 形式化为单轮 RLHF 序列：先用离线轨迹拟合一个多轮 Q 函数，再把该 Q 值作为即时奖励，用标准 token 级 PPO 求解单轮 RLHF；证明了该单步优化等价于多轮策略改进，从而导出 Iterative PPO——在拟合 Q 与策略更新之间批量交替的半在线算法。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>理论证明该单轮 PPO 更新满足多轮策略改进保证；实验显示在模拟销售场景中，相比离线 BC 与完全在线 RL，Iterative PPO 在成交率与对话长度上取得更好或相等的性能，同时只需复用现有单轮 RLHF 代码库即可实现。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>证明仅给出单调改进保证但未提供样本复杂度或收敛率；实验局限在模拟环境，真实世界噪声、非平稳用户行为及奖励模型误设可能影响稳定性；批量在线更新仍需要持续收集新数据，部署成本高于纯离线方法。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可研究置信度与可验证奖励的动态融合权重学习，以及将 ICPO 与基于过程奖励或蒙特卡洛树搜索的细粒度信号结合，进一步压缩采样次数并扩展到代码生成、科学问答等复杂推理领域。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>可研究样本高效的 Q 函数估计与信用分配机制，并将 Iterative PPO 扩展到连续动作空间或结合人类-in-the-loop 反馈以降低真实环境样本需求。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注大模型后训练、RLHF/RLVR 中的奖励设计与探索效率，或希望利用模型自身概率进行自监督改进，ICPO 提供了一种无需人工偏好标注即可缓解奖励噪声与熵崩溃的新视角，可直接嵌入现有 PPO/GRPO 流程。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注多轮对话策略优化、长程奖励下的 RLHF 或希望在不重写训练栈的情况下把单轮 RLHF 工具直接用于对话系统，该文提供了可立即落地的理论依据与实现框架。</p>
                   </div>
                 </div>
               </div>
@@ -4399,30 +4393,6 @@
         }
         if (icon) icon.style.transform = 'rotate(0deg)';
       }
-    }
-    function expandAll() {
-      document.querySelectorAll('.section-expand').forEach(el => {
-        el.classList.remove('collapsed');
-        el.classList.add('expanded');
-      });
-      document.querySelectorAll('[id^="btn-detail-"], [id^="btn-featured-detail-"]').forEach(btn => {
-        btn.innerHTML = '<svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>收起详细分析';
-      });
-      document.querySelectorAll('[id^="icon-abstract-"], [id^="icon-featured-abstract-"]').forEach(icon => {
-        icon.style.transform = 'rotate(180deg)';
-      });
-    }
-    function collapseAll() {
-      document.querySelectorAll('.section-expand').forEach(el => {
-        el.classList.remove('expanded');
-        el.classList.add('collapsed');
-      });
-      document.querySelectorAll('[id^="btn-detail-"], [id^="btn-featured-detail-"]').forEach(btn => {
-        btn.innerHTML = '<svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>查看详细分析';
-      });
-      document.querySelectorAll('[id^="icon-abstract-"], [id^="icon-featured-abstract-"]').forEach(icon => {
-        icon.style.transform = 'rotate(0deg)';
-      });
     }
   </script>
 </body>
