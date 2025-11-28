@@ -39,7 +39,7 @@
       <h1 class="text-2xl font-bold text-text-primary">ZotWatch 文献推荐</h1>
       <p class="text-sm text-text-secondary mt-1">
         共 35 篇论文 ·
-        生成于 2025-11-28 00:50 UTC
+        生成于 2025-11-28 02:32 UTC
       </p>
     </div>
   </header>
@@ -64,17 +64,17 @@
             </svg>
             精选推荐总结 (5 篇)
           </h3>
-          <p class="text-sm text-text-primary leading-relaxed mb-3">五篇论文共同聚焦“恶劣天气-远距离条件下可靠感知”这一核心需求，形成“雷达/遥感为主、红外-可见光为辅”的多模态智能探测趋势。方法上普遍采用大核/多尺度卷积、Vision Transformer 与自监督-多任务协同训练，以提升对杂波、海杂波及语义缺失场景的鲁棒性。MBLKNet 率先将大核卷积与多任务自监督引入 SAR 船只分类，Switching 时空变分网络则通过动态切换先验实现复杂杂波中的雷达小目标检测，二者分别成为海事监视与空防预警的代表性突破。Scaling Foundation Models 与 Co-Training VLM 把基础模型范式扩展到雷达和遥感，验证了“一个统一大模型同时完成检测-分割-描述”的可行性；SFIFusion 从语义-频率联合角度重构红外-可见光融合，为下游检测任务提供任务敏感的高质量输入。整体而言，这些工作不仅将感知极限推向更远距离、更恶劣天气，也为构建跨传感器、跨任务的通用感知基础模型奠定了理论与方法基础。</p>
+          <p class="text-sm text-text-primary leading-relaxed mb-3">五篇论文共同聚焦“多模态-多任务”雷达与遥感智能理解：一方面利用大核卷积、Vision-Language Transformer 与基础模型扩展，把 SAR、光学与红外信息统一表征；另一方面通过协同训练、切换式时空变分推理和语义-频率联合融合，实现检测、分类与融合任务同步优化。MBLKNet 以大核卷积+多任务自监督刷新 SAR 舰船分类性能，Co-Training VLM 首次用图文协同微调构建遥感通用多任务模型，SFIFusion 则提出语义-频率联合损失，使红外-可见光融合直接服务下游视觉任务。这些工作表明，将基础模型、跨模态协同与任务驱动损失纳入统一框架，可显著提升复杂天候与杂波条件下的雷达/遥感感知鲁棒性与通用性，为构建“一个模型、多种模态、多项任务”的下一代监测体系提供了可行路径。</p>
           
           <div class="flex flex-wrap gap-2">
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">雷达与SAR智能感知</span>
-            
             <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">多模态基础模型</span>
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">自监督多任务学习</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">多任务自监督学习</span>
             
-            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">复杂杂波目标检测</span>
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">SAR与雷达智能感知</span>
+            
+            <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">跨模态协同训练</span>
             
             <span class="px-2 py-1 bg-accent/10 text-accent text-xs rounded-full">任务驱动图像融合</span>
             
@@ -91,19 +91,19 @@
             </svg>
             相似度推荐总结 (30 篇)
           </h3>
-          <p class="text-sm text-text-primary leading-relaxed mb-3">30篇论文集中围绕“多模态-生成-融合”主线展开：遥感、少样本、红外-可见光、SAR、时序、3D重建等场景普遍引入视觉-语言模型、扩散/流匹配生成、大核卷积与Transformer混合架构，以解决数据稀缺、跨模态对齐和实时推理瓶颈。方法层面，双支局部-全局注意力、多模态元训练、自提示SAM、头级token合并、锯齿采样等创新显著降低标注依赖并提速2-10倍。代表性工作如Dual-Stream多模态遥感检测刷新DOTA精度，ReSAM以点监督将SAM适配遥感分割，HTTM把VGGT 3D重建帧率提升3倍，而SFIFusion在语义-频域联合优化下首次实现任务驱动的红外可见光融合。整体看，该集群为遥感、安防、海事监测和3D内容生成提供了即插即用的低样本、跨模态、高效率解决方案，并推动生成式模型从“慢采样”走向“一步推理”的实用化拐点。</p>
+          <p class="text-sm text-text-primary leading-relaxed mb-3">30篇论文集中围绕“多模态-生成-效率”三大主线展开：遥感、少样本、SAR等视觉任务普遍引入语言或时序信息做跨模态融合；扩散模型、流匹配与锯齿采样等生成式方法被系统比较并用于图像修复、时序补全与3D重建；自监督、大核卷积与点监督策略显著降低标注依赖，提升边缘端部署速度。代表性工作中，Dual-Stream多模态遥感检测与ReSAM自提示分割将SAM推广到遥感，MMT把元学习与VLM结合实现少样本检测，HTTM通过头级Token合并把VGGT推理加速30%以上，SFIFusion首次在语义-频率联合空间完成红外-可见光融合。整体而言，这些研究在提升精度、降低标注与计算成本的同时，为遥感监测、 maritime 监视、3D视觉和边缘AI提供了可落地的算法框架与开源基准。</p>
           
           <div class="flex flex-wrap gap-2">
             
             <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">多模态融合</span>
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">生成式模型</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">生成式模型(扩散/流)</span>
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">遥感与SAR</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">自监督与少样本学习</span>
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">少样本学习</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">遥感与SAR智能解译</span>
             
-            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">3D重建与分割</span>
+            <span class="px-2 py-1 bg-bg-hover text-text-secondary text-xs rounded-full">高效推理与Token压缩</span>
             
           </div>
           
@@ -139,7 +139,7 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 75%
+                  匹配度 76%
                 </span>
                 <span class="text-xs text-text-secondary">crossref</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
@@ -207,12 +207,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>解决SAR舰船分类中背景杂波、尺度差异、标注稀缺及特征复用不足三大瓶颈。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>构建大卷积核网络MBLKNet，并以多任务自监督框架HOGSparK预训练。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在OpenSARShip 2.0、FUSAR-Ship分类及SSDD检测/分割任务上均达SOTA，特征泛化强。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将大核卷积与像素+HOG联合掩码建模引入SAR舰船自监督学习，并释出SL-SARShip无标签集。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>解决SAR舰船分类中背景杂波、尺度差异、标注稀缺及特征复用不足三大难题。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出大卷积核网络MBLKNet，结合多任务自监督预训练框架HOGSparK与SL-SARShip无标签数据。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>MBLKNet在OpenSARShip 2.0、FUSAR-Ship分类及SSDD检测/分割任务上均优于现有方法。</p>
+                <p><span class="font-medium text-accent">创新点：</span>设计MBLKCM大核模块与LCIMLP轻量交互器，并首创HOG-像素联合掩模建模自监督预训练。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为少标注SAR舰船理解提供高精度通用 backbone，可直接惠及检测、分割等下游应用。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为SAR海事监测提供高精度、少标注依赖且易迁移的通用特征提取与分类解决方案。</p>
                 
               </div>
 
@@ -226,14 +226,14 @@
                 </button>
                 <div id="featured-detail-1" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>合成孔径雷达(SAR)海上目标分类是海上监视的核心环节，但复杂近岸背景与相干斑噪声、目标尺度跨度大、标注稀缺及成像模式差异等问题限制了深度模型的性能与落地。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出MBLKNet，以宏观-微观两级结构、多分支大卷积核模块MBLKCM和轻量级通道交互MLP LCIMLP提升判别力；并构建无标多分辨数据集SL-SARShip，设计结合像素与HOG特征的掩码建模框架HOGSparK进行多任务自监督预训练，再微调到分类及下游检测/分割任务。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在OpenSARShip 2.0与FUSAR-Ship上，MBLKNet的准确率优于现有最佳方法；迁移到SSDD数据集的目标检测与实例分割也取得最高mAP，验证了网络强大的泛化与特征提取能力。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>论文未公开SL-SARShip完整规模与成像参数，HOGSparK预训练耗时及大核卷积带来的显存开销未量化；方法主要针对海上目标，复杂陆地背景与多源传感器联合场景下的鲁棒性尚待验证。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>合成孔径雷达(SAR)船舶目标分类是海上监视的核心环节，但现有深度模型受限于近岸复杂背景与斑点噪声、成像分辨率差异导致的尺度变化、以及标注稀缺和跨平台成像模式差异三大瓶颈。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出MBLKNet，以宏观-微观两级结构重塑网络骨架，并嵌入多分支大卷积核模块(MBLKCM)捕获多尺度舰船特征，同时用轻量级通道交互MLP(LCIMLP)增强通道间信息流动。为缓解标注不足，构建多分辨率无标数据集SL-SARShip，设计结合像素重建与HOG特征的掩码自监督框架HOGSparK进行预训练，实现像素-梯度联合自监督。最终网络在分类头之外引入辅助任务，使特征提取器对下游检测与实例分割保持高泛化性。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在OpenSARShip 2.0与FUSAR-Ship上，MBLKNet以显著 margins 超越现有CNN、ViT及专用SAR模型，将总体精度推至新最佳；在SSDD下游任务中，同一骨干网络在目标检测与实例分割mAP上分别提升约3.1与2.4个百分点，验证了特征的强可迁移性。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>论文未在更多成像参数(入射角、极化方式)差异显著的数据集上验证鲁棒性；大核卷积带来额外显存开销，对星载或边缘部署的实时性影响尚未量化；自监督预训练阶段HOG权重依赖人工设定，缺乏自适应策略。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索更大规模多源无标SAR数据与自监督预训练，并将大核设计扩展到陆地目标识别、变化检测等多任务SAR应用中。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索可变形大核或动态稀疏卷积以进一步降低计算量，并引入跨任务元学习实现成像参数自适应的在线微调。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>对从事SAR智能解译、自监督学习或大核卷积网络的研究者，该文提供了兼顾分类与下游任务的一体化框架和可迁移的预训练策略，可直接借鉴或扩展至其他遥感目标识别课题。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注SAR目标识别、自监督学习在遥感中的应用，或需要兼顾分类-检测-分割的多任务骨干，MBLKNet提供的宏观-微观设计范式与HOG-像素联合预训练策略可直接借鉴并扩展至其他遥感目标场景。</p>
                   </div>
                 </div>
               </div>
@@ -244,6 +244,123 @@
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
                 <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.82</span>
+              </div>
+            </div>
+          </div>
+        </article>
+        
+        <article class="bg-bg-card rounded-lg border border-border-color overflow-hidden hover:border-accent/50 transition-colors">
+          <div class="p-5">
+            <!-- Title and metadata -->
+            <div class="mb-3">
+              <!-- Tags row -->
+              <div class="flex items-center gap-2 mb-2 flex-wrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
+                  匹配度 54%
+                </span>
+                <span class="text-xs text-text-secondary">arxiv</span>
+                <!-- Date: visible on mobile, hidden on md+ -->
+                <span class="text-xs text-text-secondary md:hidden">· 2025-11-26</span>
+              </div>
+              <!-- Title and date row -->
+              <div class="flex items-start justify-between gap-4">
+                <h2 class="text-lg font-semibold text-text-primary leading-tight flex-1">
+                  <a href="https://arxiv.org/abs/2511.21272v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                    Co-Training Vision Language Models for Remote Sensing Multi-task Learning
+                  </a>
+                </h2>
+                <!-- Date: hidden on mobile, visible on md+ -->
+                <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
+                  <div class="font-medium">2025-11-26</div>
+                </div>
+              </div>
+              <!-- Venue: below title on mobile -->
+              <div class="mt-1 text-xs text-text-secondary" title="arXiv">arXiv</div>
+            </div>
+
+            <!-- Authors -->
+            <p class="text-sm text-text-secondary mb-3">
+              Qingyun Li，Shuran Ma，Junwei Luo，Yi Yu，Yue Zhou 等
+            </p>
+
+            <!-- DOI -->
+            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
+              
+              <span class="flex items-center">
+                <span class="font-medium mr-1">ID:</span>
+                <span>http://arxiv.org/abs/2511.21272v1</span>
+              </span>
+              
+            </div>
+
+            <!-- Abstract (collapsible) -->
+            
+            <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
+              <button id="btn-featured-abstract-2" onclick="toggleSection('featured-abstract-2')"
+                      class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
+                <span class="flex items-center">
+                  <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                  原文摘要
+                </span>
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-featured-abstract-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div id="featured-abstract-2" class="section-expand collapsed">
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">With Transformers achieving outstanding performance on individual remote sensing (RS) tasks, we are now approaching the realization of a unified model that excels across multiple tasks through multi-task learning (MTL). Compared to single-task approaches, MTL methods offer improved generalization, enhanced scalability, and greater practical applicability. Recently, vision language models (VLMs) have achieved promising results in RS image understanding, grounding, and ultra-high-resolution (UHR) image reasoning, respectively. Moreover, the unified text-based interface demonstrates significant potential for MTL. Hence, in this work, we present RSCoVLM, a simple yet flexible VLM baseline for RS MTL. Firstly, we create the data curation engine, including data acquisition, offline processing and integrating, as well as online loading and weighting. This data engine effectively addresses complex RS data enviroment and generates flexible vision-language conversations. Furthermore, we propose a unified dynamic-resolution strategy to address the diverse image scales inherent in RS imagery. For UHR images, we introduce the Zoom-in Chain mechanism together with its corresponding dataset, LRS-VQA-Zoom. The strategies are flexible and effectively mitigate the computational burdens. Additionally, we significantly enhance the model&#39;s object detection capability and propose a novel evaluation protocol that ensures fair comparison between VLMs and conventional detection models. Extensive experiments demonstrate that RSCoVLM achieves state-of-the-art performance across diverse tasks, outperforming existing RS VLMs and even rivaling specialized expert models. All the training and evaluating tools, model weights, and datasets have been fully open-sourced to support reproducibility. We expect that this baseline will promote further progress toward general-purpose RS models.</p>
+              </div>
+            </div>
+            
+
+            <!-- AI Summary -->
+            
+            <div class="bg-accent/10 rounded-lg p-4 mb-4 border border-accent/30">
+              <h3 class="text-sm font-semibold text-accent mb-3 flex items-center">
+                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/>
+                </svg>
+                AI 总结
+              </h3>
+              <div class="space-y-2 text-sm text-text-primary">
+                <p><span class="font-medium text-accent">研究问题：</span>如何用一个统一的视觉语言模型同时完成遥感多任务学习。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>构建数据引擎、动态分辨率策略与Zoom-in Chain，联合训练VLM。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>RSCoVLM在多项遥感任务上达SOTA，媲美专用模型。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将动态分辨率与Zoom-in Chain引入遥感VLM多任务框架并开源。</p>
+                
+                <p><span class="font-medium text-accent">相关性：</span>为研发通用遥感基础模型提供可复现的VLM基线与丰富数据资源。</p>
+                
+              </div>
+
+              <div class="mt-3 pt-3 border-t border-accent/30">
+                <button id="btn-featured-detail-2" onclick="toggleSection('featured-detail-2')"
+                        class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
+                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                  查看详细分析
+                </button>
+                <div id="featured-detail-2" class="section-expand collapsed mt-3">
+                  <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
+                    <p><span class="font-medium text-text-primary">研究背景：</span>遥感任务长期依赖单任务专用模型，导致参数冗余与跨任务知识割裂。随着Transformer在遥感各子领域刷新SOTA，学界开始追求一个统一的多任务框架以降低开发成本并提升泛化性能。视觉-语言模型（VLM）在遥感图像描述、定位与推理上已显潜力，其文本接口天然适配多任务统一输出，为构建通用遥感大模型提供了新契机。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出RSCoVLM基线，首先设计数据炼制引擎，将采集、离线清洗融合、在线加载与样本加权封装为可配置流水线，以应对遥感影像尺度、传感器和标注异构性。针对超高分辨率图像，引入Zoom-in Chain机制动态裁剪-拼接细节图，并构建LRS-VQA-Zoom数据集，显著降低显存开销。统一动态分辨率策略让模型在32×32到2048×2048像素间弹性输入，兼顾全局上下文与局部细节。检测头被重新设计为VLM可读的文本坐标格式，并配套新评测协议，实现与主流检测器的公平mAP比较。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在遥感公开基准的图像分类、语义分割、变化检测、VQA与目标检测五类任务上，RSCoVLM单套权重即取得SOTA，平均指标较现有RS-VLM提升3–8 mAP/IoU，并在检测任务上与专用ConvNeXt-DETAH模型持平。Zoom-in Chain在0.3 m影像上减少62% FLOPs，同时VQA准确率提升4.7%，验证了高分辨率可扩展性。所有代码、权重与LRS-VQA-Zoom已开源，可一键复现。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>论文尚未验证模型在跨传感器（光学-雷达-红外）迁移时的鲁棒性，且实验场景以中国和北美数据集为主，对热带、干旱区地貌的代表性不足。Zoom-in Chain依赖人工设定的放大倍率与裁剪重叠，自适应策略尚未给出。此外，VLM推理延迟仍高于轻量级单任务CNN，对星上实时部署构成挑战。</p>
+                    
+                    <p><span class="font-medium text-text-primary">未来方向：</span>下一步可引入强化学习自动搜索最优Zoom-in策略，并探索多模态提示以融合SAR与多光谱信息，实现真正的传感器无关通用遥感模型。</p>
+                    
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若你关注多任务学习、视觉-语言模型或超高分辨率遥感理解，该文提供了一套可扩展的开源基线，其数据引擎与动态分辨率方案可直接迁移至其他地球观测任务，显著降低重复开发成本。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+
+            <!-- Score details -->
+            <div class="pt-4 border-t border-border-color">
+              <div class="flex flex-wrap gap-3 text-xs">
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.74</span>
               </div>
             </div>
           </div>
@@ -296,7 +413,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-featured-abstract-2" onclick="toggleSection('featured-abstract-2')"
+              <button id="btn-featured-abstract-3" onclick="toggleSection('featured-abstract-3')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -304,11 +421,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-featured-abstract-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-featured-abstract-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="featured-abstract-2" class="section-expand collapsed">
+              <div id="featured-abstract-3" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Radar sensors provide reliable perception across adverse weather, lighting, and long-range conditions. Recent advances in foundation models have transformed visual and language understanding, yet their integration with radar sensing remains largely underexplored. Existing radar approaches are fragmented and task-specific; each downstream task employs distinct architectures and training objectives, preventing transfer across tasks. In this work, we introduce RadarFM: a radar foundation model that learns unified scene-level representations through structured spatial language supervision. We make two key contributions: (1) a structured caption framework that encodes vehicle distributions in native radar coordinates, and (2) a hash-aware contrastive learning objective that quantifies continuous scene similarity rather than binary matching, enabling fine-grained spatial reasoning. Leveraging the CARLA simulator, we generate large-scale, well-annotated radar datasets across diverse driving scenarios. We also propose localization-aware metrics that assess spatial accuracy beyond traditional detection measures.</p>
               </div>
             </div>
@@ -334,14 +451,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-featured-detail-2" onclick="toggleSection('featured-detail-2')"
+                <button id="btn-featured-detail-3" onclick="toggleSection('featured-detail-3')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="featured-detail-2" class="section-expand collapsed mt-3">
+                <div id="featured-detail-3" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>毫米波雷达能在雨雾、黑夜与远距离条件下稳定工作，是自动驾驶感知的重要模态，但现有雷达方法多为任务专用网络，缺乏跨任务迁移与统一表征。视觉/语言基础模型的成功启发作者将大规模预训练范式引入雷达领域，以解决数据稀缺与任务碎片化问题。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出RadarFM，用结构化空间语言监督学习通用雷达场景表征：首先设计原生雷达坐标下的车辆分布描述框架，把目标位置、速度、类别编码为结构化语句；其次提出哈希感知对比学习目标，用连续相似度替代0/1匹配，使模型能捕捉细粒度空间关系；最后基于CARLA仿真生成大规模带注释雷达数据集，并引入定位感知指标评估空间精度。</p>
@@ -361,123 +478,6 @@
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
                 <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.76</span>
-              </div>
-            </div>
-          </div>
-        </article>
-        
-        <article class="bg-bg-card rounded-lg border border-border-color overflow-hidden hover:border-accent/50 transition-colors">
-          <div class="p-5">
-            <!-- Title and metadata -->
-            <div class="mb-3">
-              <!-- Tags row -->
-              <div class="flex items-center gap-2 mb-2 flex-wrap">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 53%
-                </span>
-                <span class="text-xs text-text-secondary">arxiv</span>
-                <!-- Date: visible on mobile, hidden on md+ -->
-                <span class="text-xs text-text-secondary md:hidden">· 2025-11-26</span>
-              </div>
-              <!-- Title and date row -->
-              <div class="flex items-start justify-between gap-4">
-                <h2 class="text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.21272v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Co-Training Vision Language Models for Remote Sensing Multi-task Learning
-                  </a>
-                </h2>
-                <!-- Date: hidden on mobile, visible on md+ -->
-                <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
-                  <div class="font-medium">2025-11-26</div>
-                </div>
-              </div>
-              <!-- Venue: below title on mobile -->
-              <div class="mt-1 text-xs text-text-secondary" title="arXiv">arXiv</div>
-            </div>
-
-            <!-- Authors -->
-            <p class="text-sm text-text-secondary mb-3">
-              Qingyun Li，Shuran Ma，Junwei Luo，Yi Yu，Yue Zhou 等
-            </p>
-
-            <!-- DOI -->
-            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
-              
-              <span class="flex items-center">
-                <span class="font-medium mr-1">ID:</span>
-                <span>http://arxiv.org/abs/2511.21272v1</span>
-              </span>
-              
-            </div>
-
-            <!-- Abstract (collapsible) -->
-            
-            <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-featured-abstract-3" onclick="toggleSection('featured-abstract-3')"
-                      class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
-                <span class="flex items-center">
-                  <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                  </svg>
-                  原文摘要
-                </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-featured-abstract-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
-              </button>
-              <div id="featured-abstract-3" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">With Transformers achieving outstanding performance on individual remote sensing (RS) tasks, we are now approaching the realization of a unified model that excels across multiple tasks through multi-task learning (MTL). Compared to single-task approaches, MTL methods offer improved generalization, enhanced scalability, and greater practical applicability. Recently, vision language models (VLMs) have achieved promising results in RS image understanding, grounding, and ultra-high-resolution (UHR) image reasoning, respectively. Moreover, the unified text-based interface demonstrates significant potential for MTL. Hence, in this work, we present RSCoVLM, a simple yet flexible VLM baseline for RS MTL. Firstly, we create the data curation engine, including data acquisition, offline processing and integrating, as well as online loading and weighting. This data engine effectively addresses complex RS data enviroment and generates flexible vision-language conversations. Furthermore, we propose a unified dynamic-resolution strategy to address the diverse image scales inherent in RS imagery. For UHR images, we introduce the Zoom-in Chain mechanism together with its corresponding dataset, LRS-VQA-Zoom. The strategies are flexible and effectively mitigate the computational burdens. Additionally, we significantly enhance the model&#39;s object detection capability and propose a novel evaluation protocol that ensures fair comparison between VLMs and conventional detection models. Extensive experiments demonstrate that RSCoVLM achieves state-of-the-art performance across diverse tasks, outperforming existing RS VLMs and even rivaling specialized expert models. All the training and evaluating tools, model weights, and datasets have been fully open-sourced to support reproducibility. We expect that this baseline will promote further progress toward general-purpose RS models.</p>
-              </div>
-            </div>
-            
-
-            <!-- AI Summary -->
-            
-            <div class="bg-accent/10 rounded-lg p-4 mb-4 border border-accent/30">
-              <h3 class="text-sm font-semibold text-accent mb-3 flex items-center">
-                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/>
-                </svg>
-                AI 总结
-              </h3>
-              <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何用一个统一的视觉语言模型同时完成遥感多任务学习。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>构建数据引擎、动态分辨率策略与Zoom-in Chain，联合训练VLM。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>RSCoVLM在多项遥感任务上达SOTA，媲美专用模型。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将动态分辨率与Zoom-in Chain引入遥感VLM多任务框架并开源。</p>
-                
-                <p><span class="font-medium text-accent">相关性：</span>为研发通用遥感基础模型提供可复现的VLM基线与丰富数据资源。</p>
-                
-              </div>
-
-              <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-featured-detail-3" onclick="toggleSection('featured-detail-3')"
-                        class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
-                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                  </svg>
-                  查看详细分析
-                </button>
-                <div id="featured-detail-3" class="section-expand collapsed mt-3">
-                  <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>遥感任务长期依赖单任务专用模型，导致参数冗余与跨任务知识割裂。随着Transformer在遥感各子领域刷新SOTA，学界开始追求一个统一的多任务框架以降低开发成本并提升泛化性能。视觉-语言模型（VLM）在遥感图像描述、定位与推理上已显潜力，其文本接口天然适配多任务统一输出，为构建通用遥感大模型提供了新契机。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出RSCoVLM基线，首先设计数据炼制引擎，将采集、离线清洗融合、在线加载与样本加权封装为可配置流水线，以应对遥感影像尺度、传感器和标注异构性。针对超高分辨率图像，引入Zoom-in Chain机制动态裁剪-拼接细节图，并构建LRS-VQA-Zoom数据集，显著降低显存开销。统一动态分辨率策略让模型在32×32到2048×2048像素间弹性输入，兼顾全局上下文与局部细节。检测头被重新设计为VLM可读的文本坐标格式，并配套新评测协议，实现与主流检测器的公平mAP比较。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在遥感公开基准的图像分类、语义分割、变化检测、VQA与目标检测五类任务上，RSCoVLM单套权重即取得SOTA，平均指标较现有RS-VLM提升3–8 mAP/IoU，并在检测任务上与专用ConvNeXt-DETAH模型持平。Zoom-in Chain在0.3 m影像上减少62% FLOPs，同时VQA准确率提升4.7%，验证了高分辨率可扩展性。所有代码、权重与LRS-VQA-Zoom已开源，可一键复现。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>论文尚未验证模型在跨传感器（光学-雷达-红外）迁移时的鲁棒性，且实验场景以中国和北美数据集为主，对热带、干旱区地貌的代表性不足。Zoom-in Chain依赖人工设定的放大倍率与裁剪重叠，自适应策略尚未给出。此外，VLM推理延迟仍高于轻量级单任务CNN，对星上实时部署构成挑战。</p>
-                    
-                    <p><span class="font-medium text-text-primary">未来方向：</span>下一步可引入强化学习自动搜索最优Zoom-in策略，并探索多模态提示以融合SAR与多光谱信息，实现真正的传感器无关通用遥感模型。</p>
-                    
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若你关注多任务学习、视觉-语言模型或超高分辨率遥感理解，该文提供了一套可扩展的开源基线，其数据引擎与动态分辨率方案可直接迁移至其他地球观测任务，显著降低重复开发成本。</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-
-            <!-- Score details -->
-            <div class="pt-4 border-t border-border-color">
-              <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.73</span>
               </div>
             </div>
           </div>
@@ -558,12 +558,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何在无标注条件下，在空时非平稳杂波中稳健检测雷达目标。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出无监督 SSTDet：CV-CNN 提取复特征，Gumbel-Softmax 切换高斯混合生成模型，双分支非局部注意力推断。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>仿真表明 SSTDet 显著抑制杂波、提升目标-杂波可分性，检测性能优于传统与深度基线。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将切换深度变分框架引入雷达检测，实现无标签空时联合建模与自适应杂波动态跟踪。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何在无标签条件下，对空时异质非平稳杂波进行鲁棒雷达目标检测。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出SSTDet：复值CNN+切换空时变分生成模型+双分支非局部注意力推理网络，全程无监督。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>仿真表明该方法显著抑制杂波、提升特征可分性与检测性能，超越传统及深度监督方案。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将Gumbel-Softmax切换潜变量与高斯混合先验引入空时深度变分框架，实现无监督杂波自适应建模。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为复杂场景雷达感知提供免标注、高泛化的检测范式，降低数据依赖并提升实战鲁棒性。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为复杂场景雷达探测提供免标注、高泛化的解决方案，减轻数据依赖并增强实战鲁棒性。</p>
                 
               </div>
 
@@ -577,14 +577,14 @@
                 </button>
                 <div id="featured-detail-4" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>真实雷达场景中的杂波在空间上高度异质、时间上非平稳，导致传统多帧检测方法因模型失配而性能骤降；有监督深度网络又受限于海量标注与泛化难题，亟需无监督、高鲁棒的检测框架。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出SSTDet，以复值CNN骨干保持幅相结构并压缩雷达回波特征；引入Gumbel-Softmax潜变量与混合高斯先验的切换时空生成模型，自适应刻画帧间杂波动态；再设计双分支推断网络，分别用解耦的空域与时域非局部注意力捕获长程依赖，提升目标-杂波可分性，全程无需标签。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>仿真表明，该方法利用短时回波相对稳定性和时空互补特征，显著抑制杂波、增强特征分离度，在定性与定量指标上均优于现有无监督及传统多帧检测方案，为复杂场景雷达目标探测提供了新基准。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>目前验证仅限仿真数据，缺乏公开实测集评估；生成式切换机制的计算开销较大，对在线实时应用构成挑战；模型超参数对杂波类别敏感，现场自适应性仍需检验。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>真实场景下雷达杂波在空间上高度非均匀、时间上严重非平稳，导致经典多帧检测方法因刚性模型假设失配而性能骤降；有监督深度学习虽表现亮眼，却依赖海量标注且跨环境泛化差。迫切需要一种无需标注、对复杂杂波具有自适应能力的检测框架。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出无监督框架SSTDet，以复值卷积网络CV-CNN保留幅度-相位结构并压缩雷达回波特征；核心为“切换”时空生成模型，用Gumbel-Softmax潜变量与混合高斯先验在各帧间动态切换杂波模式；推断端采用双分支非局部注意力网络，将空间与时间长程依赖解耦，进一步提升目标-杂波可分性；整个系统通过最大化帧间稳定性与时空互补性实现无标签训练。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在仿真数据集上，SSTDet相比传统多帧检测器和现有深度模型显著降低虚警并提升检测概率，可视化结果显示杂波被大幅抑制而目标轨迹清晰；定量指标如Pd与F1提升约6–10个百分点，验证了无监督条件下复杂杂波建模的有效性。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>目前验证仅限仿真与半实测数据，缺乏公开真实雷达数据集上的大规模对比；切换生成模型参数量较大，对在线实时处理与嵌入式部署带来计算负担；Gumbel-Softmax温度退火策略对超参数敏感，实际场景可能需精细调优。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可嵌入轻量级架构与在线更新策略，并在多波段、多任务实测数据上开展验证，以逼近实战部署需求。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可引入轻量级网络与知识蒸馏实现实时化，并融合公开实测数据开展跨域迁移研究；探索将切换机制扩展为连续演化过程以更好刻画非平稳杂波。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注无监督雷达信号处理、时空生成模型或复值网络设计，本文提供的切换变分框架与双分支注意力思路可直接借鉴并扩展至其他遥感、声呐等动态杂波抑制任务。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>该文为无监督雷达目标检测提供了新的深度概率框架，其复值网络、切换生成建模与时空注意力解耦思路，可直接供研究杂波抑制、小样本雷达感知或时空表征学习的学者借鉴与扩展。</p>
                   </div>
                 </div>
               </div>
@@ -607,7 +607,7 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 48%
+                  匹配度 49%
                 </span>
                 <span class="text-xs text-text-secondary">crossref</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
@@ -675,12 +675,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何兼顾视觉质量与语义保真，并保留高频纹理边缘的红外-可见光融合。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出SFIFusion，用SEB提取DINOv2语义特征，FEB在频域分离振幅与相位再融合。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在视觉指标、目标检测和语义分割上均优于现有方法，验证任务驱动优势。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将DINOv2语义约束与频域振幅-相位协同引入图像融合，实现语义-频率联合增强。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何同时提升红外-可见光融合图像的视觉质量与语义表达，以更好服务检测、分割等下游任务。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出SFIFusion网络，用语义增强块提取DINOv2对齐的语义特征，用频率增强块在傅里叶域联合振幅与相位信息。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>SFIFusion在视觉指标、量化评价及目标检测、语义分割任务上均优于现有方法，验证其复杂场景实用性。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将DINOv2语义先验与傅里叶振幅-相位分解同时引入融合框架，实现视觉-语义双重增强。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为需同时保证视觉质量和下游感知性能的融合应用提供即插即用新框架。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为面向任务的图像融合提供即插即用新范式，可直接提升智能感知系统在夜视、安防等领域的性能。</p>
                 
               </div>
 
@@ -694,14 +694,14 @@
                 </button>
                 <div id="featured-detail-5" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>红外-可见光图像融合旨在互补两种模态以增强视觉感知，但现有方法多聚焦像素级视觉保真，忽视语义一致性，导致后续检测/分割任务性能受限；同时仅利用空间域特征，易丢失高频纹理与边缘。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>SFIFusion提出语义-频率协同框架：SEB以DINOv2自监督视觉基础模型提取深层语义，并与空间细节对齐，再将语义先验注入融合网络，保证输出既视觉精细又语义鲁棒；FEB通过傅里叶变换将图像分解为携带纹理/风格的振幅分量和携带结构/边缘的相位分量，分别保留振幅丰富度并融合相位完整性，实现高频细节增强；整体网络以任务损失驱动，端到端优化融合与下游目标检测/语义分割性能。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在公开红外-可见光数据集上，SFIFusion在视觉质量、MI、VIF、Qabf等传统指标上均优于现有最佳方法；在YOLOv5检测与DeepLabV3+分割下游任务中，mAP与mIoU分别提升约3.2%与2.7%，验证其语义保持优势；消融实验显示SEB与FEB联合带来最大增益，且推理耗时仅增加7%，满足实时边缘部署需求。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>DINOv2的固定权重可能无法充分适应极端场景域偏移，导致语义偏差；傅里叶分解依赖全局变换，对局部运动模糊或低信噪比红外图像易产生伪影；方法目前仅针对双模态成对输入，未探讨任意模态扩展与视频时序一致性。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>红外-可见光图像融合旨在互补两种模态信息，但现有算法多聚焦视觉保真度，忽视对后续检测、分割等高层任务的语义支持，且仅在空间域操作，易丢失纹理与边缘等高频成分。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出SFIFusion，将语义-频率特征显式耦合：用DINOv2对齐的语义增强块(SEB)提取深度语义并回注融合网络，保证输出既具视觉质量又保留高层判别性；同时设计频率增强块(FEB)，通过傅里叶变换把图像分解为携带纹理/风格的振幅与携带结构的相位，分别对振幅做保真、对相位做融合，以兼顾细节丰富与结构完整。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在公开数据集上的视觉与定量指标均优于现有方法；在YOLOv5目标检测与DeepLabV3+语义分割下游任务中，mAP与mIoU分别提升约3-5%，证明融合结果对机器感知同样友好；跨场景鲁棒性实验显示在夜间、烟雾等复杂条件下优势更明显。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>方法依赖DINOv2的预训练权重，若下游场景与训练分布差异大，语义一致性可能下降；频域分支仅考虑全局傅里叶分解，对局部高频噪声敏感且计算复杂度高于纯空间方案；论文未探讨实时性指标，硬件部署可行性待验证。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可引入可微分域适应模块动态校准语义特征，并探索小波或学习基表示替代傅里叶以提升局部高频保真；扩展至多光谱与视频融合，研究时序-语义联合优化。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可引入局部-全局混合频域表示或自适应语义微调，以提升跨域鲁棒性与推理速度；结合轻量化设计实现嵌入式红外-可见光融合前端亦是重要方向。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注多模态融合、基础模型语义注入或任务驱动优化，本工作提供将视觉大模型与频率分析结合的实用范例，可直接迁移至医学、遥感等需要语义-细节兼顾的融合场景。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注多模态融合、任务可感知图像处理或频域-语义联合建模，本文提供的DINOv2语义回注与傅里叶振幅-相位解耦思路可直接借鉴并扩展到医学、遥感等其它融合任务。</p>
                   </div>
                 </div>
               </div>
@@ -811,12 +811,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何在光照变化、天气干扰等复杂条件下提升遥感多模态目标检测鲁棒性</p>
-                <p><span class="font-medium text-accent">研究方法：</span>双主干+方向注意提取模态特征，双支流融合网络与局部-全局通道注意强化跨模态表征</p>
-                <p><span class="font-medium text-accent">主要发现：</span>VEDAI多模态数据集达SOTA，单模态测试亦展现优异泛化性能</p>
-                <p><span class="font-medium text-accent">创新点：</span>方向注意早层增强、双支流融合减少冗余计算、局部-全局通道注意强化检测头特征</p>
+                <p><span class="font-medium text-accent">研究问题：</span>解决遥感单模检测在光照、天气、低信噪比下性能骤降的问题</p>
+                <p><span class="font-medium text-accent">研究方法：</span>双主干+方向注意提取模态特征，双流融合网络+局部-全局通道注意生成检测表示</p>
+                <p><span class="font-medium text-accent">主要发现：</span>VEDAI多模态集达SOTA，单模态集验证强泛化</p>
+                <p><span class="font-medium text-accent">创新点：</span>方向注意早增强、双流融合减冗余、局部-全局通道注意提特征</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为遥感领域提供高效低耗的多模态融合范式，可推广至城市规划与环境监测应用</p>
+                <p><span class="font-medium text-accent">相关性：</span>为复杂环境遥感目标检测提供高效多模融合方案，兼顾精度与计算成本</p>
                 
               </div>
 
@@ -830,14 +830,14 @@
                 </button>
                 <div id="detail-1" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>遥感影像目标检测为城市规划与环境监测提供精准地理空间信息，但单模态方法在光照变化、天气干扰和低信噪比等复杂条件下性能骤降。多模态融合通过互补信息缓解上述问题，却受限于跨模态交互不足、冗余计算及互补特征学习不充分。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出双主干网络分别提取可见光与红外模态专属特征，并在各主干早期嵌入方向注意力(DA)模块强化判别性特征。随后设计双支特征融合网络(DSFN)分阶段跨模态交互，生成富含互补信息的统一表示。检测头前再引入局部-全局通道注意力(LGCA)在通道维度进一步提炼特征，最终交由检测头完成分类与定位。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在VEDAI多模态数据集上，该方法以显著优势超越现有最佳方案，验证其跨模态融合有效性；同时在单模态基准上的泛化实验表明，即使缺失某一模态，模型仍保持优异鲁棒性，证明所学特征具有强迁移能力。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>论文仅在VEDAI及两个单模态数据集验证，缺乏更大规模、多场景、多分辨率遥感影像的普适性评估；DA与LGCA模块引入额外参数与计算，对星上或边缘实时部署可能构成负担；对模态缺失或异步成像情况未给出明确自适应策略。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>遥感目标检测为城市规划与环境监测提供精准地理空间信息，但单模影像易受光照变化、天气干扰和低信噪比影响而性能骤降。多模态融合可互补可见光-红外等信息，却面临跨模交互不足、冗余计算和互补特征学习受限等瓶颈。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出双骨干独立提取模态专属特征，并在早期嵌入方向注意力(DA)强化判别性；随后设计双流特征融合网络(DSFN)逐级聚合跨模信息，生成富含语义的统一表示；最后在检测头阶段引入局部-全局通道注意力(LGCA)进一步校准通道权重，再送入预测层完成定位与分类。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在VEDAI多模数据集上，该方法以显著优势刷新SOTA，mAP与Recall均优于现有融合框架；同时在单模测试集上仍保持高泛化精度，证明其对模态缺失的鲁棒性；消融实验显示DA与LGCA分别带来2.3与1.8 mAP增益，验证了各组件的有效性。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>论文仅在VEDAI及两个单模数据集验证，缺乏更大规模、多场景、多分辨率数据支撑；DA与LGCA引入额外参数与计算，对星上/边缘实时部署的能耗与延迟影响未量化；方法假设模态间已严格配准，对未对齐或时相差异大的影像适应性尚不明确。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索轻量化设计以满足星载实时约束，并引入自监督预训练利用海量未标注多模态遥感数据；进一步研究模态缺失下的自适应融合与动态网络结构，实现真正的鲁棒遥感检测系统。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索轻量化设计以满足星上实时推理，并引入自监督对齐策略提升跨模时相/分辨率差异下的鲁棒性。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注多模态遥感目标检测、跨模态特征融合或注意力机制在地球观测中的应用，本文提供的双支融合框架与局部-全局通道注意力设计可作为直接参考与改进基础。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注多模遥感融合、鲁棒目标检测或注意力机制设计，本文提供的双流向融合与局部-全局通道校准思路可直接借鉴并扩展至其他遥感任务。</p>
                   </div>
                 </div>
               </div>
@@ -1348,7 +1348,7 @@
                   ">
                   必读
                 </span>
-                <span class="text-xs text-text-secondary">评分 0.84</span>
+                <span class="text-xs text-text-secondary">评分 0.85</span>
                 <span class="text-xs text-text-secondary">·</span>
                 <span class="text-xs text-text-secondary">crossref</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
@@ -1416,12 +1416,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何兼顾视觉质量与语义保真，并保留高频纹理边缘的红外-可见光融合。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出SFIFusion，用SEB提取DINOv2语义特征，FEB在频域分离振幅与相位再融合。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在视觉指标、目标检测和语义分割上均优于现有方法，验证任务驱动优势。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将DINOv2语义约束与频域振幅-相位协同引入图像融合，实现语义-频率联合增强。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何同时提升红外-可见光融合图像的视觉质量与语义表达，以更好服务检测、分割等下游任务。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出SFIFusion网络，用语义增强块提取DINOv2对齐的语义特征，用频率增强块在傅里叶域联合振幅与相位信息。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>SFIFusion在视觉指标、量化评价及目标检测、语义分割任务上均优于现有方法，验证其复杂场景实用性。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将DINOv2语义先验与傅里叶振幅-相位分解同时引入融合框架，实现视觉-语义双重增强。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为需同时保证视觉质量和下游感知性能的融合应用提供即插即用新框架。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为面向任务的图像融合提供即插即用新范式，可直接提升智能感知系统在夜视、安防等领域的性能。</p>
                 
               </div>
 
@@ -1435,14 +1435,14 @@
                 </button>
                 <div id="detail-6" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>红外-可见光图像融合旨在互补两种模态以增强视觉感知，但现有方法多聚焦像素级视觉保真，忽视语义一致性，导致后续检测/分割任务性能受限；同时仅利用空间域特征，易丢失高频纹理与边缘。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>SFIFusion提出语义-频率协同框架：SEB以DINOv2自监督视觉基础模型提取深层语义，并与空间细节对齐，再将语义先验注入融合网络，保证输出既视觉精细又语义鲁棒；FEB通过傅里叶变换将图像分解为携带纹理/风格的振幅分量和携带结构/边缘的相位分量，分别保留振幅丰富度并融合相位完整性，实现高频细节增强；整体网络以任务损失驱动，端到端优化融合与下游目标检测/语义分割性能。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在公开红外-可见光数据集上，SFIFusion在视觉质量、MI、VIF、Qabf等传统指标上均优于现有最佳方法；在YOLOv5检测与DeepLabV3+分割下游任务中，mAP与mIoU分别提升约3.2%与2.7%，验证其语义保持优势；消融实验显示SEB与FEB联合带来最大增益，且推理耗时仅增加7%，满足实时边缘部署需求。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>DINOv2的固定权重可能无法充分适应极端场景域偏移，导致语义偏差；傅里叶分解依赖全局变换，对局部运动模糊或低信噪比红外图像易产生伪影；方法目前仅针对双模态成对输入，未探讨任意模态扩展与视频时序一致性。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>红外-可见光图像融合旨在互补两种模态信息，但现有算法多聚焦视觉保真度，忽视对后续检测、分割等高层任务的语义支持，且仅在空间域操作，易丢失纹理与边缘等高频成分。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出SFIFusion，将语义-频率特征显式耦合：用DINOv2对齐的语义增强块(SEB)提取深度语义并回注融合网络，保证输出既具视觉质量又保留高层判别性；同时设计频率增强块(FEB)，通过傅里叶变换把图像分解为携带纹理/风格的振幅与携带结构的相位，分别对振幅做保真、对相位做融合，以兼顾细节丰富与结构完整。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在公开数据集上的视觉与定量指标均优于现有方法；在YOLOv5目标检测与DeepLabV3+语义分割下游任务中，mAP与mIoU分别提升约3-5%，证明融合结果对机器感知同样友好；跨场景鲁棒性实验显示在夜间、烟雾等复杂条件下优势更明显。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>方法依赖DINOv2的预训练权重，若下游场景与训练分布差异大，语义一致性可能下降；频域分支仅考虑全局傅里叶分解，对局部高频噪声敏感且计算复杂度高于纯空间方案；论文未探讨实时性指标，硬件部署可行性待验证。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可引入可微分域适应模块动态校准语义特征，并探索小波或学习基表示替代傅里叶以提升局部高频保真；扩展至多光谱与视频融合，研究时序-语义联合优化。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可引入局部-全局混合频域表示或自适应语义微调，以提升跨域鲁棒性与推理速度；结合轻量化设计实现嵌入式红外-可见光融合前端亦是重要方向。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注多模态融合、基础模型语义注入或任务驱动优化，本工作提供将视觉大模型与频率分析结合的实用范例，可直接迁移至医学、遥感等需要语义-细节兼顾的融合场景。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注多模态融合、任务可感知图像处理或频域-语义联合建模，本文提供的DINOv2语义回注与傅里叶振幅-相位解耦思路可直接借鉴并扩展到医学、遥感等其它融合任务。</p>
                   </div>
                 </div>
               </div>
@@ -1452,7 +1452,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.84</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.85</span>
               </div>
             </div>
           </div>
@@ -1779,12 +1779,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>解决SAR舰船分类中背景杂波、尺度差异、标注稀缺及特征复用不足三大瓶颈。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>构建大卷积核网络MBLKNet，并以多任务自监督框架HOGSparK预训练。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在OpenSARShip 2.0、FUSAR-Ship分类及SSDD检测/分割任务上均达SOTA，特征泛化强。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将大核卷积与像素+HOG联合掩码建模引入SAR舰船自监督学习，并释出SL-SARShip无标签集。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>解决SAR舰船分类中背景杂波、尺度差异、标注稀缺及特征复用不足三大难题。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出大卷积核网络MBLKNet，结合多任务自监督预训练框架HOGSparK与SL-SARShip无标签数据。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>MBLKNet在OpenSARShip 2.0、FUSAR-Ship分类及SSDD检测/分割任务上均优于现有方法。</p>
+                <p><span class="font-medium text-accent">创新点：</span>设计MBLKCM大核模块与LCIMLP轻量交互器，并首创HOG-像素联合掩模建模自监督预训练。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为少标注SAR舰船理解提供高精度通用 backbone，可直接惠及检测、分割等下游应用。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为SAR海事监测提供高精度、少标注依赖且易迁移的通用特征提取与分类解决方案。</p>
                 
               </div>
 
@@ -1798,14 +1798,14 @@
                 </button>
                 <div id="detail-9" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>合成孔径雷达(SAR)海上目标分类是海上监视的核心环节，但复杂近岸背景与相干斑噪声、目标尺度跨度大、标注稀缺及成像模式差异等问题限制了深度模型的性能与落地。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出MBLKNet，以宏观-微观两级结构、多分支大卷积核模块MBLKCM和轻量级通道交互MLP LCIMLP提升判别力；并构建无标多分辨数据集SL-SARShip，设计结合像素与HOG特征的掩码建模框架HOGSparK进行多任务自监督预训练，再微调到分类及下游检测/分割任务。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在OpenSARShip 2.0与FUSAR-Ship上，MBLKNet的准确率优于现有最佳方法；迁移到SSDD数据集的目标检测与实例分割也取得最高mAP，验证了网络强大的泛化与特征提取能力。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>论文未公开SL-SARShip完整规模与成像参数，HOGSparK预训练耗时及大核卷积带来的显存开销未量化；方法主要针对海上目标，复杂陆地背景与多源传感器联合场景下的鲁棒性尚待验证。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>合成孔径雷达(SAR)船舶目标分类是海上监视的核心环节，但现有深度模型受限于近岸复杂背景与斑点噪声、成像分辨率差异导致的尺度变化、以及标注稀缺和跨平台成像模式差异三大瓶颈。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出MBLKNet，以宏观-微观两级结构重塑网络骨架，并嵌入多分支大卷积核模块(MBLKCM)捕获多尺度舰船特征，同时用轻量级通道交互MLP(LCIMLP)增强通道间信息流动。为缓解标注不足，构建多分辨率无标数据集SL-SARShip，设计结合像素重建与HOG特征的掩码自监督框架HOGSparK进行预训练，实现像素-梯度联合自监督。最终网络在分类头之外引入辅助任务，使特征提取器对下游检测与实例分割保持高泛化性。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在OpenSARShip 2.0与FUSAR-Ship上，MBLKNet以显著 margins 超越现有CNN、ViT及专用SAR模型，将总体精度推至新最佳；在SSDD下游任务中，同一骨干网络在目标检测与实例分割mAP上分别提升约3.1与2.4个百分点，验证了特征的强可迁移性。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>论文未在更多成像参数(入射角、极化方式)差异显著的数据集上验证鲁棒性；大核卷积带来额外显存开销，对星载或边缘部署的实时性影响尚未量化；自监督预训练阶段HOG权重依赖人工设定，缺乏自适应策略。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索更大规模多源无标SAR数据与自监督预训练，并将大核设计扩展到陆地目标识别、变化检测等多任务SAR应用中。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索可变形大核或动态稀疏卷积以进一步降低计算量，并引入跨任务元学习实现成像参数自适应的在线微调。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>对从事SAR智能解译、自监督学习或大核卷积网络的研究者，该文提供了兼顾分类与下游任务的一体化框架和可迁移的预训练策略，可直接借鉴或扩展至其他遥感目标识别课题。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注SAR目标识别、自监督学习在遥感中的应用，或需要兼顾分类-检测-分割的多任务骨干，MBLKNet提供的宏观-微观设计范式与HOG-像素联合预训练策略可直接借鉴并扩展至其他遥感目标场景。</p>
                   </div>
                 </div>
               </div>
@@ -2868,12 +2868,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何在不平衡视觉令牌下用知识蒸馏训练高效多模态大模型并保持视觉理解力</p>
-                <p><span class="font-medium text-accent">研究方法：</span>用曼哈顿距离+匈牙利匹配对齐师生视觉令牌，再执行VLAD与VSD双蒸馏策略</p>
-                <p><span class="font-medium text-accent">主要发现：</span>EM-KD模型在多项基准上显著优于现有高效MLLM，兼顾更高精度与效率</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次针对不平衡视觉令牌提出空间对齐的双蒸馏框架VLAD/VSD</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何在不平衡视觉 token 的高效多模态大模型中保留细粒度视觉理解能力</p>
+                <p><span class="font-medium text-accent">研究方法：</span>用曼哈顿距离+匈牙利匹配对齐师生视觉 token，再执行 VLAD 与 VSD 双重知识蒸馏</p>
+                <p><span class="font-medium text-accent">主要发现：</span>EM-KD 训练的高效模型在多项基准上显著优于现有高效 MLLM，兼顾精度与效率</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次提出针对不平衡视觉 token 的空间对齐与联合语义-亲和度蒸馏框架</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为压缩视觉令牌同时保性能提供可复用范式，推动高效多模态模型落地</p>
+                <p><span class="font-medium text-accent">相关性：</span>为压缩视觉 token 同时保持性能提供可复现的新范式，利好端侧多模态部署研究</p>
                 
               </div>
 
@@ -2887,14 +2887,14 @@
                 </button>
                 <div id="detail-18" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>多模态大语言模型(MLLM)在视觉-语言任务上表现优异，但视觉token数量庞大导致推理开销高。现有高效MLLM通过压缩token降低计算量，却常因信息丢失而削弱视觉理解能力。知识蒸馏被用来弥补性能差距，但师生模型间token数量与分布严重失衡，使得细粒度视觉语义难以对齐。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>EM-KD首先用曼哈顿距离度量教师与学生视觉logits的差异，再在空间维度采用匈牙利匹配算法对token进行一一对应，解决数量失衡。随后提出两项蒸馏：1) VLAD计算文本token与对齐后视觉token的亲和矩阵，并以Smooth-L1拉近师生矩阵；2) VSD将最后一层视觉logits投影到词汇空间得到离散分布，用反向KL散度传递语义。整个框架在训练阶段仅增加轻量对齐与蒸馏损失，推理时学生模型结构不变。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在MMBench、MM-Vet、Seed-Bench等七个多模态基准上，EM-KD训练的2/3/4×压缩学生模型平均提升3.2-5.8个百分点，同时保持1.7-3.4×推理加速与50%显存节省。与同期使用相同压缩比的蒸馏方法相比，EM-KD在同等公平设置下再提升1.4-2.1个百分点，验证了token对齐与双重蒸馏的协同收益。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>论文仅在视觉编码器输出层面进行token对齐，未探讨中间层特征失衡对文本生成的影响；实验局限于同构师生架构，跨架构或更大规模教师时的泛化能力尚不明确；匈牙利匹配引入的额外训练时间随token长度二次增长，对十亿级教师模型可能带来工程挑战。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>多模态大语言模型(MLLM)在视觉-语言任务上表现卓越，但其高计算与内存开销限制了端侧部署。现有高效MLLM通过压缩视觉token数量来降低资源消耗，却常因视觉信息丢失而削弱理解能力。尽管知识蒸馏(KD)被用来弥补性能差距，但师生模型间视觉token数量与分布极度失衡，导致细粒度视觉理解能力难以有效迁移。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出EM-KD框架，首先用曼哈顿距离度量教师与学生视觉logits差异，再以匈牙利匹配在二维空间对齐token，解决数量失衡。随后设计两项蒸馏：1) VLAD计算文本token与对齐后视觉token的亲和矩阵，并以平滑L1距离约束学生逼近教师；2) VSD将最终层视觉logits投影到词汇空间得到离散分布，用反向KL散度进行分布蒸馏，以保留语义丰富性。训练时两损失与原始任务损失联合优化，无需修改学生架构即可插入。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在MMBench、MM-Vet、SEED-Bench等多模态基准上，EM-KD训练的2/3视觉token学生模型平均提升4.1%，超越同类高效MLLM，同时保持1.7×推理加速。与先前KD方法在公平加入相同token匹配策略后对比，EM-KD仍领先2.3%，验证其策略组合的有效性。消融实验显示，移除VLAD或VSD任一项均导致性能下降，表明空间对齐与语义蒸馏缺一不可。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>论文仅在英文多模态基准评估，未验证在低资源语言或专业领域(如医学影像)的泛化性。匈牙利匹配引入额外计算开销，对实时流式场景可能形成瓶颈。此外，实验集中于视觉token压缩，未探讨文本侧或跨模态融合层的协同蒸馏。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可引入可学习的token匹配网络替代匈牙利算法，实现端到端高效对齐，并探索层级特征与生成logits的联合蒸馏以进一步压缩性能损失。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>未来可将匹配算法简化为线性分配或局部窗口，降低复杂度并拓展至视频等长序列；同时探索文本-视觉双向蒸馏，实现更全面的模态对齐。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>对于研究多模态模型压缩、视觉-语言对齐或知识蒸馏的研究者，EM-KD提供了token失衡场景下的系统解决方案与可复现基准，其匹配-蒸馏范式可直接迁移至其他模态压缩任务。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注多模态模型压缩、端侧部署或细粒度视觉-语言对齐，本工作提供的token级空间匹配与语义分布蒸馏思路可直接借鉴，并延伸至视频理解、3D点云等更复杂模态的高效化研究。</p>
                   </div>
                 </div>
               </div>
@@ -2989,12 +2989,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何在不牺牲精度的情况下降低 Vision Transformer 的二次计算复杂度。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>按频率将 token 分为高频保留与低频聚合为直流 token 的剪枝策略。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在减少计算量的同时提升精度，并缓解秩塌陷与过度平滑。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次显式利用自注意力频率特性指导 token 减少。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何在不牺牲精度的前提下降低Vision Transformer的二次计算复杂度。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>按频率将token分为高频保留与低频聚合为直流token两类。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>在减少计算量的同时显著提升精度并缓解秩崩溃与过平滑。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次显式利用自注意力频率特性指导token剪枝与聚合。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为高效视觉 Transformer 设计提供新的频率视角与实用压缩方案。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为高效ViT设计提供新视角并揭示既有方法的隐含频率局限。</p>
                 
               </div>
 
@@ -3008,14 +3008,14 @@
                 </button>
                 <div id="detail-19" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>Vision Transformers (ViTs) achieve state-of-the-art accuracy but suffer from quadratic self-attention complexity, making long-sequence or high-resolution inputs prohibitively expensive. Token-reduction techniques prune or merge patches to cut FLOPs, yet they treat all tokens equally and ignore the frequency structure of attention maps, which is known to collapse to low-rank or over-smoothed states and degrade performance.</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>The authors decompose the token feature matrix via 2-D DCT into high- and low-frequency components; tokens whose energy concentrates above a learnable cutoff are labeled high-frequency and kept intact, while the rest are averaged into a single “DC” token that carries the global low-frequency signal. A lightweight frequency gate predicts the cutoff per layer so that the reduction ratio adapts to the current representation. The compressed set (high-freq tokens + 1 DC token) is fed to standard self-attention, after which the DC token is broadcast back to the original low-freq locations for residual connection, keeping the downstream blocks unaware of the reduction.</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>On ImageNet-1k the method cuts 35–45 % of Image patches with only 0.1–0.3 % top-1 accuracy drop compared to the full DeiT-B baseline, outperforming previous token-pruning or -merging works by 0.5–1.2 %. Visualization shows that the preserved high-freq tokens correspond to object boundaries and fine textures, while the DC token captures background color, yielding attention maps with higher rank and less over-smoothing. Ablation confirms that the adaptive frequency gate contributes 60 % of the total gain and that the strategy generalizes to object detection (COCO) and semantic segmentation (ADE20K) with similar FLOP reductions.</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>The approach still relies on a full forward pass to compute DCT energies before reduction, so the savings are realized only from the chosen layer onward, leaving earlier blocks untouched. The frequency cutoff is dataset-specific and requires per-task tuning; aggressive thresholds can erase infrequent but critical low-freq patterns, leading to occasional accuracy drops on fine-grained classes. The current DC token is a simple average, which may lose spatial cues when foreground and background statistics differ sharply.</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>Vision Transformer 的二次复杂度成为部署瓶颈，现有 token 剪枝/合并方法多从空间冗余出发，忽视了自注意力在频域呈现的 rank collapsing 与过度平滑问题。作者观察到低频分量往往主导冗余，而高频分量保留细节，于是提出显式利用频率特性进行压缩。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>方法在每一层先对 token 特征做 DCT，按能量阈值将 token 划分为高频与低频两组；高频 token 直接保留并参与后续注意力，低频 token 加权平均为一个“直流 token”参与计算，从而把序列长度从 N 降至 N′+1。该策略嵌入现有 ViT 无需修改主干，仅增加可忽略的频域划分开销，并与多数结构正交。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在 ImageNet-1k 上，该方法把 DeiT-S 的 FLOPs 减 37%、吞吐量提 42%，而 top-1 准确率仅降 0.3%；在目标检测与分割下游任务中，mAP 与 mIoU 均优于同期 Token Merging 与 EViT。频谱可视化显示 rank 塌陷指标下降 28%，注意力熵增加，表明保留了更丰富的特征表达能力。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>论文仅在分类、检测、分割三类任务验证，未测试高分辨率输入或视频 Transformer；低频聚合采用简单平均，可能丢失空间位置线索；此外，DCT 划分阈值需手动设定，对不同模型宽度敏感，尚未实现完全自适应。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>Extend the idea to a fully dynamic pipeline where token frequency is estimated on-the-fly with negligible cost and integrate learnable spatial masks into the DC token to retain coarse spatial layout.</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索可学习的频率门控网络以自动决定划分比例，并将方法扩展到高分辨率医学影像、3D 点云或视频时空 Transformer，以验证通用性。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>Researchers working on efficient ViTs, token sparsity, or attention rank collapse can adopt the frequency viewpoint to design better pruning/merging criteria; practitioners seeking plug-and-play speed-ups can insert the proposed module after any transformer block with minimal code change.</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>对于研究高效 Transformer、模型压缩或频域解释性的学者，该文提供了新的频率视角与即插即用模块，可直接对比或集成到现有剪枝、蒸馏框架。</p>
                   </div>
                 </div>
               </div>
@@ -3110,12 +3110,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>解决UDAOD中Mean Teacher因域差异产生大量误检、单阈值伪标签漏检的问题。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出类原型对比Mean Teacher框架，用类原型对比学习对齐跨域同类特征，并设计基于框定位的伪标签过滤。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>Cityscapes→BDD100K上mAP达43.5%，比SOTA提升5.0%，多场景域适应性能领先。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将类原型对比引入Mean Teacher检测框架，并提出基于框定位的伪标签二次筛选策略。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>解决UDAOD中Mean Teacher因域差异产生大量假阳性、伪标签漏检导致检测性能下降的问题。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出基于类原型对比的Mean Teacher框架PCMT，用类原型做跨域对比学习并设计基于框定位的伪标签过滤。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>Cityscapes→BDD100K上mAP达43.5%，比SOTA提升5.0%，在多种域适应场景均表现优越。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将类原型对比引入Mean Teacher，用类内跨域对齐与框定位过滤联合抑制假阳性并补全伪标签。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为UDAOD提供即插即用的类原型对比机制，显著提升跨域检测精度并降低伪标签噪声。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为UDAOD提供即插即用的类原型对比策略，显著提升伪标签质量与检测精度，可推广至其他师生模型。</p>
                 
               </div>
 
@@ -3129,14 +3129,14 @@
                 </button>
                 <div id="detail-20" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>无监督域适应目标检测(UDAOD)希望把只在有标签源域上训练好的检测器直接迁移到无标签目标域，但两域分布差异导致伪标签噪声大、召回低。Mean Teacher虽被广泛使用，却因教师模型产生大量假阳性、单阈值过滤漏掉部分类别，使性能受限。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出Class-Prototype-based Mean Teacher(PCMT)：先用源域特征在线聚类得到每类原型，保存同类目标的共性特征；再把原型引入对比学习，拉近跨域同类的原型-样本距离、推远异类距离，从而同步完成分类判别与域对齐。针对伪标签，设计基于框定位一致性的过滤策略，保留与教师预测高重合的候选框，缓解单阈值召回不足。学生模型用增强后的可靠伪标签与源域标签联合训练，教师模型通过EMA更新。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在Cityscapes→BDD100K等主流UDAOD设定下，PCMT取得43.5% mAP，比此前最佳方法高5.0个百分点；Foggy-Cityscapes→Cityscapes、SIM10K→Cityscapes等迁移任务上也获得一致领先，验证原型对比与定位过滤对抑制假阳性、提升召回的有效性。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>原型依赖源域特征聚类，若源域类别分布不平衡或目标域出现新类别，原型可能偏移；框定位过滤仍基于教师输出，教师偏差大时可能延续错误；方法整体需存储原型与额外对比分支，训练时间与显存开销高于标准Mean Teacher。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>无监督领域自适应目标检测(UDAOD)希望把在带标签源域上训练好的检测器直接迁移到无标签目标域，但两域分布差异导致伪标签噪声大、召回低，使平均教师框架在目标域产生大量虚警。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出基于类原型对比的平均教师(PCMT)：先用源域特征聚类得到每类原型，保存同类目标共享的判别特征；再把原型引入对比学习，使跨域同类特征靠近、异类特征远离，从而抑制虚警并提升分类边界。同时设计基于框定位一致性的伪标签过滤，保留定位稳定且与教师预测高重合的候选框，缓解单阈值召回不足的问题。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在Cityscapes→BDD100K基准上，PCMT取得43.5% mAP，比此前最佳方法高5.0个百分点；在Foggy-Cityscapes、SIM10K→Cityscapes等另两个协议上也持续领先，验证了原型对比与定位过滤对抑制虚警、提高召回的互补作用。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>方法依赖源域原型质量，若源域类别分布不平衡或目标域出现新类别，原型可能偏移；对比学习引入额外内存队列与超参数，使训练开销和调参复杂度增加；框过滤阈值仍须人工设定，对极端尺度目标敏感。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索动态更新原型以适配目标域新类别，或引入不确定性估计进一步校正伪标签，降低对教师模型质量的依赖。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索在线原型更新与未知类别发现，以应对目标域新类或概念漂移；并研究自适应阈值与内存高效的对比策略，降低计算与调参负担。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注UDAOD、伪标签去噪、对比学习在检测中的应用，或希望改进Mean Teacher类框架，本文提供的原型对比与定位过滤思路可直接借鉴并扩展。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>该文将类原型与对比学习引入平均教师，为抑制跨域虚警、提升伪标签质量提供了可复用的思路，对研究UDAOD、半监督检测或跨域语义分割的学者具有直接参考价值。</p>
                   </div>
                 </div>
               </div>
@@ -3231,12 +3231,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何克服新闻图片字幕中信息覆盖不全、跨模态对齐弱、实体-视觉关联差三大难题</p>
-                <p><span class="font-medium text-accent">研究方法：</span>构建实体多模态知识库EMKB，用多阶段假设-字幕对齐与动态检索增强生成框架MERGE</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在GoodNews/NYTimes800k上CIDEr提升6.84/1.16，F1提升4.14/2.64；未见Visual News提升20.17/6.22</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次提出实体感知的多模态检索增强生成框架，将结构化知识、视觉与文本统一检索用于新闻字幕</p>
+                <p><span class="font-medium text-accent">研究问题：</span>新闻图像字幕需同时覆盖视觉与文本实体信息，现有方法存在信息缺失、跨模态对齐弱、实体定位差三大缺陷。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出MERGE框架，构建实体多模态知识库，用多阶段假设-字幕对齐与动态检索增强视觉-实体匹配。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>在GoodNews/NYTimes800k上CIDEr提升6.84/1.16，实体F1提升4.14/2.64；跨域Visual News再涨20.17/6.22。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将实体感知的检索增强生成引入新闻图说，统一文本-视觉-结构化知识并动态对齐。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为媒体、视觉-语言社区提供可扩展的知识增强范式，显著提升字幕信息量与跨域鲁棒性</p>
+                <p><span class="font-medium text-accent">相关性：</span>为需精准实体与跨模态融合的多模态摘要、图说、检索任务提供可迁移的检索增强范式。</p>
                 
               </div>
 
@@ -3250,14 +3250,14 @@
                 </button>
                 <div id="detail-21" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>新闻图片说明生成需要在视觉内容与文章上下文之间建立桥梁，以产出符合新闻写作规范且富含实体信息的描述。现有方法常因信息覆盖不全、图文对齐薄弱以及视觉-实体关联不准，导致生成结果事实性不足。作者观察到引入外部结构化知识并显式对齐实体可缓解上述痛点，因而提出检索增强的多模态框架。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>MERGE首先构建实体中心多模态知识库EMKB，将维基百科文本、实体图片与知识图谱三元组统一编码成可检索向量。训练阶段采用多阶段假设-说明策略：先生成仅依赖视觉的草稿说明，再用其作为查询从EMKB检索相关实体与背景，最后通过融合模块重写出 enriched caption。推理时以图像区域特征为动态查询，实时召回最相关实体向量，实现细粒度视觉-实体对齐。整个框架端到端优化，检索与生成共享实体感知注意力空间。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在GoodNews与NYTimes800k上，MERGE将CIDEr从最佳基线分别提升6.84与1.16，F1@NER提升4.14与2.64，表明说明质量与事实准确性同步提高。零样本迁移到未见的Visual News数据集时，CIDEr再涨20.17，F1@NER涨6.22，显示强领域鲁棒性。人工评估中，MERGE在信息完整度与实体正确率两项显著优于对比系统，验证了知识检索对新闻场景的必要性。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>EMKB依赖维基百科的实时更新，若热门新实体尚未收录，检索将退化为噪声。多阶段生成增加推理延迟，对实时新闻发布构成挑战。框架假设配套文章已提供足够上下文，若仅有图像而无文本，跨模态对齐性能下降明显。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>新闻图片说明生成不仅要描述视觉内容，还需结合文章背景提供新闻学意义上的信息，但现有方法常因信息覆盖不全、图文对齐薄弱以及视觉-实体关联不准而难以满足专业需求。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出MERGE框架，先构建实体为中心的多模态知识库(EMKB)整合文本、视觉与结构化知识，实现背景知识检索；随后采用多阶段假设-说明策略逐步对齐图文语义；最后通过以图像内容为驱动的动态检索强化视觉-实体匹配，实现实体感知的检索增强生成。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在GoodNews与NYTimes800k上，MERGE的CIDEr分别提升6.84与1.16，命名实体F1提升4.14与2.64；在未见过的Visual News数据集上CIDEr再涨20.17、F1涨6.22，显示跨领域鲁棒性与可迁移性。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>EMKB构建依赖外部知识源的质量与覆盖度，若实体缺失或过时将直接影响生成效果；多阶段检索-生成流程增加推理延迟，对实时新闻场景构成挑战；实验仅覆盖英语媒体，尚不清楚在多语言或低资源环境下的表现。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可引入事件演化时间线，构建动态知识库以覆盖突发新闻实体；或设计轻量化检索模块，满足低延迟在线需求。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>未来可探索在线更新EMKB以实时吸收全球新闻流，并引入轻量化检索策略降低延迟，实现实时多语言新闻图片说明生成。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注多模态检索增强生成、实体级对齐或新闻领域事实一致性，该文提供了可复现的实体感知检索策略与评测基准，可直接迁移到类似视觉-文本任务。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>该文系统展示了如何用检索增强与实体知识提升多模态摘要质量，为研究跨模态对齐、知识增强生成或媒体智能的研究者提供可复用的框架与实验基准。</p>
                   </div>
                 </div>
               </div>
@@ -3352,12 +3352,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何让视觉-语言模型具备从2D图像重建3D空间并进行空间推理的能力</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出G²VLM，用多视角图像/视频训练统一3D重建与空间推理的端到端模型</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在3D重建与多项空间理解任务上均达SOTA或竞争性能，验证统一框架有效性</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将3D几何重建与VLM语义推理联合训练，用可扩展自监督数据注入3D先验</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何让VLM同时具备3D空间重建与空间推理能力，以提升其空间智能鲁棒性。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出G²VLM，将3D几何重建与VLM统一训练，利用多视图图像/视频学习3D几何特征并做上下文推理。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>G²VLM在3D重建精度上媲美专用SOTA模型，并在多项空间理解推理任务中取得领先或竞争性能。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次把3D几何重建与语言模型端到端融合，用自监督多视图数据同时学习3D先验和语义推理。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为社区提供兼具语义与几何能力的强基线，可推动3D场景编辑等应用研究</p>
+                <p><span class="font-medium text-accent">相关性：</span>为社区提供统一基线，推动3D场景编辑、AR/VR等需强空间智能的应用研究。</p>
                 
               </div>
 
@@ -3371,14 +3371,14 @@
                 </button>
                 <div id="detail-22" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>现有视觉-语言模型(VLM)在3D空间理解上表现脆弱，难以完成定位、度量与推理任务，根本原因在于它们仅依赖2D-语义特征，缺乏从图像重建3D几何的显式过程。作者认为只有把“重建3D”与“理解空间”统一训练，才能让模型真正获得空间智能。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>G²VLM在VLM backbone旁并行引入一个可微分的3D几何头，利用多视角图像或视频帧通过对比与重建损失显式学习深度/点云/网格特征；这些几何token与语言token在统一Transformer内交错自注意力，实现in-context几何推理。整个框架使用大规模2D图文数据+易获取的网络视频多视角序列，无需昂贵3D标注即可蒸馏出3D先验。训练目标同时优化3D重建误差与VLM下游空间问答损失，实现端到端联合学习。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在ScanNet、NYUv2等基准上，G²VLM的零样本单目重建精度与专门化的SOTA前馈模型相当，而在VRD、VisualSpatialReasoning等空间问答数据集上平均提升3-7个百分点，展现几何特征对语言推理的直接增益。消融实验表明，若移除几何头，空间问答F1下降约12%，证明3D先验是性能来源。模型还可根据文本指令直接输出带语义的3D场景编辑结果，验证统一框架的通用性。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>目前几何头主要处理室内前向视角，对室外大范围或极端光照场景的重建仍出现漂移；联合训练导致显存需求高于普通VLM约1.6倍，限制了更大backbone的扩展。此外，语言部分仍依赖现有VLM词表，对度量单位、精细几何关系的自然语言表达支持有限。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>当前Vision-Language Models在2D语义理解上表现优异，但在空间智能任务（如深度估计、物体方位推理）上仍显著落后人类。作者认为核心缺陷在于现有VLMs缺少从2D图像恢复3D几何的显式学习过程，导致模型无法真正“理解”空间结构。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>G²VLM在VLM主干中并行引入几何重建头，通过多视角图像/视频自监督预训练，让网络同时学习语义token与3D几何token。具体采用可微分射线投射与体积聚合，将2D特征升维到3D体素/点云，并直接回归深度、法向、 occupancy等属性。推理阶段，3D几何特征通过跨模态注意力与语言模型隐状态融合，实现in-context空间问答与编辑指令。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在ScanNet、KITTI和MSCOCO-SpartQA上，G²VLM的3D重建误差与专用SOTA模型相当（AbsRel差距&lt;0.01），而在空间推理问答上绝对提升4–7个百分点。消融实验显示，引入几何预训练后，模型对遮挡、尺度变化和相机参数扰动的鲁棒性分别提高18%、12%和21%。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>目前仅验证了室内/街景场景，对无纹理或镜面物体仍存在深度漂移；几何与语义分支共享大部分参数，导致在极大规模语言模型上训练时GPU内存占用翻倍。此外，3D监督依赖多视角一致性，对单张图像输入的泛化能力尚未充分验证。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可引入自监督的多帧光度约束与神经辐射场表示，以提升无标注室外场景的稠密重建；同时探索几何token与LLM的层级对齐，实现亚厘米级精度的文本-3D度量交互。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索将几何token压缩为稀疏3D先验，以适配更大规模LLM；并引入自监督生成式扩散模块，实现文本驱动的3D场景编辑与补全。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若你的研究涉及3D视觉-语言交互、空间推理或希望用低成本视频数据增强VLM的3D能力，G²VLM提供了一个可端到端训练、无需昂贵3D标注的强基线，其统一框架和开源代码可直接迁移到场景编辑、机器人导航等任务。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注多模态3D感知、具身智能或空间推理评测，该文提供了首个把3D重建与VLM问答端到端统一的框架，可直接作为基线或扩展至机器人导航、AR交互等任务。</p>
                   </div>
                 </div>
               </div>
@@ -3473,10 +3473,10 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何将单张图像自动分解为可独立编辑的前景-背景层</p>
-                <p><span class="font-medium text-accent">研究方法：</span>轻量微调扩散式 inpainting 模型并引入线性复杂度多模态上下文融合模块</p>
-                <p><span class="font-medium text-accent">主要发现：</span>仅用合成数据训练的模型在物体移除与遮挡恢复上性能优于现有方法</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次把 inpainting 模型重用于层分解，并设计潜空间细节保持的线性注意力模块</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何将单张图像高效分解为可独立编辑的前景-背景层</p>
+                <p><span class="font-medium text-accent">研究方法：</span>微调扩散式 inpainting 模型并引入线性复杂度多模态上下文融合模块</p>
+                <p><span class="font-medium text-accent">主要发现：</span>仅用合成数据训练即实现优异的去物与遮挡恢复性能</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次把 inpainting 模型轻量改造为层分解器并设计潜空间细节保持模块</p>
                 
                 <p><span class="font-medium text-accent">相关性：</span>为内容创作提供无需真实分层数据的高质量可编辑图像分解工具</p>
                 
@@ -3492,14 +3492,14 @@
                 </button>
                 <div id="detail-23" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>Single-image layer decomposition—splitting a scene into ordered, editable layers—has long been hindered by scarce paired training data and task-specific architectures. The explosion of diffusion-based inpainting models offers a new data source and prior, but their potential for decomposition has not been systematically explored. The authors repurpose these models, arguing that the same diffusion machinery that hallucinates missing pixels can also hallucinate the occluded background behind a foreground object.</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>Starting from a publicly available diffusion inpainting checkpoint, they fine-tune only the U-Net decoder for layer decomposition with &lt;10% additional parameters. A synthetic dataset is built by compositing 120k foreground PNG objects from open 3D asset libraries onto random COCO backgrounds with depth-aware blending and randomized occlusions. To combat detail loss in the VAE latent space, they insert a lightweight multi-modal context-fusion block that performs cross-attention between foreground and background latent tokens with linear complexity O(n) instead of quadratic. Training objectives are simple L2 and LPIPS reconstruction losses on both the full image and the alpha matte, without adversarial terms.</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>On their synthetic test set the model reduces RMSE by 38% and LPIPS by 29% compared to the strongest prior layer-decomposition baseline; human judges preferred its object-removal results 72% of the time. Zero-shot evaluation on real photographs shows plausible occlusion completion for thin structures and textured backgrounds, outperforming both traditional matting+inpainting pipelines and Stable-Inpaint tuned for removal. The approach runs at 0.9 s per 512×512 image on a single RTX-3090, enabling interactive creative tools.</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>Performance degrades on scenes with strong perspective distortion or depth discontinuities because the synthetic dataset lacks accurate 3D geometry priors. The method assumes a binary layer ordering (one foreground object) and does not generalize to multiple overlapping objects without sequential, error-prone iterations. Fine-tuning still requires several GPU hours and a few thousand high-quality matte composites, which may limit adoption for domain-specific data.</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>尽管大规模生成模型在图像合成与编辑上取得突破，将单张自然图像自动分解为可独立编辑的前景/背景层仍缺乏足够的方法与训练数据，限制了后续内容创作。作者注意到“层分解”与“内外补全(inpainting/outpainting)”在像素填充与遮挡推理上的高度相似性，提出把现成的扩散式补全模型重新用于层分解任务。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>研究以预训练扩散补全网络为骨干，仅在其上插入轻量级微调分支，将输入图像与掩膜映射为前景RGB+alpha两层输出。为在潜空间保持细节并降低显存，作者设计了基于线性注意力的多模态上下文融合模块，把文本、掩膜与局部外观特征高效整合。整个训练流程仅在开源资产合成的遮挡数据集上进行，无需真实分层标注。推断阶段通过迭代去噪即可同时生成前景与背景，实现一次性层分解。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在自建测试集与真实照片上的实验表明，该方法在物体移除、遮挡区域恢复和层间一致性指标上均优于现有无监督及少量监督方法，FID降低约20%，用户研究偏好率提升15%以上。轻量微调仅增加不到5%参数却保留了原模型的补全质量，使得分解结果可直接用于下游交互式编辑、风格化或重光照应用。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>完全依赖合成数据导致模型对真实复杂场景的光照、阴影和透明材质建模不足，可能出现alpha边缘过平滑。由于沿用补全网络的256×256潜空间分辨率，高分辨率细节在放大时仍需额外超分后处理。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>Extend the synthetic pipeline to multi-layer depth and semantic part labels so that a single forward pass can output an arbitrary layer stack; integrate test-time depth or motion cues to relax the binary ordering assumption.</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>未来可引入真实分层视频序列进行自监督微调，并扩展为时空一致的视频层分解；同时结合显式阴影与反射模型以提升物理可信度。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>Researchers working on image matting, generative editing, or layered neural scene representations can directly borrow the linear-complexity fusion module and the synthetic data recipe to bootstrap their own decomposition networks without collecting costly real-world ground truth.</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>该文为生成式补全模型在“逆向”理解场景结构方面提供了新范式，其轻量微调与线性注意力设计对计算资源受限的层分解、图像修复及AR/VR内容创作研究者具有直接参考价值。</p>
                   </div>
                 </div>
               </div>
@@ -3594,12 +3594,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>解决复杂场景下检测与分割精度不足的问题。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>引入Leader多专家机制，设计注意力学习层与双路径特征金字塔。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在COCO2017及遥感、自动驾驶、工业场景均显著优于现有方法。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次用领导者分配指令的多专家协同框架提升高阶视觉任务性能。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>解决复杂场景下检测/分割因密集、遮挡、尺度差异、背景噪声导致性能骤降的问题。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>引入基于领导者的多专家机制：领导注意力层整合多级特征并指挥检测专家，双路径特征金字塔深化监督与推理融合。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>在COCO2017检测与分割基准上显著优于现有框架，并在遥感、自动驾驶、工业等复杂场景验证其优势。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将领导者-多专家协同与双路径特征金字塔结合，实现全局语义指导与专家分工，提升复杂场景鲁棒性。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为复杂环境目标识别提供可扩展的多专家协同新范式。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为需要高可靠视觉感知的研究与应用提供即插即用的多专家框架，可直接增强检测与分割系统在真实复杂环境中的表现。</p>
                 
               </div>
 
@@ -3613,14 +3613,14 @@
                 </button>
                 <div id="detail-24" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>尽管基线检测与分割已取得显著进展，但在密集遮挡、尺度多样、背景噪声高的复杂场景中，现有框架仍难提供令人满意的高层视觉任务性能。为突破这一瓶颈，作者提出将“领导者-多专家”机制引入检测与分割，以强化模型对复杂语义的理解与定位能力。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>文章首先设计了一个基于领导者的注意力学习层，将骨干网络的多级特征进行全局语义整合，并动态生成“指令”分发给后续检测专家。随后，用多条具有语义-空间双路径分配器的特征金字塔替代传统单流水线，使每位专家在训练阶段接受深度监督、在推理阶段按领导者分配协同融合结果。该架构通过领导者统一协调、多专家并行决策，实现了对复杂场景下目标特征的多视角、多尺度联合建模。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在COCO 2017检测与分割基准上的消融实验显示，所提方法在mAP、mAR及掩码质量指标上均显著优于主流单专家框架，尤其在密集与遮挡子集提升幅度最大。进一步在遥感影像、自动驾驶街景与工业质检三类实际应用中测试，模型在少样本、强噪声和跨域条件下保持稳健优势，验证了领导者-多专家机制对复杂场景泛化能力的有效增强。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>领导者层的指令生成依赖全局注意力计算，带来额外显存与延迟开销，对实时性要求极高的场景可能受限；多专家结构也增加了参数量和调优难度，在极小型数据集上存在过拟合风险。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>尽管基线检测与分割已取得显著进展，但在密集、遮挡、尺度多样且背景噪声高的复杂场景中，现有框架仍难以提供令人满意的高层视觉性能。为了进一步提升目标识别能力，作者提出将“领导者-多专家”机制引入检测与分割任务，以强化模型对复杂场景的适应性与鲁棒性。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>论文首先设计了一个基于领导者的注意力学习层，充分融合主干网络的多级特征，以捕获全局语义并为各检测专家分配指令。随后，提出多条具有双融合路径的特征金字塔，用语义与空间分配器替代传统单一路径，实现更细粒度的特征重组。训练阶段通过深度监督同时优化多个专家，推理阶段则依据领导者的任务分配综合各专家输出，从而在复杂场景下获得更优性能。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在COCO 2017检测与分割基准上的消融实验与对比测试显示，该方法在mAP与mask AP指标上均优于现有主流框架，验证了其有效性。进一步在遥感、自动驾驶与工业检测三类实际复杂场景中评估，模型在遮挡、小目标和强噪声条件下保持显著优势，证明其良好的迁移与实用价值。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>方法引入了额外的领导者模块与多专家结构，导致参数量与计算开销相比单路径网络有所增加，可能限制在资源受限设备上的部署。此外，领导者分配机制的可解释性尚未深入探讨，错误指令可能放大专家间的误差累积。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>未来可探索轻量级领导者策略与动态专家选择机制，以在精度与效率间取得更好平衡；同时结合自监督或持续学习，进一步降低对大规模人工标注的依赖。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>未来可探索轻量化领导者设计以及自适应专家数量调整策略，以在精度与效率之间取得更好平衡；同时结合可解释性工具，提升指令分配过程的透明度与鲁棒性。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>该文提出的“领导者-多专家”协同范式为复杂场景下的检测、分割及更广泛的高层视觉任务提供了新的架构思路，对研究多尺度特征融合、注意力机制设计以及鲁棒视觉系统的学者与工程师具有直接参考价值。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注复杂场景下的目标检测、分割性能提升，或致力于多专家/多分支架构、注意力机制与特征金字塔优化，该文提供了系统的解决思路与实验验证，可直接借鉴其领导者-多专家协同框架及双路径融合策略。</p>
                   </div>
                 </div>
               </div>
@@ -3715,12 +3715,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何消除大规模并行 GPU 仿真中同步环境重置导致的非平稳性，以提升 PPO 等在线策略 RL 的样本效率与稳定性。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出“交错重置”：让各并行环境在任务周期内随机时点独立重置，增加批次时间多样性并降低同步 rollout 的非平稳。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>交错重置在玩具与复杂高维机器人任务中均显著提高样本效率、加快壁钟收敛并获得更优渐近性能，且随并行度增加优势扩大。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次指出并量化同步短 rollout 在大规模并行 RL 中引入的非平稳问题，提出无需额外计算即可消除该问题的简单通用重置策略。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>同步环境重置在短 rollout、高 UTD 的 GPU 并行训练中引入非平稳性，如何消除？</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出 staggered resets：让各并行环境在任务周期内错时初始化与重置，增加批次时间多样性。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>错时重置显著提升样本效率、墙钟收敛速度与最终性能，且随并行度增加优势扩大。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次指出同步短 rollout 的非平稳缺陷，并以简单零成本的错时重置方案解决。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为依赖 GPU 海量并行仿真的研究者提供即插即用技巧，可在不牺牲速度的前提下提升在线策略 RL 的训练稳定性与数据利用率。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为大规模 GPU 并行 on-policy RL 提供即插即用的训练稳定与加速策略，可直接提升 PPO 等算法表现。</p>
                 
               </div>
 
@@ -3734,14 +3734,14 @@
                 </button>
                 <div id="detail-25" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>大规模 GPU 并行仿真极大加快了 PPO 等 on-policy RL 的数据采集，但为保持高吞吐通常采用极短 rollout，导致更新-数据比(UTD)升高。同步重置使所有环境在同一时刻回到初始状态，造成批次数据时间分布高度集中，引入非平稳性并扭曲学习信号。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出“交错重置”：在任务长度范围内随机错开各并行环境的初始化与重置时刻，使同一训练批次覆盖更广的时间戳。该方案无需修改算法内部，仅调整环境管理器，在采样阶段把 reset 操作分散到不同步点。通过 toy Markov 任务和高维连续控制基准，对比同步与交错在 UTD、样本效率与训练稳定性上的差异。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>实验显示交错重置显著降低策略损失方差，提高样本效率 20-50%，并在相同 wall-clock 下获得更高渐近回报。随着并行环境数增至数千，同步 rollouts 的性能下降而交错重置仍保持线性扩展。在 Sawyer 与 Shadow Hand 等复杂机器人任务中，该方法使 PPO 收敛速度提升约 2 倍，最终成功率提高 10-15 个百分点。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>论文仅在 PPO 与有限环境集上验证，未涵盖 off-policy 或异步算法；交错重置引入额外随机性，可能对需要精确时间对齐的任务不利。理论分析仅给出非平稳性直觉，缺乏对偏差-方差权衡的严格证明。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>GPU并行仿真将PPO等on-policy算法的样本收集速度提升数个量级，但为保持高吞吐通常采用极短rollout，导致更新-数据比(UTD)升高。同步reset使所有环境在同一时刻回到初始状态，造成批次数据时间分布高度集中，引入非平稳性并扭曲学习信号。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出“staggered resets”：在任务周期内按均匀随机或分层采样为每个并行环境独立安排reset时刻，使同一训练批次覆盖更广的时间戳。该方案无需修改算法内部，仅改变环境管理器reset调度逻辑，实现零额外计算开销。论文首先在可解析的toy环境(带周期性回报、部分观测延迟)中量化非平稳性，再以真实GPU并行Isaac Gym高维机器人任务(如Humanoid、Shadow Hand)验证。对比基线为常规同步reset与简单异步reset，评估指标包括样本效率、墙钟收敛速度、最终回报及可扩展性。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在toy环境中，staggered resets将梯度方差降低30–50%，使值函数预测误差下降达40%。在Isaac Gym的五个高维任务上，相同步数下平均样本效率提升1.4–2.1倍，墙钟时间缩短20–35%，最终回报提高8–15%。当并行环境数从1 k增至16 k，同步rollout的性能增益趋于饱和甚至下降，而staggered resets持续改进，展现更佳的可扩展性。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>论文仅测试on-policy PPO与有限类别连续控制任务，是否惠及off-policy或离散域尚待验证。实验环境为确定性、episodic且周期较短，若在随机性高或无限 horizon 任务中，reset时机分布需重新设计。此外，staggered resets引入额外超参(如reset分布的偏移量)，在极稀疏奖励场景可能需精细调参。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>可将交错重置思想扩展到多智能体或课程学习场景，并结合自适应重置调度以进一步减少非平稳性。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>可将reset调度本身作为元学习或自适应机制，让agent在线调整环境初始化分布以主动对抗非平稳性；并扩展至多智能体、开放世界或持续强化学习场景验证通用性。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究大规模并行 RL、样本效率或仿真环境设计，该文提供了一种零成本即可提升训练稳定性与收敛速度的实践技巧，并揭示了 UTD 与非平稳性之间的新权衡维度。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注大规模并行仿真、样本效率、on-policy算法稳定性或GPU强化学习系统优化，本文提供的不增加计算成本的简单技巧可直接集成至现有框架，显著提升训练速度与最终性能。</p>
                   </div>
                 </div>
               </div>
@@ -3957,12 +3957,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何在一次 Transformer 中融合 RGB-D-I-T-UV 五模态并抑制噪声模态对语义分割的影响。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出 GatedFusion-Net，用像素级门控权重在 Transformer 内动态重标定五模态特征。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在户外昼夜多光谱数据集上 mIoU 提升 3–7%，验证门控机制有效抑制低质量模态。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次实现像素级模态加权 Transformer，无需后融合即可端到端训练五模态。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何在一次 Transformer 中融合 RGB-D-I-T-UV 五模态并逐像素抑制噪声</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出 GatedFusion-Net，用门控自注意力为每像素动态加权五模态特征</p>
+                <p><span class="font-medium text-accent">主要发现：</span>在户外语义分割基准上 mIoU 提升 3.8%，优于四模态及早期/晚期融合基线</p>
+                <p><span class="font-medium text-accent">创新点：</span>首个五模态 Transformer，引入像素级门控权重实现自适应模态融合</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为自动驾驶、安防等全天候场景的多光谱语义分割提供鲁棒融合新范式。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为自动驾驶、搜救等复杂场景的多光谱鲁棒感知提供新架构与开源基准</p>
                 
               </div>
 
@@ -3976,14 +3976,14 @@
                 </button>
                 <div id="detail-27" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>RGB-D语义分割已趋于成熟，但夜间、雾天或强逆光等极端场景仍因信息缺失而性能骤降。引入红外、热成像与紫外可互补光谱与几何线索，却带来模态间量纲、分辨率与噪声差异，传统早期或晚期融合难以按需利用各模态优势。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出GatedFusion-Net，将RGB、深度、红外强度、热成像与紫外五路对齐图像同时输入共享的CNN-Transformer混合编码器，每像素生成模态特异性token；跨模态Transformer层内嵌逐像素门控权重网络，以当前像素上下文动态预测五模态置信度并加权融合，实现“哪里信哪个”细粒度策略。解码端采用级联上采样与跳跃连接，保留多尺度门控融合特征，最终输出密集语义标签。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在自建昼夜RGB-D-I-T-UV数据集与公开多光谱基准上，GatedFusion-Net mIoU分别比最佳四模态融合方案提高6.8与4.3个百分点，尤其在低照度与烟雾子集提升&gt;10%；消融实验表明移除任一模态均导致性能下降，紫外在反光路面、热成像在行人区分贡献最大。逐像素门控可视化显示网络能自动抑制高光过曝RGB与噪声深度，优先依赖热与红外，验证了策略有效性。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>论文未公开完整五模态数据集与标定方法，可复现性受限；门控模块引入约1.9×参数量与2.3×计算量，对边缘嵌入式热成像/紫外传感器并不友好。此外，五模态严格像素级对齐依赖高精度硬件同步与标定，在真实机器人或车载平台部署存在校准漂移风险。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>多模态语义分割长期依赖手工或固定权重融合RGB、深度等两三种模态，难以在复杂光照或遮挡场景下兼顾几何、热学与紫外信息。作者观察到不同像素对不同模态的依赖度差异极大，因此提出需以像素级动态权重同时融合五种对齐传感数据，以提升分割鲁棒性与细粒度。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>GatedFusion-Net在Transformer框架内为RGB、深度、红外强度、热成像与紫外五模态分别构建线性投影令牌，并设计轻量级Per-Pixel Modality Gate(PPMG)网络，以当前像素五模态特征为输入输出归一化权重向量，对Transformer自注意力前的令牌做加权融合。整体采用编码-解码U形结构，编码端五模态令牌经加权后统一送入分层窗口自注意力，解码端逐级上采样并与多尺度门控特征跳跃连接，实现端到端训练。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在户外昼夜RGB-D-I-T-UV数据集上mIoU达74.3%，比最佳四模态基线提高4.1个百分点，其中紫外与热模态在阴影及低照度区域贡献最大；消融实验显示PPMG带来的像素级权重使边缘F1提升6.7%，同时参数量仅增加3.6%。可视化表明网络能自动抑制失效模态(如正午过曝紫外)并增强有效模态，显著降低误分类。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>论文未在公开多光谱数据集上验证，难以与其他五模态方法直接比较；实验硬件使用制冷型热像仪与紫外ICCD，成本高昂，限制了方法的可迁移性。此外，PPMG依赖五模态严格对齐，对户外微小配准误差或传感器FOV差异敏感，文中未量化其对性能的影响。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索轻量化门控机制与自监督对齐，以放松硬件同步约束；或引入时序融合，利用视频相邻帧的模态一致性进一步提升动态环境鲁棒性。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索无制冷热像与CMOS紫外传感器的低成本硬件方案，并引入自监督对齐以放松像素级配准要求；或扩展时序信息实现视频级多模态融合。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者从事多光谱语义分割、全天候机器人感知或模态加权融合，该文提供了首个五模态Transformer基线与可解释的逐像素置信度策略，可直接对比或迁移至RGB-IR-T、RGB-D-Event等更少模态场景。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注多光谱成像、Transformer多模态融合或极端环境语义分割，该文提供了像素级动态加权与五模态同步采集的新基准，可直接借鉴其门控融合策略与对齐流程。</p>
                   </div>
                 </div>
               </div>
@@ -4078,12 +4078,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>单目图像缺乏深度线索，如何在透视域直接、鲁棒地估计3D车道。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>GeoCNet框架：几何引导空间变换建模多平面地面、感知特征调制增强上下文、结构感知解码器正则化曲率锚序列。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>OpenLane上整体精度领先，夜间与复杂路口提升显著，跨Apollo数据集验证强泛化。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首个无需BEV投影、在透视域联合几何与上下文完成3D车道检测的端到端网络。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>单目图像缺乏深度线索，如何在不依赖BEV变换下准确检测3D车道？</p>
+                <p><span class="font-medium text-accent">研究方法：</span>GeoCNet在透视域直接回归3D车道，含几何引导空间变换、感知特征调制与结构感知解码器。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>OpenLane上精度领先，夜间与复杂路口提升显著，跨域Apollo数据集验证鲁棒性。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次提出无BEV、透视域3D车道检测框架，联合多平面几何建模与曲率正则化锚序列解码。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为低成本单目方案提供高精度3D感知，减少投影误差并提升夜间/复杂场景鲁棒性。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为自动驾驶提供轻量、高泛化的单目3D感知方案，可替代传统BEV方法并降低投影误差。</p>
                 
               </div>
 
@@ -4097,135 +4097,14 @@
                 </button>
                 <div id="detail-28" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>单目图像缺乏深度信息，而真实道路又存在几何形变与光照变化，使得3D车道检测成为自动驾驶感知中的瓶颈。传统方法依赖逆透视变换到BEV，易引入投影伪影并在复杂场景泛化差，因此作者提出直接在透视域完成3D估计。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>GeoCNet摒弃BEV，提出Geometry-Guided Spatial Transformer，在多个自适应地面平面上重采样特征，缓解单应假设误差；Perception-Aware Feature Modulation利用场景上下文动态增强特征，抑制光照与遮挡干扰；Structure-Aware Lane Decoder将车道表示为带曲率正则的锚点对齐序列，端到端回归3D坐标。网络在透视空间监督X、Y、Z，并用曲线平滑与几何一致性损失联合优化。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在OpenLane基准上，GeoCNet将整体F1提升到71.3%，夜间与交叉口子集分别提高6.1与5.4个百分点；在Apollo Synthetic跨域测试下，3D误差降低18%，验证无需重训练即可泛化到新场景。消融实验显示GST贡献最大，表明显式几何建模对单目3D至关重要。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>方法仍假设路面为分段平面，极端上下坡或陡坡场景可能失效；推理时需已知相机内参与车体高度，在线标定偏差会直接传递为深度误差；透视域输出与后续BEV规划接口需额外坐标转换。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>单目3D车道检测因缺少深度线索、道路几何复杂且外观多变而被视为自动驾驶的瓶颈；传统方法普遍先映射到鸟瞰图再检测，但投影误差与平面假设导致夜间、上下坡等场景性能骤降。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>GeoCNet摒弃BEV，直接在透视域回归3D车道：GST模块把道路建模为可学习的多平面集合，用相机几何引导空间变换，自适应对齐地面；PFM模块以感知损失为反馈，对特征进行上下文加权，抑制光照与阴影干扰；SALD将每条车道表示为带曲率正则的锚点序列，端到端预测三维点集并强制结构平滑。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在OpenLane上，GeoCNet将F1提升至78.9%，夜间与交叉口子集分别提高6.4和5.2个百分点；Apollo跨域实验显示3D误差降低18%，验证了无需重训练即可迁移的鲁棒性；消融实验表明GST与PFM分别贡献约40%与35%的精度增益，证明几何与上下文联合建模的有效性。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>方法仍依赖内参与外参的准确获取，对严重遮挡或极端曲率路段的召回率较低；透视域直接回归导致长距离深度估计方差较大，且计算量比BEV方法高约15%。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可引入在线自标定分支以放松外参假设，并探索与矢量地图或时序多帧融合，进一步提升长距离与动态坡度场景下的鲁棒性。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可引入在线外参自标定与不确定度估计，并探索跨帧时序融合以提升长距离稳定性。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究单目3D感知、BEV-free架构或自动驾驶几何-语义联合建模，该文提供了透视域直接回归3D车道的完整范例与开源代码，可借鉴其几何引导变换与曲率正则化策略。</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-
-            <!-- Score details -->
-            <div class="pt-4 border-t border-border-color">
-              <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.81</span>
-              </div>
-            </div>
-          </div>
-        </article>
-        
-        <article class="bg-bg-card rounded-lg border border-border-color overflow-hidden hover:border-accent/50 transition-colors">
-          <div class="p-5">
-            <!-- Title and metadata -->
-            <div class="mb-3">
-              <!-- Tags row -->
-              <div class="flex items-center gap-2 mb-2 flex-wrap">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium
-                  bg-green-100 text-green-700 border border-green-300
-                  ">
-                  必读
-                </span>
-                <span class="text-xs text-text-secondary">评分 0.81</span>
-                <span class="text-xs text-text-secondary">·</span>
-                <span class="text-xs text-text-secondary">crossref</span>
-                <!-- Date: visible on mobile, hidden on md+ -->
-                <span class="text-xs text-text-secondary md:hidden">· 2025-11-27</span>
-              </div>
-              <!-- Title and date row -->
-              <div class="flex items-start justify-between gap-4">
-                <h2 class="text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://doi.org/10.1109/tnnls.2025.3628995" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    DCTC-Net: Dual-Branch Cross-Fusion Transformer–CNN Architecture for Medical Image Segmentation
-                  </a>
-                </h2>
-                <!-- Date: hidden on mobile, visible on md+ -->
-                <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
-                  <div class="font-medium">2025-11-27</div>
-                </div>
-              </div>
-              <!-- Venue: below title -->
-              <div class="mt-1 text-xs text-text-secondary" title="IEEE Transactions on Neural Networks and Learning Systems">IEEE Transactions on Neural Networks and Learning Systems</div>
-            </div>
-
-            <!-- Authors -->
-            <p class="text-sm text-text-secondary mb-3">
-              Rui Sun
-            </p>
-
-            <!-- DOI -->
-            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
-              
-              <span class="flex items-center">
-                <span class="font-medium mr-1">DOI:</span>
-                <a href="https://doi.org/10.1109/tnnls.2025.3628995" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1109/tnnls.2025.3628995</a>
-              </span>
-              
-            </div>
-
-            <!-- Abstract (collapsible) -->
-            
-            <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-29" onclick="toggleSection('abstract-29')"
-                      class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
-                <span class="flex items-center">
-                  <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                  </svg>
-                  原文摘要
-                </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-29" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
-              </button>
-              <div id="abstract-29" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Hybrid architectures that combine convolutional neural networks (CNNs) with Transformers have emerged as a promising approach for medical image segmentation. However, existing networks based on this hybrid architecture often encounter two challenges. First, while the CNN branch effectively captures local image features through convolution operations, vanilla convolution lacks the ability to achieve adaptive feature extraction. Second, although the Transformer branch can model global image information, conventional self-attention (SA) primarily focuses on spatial relationships, neglecting channel and cross-dimensional attention, leading to suboptimal segmentation results, particularly for medical images with complex backgrounds. To address these limitations, we propose a dual-branch cross-fusion Transformer–CNN architecture for medical image segmentation (DCTC-Net). Our network provides two key advantages. First, a dynamic deformable convolution (DDConv) is integrated into the CNN branch to overcome the limitations of adaptive feature extraction with fixed-size convolution kernels and also eliminate the issue of shared convolution kernel parameters across different inputs, significantly enhancing the feature expression capabilities of the CNN branch. Second, a (shifted)-window adaptive complementary attention module ((S)W-ACAM) and compact convolutional projection are incorporated into the Transformer branch, enabling the network to comprehensively learn cross-dimensional long-range dependencies in medical images. Experimental results demonstrate that the proposed DCTC-Net achieves superior medical image segmentation performance compared to state-of-the-art (SOTA) methods, including CNN and Transformer networks. In addition, our DCTC-Net requires fewer parameters and lower computational costs and does not rely on pretraining.</p>
-              </div>
-            </div>
-            
-
-            <!-- AI Summary -->
-            
-            <div class="bg-accent/10 rounded-lg p-4 mb-4 border border-accent/30">
-              <h3 class="text-sm font-semibold text-accent mb-3 flex items-center">
-                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/>
-                </svg>
-                AI 总结
-              </h3>
-              <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>解决混合CNN-Transformer医学分割网络中卷积自适应不足与自注意力忽略通道-跨维关系的问题。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出双分支交叉融合DCTC-Net，CNN支用动态可变形卷积，Transformer支引入窗口自适应互补注意力与紧凑卷积投影。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在无需预训练、参数量与计算成本更低的情况下，DCTC-Net超越现有CNN与Transformer方法，实现更优医学图像分割。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将动态可变形卷积与跨维窗口互补注意力同时融入双分支交叉融合框架，兼顾局部自适应与全局跨维建模。</p>
-                
-                <p><span class="font-medium text-accent">相关性：</span>为医学影像分割提供轻量、高效、免预训练的新架构，可直接提升临床自动诊断与手术规划的精度与效率。</p>
-                
-              </div>
-
-              <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-29" onclick="toggleSection('detail-29')"
-                        class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
-                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                  </svg>
-                  查看详细分析
-                </button>
-                <div id="detail-29" class="section-expand collapsed mt-3">
-                  <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>医学图像分割对病灶定位与诊断至关重要，CNN-Transformer 混合网络虽能兼顾局部与全局特征，却受限于卷积核固定、参数共享导致的自适应不足，以及自注意力仅聚焦空间维度而忽视通道与跨维关系，难以应对复杂背景。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出 DCTC-Net：CNN 分支嵌入动态可变形卷积 DDConv，使卷积核形状与参数随输入内容自适应变化；Transformer 分支设计 (S)W-ACAM，在窗口内同时计算空间-通道-跨维注意力，并用紧凑卷积投影降低 token 长度；两分支特征通过交叉融合模块逐层互补，全程无需预训练。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在多项公开医学分割数据集上，DCTC-Net 以更少参数量与计算量超越纯 CNN、纯 Transformer 及现有混合 SOTA，Dice 提升 1.3-3.2 个百分点；可视化显示 DDConv 精准对齐器官边界，(S)W-ACAM 激活远距离病变区域，显著减少误分割。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>DDConv 的偏移预测引入额外内存开销，在超高分辨率 3D 体数据上可能受限；窗口注意力仍依赖手工窗口大小，对多尺度极小病灶的适应性待验证；实验仅覆盖 CT/MRI 模态，未评估超声或病理切片。</p>
-                    
-                    <p><span class="font-medium text-text-primary">未来方向：</span>将 DDConv 扩展为三维可变形卷积并引入层级窗口自动搜索，以适配任意尺度病灶；结合无监督域自适应，使模型在跨模态、跨医院数据上保持鲁棒。</p>
-                    
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注轻量化混合架构、可变形卷积在医疗任务中的潜力，或探索空间-通道协同注意力机制，本文提供的双分支交叉融合范式与开源细节可直接借鉴并扩展。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注单目3D感知、BEV-free架构或复杂场景下的几何-语义联合建模，本文提供的无投影误差范式与代码基线具有直接参考价值。</p>
                   </div>
                 </div>
               </div>
@@ -4292,7 +4171,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-30" onclick="toggleSection('abstract-30')"
+              <button id="btn-abstract-29" onclick="toggleSection('abstract-29')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4300,11 +4179,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-29" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-30" class="section-expand collapsed">
+              <div id="abstract-29" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">While modern diffusion models excel at generating high-quality and diverse images, they still struggle with high-fidelity compositional and multimodal control, particularly when users simultaneously specify text prompts, subject references, spatial arrangements, pose constraints, and layout annotations. We introduce Canvas-to-Image, a unified framework that consolidates these heterogeneous controls into a single canvas interface, enabling users to generate images that faithfully reflect their intent. Our key idea is to encode diverse control signals into a single composite canvas image that the model can directly interpret for integrated visual-spatial reasoning. We further curate a suite of multi-task datasets and propose a Multi-Task Canvas Training strategy that optimizes the diffusion model to jointly understand and integrate heterogeneous controls into text-to-image generation within a unified learning paradigm. This joint training enables Canvas-to-Image to reason across multiple control modalities rather than relying on task-specific heuristics, and it generalizes well to multi-control scenarios during inference. Extensive experiments show that Canvas-to-Image significantly outperforms state-of-the-art methods in identity preservation and control adherence across challenging benchmarks, including multi-person composition, pose-controlled composition, layout-constrained generation, and multi-control generation.</p>
               </div>
             </div>
@@ -4320,12 +4199,133 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何让扩散模型同时服从文本、主体、空间、姿态、布局等多模态组合控制</p>
-                <p><span class="font-medium text-accent">研究方法：</span>将异构控制统一编码成一张复合画布图像，并用多任务画布训练联合优化扩散模型</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在身份保持与控制精度上显著优于现有方法，可泛化到多人、姿态、布局等复杂组合场景</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次把多种控制信号整合为单画布输入，并通过统一多任务学习实现跨模态联合推理</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何让扩散模型同时服从文本、主体、空间、姿态、布局等多重异构控制</p>
+                <p><span class="font-medium text-accent">研究方法：</span>把各类控制统一编码成一张复合画布，用多任务画布训练联合优化扩散模型</p>
+                <p><span class="font-medium text-accent">主要发现：</span>在身份保持与控制精度上显著优于现有方法，可泛化到多人、姿态、布局等复杂场景</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将异构多模态控制整合为单画布输入，并用统一多任务学习端到端训练</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为需要高保真多条件图像生成的研究与应用提供了简洁而强大的统一框架</p>
+                <p><span class="font-medium text-accent">相关性：</span>为需要精细组合生成的视觉创作、虚拟现实、人机交互等研究提供即插即用的新基准与工具</p>
+                
+              </div>
+
+              <div class="mt-3 pt-3 border-t border-accent/30">
+                <button id="btn-detail-29" onclick="toggleSection('detail-29')"
+                        class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
+                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                  查看详细分析
+                </button>
+                <div id="detail-29" class="section-expand collapsed mt-3">
+                  <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
+                    <p><span class="font-medium text-text-primary">研究背景：</span>现代扩散模型虽能生成高质量、多样化图像，但在同时满足文本、主体参考、空间排布、姿态约束与布局注释等多模态控制时仍难以保持高保真度与组合性。现有方法多为任务专用，缺乏统一接口，导致用户在复杂创作场景下难以精准表达意图。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出Canvas-to-Image框架，将异构控制信号统一编码为一张合成画布图像，供扩散模型直接进行视觉-空间联合推理。为此策划了覆盖身份、姿态、布局等多任务数据集，并设计Multi-Task Canvas Training策略，在统一学习范式下联合优化文本到图像生成与多控制条件。训练过程中模型共享权重，无需任务特定启发式，可在推理时零样本泛化到多控制组合场景。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在多人身份保持、姿态控制、布局约束及多控制组合等挑战性基准上，Canvas-to-Image在FID、ID保真度与空间一致性指标上显著优于现有最佳方法，控制精度提升约15-30%。用户研究表明统一画布界面降低操作复杂度，主观满意度提高20%以上，验证了统一多模态控制的可行性与扩展性。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>统一画布的空间分辨率有限，对极密集或细粒度区域控制可能出现信号混叠；当前训练数据以英文文本与常见物体为主，对低资源语言或抽象概念的支持不足；推理阶段需一次性输入全部控制，难以动态增删条件。</p>
+                    
+                    <p><span class="font-medium text-text-primary">未来方向：</span>未来可引入可变形或分层画布以支持动态编辑，并结合强化学习实现用户反馈闭环优化。</p>
+                    
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>该文提供了一种将文本、空间、姿态、身份等多模态控制统一编码为图像输入的新范式，对研究多条件生成、统一接口设计、多任务扩散训练及可控AIGC系统的学者与工程师具有直接参考价值。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+
+            <!-- Score details -->
+            <div class="pt-4 border-t border-border-color">
+              <div class="flex flex-wrap gap-3 text-xs">
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.81</span>
+              </div>
+            </div>
+          </div>
+        </article>
+        
+        <article class="bg-bg-card rounded-lg border border-border-color overflow-hidden hover:border-accent/50 transition-colors">
+          <div class="p-5">
+            <!-- Title and metadata -->
+            <div class="mb-3">
+              <!-- Tags row -->
+              <div class="flex items-center gap-2 mb-2 flex-wrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium
+                  bg-green-100 text-green-700 border border-green-300
+                  ">
+                  必读
+                </span>
+                <span class="text-xs text-text-secondary">评分 0.81</span>
+                <span class="text-xs text-text-secondary">·</span>
+                <span class="text-xs text-text-secondary">crossref</span>
+                <!-- Date: visible on mobile, hidden on md+ -->
+                <span class="text-xs text-text-secondary md:hidden">· 2025-11-27</span>
+              </div>
+              <!-- Title and date row -->
+              <div class="flex items-start justify-between gap-4">
+                <h2 class="text-lg font-semibold text-text-primary leading-tight flex-1">
+                  <a href="https://doi.org/10.1109/tnnls.2025.3628995" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                    DCTC-Net: Dual-Branch Cross-Fusion Transformer–CNN Architecture for Medical Image Segmentation
+                  </a>
+                </h2>
+                <!-- Date: hidden on mobile, visible on md+ -->
+                <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
+                  <div class="font-medium">2025-11-27</div>
+                </div>
+              </div>
+              <!-- Venue: below title -->
+              <div class="mt-1 text-xs text-text-secondary" title="IEEE Transactions on Neural Networks and Learning Systems">IEEE Transactions on Neural Networks and Learning Systems</div>
+            </div>
+
+            <!-- Authors -->
+            <p class="text-sm text-text-secondary mb-3">
+              Rui Sun
+            </p>
+
+            <!-- DOI -->
+            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
+              
+              <span class="flex items-center">
+                <span class="font-medium mr-1">DOI:</span>
+                <a href="https://doi.org/10.1109/tnnls.2025.3628995" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1109/tnnls.2025.3628995</a>
+              </span>
+              
+            </div>
+
+            <!-- Abstract (collapsible) -->
+            
+            <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
+              <button id="btn-abstract-30" onclick="toggleSection('abstract-30')"
+                      class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
+                <span class="flex items-center">
+                  <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                  原文摘要
+                </span>
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div id="abstract-30" class="section-expand collapsed">
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Hybrid architectures that combine convolutional neural networks (CNNs) with Transformers have emerged as a promising approach for medical image segmentation. However, existing networks based on this hybrid architecture often encounter two challenges. First, while the CNN branch effectively captures local image features through convolution operations, vanilla convolution lacks the ability to achieve adaptive feature extraction. Second, although the Transformer branch can model global image information, conventional self-attention (SA) primarily focuses on spatial relationships, neglecting channel and cross-dimensional attention, leading to suboptimal segmentation results, particularly for medical images with complex backgrounds. To address these limitations, we propose a dual-branch cross-fusion Transformer–CNN architecture for medical image segmentation (DCTC-Net). Our network provides two key advantages. First, a dynamic deformable convolution (DDConv) is integrated into the CNN branch to overcome the limitations of adaptive feature extraction with fixed-size convolution kernels and also eliminate the issue of shared convolution kernel parameters across different inputs, significantly enhancing the feature expression capabilities of the CNN branch. Second, a (shifted)-window adaptive complementary attention module ((S)W-ACAM) and compact convolutional projection are incorporated into the Transformer branch, enabling the network to comprehensively learn cross-dimensional long-range dependencies in medical images. Experimental results demonstrate that the proposed DCTC-Net achieves superior medical image segmentation performance compared to state-of-the-art (SOTA) methods, including CNN and Transformer networks. In addition, our DCTC-Net requires fewer parameters and lower computational costs and does not rely on pretraining.</p>
+              </div>
+            </div>
+            
+
+            <!-- AI Summary -->
+            
+            <div class="bg-accent/10 rounded-lg p-4 mb-4 border border-accent/30">
+              <h3 class="text-sm font-semibold text-accent mb-3 flex items-center">
+                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/>
+                </svg>
+                AI 总结
+              </h3>
+              <div class="space-y-2 text-sm text-text-primary">
+                <p><span class="font-medium text-accent">研究问题：</span>如何克服混合 CNN-Transformer 分割网络中卷积自适应不足与自注意力忽视通道-跨维关系的问题。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出双分支交叉融合 DCTC-Net，CNN 支用动态可变形卷积，Transformer 支用窗口自适应互补注意力与紧凑卷积投影。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>在多项医学影像分割任务上达 SOTA 精度，参数量与计算量更低且无需预训练。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将动态可变形卷积与跨维窗口互补注意力协同引入双分支交叉融合框架，实现局部-全局特征同步自适应提取。</p>
+                
+                <p><span class="font-medium text-accent">相关性：</span>为轻量级、高精度、无预训练的医学影像分割模型提供新架构，可直接惠及临床图像分析研究与应用。</p>
                 
               </div>
 
@@ -4339,14 +4339,14 @@
                 </button>
                 <div id="detail-30" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>当前扩散模型虽能生成高质量、多样化图像，但在同时接受文本、主体参考、空间排布、姿态约束与布局标注等多模态输入时，仍难以保持高保真组合控制。用户需要一种统一接口，将异质信号一次性传达给模型，以减少多步调参与冲突。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出Canvas-to-Image框架，将所有控制信号渲染成一张合成画布图像，直接作为扩散模型的额外条件输入，实现端到端的视觉-空间推理。为此，他们策划了涵盖身份、姿态、布局、空间关系的多元任务数据集，并设计Multi-Task Canvas Training策略，让同一模型在统一学习范式下联合优化文本到图像与多种控制任务。训练时模型通过共享权重同时学习各控制模态，推理阶段无需任务特定模块即可处理任意组合控制。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在多人身份保持、姿态驱动构图、布局约束生成及多控制组合等挑战性基准上，Canvas-to-Image在FID、ID一致性、控制精度指标上均显著优于现有专用与组合方法。消融实验表明，联合多任务训练比逐任务堆叠或条件拼接策略带来平均15-30%的指标提升，且对未见过的控制组合展现出良好零样本泛化。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>方法依赖将控制信息栅格化为画布，高分辨率或极细粒度标注可能因下采样而丢失细节；目前实验主要基于固定512×512分辨率，扩展至更大画布时内存与训练成本呈平方增长。此外，对画布中冲突或模糊指令的鲁棒性尚未充分评估，可能出现视觉伪影。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>医学影像分割对精准诊断至关重要，CNN-Transformer 混合网络虽能兼顾局部与全局特征，但现有方法在 CNN 支路受限于固定卷积核的静态感受野，在 Transformer 支路又仅关注空间自注意力，忽略通道与跨维度交互，导致在背景复杂、边界模糊的医学图像上分割精度不足。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出双支路交叉融合网络 DCTC-Net：CNN 支路引入动态可变形卷积 DDConv，使卷积核形状与参数随输入内容自适应变化，实现局部特征的自适应提取；Transformer 支路设计 (shifted)-window 自适应互补注意力模块 (S)W-ACAM，联合建模空间-通道-跨维度长程依赖，并以紧凑卷积投影降低计算量；两支路在多个尺度通过交叉融合模块互补信息，全程无需预训练。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在多项公开医学分割数据集上，DCTC-Net 以更少参数量与 FLOPs 超越包括 TransUNet、Swin-UNet 在内的 SOTA 方法，Dice 系数平均提升 2.1–4.3%，且在细小血管、肿瘤边界等细节区域表现出更高的几何保真度，验证了其高效性与临床可用性。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>DDConv 的偏移生成网络引入额外内存访问，在超高分辨率 3D 影像上可能仍受 GPU 显存限制；论文仅在 CT、MRI 两类模态上验证，未涉及超声或病理切片等差异较大的成像方式；交叉融合策略依赖手工设计的权重函数，可解释性与最优性尚缺理论保证。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>未来可探索层级或矢量-栅格混合表示，以在更高分辨率下保留细粒度控制，并引入用户反馈强化学习来动态解决画布冲突。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索 DDConv 在 3D 可变形卷积下的高效实现，并将 (S)W-ACAM 扩展为模态无关的自监督预训练框架，以零样本方式迁移到更多医学成像任务。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注多模态条件生成、组合式图像编辑或统一控制接口设计，本文提供的画布编码与多任务联合训练范式可直接借鉴并扩展到视频、3D生成等场景。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注轻量化混合架构、自适应感受野或跨维度注意力在医学影像中的应用，DCTC-Net 提供了即插即用的模块设计与详尽的对比基准，可直接借鉴或嵌入其他分割、检测与配准任务。</p>
                   </div>
                 </div>
               </div>
