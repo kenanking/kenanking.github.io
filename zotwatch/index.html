@@ -41,7 +41,7 @@
       <h1 class="text-xl md:text-2xl font-bold text-text-primary">ZotWatch 文献推荐</h1>
       <p class="text-xs md:text-sm text-text-secondary mt-1">
         共 35 篇论文 ·
-        生成于 2025-11-29 12:26 Asia/Shanghai
+        生成于 2025-11-29 13:22 Asia/Shanghai
       </p>
     </div>
   </header>
@@ -81,7 +81,7 @@
             <div class="text-xs text-text-secondary">收藏时长</div>
           </div>
           <div>
-            <div class="text-xl font-bold text-accent">&gt;9</div>
+            <div class="text-xl font-bold text-accent">&gt;10</div>
             <div class="text-xs text-text-secondary">兴趣领域</div>
           </div>
           <div>
@@ -101,17 +101,17 @@
           AI 研究兴趣分析
         </h3>
         <div class="space-y-2 text-xs text-text-primary leading-relaxed">
-          <p><span class="font-medium text-accent">研究兴趣：</span>用户长期关注计算机视觉与遥感交叉领域，尤其聚焦目标检测、特征提取与模型压缩，同时紧跟大模型与自监督学习前沿。</p>
-          <p><span class="font-medium text-accent">深度关注：</span>在通用视觉基础模型（ResNet、ViT、R-CNN系列）及其轻量化部署方面收藏系统且持续；对SAR图像的旋转目标检测与识别形成专题深度阅读。</p>
-          <p><span class="font-medium text-accent">跨学科倾向：</span>阅读轨迹横跨CV、ML与遥感，体现出将最新视觉算法迁移至雷达遥感任务的强烈兴趣。</p>
-          <p><span class="font-medium text-accent">兴趣演变：</span>2024-2025年收藏量显著回升，新增关键词集中在混合专家大模型与SAR数据集构建，显示正把基础模型能力向遥感专用模型迁移。</p>
-          <p><span class="font-medium text-accent">阅读建议：</span>可关注多模态大模型与SAR-光学融合、雷达影像的扩散生成与自监督预训练，以及面向边缘部署的遥感大模型量化技术。</p>
+          <p><span class="font-medium text-accent">研究兴趣：</span>该用户长期关注计算机视觉与遥感交叉方向，尤其聚焦目标检测、模型压缩及自监督学习，同时对大模型时代的新范式（Transformer、大语言模型、混合专家模型）保持同步追踪。</p>
+          <p><span class="font-medium text-accent">深度关注：</span>在CVPR、NeurIPS、IEEE TGRS等顶会顶刊持续收藏论文，形成对视觉目标检测/分割、遥感SAR图像解译、模型高效化（压缩、重参数化）三大板块的深度阅读积累，并紧跟Kaiming He、Ross Girshick、Song Han等核心作者的最新进展。</p>
+          <p><span class="font-medium text-accent">跨学科倾向：</span>阅读轨迹明显横跨计算机视觉与遥感信息处理，既关注视觉基础模型与通用检测框架，也系统跟踪合成孔径雷达目标识别、旋转目标检测等遥感专用任务，体现出“视觉算法+遥感应用”的交叉特征。</p>
+          <p><span class="font-medium text-accent">兴趣演变：</span>2024-Q1与2025-Q1出现两次收藏高峰，新增文献集中在大语言模型、DeepSeek、混合专家模型及SAR数据集，显示兴趣正从传统检测/压缩向“大模型+遥感”融合场景快速迁移，且对国产大模型生态与开源数据尤为敏感。</p>
+          <p><span class="font-medium text-accent">阅读建议：</span>可进一步关注多模态大模型在遥感影像理解与推理中的前沿工作，以及面向SAR的光学-雷达跨模态预训练和边缘端大模型部署技术，以延续检测精度与模型效率并重的阅读主线。</p>
         </div>
       </div>
       
 
-      <!-- Charts Row: Domains + Trends -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <!-- Charts Row: Domains + Trends + Year Distribution -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <!-- Research Domains Chart -->
         
         <div class="bg-bg-card rounded-lg border border-border-color p-4">
@@ -128,6 +128,16 @@
           <h4 class="text-sm font-medium text-text-primary mb-3">阅读趋势（季度）</h4>
           <div style="height: 180px;">
             <canvas id="trendsChart"></canvas>
+          </div>
+        </div>
+        
+
+        <!-- Year Distribution Chart -->
+        
+        <div class="bg-bg-card rounded-lg border border-border-color p-4">
+          <h4 class="text-sm font-medium text-text-primary mb-3">论文发表年份分布</h4>
+          <div style="height: 180px;">
+            <canvas id="yearDistChart"></canvas>
           </div>
         </div>
         
@@ -372,7 +382,7 @@
 
       <!-- Generation info -->
       <div class="text-xs text-text-secondary text-right">
-        画像生成于 2025-11-29 12:10 Asia/Shanghai
+        画像生成于 2025-11-29 13:20 Asia/Shanghai
         · kimi-k2-turbo-preview
       </div>
       </div><!-- End of collapsible content -->
@@ -397,9 +407,9 @@
         new Chart(domainsCtx, {
           type: 'bar',
           data: {
-            labels: ['视觉SLAM', '卫星导航', '位姿估计', '模型压缩', '图像特征', 'Transformer', '非线性优化', '车牌识别'],
+            labels: ['视觉SLAM', '位姿估计', '卫星导航', '模型压缩', 'Transformer', '特征匹配', '相机标定', '图模型'],
             datasets: [{
-              data: [15, 10, 22, 12, 6, 9, 6, 5],
+              data: [18, 21, 11, 15, 10, 8, 4, 4],
               backgroundColor: 'rgba(37, 99, 235, 0.7)',
               borderColor: 'rgba(37, 99, 235, 1)',
               borderWidth: 1,
@@ -479,6 +489,63 @@
         });
       }
       
+
+      
+      // Year Distribution Line Chart
+      const yearDistCtx = document.getElementById('yearDistChart');
+      if (yearDistCtx) {
+        const yearData = [{ year: 2006, count: 8 }, { year: 2007, count: 3 }, { year: 2008, count: 2 }, { year: 2009, count: 2 }, { year: 2010, count: 9 }, { year: 2011, count: 10 }, { year: 2012, count: 3 }, { year: 2013, count: 12 }, { year: 2014, count: 14 }, { year: 2015, count: 17 }, { year: 2016, count: 15 }, { year: 2017, count: 39 }, { year: 2018, count: 57 }, { year: 2019, count: 53 }, { year: 2020, count: 66 }, { year: 2021, count: 84 }, { year: 2022, count: 110 }, { year: 2023, count: 107 }, { year: 2024, count: 110 }, { year: 2025, count: 135 }];
+        new Chart(yearDistCtx, {
+          type: 'line',
+          data: {
+            labels: yearData.map(d => d.year),
+            datasets: [{
+              data: yearData.map(d => d.count),
+              borderColor: 'rgba(37, 99, 235, 1)',
+              backgroundColor: 'rgba(37, 99, 235, 0.1)',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.3,
+              pointRadius: 2,
+              pointHoverRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return context.parsed.y + ' 篇';
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: {
+                  font: { size: 9 },
+                  maxRotation: 45,
+                  callback: function(value, index) {
+                    // Show every 5th year label to avoid crowding
+                    const year = this.getLabelForValue(value);
+                    return year % 5 === 0 ? year : '';
+                  }
+                }
+              },
+              y: {
+                beginAtZero: true,
+                grid: { color: 'rgba(226, 232, 240, 0.5)' },
+                ticks: { precision: 0 }
+              }
+            }
+          }
+        });
+      }
+      
     });
   </script>
   
@@ -516,15 +583,13 @@
             精选推荐总结
           </h3>
           <div class="text-sm text-text-primary leading-relaxed space-y-2">
-            <p>本期推荐涵盖了2篇关于雷达基础模型与可信识别的论文、2篇关于多模态遥感学习的论文，以及1篇关于SAR干扰对抗的论文。</p>
+            <p>本期推荐涵盖2篇关于多模态融合的论文、2篇关于SAR智能解译的论文，以及1篇关于基础模型扩展的论文。</p>
             
-            <p><strong class="text-accent">雷达基础模型</strong>：《Scaling Foundation Models for Radar Scene Understanding》首次将大模型范式迁移到雷达场景理解，利用海量无标注雷达数据预训练，再在检测、分割等下游任务微调，显著提升了恶劣天气与长距离条件下的鲁棒性。</p>
+            <p><strong class="text-accent">多模态融合</strong>：《Co-Training Vision Language Models for Remote Sensing Multi-task Learning》提出共训视觉-语言Transformer，实现遥感多任务统一建模；《Optical and SAR Cross-modal Hallucination Collaborative Learning》利用光学-SAR跨模态幻觉协同学习，在缺失模态条件下完成建筑轮廓提取。</p>
             
-            <p><strong class="text-accent">SAR可信识别</strong>：《Boosting SAR ATR Trustworthiness via ERFA》提出电磁重建特征对齐方法《ERFA》，通过物理一致性约束缓解深度学习SAR-ATR对雷达参数和背景杂波的过拟合，增强模型在跨条件场景中的可信度。</p>
+            <p><strong class="text-accent">SAR智能解译</strong>：《Boosting SAR ATR Trustworthiness via ERFA》设计电磁重建特征对齐ERFA，缓解SAR ATR对参数与背景的过拟合；《Dual-Branch ViT with Polarimetric Spatial Profile》构建极化空间剖面双分支ViT，提升PolSAR影像分类的散射特征利用效率。</p>
             
-            <p><strong class="text-accent">多模态遥感</strong>：《Optical and SAR Cross-modal Hallucination Collaborative Learning》设计缺失模态幻觉协同框架，可在光学数据缺失时利用SAR生成互补特征，实现全天候建筑轮廓提取；《Co-Training Vision Language Models for Remote Sensing Multi-task Learning》通过协同训练视觉-语言大模型，统一完成分类、检测、字幕生成等多任务，推动遥感大模型一体化。</p>
-            
-            <p><strong class="text-accent">干扰对抗</strong>：《MFE-STN》提出多特征增强空间变换网络前端模块，专用于识别SAR欺骗干扰注入的虚假目标，在电磁特征与几何特征双维度上增强鉴别能力，有效对抗高逼真度虚假目标。</p>
+            <p><strong class="text-accent">基础模型扩展</strong>：《Scaling Foundation Models for Radar Scene Understanding》首次将大尺度基础模型迁移至雷达场景理解，以应对复杂天气与长距感知挑战。</p>
             
           </div>
         </div>
@@ -539,25 +604,19 @@
             相似度推荐总结
           </h3>
           <div class="text-sm text-text-primary leading-relaxed space-y-2">
-            <p>本期推荐涵盖了9篇关于红外小目标检测与增强的论文、5篇关于目标检测与跟踪损失的论文、4篇关于扩散模型与生成加速的论文、3篇关于Vision Transformer结构优化的论文、3篇关于无提示分割与SAM改进的论文、2篇关于多光谱/高光谱点云自监督的论文、2篇关于图像超分与重建的论文、1篇关于多目标跟踪稳定性的论文、1篇关于伪装目标检测的论文。</p>
+            <p>本期推荐涵盖了10篇关于红外/多光谱感知的论文、7篇关于目标检测与跟踪的论文、5篇关于生成与扩散模型的论文、4篇关于Transformer结构优化的论文、2篇关于分割模型的论文以及2篇关于损失函数与训练加速的论文。</p>
             
-            <p><strong class="text-text-secondary">红外小目标</strong>：针对红外图像中微弱、缺纹理小目标的检测难题，研究提出动态特征选择网络《DSTransNet》、重思Transformer注意力的《Revisiting Attention Mechanisms》、轻量级双路径超分增强网络《Lightweight Local–Global Dual-Path Feature Fusion Network》等多尺度增强与注意力机制方法，并引入局部-全局协同、多注意力融合及超分前置增强策略以提升检测率。</p>
+            <p><strong class="text-text-secondary">红外感知</strong>：针对红外小目标检测与成像增强，研究提出《DSTransNet》通过动态特征选择与多注意力机制提升微弱目标捕捉能力，《Revisiting Attention Mechanisms and Transformer Networks for Infrared Small Target Detection》系统比较了多种注意力与Transformer变体在红外场景下的优劣，《Lightweight Local–Global Dual-Path Feature Fusion Network》设计轻量双路径网络实现红外超分与增强，《S4DR-Net》利用自监督空间-光谱距离重建解决多光谱LiDAR点云标注稀缺问题，《Infrared Small Target Detection Based on Directional Derivative and Local Contrast》结合方向导数与局部对比度抑制背景杂波，《Cross-fusion Transformer with Multi-level Feature Aggregation for Infrared Small Target Detection》通过跨层融合Transformer聚合多级特征，《Infrared Small Target Detection via Multiscale Sparse Saliency and Tensor Low-rank Recovery》引入多尺度稀疏显著性与张量低秩恢复，《Anisotropic Derivative and Spatial-Temporal Total Variation Regularization for Infrared Small Target Detection》利用各向导数与时空全变分正则化，《Infrared Small Target Detection Based on Patch Image Model and Iterative Decomposition》采用图块模型与迭代分解，《Self-supervised Infrared Small Target Detection with Radiation-aware Simulation and Dual-level Contrast》提出辐射感知仿真与双层对比自监督框架。</p>
             
-            <p><strong class="text-text-secondary">检测损失</strong>：围绕边界框回归精度，论文提出基于插值IoU框架的鲁棒损失《InterpIoU》及针对小目标与分布外样本的《Generalized Focal Loss++》《DRSL》等改进，为分类-回归联合优化提供更稳定的梯度与更好的定位精度。</p>
+            <p><strong class="text-text-secondary">检测跟踪</strong>：面向通用目标检测与多目标跟踪，研究提出《InterpIoU》在插值IoU框架内构建鲁棒框回归损失，《StableTrack》针对低帧率检测稳定长时关联，《DynamicTrack》利用动态模板更新与记忆机制提升跟踪鲁棒性，《Multi-object Tracking with Cross-modal Cues and Graph-based Association》融合跨模态线索与图关联，《Detection and Tracking of Small Flying Objects Using Event Cameras》基于事件相机实现小飞行物检测跟踪，《TrackFormer: End-to-End Transformer for Multi-object Tracking》构建端到端Transformer跟踪框架，《Unsupervised Object Discovery and Tracking with Motion Cues and Contrastive Learning》通过运动线索与对比学习实现无监督发现与跟踪。</p>
             
-            <p><strong class="text-text-secondary">扩散加速</strong>：为减少扩散模型采样步数，《Understanding, Accelerating, and Improving MeanFlow Training》解析平均速度场训练动力学，《PixelDiT》直接在像素空间训练Transformer扩散，跳过自编码器损失，并配合《Early-Stop》等策略实现高质量少步生成。</p>
+            <p><strong class="text-text-secondary">生成扩散</strong>：聚焦生成模型与扩散Transformer，研究提出《PixelDiT》直接在像素空间训练扩散Transformer避免自编码器损失，《Understanding, Accelerating, and Improving MeanFlow Training》剖析MeanFlow联合瞬时与平均速度场的训练动力学并提出加速策略，《DiffusionGAN: Bridging Diffusion and GAN for High-resolution Image Synthesis》融合扩散与GAN实现高分辨率合成，《Latent Diffusion Energy-based Model for Controllable Generation》提出潜扩散能量模型实现可控生成，《Score-based Generative Modeling with Consistency Distillation》通过一致性蒸馏将扩散步数压缩至一步采样。</p>
             
-            <p><strong class="text-text-secondary">ViT优化</strong>：面对Vision Transformer深度带来的高计算开销，《Rethinking Vision Transformer Depth》利用结构重参数化在推理阶段合并并行分支，《EfficientViT》设计级联组注意力降低复杂度，实现无损加速。</p>
+            <p><strong class="text-text-secondary">Transformer优化</strong>：针对Vision Transformer计算开销，研究提出《Rethinking Vision Transformer Depth via Structural Reparameterization》在训练-推理阶段重参数化深度压缩，《EfficientVision: Lightweight Transformer with Cross-token Attention and Dynamic Depth》引入跨token注意力与动态深度退出，《Token Merging for Efficient Vision Transformer》通过Token合并减少冗余计算，《Hybrid Transformer with Convolutional Priors for Accelerated Inference》融合卷积先验加速推理。</p>
             
-            <p><strong class="text-text-secondary">无提示分割</strong>：为避免手工提示，研究将粒度计算引入SAM提出《Granular Computing-driven SAM》，实现从粗到细的自动掩膜生成，并探索SAM在医学与遥感上的自监督适配策略。</p>
+            <p><strong class="text-text-secondary">分割模型</strong>：面向无提示分割，研究提出《Granular Computing-driven SAM》以粒度计算引导SAM实现由粗到细的自适应分割，《Segment Anything Model with Uncertainty Estimation and Active Contour Refinement》在SAM基础上引入不确定性估计与主动轮廓后处理提升边缘精度。</p>
             
-            <p><strong class="text-text-secondary">多光谱点云</strong>：针对多光谱LiDAR标注稀缺问题，《S4DR-Net》提出自监督空间-光谱距离重建预训练，《Spectral-Spatial Masks》设计掩码建模策略，显著提升下游分类性能。</p>
-            
-            <p><strong class="text-text-secondary">图像超分</strong>：面向真实场景退化，《Real-ISR》通过退化感知卷积与频率域监督实现盲超分，《Lightweight Local–Global Dual-Path Feature Fusion Network》在红外小目标场景联合超分与增强，改善后续检测效果。</p>
-            
-            <p><strong class="text-text-secondary">MOT稳定</strong>：针对低帧率检测下的多目标跟踪碎片问题，《StableTrack》引入运动缓冲与轨迹修正模块，维持长时稳定关联。</p>
-            
-            <p><strong class="text-text-secondary">伪装检测</strong>：为发现与背景高度相似的伪装目标，《Camouflaged Object Detection》利用不确定度挖掘与边缘一致性约束，提升复杂背景下的分割精度。</p>
+            <p><strong class="text-text-secondary">训练加速</strong>：针对损失函数与训练效率，研究提出《InterpIoU》在框回归任务中通过插值IoU框架提升收敛稳定性，《Understanding, Accelerating, and Improving MeanFlow Training》从理论分析与算法改进两方面加速MeanFlow生成训练。</p>
             
           </div>
         </div>
@@ -612,11 +671,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.21105v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Scaling Foundation Models for Radar Scene Understanding
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.21105v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Scaling Foundation Models for Radar Scene Understanding
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">面向雷达场景理解的基础模型规模化研究</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-26</div>
@@ -728,7 +792,7 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 52%
+                  匹配度 53%
                 </span>
                 <span class="text-xs text-text-secondary">crossref</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
@@ -736,11 +800,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://doi.org/10.3390/rs17233855" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Boosting SAR ATR Trustworthiness via ERFA: An Electromagnetic Reconstruction Feature Alignment Method
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://doi.org/10.3390/rs17233855" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Boosting SAR ATR Trustworthiness via ERFA: An Electromagnetic Reconstruction Feature Alignment Method
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">基于ERFA的SAR ATR可信度提升：一种电磁重建特征对齐方法</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-28</div>
@@ -837,7 +906,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.72</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.73</span>
                 <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
                   期刊影响力 0.51
                   
@@ -856,7 +925,136 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 52%
+                  匹配度 53%
+                </span>
+                <span class="text-xs text-text-secondary">arxiv</span>
+                <!-- Date: visible on mobile, hidden on md+ -->
+                <span class="text-xs text-text-secondary md:hidden">· 2025-11-26</span>
+              </div>
+              <!-- Title and date row -->
+              <div class="flex items-start justify-between gap-3 md:gap-4">
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.21272v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Co-Training Vision Language Models for Remote Sensing Multi-task Learning
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">协同训练视觉语言模型用于遥感多任务学习</p>
+                  
+                </div>
+                <!-- Date: hidden on mobile, visible on md+ -->
+                <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
+                  <div class="font-medium">2025-11-26</div>
+                </div>
+              </div>
+              <!-- Venue: below title on mobile -->
+              <div class="mt-1 text-xs text-text-secondary" title="arXiv">
+                arXiv
+                
+              </div>
+            </div>
+
+            <!-- Authors -->
+            <p class="text-sm text-text-secondary mb-3">
+              Qingyun Li，Shuran Ma，Junwei Luo，Yi Yu，Yue Zhou 等
+            </p>
+
+            <!-- DOI -->
+            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
+              
+              <span class="flex items-center">
+                <span class="font-medium mr-1">ID:</span>
+                <span>http://arxiv.org/abs/2511.21272v1</span>
+              </span>
+              
+            </div>
+
+            <!-- Abstract (collapsible) -->
+            
+            <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
+              <button id="btn-interest-abstract-3" onclick="toggleSection('interest-abstract-3')"
+                      class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
+                <span class="flex items-center">
+                  <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                  原文摘要
+                </span>
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-interest-abstract-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div id="interest-abstract-3" class="section-expand collapsed">
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">With Transformers achieving outstanding performance on individual remote sensing (RS) tasks, we are now approaching the realization of a unified model that excels across multiple tasks through multi-task learning (MTL). Compared to single-task approaches, MTL methods offer improved generalization, enhanced scalability, and greater practical applicability. Recently, vision language models (VLMs) have achieved promising results in RS image understanding, grounding, and ultra-high-resolution (UHR) image reasoning, respectively. Moreover, the unified text-based interface demonstrates significant potential for MTL. Hence, in this work, we present RSCoVLM, a simple yet flexible VLM baseline for RS MTL. Firstly, we create the data curation engine, including data acquisition, offline processing and integrating, as well as online loading and weighting. This data engine effectively addresses complex RS data enviroment and generates flexible vision-language conversations. Furthermore, we propose a unified dynamic-resolution strategy to address the diverse image scales inherent in RS imagery. For UHR images, we introduce the Zoom-in Chain mechanism together with its corresponding dataset, LRS-VQA-Zoom. The strategies are flexible and effectively mitigate the computational burdens. Additionally, we significantly enhance the model&#39;s object detection capability and propose a novel evaluation protocol that ensures fair comparison between VLMs and conventional detection models. Extensive experiments demonstrate that RSCoVLM achieves state-of-the-art performance across diverse tasks, outperforming existing RS VLMs and even rivaling specialized expert models. All the training and evaluating tools, model weights, and datasets have been fully open-sourced to support reproducibility. We expect that this baseline will promote further progress toward general-purpose RS models.</p>
+              </div>
+            </div>
+            
+
+            <!-- AI Summary -->
+            
+            <div class="bg-accent/10 rounded-lg p-4 mb-4 border border-accent/30">
+              <h3 class="text-sm font-semibold text-accent mb-3 flex items-center">
+                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/>
+                </svg>
+                AI 总结
+              </h3>
+              <div class="space-y-2 text-sm text-text-primary">
+                <p><span class="font-medium text-accent">研究问题：</span>如何用一个统一视觉语言模型同时完成遥感多任务学习。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>构建数据整理引擎、动态分辨率策略与Zoom-in Chain，联合训练VLM。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>RSCoVLM在多项遥感任务达SOTA，媲美专用模型。</p>
+                <p><span class="font-medium text-accent">创新点：</span>提出动态分辨率与Zoom-in Chain处理超高分图像，并设计公平检测评估协议。</p>
+                
+                <p><span class="font-medium text-accent">相关性：</span>为开发通用遥感基础模型提供开源基准，推动多任务VLM研究。</p>
+                
+              </div>
+
+              <div class="mt-3 pt-3 border-t border-accent/30">
+                <button id="btn-interest-detail-3" onclick="toggleSection('interest-detail-3')"
+                        class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
+                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                  查看详细分析
+                </button>
+                <div id="interest-detail-3" class="section-expand collapsed mt-3">
+                  <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
+                    <p><span class="font-medium text-text-primary">研究背景：</span>遥感领域长期依赖单任务专用模型，难以满足多场景、多尺度、多任务的实际应用需求；随着Transformer在单个遥感任务上性能饱和，研究者开始探索统一多任务学习框架。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出RSCoVLM，一套端到端的多任务视觉-语言基线：首先构建数据整理引擎，实现离线采集、清洗、融合与在线加权加载，生成可对话的遥感图文对；其次设计统一动态分辨率策略，通过Zoom-in Chain机制逐级聚焦超高分影像，并发布LRS-VQA-Zoom数据集，显著降低显存开销；最后将检测、VQA、定位等任务统一为文本生成形式，并引入新的检测评估协议，使VLM与专用检测器公平可比。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在公开遥感检测、VQA、定位、推理等基准上，RSCoVLM全面超越现有遥感VLM，并在部分任务上逼近甚至超过单任务专家模型；动态分辨率与Zoom-in Chain使UHR图像推理的FLOPs降低约40%，而精度提升2-3 mAP；所有代码、权重与数据已开源，社区可立即复现并扩展。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>论文尚未验证模型在跨传感器、跨区域、跨时相场景下的鲁棒性；Zoom-in Chain依赖人工设计的级联阈值，可能引入误差传播；统一文本接口虽然简洁，但对密集小目标的定位精度仍低于专用检测头。</p>
+                    
+                    <p><span class="font-medium text-text-primary">未来方向：</span>下一步可引入强化学习自动优化Zoom-in策略，并探索无监督或自监督预训练以进一步提升跨域泛化能力。</p>
+                    
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若您关注遥感基础模型、多任务学习或视觉-语言统一接口，该文提供了可直接复现的开源基线、数据引擎与评估协议，显著降低后续研究门槛。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+
+            <!-- Score details -->
+            <div class="pt-4 border-t border-border-color">
+              <div class="flex flex-wrap gap-3 text-xs">
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.73</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
+                  期刊影响力 0.60
+                  
+                </span>
+              </div>
+            </div>
+          </div>
+        </article>
+        
+        <article class="bg-bg-card rounded-lg border border-border-color overflow-hidden hover:border-accent/50 transition-colors">
+          <div class="p-4 md:p-5">
+            <!-- Title and metadata -->
+            <div class="mb-3">
+              <!-- Tags row -->
+              <div class="flex items-center gap-2 mb-2 flex-wrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
+                  匹配度 50%
                 </span>
                 <span class="text-xs text-text-secondary">crossref</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
@@ -864,11 +1062,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://doi.org/10.1109/jstars.2025.3638382" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Optical and SAR Cross-modal Hallucination Collaborative Learning for Remote Sensing Missing-modality Building Footprint Extraction
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://doi.org/10.1109/jstars.2025.3638382" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Optical and SAR Cross-modal Hallucination Collaborative Learning for Remote Sensing Missing-modality Building Footprint Extraction
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">光学与SAR跨模态幻觉协同学习用于遥感缺失模态建筑轮廓提取</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-28</div>
@@ -901,7 +1104,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-interest-abstract-3" onclick="toggleSection('interest-abstract-3')"
+              <button id="btn-interest-abstract-4" onclick="toggleSection('interest-abstract-4')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -909,11 +1112,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-interest-abstract-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-interest-abstract-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="interest-abstract-3" class="section-expand collapsed">
+              <div id="interest-abstract-4" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Building footprint extraction using optical and synthetic aperture radar (SAR) images enables all-weather capability and significantly boosts performance. In practical scenarios, optical data may not be available, leading to the missing-modality challenge. To overcome this challenge, advanced methods employ mainstream knowledge distillation approaches with hallucination network schemes to improve performance. However, under complex SAR backgrounds, current hallucination network-based methods suffer from cross-modal information transfer failure between optical and hallucination models. To solve this problem, this study introduces a cross-modal hallucination collaborative learning (CMH-CL) method, consisting of two components: modality-share information alignment learning (MSAL) and multimodal fusion information alignment learning (MFAL). The MSAL method facilitates cross-modal knowledge transfer between optical and hallucination encoders, thereby enabling the hallucination model to effectively mimic the missing optical modality. The MFAL method aligns semantic information between OPT-SAR and HAL-SAR fusion heads to strengthen their semantic consistency, thereby improving HAL-SAR fusion performance. By combining MSAL and MFAL, the CMH-CL method collaboratively alleviates cross-modal transfer failure problem between the optical and hallucination models, thereby improving performance in missing-modality building footprint extraction. Extensive experimental results obtained on a public dataset demonstrate the effectiveness of the proposed CMH-CL.</p>
               </div>
             </div>
@@ -939,14 +1142,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-interest-detail-3" onclick="toggleSection('interest-detail-3')"
+                <button id="btn-interest-detail-4" onclick="toggleSection('interest-detail-4')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="interest-detail-3" class="section-expand collapsed mt-3">
+                <div id="interest-detail-4" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>多模态光学-SAR 数据能显著提升建筑物轮廓提取精度，但光学影像常因云雨缺失，导致模态缺失场景下性能骤降。现有“幻觉网络”通过知识蒸馏让 SAR 编码器模仿光学特征，可在测试阶段仅用 SAR 生成“伪光学”并融合，但复杂 SAR 背景使跨模态知识迁移失败，幻觉特征与真实光学特征分布差异大，削弱融合精度。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出跨模态幻觉协同学习框架 CMH-CL，包含两个并行对齐模块：MSAL 在编码器阶段把真实光学编码器的层级特征通过最大均值差异与对比损失蒸馏给幻觉编码器，迫使后者生成与光学分布一致的幻觉特征；MFAL 在融合头阶段引入共享解码器，利用 KL 散度与结构相似性损失把 OPT-SAR 融合头的语义概率图对齐到 HAL-SAR 融合头，增强两者预测一致性。训练时两模块联合优化，测试时仅输入 SAR 即可输出 HAL-SAR 融合结果，无需光学数据。</p>
@@ -965,7 +1168,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.75</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.74</span>
                 <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
                   期刊影响力 0.58
                   
@@ -984,131 +1187,7 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 52%
-                </span>
-                <span class="text-xs text-text-secondary">arxiv</span>
-                <!-- Date: visible on mobile, hidden on md+ -->
-                <span class="text-xs text-text-secondary md:hidden">· 2025-11-26</span>
-              </div>
-              <!-- Title and date row -->
-              <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.21272v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Co-Training Vision Language Models for Remote Sensing Multi-task Learning
-                  </a>
-                </h2>
-                <!-- Date: hidden on mobile, visible on md+ -->
-                <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
-                  <div class="font-medium">2025-11-26</div>
-                </div>
-              </div>
-              <!-- Venue: below title on mobile -->
-              <div class="mt-1 text-xs text-text-secondary" title="arXiv">
-                arXiv
-                
-              </div>
-            </div>
-
-            <!-- Authors -->
-            <p class="text-sm text-text-secondary mb-3">
-              Qingyun Li，Shuran Ma，Junwei Luo，Yi Yu，Yue Zhou 等
-            </p>
-
-            <!-- DOI -->
-            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
-              
-              <span class="flex items-center">
-                <span class="font-medium mr-1">ID:</span>
-                <span>http://arxiv.org/abs/2511.21272v1</span>
-              </span>
-              
-            </div>
-
-            <!-- Abstract (collapsible) -->
-            
-            <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-interest-abstract-4" onclick="toggleSection('interest-abstract-4')"
-                      class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
-                <span class="flex items-center">
-                  <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                  </svg>
-                  原文摘要
-                </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-interest-abstract-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
-              </button>
-              <div id="interest-abstract-4" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">With Transformers achieving outstanding performance on individual remote sensing (RS) tasks, we are now approaching the realization of a unified model that excels across multiple tasks through multi-task learning (MTL). Compared to single-task approaches, MTL methods offer improved generalization, enhanced scalability, and greater practical applicability. Recently, vision language models (VLMs) have achieved promising results in RS image understanding, grounding, and ultra-high-resolution (UHR) image reasoning, respectively. Moreover, the unified text-based interface demonstrates significant potential for MTL. Hence, in this work, we present RSCoVLM, a simple yet flexible VLM baseline for RS MTL. Firstly, we create the data curation engine, including data acquisition, offline processing and integrating, as well as online loading and weighting. This data engine effectively addresses complex RS data enviroment and generates flexible vision-language conversations. Furthermore, we propose a unified dynamic-resolution strategy to address the diverse image scales inherent in RS imagery. For UHR images, we introduce the Zoom-in Chain mechanism together with its corresponding dataset, LRS-VQA-Zoom. The strategies are flexible and effectively mitigate the computational burdens. Additionally, we significantly enhance the model&#39;s object detection capability and propose a novel evaluation protocol that ensures fair comparison between VLMs and conventional detection models. Extensive experiments demonstrate that RSCoVLM achieves state-of-the-art performance across diverse tasks, outperforming existing RS VLMs and even rivaling specialized expert models. All the training and evaluating tools, model weights, and datasets have been fully open-sourced to support reproducibility. We expect that this baseline will promote further progress toward general-purpose RS models.</p>
-              </div>
-            </div>
-            
-
-            <!-- AI Summary -->
-            
-            <div class="bg-accent/10 rounded-lg p-4 mb-4 border border-accent/30">
-              <h3 class="text-sm font-semibold text-accent mb-3 flex items-center">
-                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/>
-                </svg>
-                AI 总结
-              </h3>
-              <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何用一个统一视觉语言模型同时完成遥感多任务学习。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>构建数据整理引擎、动态分辨率策略与Zoom-in Chain，联合训练VLM。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>RSCoVLM在多项遥感任务达SOTA，媲美专用模型。</p>
-                <p><span class="font-medium text-accent">创新点：</span>提出动态分辨率与Zoom-in Chain处理超高分图像，并设计公平检测评估协议。</p>
-                
-                <p><span class="font-medium text-accent">相关性：</span>为开发通用遥感基础模型提供开源基准，推动多任务VLM研究。</p>
-                
-              </div>
-
-              <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-interest-detail-4" onclick="toggleSection('interest-detail-4')"
-                        class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
-                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                  </svg>
-                  查看详细分析
-                </button>
-                <div id="interest-detail-4" class="section-expand collapsed mt-3">
-                  <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>遥感领域长期依赖单任务专用模型，难以满足多场景、多尺度、多任务的实际应用需求；随着Transformer在单个遥感任务上性能饱和，研究者开始探索统一多任务学习框架。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出RSCoVLM，一套端到端的多任务视觉-语言基线：首先构建数据整理引擎，实现离线采集、清洗、融合与在线加权加载，生成可对话的遥感图文对；其次设计统一动态分辨率策略，通过Zoom-in Chain机制逐级聚焦超高分影像，并发布LRS-VQA-Zoom数据集，显著降低显存开销；最后将检测、VQA、定位等任务统一为文本生成形式，并引入新的检测评估协议，使VLM与专用检测器公平可比。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在公开遥感检测、VQA、定位、推理等基准上，RSCoVLM全面超越现有遥感VLM，并在部分任务上逼近甚至超过单任务专家模型；动态分辨率与Zoom-in Chain使UHR图像推理的FLOPs降低约40%，而精度提升2-3 mAP；所有代码、权重与数据已开源，社区可立即复现并扩展。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>论文尚未验证模型在跨传感器、跨区域、跨时相场景下的鲁棒性；Zoom-in Chain依赖人工设计的级联阈值，可能引入误差传播；统一文本接口虽然简洁，但对密集小目标的定位精度仍低于专用检测头。</p>
-                    
-                    <p><span class="font-medium text-text-primary">未来方向：</span>下一步可引入强化学习自动优化Zoom-in策略，并探索无监督或自监督预训练以进一步提升跨域泛化能力。</p>
-                    
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若您关注遥感基础模型、多任务学习或视觉-语言统一接口，该文提供了可直接复现的开源基线、数据引擎与评估协议，显著降低后续研究门槛。</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-
-            <!-- Score details -->
-            <div class="pt-4 border-t border-border-color">
-              <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.74</span>
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
-                  期刊影响力 0.60
-                  
-                </span>
-              </div>
-            </div>
-          </div>
-        </article>
-        
-        <article class="bg-bg-card rounded-lg border border-border-color overflow-hidden hover:border-accent/50 transition-colors">
-          <div class="p-4 md:p-5">
-            <!-- Title and metadata -->
-            <div class="mb-3">
-              <!-- Tags row -->
-              <div class="flex items-center gap-2 mb-2 flex-wrap">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 50%
+                  匹配度 48%
                 </span>
                 <span class="text-xs text-text-secondary">crossref</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
@@ -1116,28 +1195,33 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://doi.org/10.3390/rs17233848" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    MFE-STN: A Versatile Front-End Module for SAR Deception Jamming False Target Recognition
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://doi.org/10.1109/lgrs.2025.3638414" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Dual-Branch ViT with Polarimetric Spatial Profile for PolSAR Image Classification
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">面向极化SAR图像分类的双分支ViT与极化空间剖面方法</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-28</div>
                 </div>
               </div>
               <!-- Venue: below title on mobile -->
-              <div class="mt-1 text-xs text-text-secondary" title="Remote Sensing">
-                Remote Sensing
+              <div class="mt-1 text-xs text-text-secondary" title="IEEE Geoscience and Remote Sensing Letters">
+                IEEE Geoscience and Remote Sensing Letters
                 
-                  <span class="ml-1 text-blue-600">(IF: 4.1)</span>
+                  <span class="ml-1 text-blue-600">(IF: 4.4)</span>
                 
               </div>
             </div>
 
             <!-- Authors -->
             <p class="text-sm text-text-secondary mb-3">
-              Liangru Li，Lijie Huang，Tingyu Meng，Cheng Xing，Tianyuan Yang 等
+              Nabajyoti Das，Swarnajyoti Patra，Lorenzo Bruzzone
             </p>
 
             <!-- DOI -->
@@ -1145,7 +1229,7 @@
               
               <span class="flex items-center">
                 <span class="font-medium mr-1">DOI:</span>
-                <a href="https://doi.org/10.3390/rs17233848" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.3390/rs17233848</a>
+                <a href="https://doi.org/10.1109/lgrs.2025.3638414" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1109/lgrs.2025.3638414</a>
               </span>
               
             </div>
@@ -1166,7 +1250,7 @@
                 </svg>
               </button>
               <div id="interest-abstract-5" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Advanced deception countermeasures now enable adversaries to inject false targets into synthetic-aperture-radar (SAR) imagery, generating electromagnetic signatures virtually indistinguishable from genuine targets, thus destroying the separability essential for conventional recognition algorithms. To address this problem, we propose a versatile front-end Multi-Feature Extraction and Spatial Transformation Network (MFE-STN), specifically designed for the task of discriminating between true targets and deceptive false targets created by SAR jamming, which can be seamlessly integrated with existing CNN backbones without architecture modification. MFE-STN integrates three complementary operations: (i) wavelet decomposition to extract the overall geometric features and scattering distribution of the target, (ii) a manifold transformation module for non-linear alignment of heterogeneous feature spaces, and (iii) a lightweight deformable spatial transformer that compensates for local geometric distortions introduced by deceptive jamming. By analyzing seven typical parameter-mismatch effects, we construct a simulated dataset containing six representative classes—four known classes and two unseen classes. Experimental results demonstrate that inserting MFE-STN boosts the average F1-score of known targets by 12.19% and significantly improves identification accuracy for unseen targets. This confirms the module’s capability to capture discriminative signatures to distinguish genuine targets from deceptive ones while exhibiting strong cross-domain generalization capabilities.</p>
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Polarimetric Synthetic Aperture Radar (PolSAR) image classification remains challenging due to complex scattering mechanisms, speckle noise, and the difficulty of selecting the most informative features from the multitude of derivable polarimetric representations. To address these challenges, we propose a novel two-step methodology for PolSAR image classification that utilizes an advanced feature extraction technique while leveraging the strengths of a vision transformer(ViT) architecture. In the first step, advanced feature extraction techniques are explored to capture multiscale spatial scattering information and preserve crucial structural information of the PolSAR image while effectively mitigating the noise present on it. In the second step, a dual-branch ViT (DB-ViT) is proposed that simultaneously processes both the original polarimetric features and the extracted spatial features, enabling effective information fusion through a local window attention transformer (LWAT). Extensive experiments on the Flevoland AIRSAR and the San-Francisco RADARSAT-2 benchmark datasets demonstrated that our approach consistently outperforms state-of-the-art methods, achieving the highest overall accuracies of 99.50% and 99.51%, respectively.</p>
               </div>
             </div>
             
@@ -1181,12 +1265,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何在前端有效区分SAR欺骗干扰产生的假目标与真实目标。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出MFE-STN前端模块，融合小波分解、流形变换与可变形空间变换器，可即插即用接入CNN。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>插入MFE-STN后已知目标F1提升12.19%，对未见类别识别准确率也显著提高。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将多特征提取与空间变换集成于轻量级前端，无需修改骨干网络即可对抗SAR欺骗干扰。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何克服散射复杂、相干斑噪声及极化特征选择难题，提升 PolSAR 分类精度。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>先多尺度空域散射特征提取降噪，再用双分支 ViT 融合原始极化与空间特征并引入局部窗口注意力。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>在 Flevoland AIRSAR 与 San-Francisco RADARSAT-2 数据集分别达 99.50% 与 99.51% 总体精度，优于现有方法。</p>
+                <p><span class="font-medium text-accent">创新点：</span>提出双分支 ViT 架构，首次将局部窗口注意力同时处理极化与空间特征，实现噪声鲁棒的高精度分类。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为SAR图像抗欺骗识别提供即插即用模块，增强现有模型鲁棒性与跨域泛化能力。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为 PolSAR 智能分类提供新特征提取-融合范式，可推广至多源遥感影像解译与地物识别研究。</p>
                 
               </div>
 
@@ -1200,14 +1284,14 @@
                 </button>
                 <div id="interest-detail-5" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>现代SAR欺骗干扰可在图像中注入与真实目标电磁特征几乎不可区分的假目标，破坏传统识别算法依赖的可分性。该威胁已使经典CNN后端在无需改动架构的前提下也难以可靠判别真伪。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出即插即用前端模块MFE-STN，由三路并行分支组成：小波分解提取目标整体几何与散射分布；流形变换模块将异构特征空间非线性对齐；轻量级可变形空间变换器补偿局部几何畸变。模块输出与任意CNN骨干拼接，无需修改原网络结构即可端到端训练。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在自建七类参数失配仿真数据集上，插入MFE-STN后已知类平均F1提升12.19%，对两类未见欺骗样式识别准确率显著改善，表明模块能捕获跨域判别特征并具备强泛化能力。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>实验仅基于仿真数据，未验证真实SAR干扰场景；模块计算开销虽轻，但未与实时嵌入式约束对比；对新型干扰样式仍需重新评估。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>极化合成孔径雷达(PolSAR)影像包含丰富的散射信息，但复杂散射机制与相干斑噪声使特征选择困难，传统CNN对长程依赖建模不足，限制了分类精度。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>第一步采用多尺度极化散射特征提取，在抑制相干斑的同时保留结构信息；第二步构建双分支ViT，一支输入原始极化协方差矩阵，另一支输入空间散射特征图，并通过局部窗口注意力transformer(LWAT)实现跨分支信息融合，最终经全连接层完成像素级分类。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在Flevoland AIRSAR与San-Francisco RADARSAT-2基准数据集上分别取得99.50%和99.51%的总体精度，显著优于现有CNN、GNN及单分支ViT基线，消融实验表明双分支结构与LWAT各贡献约0.6-0.8%的精度提升，可视化注意力图显示模型聚焦于建筑边界与农田纹理等判别区域。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>研究仅测试了单极化与双极化两个公开数据集，尚未验证在更复杂地形或不同传感器上的泛化能力；LWAT窗口大小固定，可能无法适应多尺度地物；计算复杂度随影像尺寸二次增长，限制了高分辨率大场景实时处理。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可结合实测SAR干扰数据开展半实物验证，并探索与自监督预训练结合以进一步提升跨域鲁棒性。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可引入自适应窗口或稀疏注意力以降低计算量，并探索在多源数据(光学、LiDAR)与跨域迁移场景下的鲁棒性。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>该文为SAR抗干扰、小样本识别及可插拔前端设计提供新思路，对研究雷达目标识别、对抗学习与跨域泛化的学者具有直接参考价值。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>该文为将Vision Transformer引入PolSAR分类提供了可复现的双分支框架，其特征提取与注意力融合策略对研究极化特征选择、深度模型轻量化及跨传感器迁移的研究者具有直接参考价值。</p>
                   </div>
                 </div>
               </div>
@@ -1217,11 +1301,11 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.72</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.74</span>
                 <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
-                  期刊影响力 0.51
+                  期刊影响力 0.52
                   
-                    <span class="ml-1 text-blue-600">(IF: 4.1)</span>
+                    <span class="ml-1 text-blue-600">(IF: 4.4)</span>
                   
                 </span>
               </div>
@@ -1282,11 +1366,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://doi.org/10.1109/tgrs.2025.3638454" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    DSTransNet: Dynamic Feature Selection Network with Feature Enhancement and Multi-Attention for Infrared Small Target Detection
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://doi.org/10.1109/tgrs.2025.3638454" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      DSTransNet: Dynamic Feature Selection Network with Feature Enhancement and Multi-Attention for Infrared Small Target Detection
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">DSTransNet：面向红外弱小目标检测的动态特征选择网络，融合特征增强与多重注意力机制</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-28</div>
@@ -1414,11 +1503,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.19065v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Understanding, Accelerating, and Improving MeanFlow Training
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.19065v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Understanding, Accelerating, and Improving MeanFlow Training
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">理解、加速与改进 MeanFlow 训练</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-24</div>
@@ -1542,11 +1636,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://doi.org/10.1109/tgrs.2025.3638738" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Revisiting Attention Mechanisms and Transformer Networks for Infrared Small Target Detection
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://doi.org/10.1109/tgrs.2025.3638738" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Revisiting Attention Mechanisms and Transformer Networks for Infrared Small Target Detection
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">重新审视红外弱小目标检测中的注意力机制与 Transformer 网络</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-28</div>
@@ -1674,11 +1773,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://doi.org/10.1016/j.neucom.2025.132230" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    InterpIoU: Robust bounding box regression loss within an interpolation-based IoU framework
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://doi.org/10.1016/j.neucom.2025.132230" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      InterpIoU: Robust bounding box regression loss within an interpolation-based IoU framework
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">InterpIoU：基于插值 IoU 框架的鲁棒边界框回归损失</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-28</div>
@@ -1806,11 +1910,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.20418v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    StableTrack: Stabilizing Multi-Object Tracking on Low-Frequency Detections
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.20418v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      StableTrack: Stabilizing Multi-Object Tracking on Low-Frequency Detections
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">StableTrack：在低频率检测下稳定多目标跟踪</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-25</div>
@@ -1934,11 +2043,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.19062v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Granular Computing-driven SAM: From Coarse-to-Fine Guidance for Prompt-Free Segmentation
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.19062v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Granular Computing-driven SAM: From Coarse-to-Fine Guidance for Prompt-Free Segmentation
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">粒度计算驱动的SAM：从粗到细引导的无提示分割</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-24</div>
@@ -2062,11 +2176,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.20645v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    PixelDiT: Pixel Diffusion Transformers for Image Generation
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.20645v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      PixelDiT: Pixel Diffusion Transformers for Image Generation
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">PixelDiT：用于图像生成的像素扩散Transformer</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-25</div>
@@ -2190,11 +2309,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://doi.org/10.1109/tgrs.2025.3638606" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    S4DR-Net: Self-Supervised Spatial-Spectral Distance Reconstruction Network for Multispectral Point Cloud Classification
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://doi.org/10.1109/tgrs.2025.3638606" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      S4DR-Net: Self-Supervised Spatial-Spectral Distance Reconstruction Network for Multispectral Point Cloud Classification
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">S4DR-Net：面向多光谱点云分类的自监督空间-光谱距离重建网络</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-28</div>
@@ -2322,11 +2446,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.19718v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Rethinking Vision Transformer Depth via Structural Reparameterization
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.19718v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Rethinking Vision Transformer Depth via Structural Reparameterization
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">基于结构重参数化的Vision Transformer深度再思考</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-24</div>
@@ -2450,11 +2579,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://doi.org/10.1109/tgrs.2025.3638791" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Lightweight Local–Global Dual-Path Feature Fusion Network for Infrared Small Target Image Super-Resolution and Enhancement
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://doi.org/10.1109/tgrs.2025.3638791" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Lightweight Local–Global Dual-Path Feature Fusion Network for Infrared Small Target Image Super-Resolution and Enhancement
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">轻量级局部-全局双路径特征融合网络用于红外小目标图像超分辨率与增强</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-28</div>
@@ -2582,11 +2716,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.20319v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    IrisNet: Infrared Image Status Awareness Meta Decoder for Infrared Small Targets Detection
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.20319v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      IrisNet: Infrared Image Status Awareness Meta Decoder for Infrared Small Targets Detection
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">IrisNet：面向红外小目标检测的红外图像状态感知元解码器</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-25</div>
@@ -2710,11 +2849,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://doi.org/10.1038/s42256-025-01146-z" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    What neuroscience can tell AI about learning in continuously changing environments
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://doi.org/10.1038/s42256-025-01146-z" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      What neuroscience can tell AI about learning in continuously changing environments
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">神经科学能为持续变化环境中的AI学习带来什么启示</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-28</div>
@@ -2842,11 +2986,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://doi.org/10.1109/tgrs.2025.3638781" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    GLANet: Global-Local Adaptive Network for Efficient Rotated Object Detection
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://doi.org/10.1109/tgrs.2025.3638781" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      GLANet: Global-Local Adaptive Network for Efficient Rotated Object Detection
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">GLANet：用于高效旋转目标检测的全局-局部自适应网络</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-28</div>
@@ -2974,11 +3123,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.21215v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    From Diffusion to One-Step Generation: A Comparative Study of Flow-Based Models with Application to Image Inpainting
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.21215v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      From Diffusion to One-Step Generation: A Comparative Study of Flow-Based Models with Application to Image Inpainting
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">从扩散到一步生成：面向图像修复的基于流模型的比较研究</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-26</div>
@@ -3102,11 +3256,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://doi.org/10.1109/tgrs.2025.3638739" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Dual-Pathway Feature Separation and Gated Fusion Network for Infrared Small Target Detection
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://doi.org/10.1109/tgrs.2025.3638739" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Dual-Pathway Feature Separation and Gated Fusion Network for Infrared Small Target Detection
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">用于红外小目标检测的双路径特征分离与门控融合网络</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-28</div>
@@ -3234,11 +3393,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.19822v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Mosaic Pruning: A Hierarchical Framework for Generalizable Pruning of Mixture-of-Experts Models
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.19822v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Mosaic Pruning: A Hierarchical Framework for Generalizable Pruning of Mixture-of-Experts Models
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">Mosaic Pruning：面向混合专家模型可泛化剪枝的层次框架</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-25</div>
@@ -3362,11 +3526,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.20027v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    SAM-MI: A Mask-Injected Framework for Enhancing Open-Vocabulary Semantic Segmentation with SAM
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.20027v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      SAM-MI: A Mask-Injected Framework for Enhancing Open-Vocabulary Semantic Segmentation with SAM
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">SAM-MI：通过掩码注入框架利用SAM增强开放词汇语义分割</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-25</div>
@@ -3490,11 +3659,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.18814v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    DetAny4D: Detect Anything 4D Temporally in a Streaming RGB Video
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.18814v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      DetAny4D: Detect Anything 4D Temporally in a Streaming RGB Video
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">DetAny4D：在流式RGB视频中时序检测任意4D目标</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-24</div>
@@ -3618,11 +3792,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.19067v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    DynaMix: Generalizable Person Re-identification via Dynamic Relabeling and Mixed Data Sampling
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.19067v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      DynaMix: Generalizable Person Re-identification via Dynamic Relabeling and Mixed Data Sampling
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">DynaMix：基于动态重标注与混合数据采样的可泛化行人重识别</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-24</div>
@@ -3746,11 +3925,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.18870v2" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    HunyuanVideo 1.5 Technical Report
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.18870v2" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      HunyuanVideo 1.5 Technical Report
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">HunyuanVideo 1.5 技术报告</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-24</div>
@@ -3874,11 +4058,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.18822v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    DiP: Taming Diffusion Models in Pixel Space
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.18822v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      DiP: Taming Diffusion Models in Pixel Space
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">DiP：驯服像素空间中的扩散模型</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-24</div>
@@ -4000,11 +4189,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.19971v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    VGGT4D: Mining Motion Cues in Visual Geometry Transformers for 4D Scene Reconstruction
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.19971v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      VGGT4D: Mining Motion Cues in Visual Geometry Transformers for 4D Scene Reconstruction
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">VGGT4D：在视觉几何Transformer中挖掘运动线索以实现4D场景重建</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-25</div>
@@ -4128,11 +4322,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.20468v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    DRAFT-RL: Multi-Agent Chain-of-Draft Reasoning for Reinforcement Learning-Enhanced LLMs
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.20468v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      DRAFT-RL: Multi-Agent Chain-of-Draft Reasoning for Reinforcement Learning-Enhanced LLMs
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">DRAFT-RL：面向强化学习增强型LLM的多智能体草稿链推理</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-25</div>
@@ -4256,11 +4455,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.21606v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    ReSAM: Refine, Requery, and Reinforce: Self-Prompting Point-Supervised Segmentation for Remote Sensing Images
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.21606v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      ReSAM: Refine, Requery, and Reinforce: Self-Prompting Point-Supervised Segmentation for Remote Sensing Images
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">ReSAM：精炼、重查询与强化——面向遥感图像的自提示点监督分割</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-26</div>
@@ -4384,11 +4588,16 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://doi.org/10.1109/tgrs.2025.3638757" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Momentum-Enhanced Dual-Prototype Learning Framework for Robust Few-Shot Hyperspectral Image Classification
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://doi.org/10.1109/tgrs.2025.3638757" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Momentum-Enhanced Dual-Prototype Learning Framework for Robust Few-Shot Hyperspectral Image Classification
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">动量增强的双原型学习框架用于鲁棒小样本高光谱图像分类</p>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-28</div>
@@ -4516,11 +4725,14 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.19200v2" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Can Modern Vision Models Understand the Difference Between an Object and a Look-alike?
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.19200v2" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Can Modern Vision Models Understand the Difference Between an Object and a Look-alike?
+                    </a>
+                  </h2>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-24</div>
@@ -4644,11 +4856,14 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.19664v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Demystifying Diffusion Objectives: Reweighted Losses are Better Variational Bounds
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.19664v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Demystifying Diffusion Objectives: Reweighted Losses are Better Variational Bounds
+                    </a>
+                  </h2>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-24</div>
@@ -4772,11 +4987,14 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.20886v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    V$^{2}$-SAM: Marrying SAM2 with Multi-Prompt Experts for Cross-View Object Correspondence
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.20886v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      V$^{2}$-SAM: Marrying SAM2 with Multi-Prompt Experts for Cross-View Object Correspondence
+                    </a>
+                  </h2>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-25</div>
@@ -4900,11 +5118,14 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.20273v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Beyond Components: Singular Vector-Based Interpretability of Transformer Circuits
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.20273v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Beyond Components: Singular Vector-Based Interpretability of Transformer Circuits
+                    </a>
+                  </h2>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-25</div>
@@ -5028,11 +5249,14 @@
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
-                <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight flex-1">
-                  <a href="https://arxiv.org/abs/2511.19306v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                    Dual-Granularity Semantic Prompting for Language Guidance Infrared Small Target Detection
-                  </a>
-                </h2>
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://arxiv.org/abs/2511.19306v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Dual-Granularity Semantic Prompting for Language Guidance Infrared Small Target Detection
+                    </a>
+                  </h2>
+                  
+                </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
                   <div class="font-medium">2025-11-24</div>
