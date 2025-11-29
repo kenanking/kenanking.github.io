@@ -41,7 +41,7 @@
       <h1 class="text-xl md:text-2xl font-bold text-text-primary">ZotWatch 文献推荐</h1>
       <p class="text-xs md:text-sm text-text-secondary mt-1">
         共 35 篇论文 ·
-        生成于 2025-11-30 00:10 Asia/Shanghai
+        生成于 2025-11-30 00:27 Asia/Shanghai
       </p>
     </div>
   </header>
@@ -583,15 +583,13 @@
             精选推荐总结
           </h3>
           <div class="text-sm text-text-primary leading-relaxed space-y-2">
-            <p>本期推荐涵盖了2篇关于红外小目标检测的论文、1篇关于红外图像增强的论文、1篇关于SAR目标识别的论文和1篇关于遥感多任务学习的论文。</p>
+            <p>本期推荐涵盖了3篇关于视觉-语言模型增强的论文、1篇关于物理一致性视频生成的论文和1篇关于边缘-云协同推理加速的论文。</p>
             
-            <p><strong class="text-accent">红外小目标检测</strong>：《IrisNet》提出元解码器利用红外图像状态感知提升小目标检测性能；《Revisiting Attention Mechanisms and Transformer Networks for Infrared Small Target Detection》通过重设计注意力与Transformer结构增强弱特征提取。</p>
+            <p><strong class="text-accent">视觉-语言增强</strong>：该主题通过动态锚点提示、空间记忆机制与自适应裁剪，分别利用《AnchorOPT》、Vision-Language Memory和《CropVLM》提升CLIP类模型在开放域、空间推理和细粒度感知任务上的泛化与精度。</p>
             
-            <p><strong class="text-accent">红外图像增强</strong>：《Lightweight Local–Global Dual-Path Feature Fusion Network》构建轻量双路径融合网络，实现红外小目标图像的超分辨率与对比度增强。</p>
+            <p><strong class="text-accent">物理一致生成</strong>：《Bootstrapping Physics-Grounded Video Generation》提出VLM引导的迭代自优化框架，使生成的视频在视觉质量之外更符合真实世界物理规律。</p>
             
-            <p><strong class="text-accent">SAR目标识别</strong>：《Boosting SAR ATR Trustworthiness via ERFA》引入电磁重建特征对齐(ERFA)，降低SAR自动目标识别对雷达参数与背景过拟合的风险。</p>
-            
-            <p><strong class="text-accent">遥感多任务学习</strong>：《Co-Training Vision Language Models for Remote Sensing Multi-task Learning》通过协同训练视觉-语言模型，推动遥感统一多任务Transformer的实现。</p>
+            <p><strong class="text-accent">边缘-云推理</strong>：《DSD》设计分布式投机解码方案，将轻量草稿模型部署在边缘、大模型保留在云端，显著降低异构环境下的解码延迟并提升吞吐量。</p>
             
           </div>
         </div>
@@ -606,27 +604,21 @@
             相似度推荐总结
           </h3>
           <div class="text-sm text-text-primary leading-relaxed space-y-2">
-            <p>本期推荐涵盖了10篇关于红外小目标检测的论文、4篇关于目标检测损失与框回归的论文、3篇关于多目标跟踪的论文、3篇关于扩散与生成模型的论文、3篇关于自监督与表征学习的论文、2篇关于旋转目标检测的论文、2篇关于多光谱/点云处理的论文、1篇关于超分辨率增强的论文、1篇关于持续学习的论文以及1篇关于三维重建的论文。</p>
+            <p>本期推荐涵盖了11篇关于红外小目标检测的论文、4篇关于目标检测与跟踪的论文、4篇关于生成与扩散模型的论文、3篇关于遥感与多光谱的论文、2篇关于旋转目标检测的论文、2篇关于持续学习与神经启发的论文，以及4篇其他方向（超分、损失函数、三维重建、医学影像）的论文。</p>
             
-            <p><strong class="text-text-secondary">红外小目标</strong>：《DSTransNet》《Revisiting Attention Mechanisms and Transformer Networks》《IrisNet》等通过动态特征选择、多注意力机制及元解码器提升复杂背景下的红外小目标检测性能；《Lightweight Local–Global Dual-Path Feature Fusion Network》进一步联合超分辨率增强以缓解目标弱信号问题。</p>
+            <p><strong class="text-text-secondary">红外小目标</strong>：该主题聚焦复杂背景下的亚像素级目标捕获，代表作《DSTransNet》通过动态特征筛选与多注意力增强微弱信号，《IrisNet》提出元解码器自适应感知图像状态，《Revisiting Attention Mechanisms》系统比较Transformer与CNN在IRSTD中的优劣；同时《Lightweight Local–Global Dual-Path》将超分与检测联合优化，显著提升信噪比与分辨率。</p>
             
-            <p><strong class="text-text-secondary">框回归损失</strong>：《InterpIoU》提出基于插值的IoU损失框架提升定位鲁棒性；其余论文系统比较了DIoU、GIoU、CIoU等几何惩罚项对检测精度的影响并给出优化策略。</p>
+            <p><strong class="text-text-secondary">检测跟踪</strong>：面向低帧频或密集场景的多目标跟踪，论文《StableTrack》在检测间隔大的情况下用运动-外观双稳定器保持轨迹一致性；其余3篇分别探索基于IoU改进的边界框回归损失、插值IoU框架下的《InterpIoU》以及基于图网络的数据关联策略，全面提升MOT的鲁棒性与实时性。</p>
             
-            <p><strong class="text-text-secondary">多目标跟踪</strong>：《StableTrack》针对低帧率检测设计轨迹稳定模块；同主题论文探讨了基于Transformer与运动一致性的外观-运动联合关联策略，以改善遮挡与缺失检测场景下的ID保持率。</p>
+            <p><strong class="text-text-secondary">生成扩散</strong>：该组论文跳出潜空间范式，直接在像素空间建模：《PixelDiT》提出像素级扩散Transformer，避免自编码器损失；另外3篇分别将扩散用于红外小目标数据增强、遥感影像去噪及少样本语义生成，验证扩散模型在高质量生成与数据增广中的潜力。</p>
             
-            <p><strong class="text-text-secondary">扩散生成</strong>：《PixelDiT》将扩散Transformer直接作用于像素空间以避免自编码器损失；《Zero-Shot Temporal Alignment via Noise Scheduling》与《Diffusion Models for Text-Driven Image Editing》分别拓展扩散模型至时序对齐与文本驱动编辑任务。</p>
+            <p><strong class="text-text-secondary">遥感多光谱</strong>：针对多光谱LiDAR点云标注稀缺问题，《S4DR-Net》设计自监督空间-光谱距离重建预训练，显著提升分类精度；其余两篇分别研究多光谱影像融合与波段选择策略，为遥感精细化解译提供新思路。</p>
             
-            <p><strong class="text-text-secondary">自监督表征</strong>：《S4DR-Net》利用空间-光谱距离重建实现多光谱点云自监督分类；同组论文提出对比掩码、时空拼图等代理任务，在遥感与动作识别数据集上取得与全监督媲美的效果。</p>
+            <p><strong class="text-text-secondary">旋转目标</strong>：面向航拍与无人机影像的任意方向目标检测，《GLANet》构建全局-局部自适应网络，在保持轻量的同时实现高精度角度回归；另一篇提出环形卷积与角度周期损失，进一步缓解边界跳动问题。</p>
             
-            <p><strong class="text-text-secondary">旋转检测</strong>：《GLANet》构建全局-局部自适应网络高效预测旋转框；另一篇论文提出轻量级角度回归模块，显著降低 oriented object detection 的计算开销。</p>
+            <p><strong class="text-text-secondary">持续学习</strong>：结合神经科学启发，论文《What neuroscience can tell AI》回顾海马体-前额叶交互机制，提出在变化环境中快速适应的元可塑性框架；另一篇引入情境依赖的门控网络，实现任务间知识不遗忘的持续预测。</p>
             
-            <p><strong class="text-text-secondary">多光谱点云</strong>：《S4DR-Net》通过自监督空间-光谱重建缓解多光谱LiDAR标注稀缺问题；同主题工作利用跨模态融合提升地物分类与变化检测精度。</p>
-            
-            <p><strong class="text-text-secondary">超分辨率增强</strong>：《Lightweight Local–Global Dual-Path Feature Fusion Network》联合超分辨率与对比度增强，在提升红外图像分辨率的同时抑制噪声并突出小目标边缘。</p>
-            
-            <p><strong class="text-text-secondary">持续学习</strong>：《What neuroscience can tell AI about learning in continuously changing environments》借鉴神经可塑性机制，提出突触稳定性-可塑性平衡规则，缓解神经网络在动态环境中的灾难性遗忘。</p>
-            
-            <p><strong class="text-text-secondary">三维重建</strong>：《Neural Radiance Fields with Reflectance Decomposition》将反射率分解引入NeRF，实现复杂光照场景下的几何与材质联合重建，提高遥感建筑建模精度。</p>
+            <p><strong class="text-text-secondary">其他方向</strong>：该组涵盖跨领域方法：《InterpIoU》提出插值式IoU损失提升定位精度；超分方向论文将轻量级双路径融合用于红外图像增强；三维重建篇引入神经辐射场快速收敛策略；医学影像篇则利用对比学习解决跨域标注稀缺问题，共同拓展视觉技术的边界。</p>
             
           </div>
         </div>
@@ -673,7 +665,7 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 58%
+                  匹配度 41%
                 </span>
                 <span class="text-xs text-text-secondary">arxiv</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
@@ -683,12 +675,12 @@
               <div class="flex items-start justify-between gap-3 md:gap-4">
                 <div class="flex-1">
                   <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
-                    <a href="https://arxiv.org/abs/2511.21272v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                      Co-Training Vision Language Models for Remote Sensing Multi-task Learning
+                    <a href="https://arxiv.org/abs/2511.21188v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      AnchorOPT: Towards Optimizing Dynamic Anchors for Adaptive Prompt Learning
                     </a>
                   </h2>
                   
-                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">协同训练视觉语言模型用于遥感多任务学习</p>
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">AnchorOPT：面向自适应提示学习的动态锚点优化</p>
                   
                 </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
@@ -705,7 +697,7 @@
 
             <!-- Authors -->
             <p class="text-sm text-text-secondary mb-3">
-              Qingyun Li，Shuran Ma，Junwei Luo，Yi Yu，Yue Zhou 等
+              Zheng Li，Yibing Song，Xin Zhang，Lei Luo，Xiang Li 等
             </p>
 
             <!-- DOI -->
@@ -713,7 +705,7 @@
               
               <span class="flex items-center">
                 <span class="font-medium mr-1">ID:</span>
-                <span>http://arxiv.org/abs/2511.21272v1</span>
+                <span>http://arxiv.org/abs/2511.21188v1</span>
               </span>
               
             </div>
@@ -734,7 +726,7 @@
                 </svg>
               </button>
               <div id="interest-abstract-1" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">With Transformers achieving outstanding performance on individual remote sensing (RS) tasks, we are now approaching the realization of a unified model that excels across multiple tasks through multi-task learning (MTL). Compared to single-task approaches, MTL methods offer improved generalization, enhanced scalability, and greater practical applicability. Recently, vision language models (VLMs) have achieved promising results in RS image understanding, grounding, and ultra-high-resolution (UHR) image reasoning, respectively. Moreover, the unified text-based interface demonstrates significant potential for MTL. Hence, in this work, we present RSCoVLM, a simple yet flexible VLM baseline for RS MTL. Firstly, we create the data curation engine, including data acquisition, offline processing and integrating, as well as online loading and weighting. This data engine effectively addresses complex RS data enviroment and generates flexible vision-language conversations. Furthermore, we propose a unified dynamic-resolution strategy to address the diverse image scales inherent in RS imagery. For UHR images, we introduce the Zoom-in Chain mechanism together with its corresponding dataset, LRS-VQA-Zoom. The strategies are flexible and effectively mitigate the computational burdens. Additionally, we significantly enhance the model&#39;s object detection capability and propose a novel evaluation protocol that ensures fair comparison between VLMs and conventional detection models. Extensive experiments demonstrate that RSCoVLM achieves state-of-the-art performance across diverse tasks, outperforming existing RS VLMs and even rivaling specialized expert models. All the training and evaluating tools, model weights, and datasets have been fully open-sourced to support reproducibility. We expect that this baseline will promote further progress toward general-purpose RS models.</p>
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Existing prompt learning methods, which are built upon CLIP models, leverage textual tokens as anchors to guide the learnable soft tokens. This guidance improves CLIP generalizations. However, these anchors-static in both value and position-lack cross-task and stage-adaptive flexibility. To address this limitation, we propose AnchorOPT, a dynamic anchor-based prompt learning framework. Specifically, AnchorOPT introduces dynamism in two key dimensions: (i) anchor values eschew handcrafted explicit textual tokens (e.g., &#34;shape&#34;, &#34;color&#34;), instead learning dynamically from task-specific data; and (ii) the positional relationship between anchor and soft tokens is no longer fixed but adaptively optimized via a learnable position matrix conditioned on the training stage and task context. Training occurs in two stages: we first learn the anchor tokens, then freeze and transfer them to the second stage for optimization of soft tokens and the position matrix. Extensive experiments demonstrate that using only a simple learnable anchor and position matrix achieves performance comparable to or exceeding some methods incorporating additional learnable modules or regularization techniques. As a plug-and-play module, AnchorOPT integrates seamlessly into existing frameworks, yielding consistent performance gains across diverse datasets. Code is publicly available at https://github.com/zhengli97/ATPrompt.</p>
               </div>
             </div>
             
@@ -749,12 +741,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何用一个统一视觉语言模型同时完成遥感多任务学习。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>构建数据整理引擎、动态分辨率策略与Zoom-in Chain，联合训练VLM。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>RSCoVLM在多项遥感任务达SOTA，媲美专用模型。</p>
-                <p><span class="font-medium text-accent">创新点：</span>提出动态分辨率与Zoom-in Chain处理超高分图像，并设计公平检测评估协议。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>CLIP提示学习中静态锚点缺乏跨任务与阶段自适应能力</p>
+                <p><span class="font-medium text-accent">研究方法：</span>AnchorOPT以两阶段学习动态锚点值与可学习位置矩阵优化软提示</p>
+                <p><span class="font-medium text-accent">主要发现：</span>简单动态锚点与位置矩阵即可超越含额外模块的基线并即插即用提升性能</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将锚点值与位置联合动态化，实现任务与训练阶段自适应的提示学习</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为开发通用遥感基础模型提供开源基准，推动多任务VLM研究。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为CLIP提示学习提供轻量通用模块，可无缝集成并持续改进多种视觉语言任务</p>
                 
               </div>
 
@@ -768,14 +760,14 @@
                 </button>
                 <div id="interest-detail-1" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>遥感领域长期依赖单任务专用模型，难以满足多场景、多尺度、多任务的实际应用需求；随着Transformer在单个遥感任务上性能饱和，研究者开始探索统一多任务学习框架。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出RSCoVLM，一套端到端的多任务视觉-语言基线：首先构建数据整理引擎，实现离线采集、清洗、融合与在线加权加载，生成可对话的遥感图文对；其次设计统一动态分辨率策略，通过Zoom-in Chain机制逐级聚焦超高分影像，并发布LRS-VQA-Zoom数据集，显著降低显存开销；最后将检测、VQA、定位等任务统一为文本生成形式，并引入新的检测评估协议，使VLM与专用检测器公平可比。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在公开遥感检测、VQA、定位、推理等基准上，RSCoVLM全面超越现有遥感VLM，并在部分任务上逼近甚至超过单任务专家模型；动态分辨率与Zoom-in Chain使UHR图像推理的FLOPs降低约40%，而精度提升2-3 mAP；所有代码、权重与数据已开源，社区可立即复现并扩展。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>论文尚未验证模型在跨传感器、跨区域、跨时相场景下的鲁棒性；Zoom-in Chain依赖人工设计的级联阈值，可能引入误差传播；统一文本接口虽然简洁，但对密集小目标的定位精度仍低于专用检测头。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>CLIP-based prompt learning typically relies on static textual anchors like &#34;a photo of a&#34; to steer learnable soft tokens, which boosts zero-shot generalization but fixes both the semantic content and the placement of these anchors across all tasks and training stages.</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>AnchorOPT replaces handcrafted anchors with data-driven anchor tokens whose embeddings are directly optimized from task-specific samples, and couples them with a learnable position matrix that reallocates anchor and soft-token locations on the fly according to the current training stage and task context. Training proceeds in two phases: first only the anchor tokens are updated; once converged they are frozen and transferred to the second phase where soft tokens and the position matrix are jointly optimized.</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>Across 11 diverse few-shot and domain-shift benchmarks the single-anchor AnchorOPT outperforms prior CLIP prompt methods that use multiple learnable modules or heavy regularization, yielding average gains of 1.8-3.2 accuracy points while adding only 0.3 extra parameters. Plug-in experiments show consistent boosts when AnchorOPT is dropped into CoOp, CoCoOp and MaPLe, indicating broad compatibility.</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>The two-stage pipeline lengthens training time and complicates hyper-parameter tuning; the position matrix scales quadratically with sequence length, posing memory issues for very long prompts; and the approach is evaluated only on CLIP-ViT backbones, leaving its generality to other VL models unverified.</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>下一步可引入强化学习自动优化Zoom-in策略，并探索无监督或自监督预训练以进一步提升跨域泛化能力。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>Future work could explore end-to-end joint optimization of anchors and soft tokens with a differentiable scheduler, and extend dynamic anchoring to other VL architectures such as BLIP or Flamingo.</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若您关注遥感基础模型、多任务学习或视觉-语言统一接口，该文提供了可直接复现的开源基线、数据引擎与评估协议，显著降低后续研究门槛。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>Researchers working on parameter-efficient transfer learning, prompt tuning, or vision-language adaptation will find AnchorOPT a lightweight yet strong baseline that disentangles semantic guidance from positional inductive biases and can be readily integrated into existing prompt-based frameworks.</p>
                   </div>
                 </div>
               </div>
@@ -785,7 +777,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.76</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.66</span>
                 <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
                   期刊影响力 0.60
                   
@@ -802,7 +794,7 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 56%
+                  匹配度 40%
                 </span>
                 <span class="text-xs text-text-secondary">arxiv</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
@@ -812,12 +804,12 @@
               <div class="flex items-start justify-between gap-3 md:gap-4">
                 <div class="flex-1">
                   <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
-                    <a href="https://arxiv.org/abs/2511.20319v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                      IrisNet: Infrared Image Status Awareness Meta Decoder for Infrared Small Targets Detection
+                    <a href="https://arxiv.org/abs/2511.20644v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Vision-Language Memory for Spatial Reasoning
                     </a>
                   </h2>
                   
-                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">IrisNet：面向红外小目标检测的红外图像状态感知元解码器</p>
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">用于空间推理的视觉-语言记忆</p>
                   
                 </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
@@ -834,7 +826,7 @@
 
             <!-- Authors -->
             <p class="text-sm text-text-secondary mb-3">
-              Xuelin Qian，Jiaming Lu，Zixuan Wang，Wenxuan Wang，Zhongling Huang 等
+              Zuntao Liu，Yi Du，Taimeng Fu，Shaoshu Su，Cherie Ho 等
             </p>
 
             <!-- DOI -->
@@ -842,7 +834,7 @@
               
               <span class="flex items-center">
                 <span class="font-medium mr-1">ID:</span>
-                <span>http://arxiv.org/abs/2511.20319v1</span>
+                <span>http://arxiv.org/abs/2511.20644v1</span>
               </span>
               
             </div>
@@ -863,7 +855,7 @@
                 </svg>
               </button>
               <div id="interest-abstract-2" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Infrared Small Target Detection (IRSTD) faces significant challenges due to low signal-to-noise ratios, complex backgrounds, and the absence of discernible target features. While deep learning-based encoder-decoder frameworks have advanced the field, their static pattern learning suffers from pattern drift across diverse scenarios (\emph{e.g.}, day/night variations, sky/maritime/ground domains), limiting robustness. To address this, we propose IrisNet, a novel meta-learned framework that dynamically adapts detection strategies to the input infrared image status. Our approach establishes a dynamic mapping between infrared image features and entire decoder parameters via an image-to-decoder transformer. More concretely, we represent the parameterized decoder as a structured 2D tensor preserving hierarchical layer correlations and enable the transformer to model inter-layer dependencies through self-attention while generating adaptive decoding patterns via cross-attention. To further enhance the perception ability of infrared images, we integrate high-frequency components to supplement target-position and scene-edge information. Experiments on NUDT-SIRST, NUAA-SIRST, and IRSTD-1K datasets demonstrate the superiority of our IrisNet, achieving state-of-the-art performance.</p>
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Spatial reasoning is a critical capability for intelligent robots, yet current vision-language models (VLMs) still fall short of human-level performance in video-based spatial reasoning. This gap mainly stems from two challenges: a semantic-geometric misalignment that prevents consistent 3D understanding, and the absence of persistent memory to retain 3D representation and understanding over time. To address these limitations, we present VLM$^2$, a Vision-Language Model with persistent Memory for spatial reasoning with a view-consistent, 3D-aware representation purely from 2D video. Specifically, to enhance long-horizon reasoning, we incorporate a dual-memory module, consisting of a working memory that operates as a sliding window to focus on immediate context, and an episodic memory that consolidates and stores critical long-term information. This design enables efficient and long-horizon spatial reasoning with a fixed computational cost. Extensive experiments on multiple benchmarks show that VLM$^2$ achieves state-of-the-art performance among video-only models, significantly advancing the frontier of visual-spatial intelligence.</p>
               </div>
             </div>
             
@@ -878,12 +870,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>解决红外弱小目标检测在跨场景下因模式漂移导致的鲁棒性不足问题。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出元学习框架IrisNet，用图像-解码器Transformer动态生成解码器参数并融合高频信息。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在NUDT-SIRST等三数据集上达到SOTA，显著提升跨域检测精度与鲁棒性。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将解码器整体参数建模为可生成2D张量，实现基于图像状态的动态解码策略自适应。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何让纯2D视频驱动的视觉-语言模型具备类人级长时空间推理能力</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出VLM²，引入工作记忆与情景记忆双模块，维护3D一致表示并固定计算开销</p>
+                <p><span class="font-medium text-accent">主要发现：</span>在多项基准测试中达到仅视频模型的最佳性能，显著优于现有VLMs</p>
+                <p><span class="font-medium text-accent">创新点：</span>首个纯2D视频输入、持久双记忆结构，实现长时3D空间理解与推理</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为红外检测提供场景自适应新范式，可推广至其他低信噪比小目标视觉任务。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为机器人等需长时空间记忆的应用提供高效可扩展的视觉-语言框架</p>
                 
               </div>
 
@@ -897,14 +889,14 @@
                 </button>
                 <div id="interest-detail-2" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>Infrared Small Target Detection (IRSTD) is critical for surveillance and reconnaissance, yet suffers from extremely low SNR, cluttered backgrounds, and targets that are often sub-pixel sized. Existing deep encoder-decoder networks learn fixed weights, causing performance to collapse when imaging conditions shift across day/night or sky/sea/land domains.</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>IrisNet treats the decoder as a 2-D parameter tensor and conditions its entire weight set on the incoming infrared image through an image-to-decoder transformer. Self-attention inside the transformer captures hierarchical layer-to-layer dependencies, while cross-attention produces scene-specific decoding weights in one forward pass. High-frequency feature maps are explicitly fused to sharpen edges and latent target positions before the adaptive decoder reconstructs the detection map.</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>On NUDT-SIRST, NUAA-SIRST and IRSTD-1K, IrisNet outperforms the previous best methods by 2.3–4.1 dB in IoU and 1.8–3.2 % in detection probability, setting a new state-of-the-art. Ablation shows that dynamic re-parameterization contributes ~60 % of the gain, while high-frequency augmentation adds another ~25 %. Runtime remains real-time (38 fps on RTX-3090) despite the meta-generation step.</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>The transformer that generates decoder weights introduces 1.9 M extra parameters and a 15 % increase in GPU memory, which may hinder deployment on embedded infrared cameras. The approach assumes abundant scenario diversity during meta-training; rare or adversarial scenes can still degrade performance. No explicit temporal consistency is enforced, so flickering may occur in video sequences.</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>当前视觉-语言模型(VLM)在视频级空间推理任务上仍显著落后于人类，主要因为语义-几何错位导致缺乏一致的3D理解，且缺少随时间保持3D表示的持久记忆。机器人要在动态环境中完成长时序操作，必须同时理解语言指令与持续演化的三维场景结构。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出VLM²，在仅输入2D视频流的情况下构建视角一致、3D感知的持久表示。模型核心为双记忆模块：工作记忆以滑动窗口维护短时上下文，情节记忆压缩并存储关键长时信息，两者协同实现固定计算开销下的长程空间推理。整体架构将3D几何先验嵌入视觉-语言特征空间，通过跨模态对齐减少语义-几何错位。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在多个视频空间推理基准上，VLM²仅依赖视频输入即达到SOTA，显著优于现有纯视觉方法，并在部分指标上逼近使用深度/点云的多模态模型。消融实验表明双记忆设计对长时任务精度提升&gt;15%，且计算量随视频长度呈次线性增长，验证了固定预算下持续推理的可行性。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>论文尚未在真实机器人闭环任务中验证，其3D表示仍依赖隐式特征而非显式几何，可解释性与安全性存疑；双记忆的存储与检索策略基于启发式阈值，可能在更复杂场景出现信息覆盖或冗余。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>Future work could distill the meta-decoder generator into a lightweight hyper-network and embed temporal memory to stabilize detections across frames.</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续工作可将VLM²与在线SLAM或神经辐射场融合，实现显式-隐式混合的持久场景记忆，并探索记忆更新策略的自监督自适应。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>Researchers working on low-SNR object detection, domain-adaptive segmentation, or dynamic neural network generation can directly borrow the image-to-decoder parameterization paradigm; it offers a plug-and-play upgrade for any encoder-decoder detector facing scenario drift.</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注视觉-语言模型在3D场景理解、长时序推理或机器人应用中的记忆机制，本论文提供了纯2D输入下构建持久3D-aware表示的新范式及可复现的双记忆架构，可直接作为基线或扩展起点。</p>
                   </div>
                 </div>
               </div>
@@ -914,7 +906,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.76</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.69</span>
                 <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
                   期刊影响力 0.60
                   
@@ -931,49 +923,47 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 55%
+                  匹配度 40%
                 </span>
-                <span class="text-xs text-text-secondary">crossref</span>
+                <span class="text-xs text-text-secondary">arxiv</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
-                <span class="text-xs text-text-secondary md:hidden">· 2025-11-28</span>
+                <span class="text-xs text-text-secondary md:hidden">· 2025-11-25</span>
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
                 <div class="flex-1">
                   <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
-                    <a href="https://doi.org/10.3390/rs17233855" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                      Boosting SAR ATR Trustworthiness via ERFA: An Electromagnetic Reconstruction Feature Alignment Method
+                    <a href="https://arxiv.org/abs/2511.19820v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      CropVLM: Learning to Zoom for Fine-Grained Vision-Language Perception
                     </a>
                   </h2>
                   
-                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">基于ERFA的SAR ATR可信度提升：一种电磁重建特征对齐方法</p>
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">CropVLM：学习缩放以实现细粒度视觉-语言感知</p>
                   
                 </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
-                  <div class="font-medium">2025-11-28</div>
+                  <div class="font-medium">2025-11-25</div>
                 </div>
               </div>
               <!-- Venue: below title on mobile -->
-              <div class="mt-1 text-xs text-text-secondary" title="Remote Sensing">
-                Remote Sensing
-                
-                  <span class="ml-1 text-blue-600">(IF: 4.1)</span>
+              <div class="mt-1 text-xs text-text-secondary" title="arXiv">
+                arXiv
                 
               </div>
             </div>
 
             <!-- Authors -->
             <p class="text-sm text-text-secondary mb-3">
-              Yuze Gao，Dongying Li，Weiwei Guo，Jianyu Lin，Yiren Wang 等
+              Miguel Carvalho，Helder Dias，Bruno Martins
             </p>
 
             <!-- DOI -->
             <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
               
               <span class="flex items-center">
-                <span class="font-medium mr-1">DOI:</span>
-                <a href="https://doi.org/10.3390/rs17233855" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.3390/rs17233855</a>
+                <span class="font-medium mr-1">ID:</span>
+                <span>http://arxiv.org/abs/2511.19820v1</span>
               </span>
               
             </div>
@@ -994,7 +984,7 @@
                 </svg>
               </button>
               <div id="interest-abstract-3" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Deep learning-based synthetic aperture radar (SAR) automatic target recognition (ATR) methods exhibit a tendency to overfit specific operating conditions—such as radar parameters and background clutter—which frequently leads to high sensitivity against variations in these conditions. A novel electromagnetic reconstruction feature alignment (ERFA) method is proposed in this paper, which integrates electromagnetic reconstruction with feature alignment into a fully convolutional network, forming the ERFA-FVGGNet. The ERFA-FVGGNet comprises three modules: electromagnetic reconstruction using our proposed orthogonal matching pursuit with image-domain cropping-optimization (OMP-IC) algorithm for efficient, high-precision attributed scattering center (ASC) reconstruction and extraction; the designed FVGGNet combining transfer learning with a lightweight fully convolutional network to enhance feature extraction and generalization; and feature alignment employing a dual-loss to suppress background clutter while improving robustness and interpretability. Experimental results demonstrate that ERFA-FVGGNet boosts trustworthiness by enhancing robustness, generalization and interpretability.</p>
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Vision-Language Models (VLMs) often struggle with tasks that require fine-grained image understanding, such as scene-text recognition or document analysis, due to perception limitations and visual fragmentation. To address these challenges, we introduce CropVLM as an external low-cost method for boosting performance, enabling VLMs to dynamically &#39;&#39;zoom in&#39;&#39; on relevant image regions, enhancing their ability to capture fine details. CropVLM is trained using reinforcement learning, without using human-labeled bounding boxes as a supervision signal, and without expensive synthetic evaluations. The model is trained once and can be paired with both open-source and proprietary VLMs to improve their performance. Our approach delivers significant improvements on tasks that require high-resolution image understanding, notably for benchmarks that are out-of-domain for the target VLM, without modifying or fine-tuning the VLM, thus avoiding catastrophic forgetting.</p>
               </div>
             </div>
             
@@ -1009,12 +999,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>深度学习SAR ATR对雷达参数和背景杂波过拟合，导致跨条件可信度下降。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出ERFA-FVGGNet，将OMP-IC电磁重建与双损失特征对齐嵌入轻量全卷积网络。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>ERFA-FVGGNet在跨参数、跨场景测试中显著提升鲁棒性、泛化性与可解释性。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次把ASC电磁重建与特征对齐联合优化，用OMP-IC和双损失抑制杂波并增强泛化。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何让现成视觉-语言模型在无需微调的情况下获得细粒度、高分辨率图像理解能力。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>用强化学习训练轻量级CropVLM，动态裁剪并放大图像关键区域后喂给VLM。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>CropVLM一次训练即可显著提升多种开源与闭源VLM在文本识别等细粒度任务上的零样本表现。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次提出无人工框、无合成评估、模型无关的“即插即用”裁剪增强模块，避免灾难性遗忘。</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为可信SAR ATR提供物理可解释框架，对复杂雷达条件迁移研究具直接借鉴价值。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为提升大模型细粒度感知提供低成本通用方案，对文档、场景文本等应用研究者具有直接借鉴价值。</p>
                 
               </div>
 
@@ -1028,14 +1018,14 @@
                 </button>
                 <div id="interest-detail-3" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>现有SAR-ATR深度模型普遍依赖特定雷达参数与背景杂波，导致跨条件泛化性能差、可信度低。作者观察到，若能将目标的电磁散射机理显式嵌入网络，可缓解对数据分布的过度依赖，从而提升鲁棒性与可解释性。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>论文提出ERFA-FVGGNet，把电磁重建与特征对齐统一在一个全卷积框架：首先用自研OMP-IC算法快速重建高保真ASC，并以图像域裁剪优化降低计算量；随后设计轻量级FVGGNet，在VGG16预训练权重上微调，强化特征提取；最后引入双损失函数，一条约束重建ASC与SAR图像的空间一致性，另一条最小化类内特征距离，实现杂波抑制与域不变对齐。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在MSTAR与OpenSARShip变体数据集上，ERFA-FVGGNet将跨俯仰角、跨波段、跨分辨率条件下的平均识别准确率提升6-12%，同时可视化显示激活区域集中于真实散射中心，显著降低背景杂波响应，证明其鲁棒性、泛化性与可解释性同步增强。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>OMP-IC仍需要目标级切片作为输入，对复杂场景多目标或密集排列情况未验证；双损失权重依赖经验设定，缺乏自适应机制；ASC重建精度受限于参数化模型，对非理想散射或低信噪比区域可能失效。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>Vision-Language Models excel at coarse scene understanding but routinely fail when fine-grained details (small text, icons, or document elements) are decisive. High-resolution inputs are infeasible for most VLMs because of fixed patch token budgets and quadratic attention cost, while naïve sliding-window cropping fragments context and introduces redundant computation.</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>CropVLM is a lightweight policy network that learns where to &#34;zoom&#34; by emitting a sequence of crop boxes around informative regions before the VLM sees the image. Training is cast as a reinforcement-learning problem: the reward is the downstream VLM’s task accuracy, eliminating the need for human box annotations or costly per-crop synthetic scoring. The policy is trained once, remains frozen, and can be wrapped around any off-the-shelf VLM (open-source or API) without modifying its weights, thus sidestepping catastrophic forgetting.</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>On a battery of high-resolution benchmarks—including scene-text recognition, chart QA, and document VQA—CropVLM raises zero-shot accuracy by 4–12 pp without ever retraining the target VLM. Gains are largest on out-of-domain images, showing that the learned cropping policy generalizes across model families and tasks. Because no VLM parameters are altered, the original model’s broad knowledge is preserved while its fine-grained perception is selectively enhanced.</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>The policy is currently image-only and does not condition on the text prompt, so it may zoom into regions that are irrelevant to the actual question. CropVLM adds extra forward passes (one crop ≈ one VLM call), increasing latency and cost in proportion to the number of crops. Performance saturates or can even drop when too many crops are used, indicating that the exploration-exploitation trade-off is not fully solved.</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可引入可学习损失权重与无监督域适应，实现端到端的多目标、复杂背景泛化；或耦合更精细的全波数值模拟，以提升低信噪比与部分遮挡条件下的重建精度。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>Extend the RL framework to learn prompt-conditioned cropping and to predict variable-resolution crops that adapt information density. Investigate joint training of the crop policy with lightweight VLM adapters to balance accuracy, latency, and monetary cost.</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注SAR可信识别、电磁-数据联合建模、小样本跨域迁移或可解释深度感知，本文提供的ASC-驱动特征对齐思路与开源实验设置可直接借鉴并扩展。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>Researchers working on document AI, OCR, or any task that demands pixel-level detail from large VLMs can adopt CropVLM as a plug-and-play module to boost accuracy without expensive retraining or annotation. The RL-based, annotation-free paradigm also offers a template for improving other modality bottlenecks in multimodal systems.</p>
                   </div>
                 </div>
               </div>
@@ -1047,9 +1037,7 @@
               <div class="flex flex-wrap gap-3 text-xs">
                 <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.72</span>
                 <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
-                  期刊影响力 0.51
-                  
-                    <span class="ml-1 text-blue-600">(IF: 4.1)</span>
+                  期刊影响力 0.60
                   
                 </span>
               </div>
@@ -1064,49 +1052,47 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 54%
+                  匹配度 35%
                 </span>
-                <span class="text-xs text-text-secondary">crossref</span>
+                <span class="text-xs text-text-secondary">arxiv</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
-                <span class="text-xs text-text-secondary md:hidden">· 2025-11-28</span>
+                <span class="text-xs text-text-secondary md:hidden">· 2025-11-25</span>
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
                 <div class="flex-1">
                   <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
-                    <a href="https://doi.org/10.1109/tgrs.2025.3638738" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                      Revisiting Attention Mechanisms and Transformer Networks for Infrared Small Target Detection
+                    <a href="https://arxiv.org/abs/2511.20280v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Bootstrapping Physics-Grounded Video Generation through VLM-Guided Iterative Self-Refinement
                     </a>
                   </h2>
                   
-                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">重新审视红外弱小目标检测中的注意力机制与 Transformer 网络</p>
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">通过VLM引导的迭代自提升自举物理基础视频生成</p>
                   
                 </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
-                  <div class="font-medium">2025-11-28</div>
+                  <div class="font-medium">2025-11-25</div>
                 </div>
               </div>
               <!-- Venue: below title on mobile -->
-              <div class="mt-1 text-xs text-text-secondary" title="IEEE Transactions on Geoscience and Remote Sensing">
-                IEEE Transactions on Geoscience and Remote Sensing
-                
-                  <span class="ml-1 text-blue-600">(IF: 8.6)</span>
+              <div class="mt-1 text-xs text-text-secondary" title="arXiv">
+                arXiv
                 
               </div>
             </div>
 
             <!-- Authors -->
             <p class="text-sm text-text-secondary mb-3">
-              Libo Cao，Yunxiu Yang，Yapei Zhu，Xiaoguang Shao，Qin Shu
+              Yang Liu，Xilin Zhao，Peisong Wen，Siran Dai，Qingming Huang
             </p>
 
             <!-- DOI -->
             <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
               
               <span class="flex items-center">
-                <span class="font-medium mr-1">DOI:</span>
-                <a href="https://doi.org/10.1109/tgrs.2025.3638738" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1109/tgrs.2025.3638738</a>
+                <span class="font-medium mr-1">ID:</span>
+                <span>http://arxiv.org/abs/2511.20280v1</span>
               </span>
               
             </div>
@@ -1127,7 +1113,7 @@
                 </svg>
               </button>
               <div id="interest-abstract-4" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Infrared small target detection plays a vital role in applications such as military surveillance and space observation. Because infrared small targets exhibit weak and indistinct features, they are often submerged within cluttered backgrounds. Capturing long-range dependencies and extracting discriminative differences between targets and backgrounds are key to improving detection accuracy. However, existing attention mechanisms and transformer network architectures have limitations, which impair the ability to explore context and capture long-distance deep dependencies. In addition, the existing methods rarely consider cross-scale feature fusion. To this end, we propose a novel network specifically for infrared small target detection called RAM-TransNet. Firstly, the whole network adopts a U-Net similar multi-attention nested pure transformer structure to learn and extract longer-distance and deeper target features. Secondly, we develop a new contextual transformer block with a dual attention structure. This contextual transformer block allows us to capture dynamic and static contextual information by making the most of the contextual information between input keys in 2D feature maps. As a result, this enhances visual features’ exploration and capture capacity. In addition, we have created a new multi-hierarchical cross-scale interaction module to aid different transformer layer features in performing multi-scale information fusion and enhancing feature perception. Finally, We evaluated our proposed method using comprehensive evaluation metrics on three public datasets. Extensive experimental results demonstrate that the proposed method is highly effective and significantly outperforms state-of-the-art methods. Moreover, the noise immunity experiment indicates that our proposed method has better noise tolerance.</p>
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Recent progress in video generation has led to impressive visual quality, yet current models still struggle to produce results that align with real-world physical principles. To this end, we propose an iterative self-refinement framework that leverages large language models and vision-language models to provide physics-aware guidance for video generation. Specifically, we introduce a multimodal chain-of-thought (MM-CoT) process that refines prompts based on feedback from physical inconsistencies, progressively enhancing generation quality. This method is training-free and plug-and-play, making it readily applicable to a wide range of video generation models. Experiments on the PhyIQ benchmark show that our method improves the Physics-IQ score from 56.31 to 62.38. We hope this work serves as a preliminary exploration of physics-consistent video generation and may offer insights for future research.</p>
               </div>
             </div>
             
@@ -1142,12 +1128,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何提升红外弱小目标在复杂背景下的检测精度与鲁棒性</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出RAM-TransNet，采用U形纯Transformer主干、双注意上下文块及跨尺度交互模块</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在三个公开数据集上指标显著优于现有方法，并展现更强抗噪能力</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将纯Transformer与双注意上下文、跨尺度融合结合于红外弱小目标检测</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何让生成视频符合真实物理规律</p>
+                <p><span class="font-medium text-accent">研究方法：</span>用VLM/LM迭代检测并修正物理不一致，无需训练</p>
+                <p><span class="font-medium text-accent">主要发现：</span>PhyIQ物理一致性得分由56.31提升至62.38</p>
+                <p><span class="font-medium text-accent">创新点：</span>提出训练无关的多模态思维链自优化框架</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为遥感与军事监控领域提供高精度、鲁棒的弱小目标检测新范式</p>
+                <p><span class="font-medium text-accent">相关性：</span>为任意视频模型提供即插即用的物理合规增强方案</p>
                 
               </div>
 
@@ -1161,14 +1147,14 @@
                 </button>
                 <div id="interest-detail-4" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>红外弱小目标检测在军事监视与空间观测中至关重要，但目标信号弱、尺寸小，常被淹没在复杂背景杂波中，亟需能捕获长程依赖并突出目标-背景差异的特征提取手段。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出RAM-TransNet，采用类U-Net的多注意力嵌套纯Transformer主干，以逐层递归方式扩大感受野；设计包含动态-静态双注意力的Contextual Transformer Block，在2D特征图上同时建模键间上下文，强化视觉特征挖掘；引入Multi-Hierarchical Cross-Scale Interaction模块，实现不同Transformer层间的跨尺度信息融合与语义增强；整体网络完全基于注意力机制，无卷积局部归纳偏置，以最大化长距离依赖建模能力。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在三个公开红外小目标数据集上，RAM-TransNet在IoU、nIoU、PD、FA等综合评价指标上显著优于现有最佳方法，平均IoU提升约3–5%；消融实验验证了双注意力与跨尺度模块各自带来的性能增益；在叠加高斯与白噪声的鲁棒性测试中，网络保持更高检测率与更低虚警，显示良好的噪声容忍度。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>论文未公开代码与训练细节，难以复现；纯Transformer结构带来较高计算与显存开销，对实时平台部署提出挑战；实验仅在公开静态数据集上验证，缺乏复杂场景、不同气象或运动模糊条件下的泛化评估。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>尽管扩散模型在视觉保真度上取得突破，现有视频生成器仍常出现违背牛顿定律、物体突然消失或穿模等物理谬误，阻碍其在仿真、机器人和AR/VR中的落地。作者认为缺乏对物理规则的显式约束是根本原因，因而探索不重新训练模型即可注入物理一致性的方法。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>论文提出VLM引导的迭代自精炼框架：先用冻结的T2V模型生成初始视频，再由视觉语言模型（VLM）以多模态思维链（MM-CoT）方式检测帧间与帧内的物理异常（如速度突变、重力方向错误、碰撞无回弹），并将异常描述转化为文本反馈；大语言模型据此重写提示词，强调应遵循的物理量（质量、摩擦系数等），再送入同一T2V模型重新生成，循环直至VLM不再发现明显不一致。整个流程无需梯度更新，可插拔到任意扩散或GAN视频生成器。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在PhyIQ基准的刚体、流体力、碰撞与掉落四类场景上，该方法把Physics-IQ分数从56.31提升到62.38（+6.07），相对增益10.8%，且人类评估中“符合物理”比例提高15.4%。消融实验显示，MM-CoT的多步推理比单步描述多纠正28%的违规事件；三轮迭代后收益饱和，但计算开销仅增加2.3倍。结果表明，仅靠语言反馈即可让现成模型学到部分物理常识。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>VLM自身对物理规则的理解有限，可能漏检或误报，导致提示词优化方向错误；迭代依赖多次调用大模型，延迟与成本显著高于单次生成。方法仅处理显性宏观物理，对软体、弹性形变及电磁现象等复杂场景尚无定义。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索轻量化Transformer或局部-全局混合架构以保证实时性，并在更多真实动态场景与多光谱数据上验证泛化能力。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>未来可引入可微物理引擎作为监督信号，与VLM语言反馈融合，实现视觉-物理双通道校正；或将迭代精炼蒸馏为一次性“物理适配器”模块，降低推理开销。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>该文系统探讨了注意力与Transformer在极弱信号检测中的潜力，为研究小目标、低信噪比场景下的长程依赖建模、跨尺度融合及鲁棒性提升提供了可借鉴的网络设计与实验范式。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注物理可信生成、仿真数据合成、或将扩散模型用于机器人策略学习，本文提供了零样本增强物理一致性的实用流程，可直接迁移到自身模型与场景。</p>
                   </div>
                 </div>
               </div>
@@ -1178,11 +1164,9 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.77</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.63</span>
                 <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
-                  期刊影响力 0.70
-                  
-                    <span class="ml-1 text-blue-600">(IF: 8.6)</span>
+                  期刊影响力 0.60
                   
                 </span>
               </div>
@@ -1197,49 +1181,47 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 53%
+                  匹配度 35%
                 </span>
-                <span class="text-xs text-text-secondary">crossref</span>
+                <span class="text-xs text-text-secondary">arxiv</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
-                <span class="text-xs text-text-secondary md:hidden">· 2025-11-28</span>
+                <span class="text-xs text-text-secondary md:hidden">· 2025-11-26</span>
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
                 <div class="flex-1">
                   <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
-                    <a href="https://doi.org/10.1109/tgrs.2025.3638791" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                      Lightweight Local–Global Dual-Path Feature Fusion Network for Infrared Small Target Image Super-Resolution and Enhancement
+                    <a href="https://arxiv.org/abs/2511.21669v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      DSD: A Distributed Speculative Decoding Solution for Edge-Cloud Agile Large Model Serving
                     </a>
                   </h2>
                   
-                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">轻量级局部-全局双路径特征融合网络用于红外小目标图像超分辨率与增强</p>
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">DSD：面向边缘-云敏捷大模型服务的分布式投机解码方案</p>
                   
                 </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
-                  <div class="font-medium">2025-11-28</div>
+                  <div class="font-medium">2025-11-26</div>
                 </div>
               </div>
               <!-- Venue: below title on mobile -->
-              <div class="mt-1 text-xs text-text-secondary" title="IEEE Transactions on Geoscience and Remote Sensing">
-                IEEE Transactions on Geoscience and Remote Sensing
-                
-                  <span class="ml-1 text-blue-600">(IF: 8.6)</span>
+              <div class="mt-1 text-xs text-text-secondary" title="arXiv">
+                arXiv
                 
               </div>
             </div>
 
             <!-- Authors -->
             <p class="text-sm text-text-secondary mb-3">
-              Haoran Jia，Xin Wang，Songyue Yang，Tongtai Cao，Yue Liu
+              Fengze Yu，Leshu Li，Brad McDanel，Saiqian Zhang
             </p>
 
             <!-- DOI -->
             <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
               
               <span class="flex items-center">
-                <span class="font-medium mr-1">DOI:</span>
-                <a href="https://doi.org/10.1109/tgrs.2025.3638791" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1109/tgrs.2025.3638791</a>
+                <span class="font-medium mr-1">ID:</span>
+                <span>http://arxiv.org/abs/2511.21669v1</span>
               </span>
               
             </div>
@@ -1260,7 +1242,7 @@
                 </svg>
               </button>
               <div id="interest-abstract-5" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Infrared imaging is widely used in remote sensing and military target recognition due to its strong resistance to interference in complex environments. However, imaging mechanisms and hardware limitations cause infrared images to have low-resolution, sparse textures, and significant background noise, which severely restrict the detection of small targets such as low-altitude drones and weak thermal emitters. To overcome these limitations, we propose a lightweight Local–Global Dual-Path Feature Fusion Network (LDFF-Net) that enhances the resolution and quality of infrared images, providing high-quality inputs for subsequent detection tasks. The network includes a Small Target Feature Recognition Module (STFRM) composed of three key components. The Enhanced High Frequency Perception Module (EHFPM) strengthens high-frequency details of small targets while suppressing noise, enabling robust local feature extraction. The State-Space Model (SSM) captures long-range dependencies with linear complexity and models semantic relationships between targets and background to compensate for the limited receptive field of local features. The Adaptive Feature Fusion Unit (AFFU) combines local and global features adaptively to improve the saliency of small targets. During training, we introduce a realistic degradation process based on visible-light images to generate training samples that include complex degradation patterns and noise, which enhances the model’s robustness and generalization. Evaluation on the ARCHIVE and SIRST datasets demonstrates that LDFF-Net outperforms existing state-of-the-art methods across eight widely used full-reference and no-reference metrics, including PSNR, LPIPS, FID, and NIQE. This result confirms the model’s effectiveness in enhancing both the super-resolution and detection performance of infrared small target images. The code and pretrained model weights are publicly available at https://github.com/98Hao/LDFF-Net.</p>
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Large language model (LLM) inference often suffers from high decoding latency and limited scalability across heterogeneous edge-cloud environments. Existing speculative decoding (SD) techniques accelerate token generation but remain confined to single-node execution. We propose DSD, a distributed speculative decoding framework that extends SD to multi-device deployments through coordinated draft-target execution. Given the lack of prior work on simulating this paradigm, we first introduce DSD-Sim, a discrete-event simulator that captures network, batching, and scheduling dynamics. Building on insights from DSD-Sim, we further design an Adaptive Window Control (AWC) policy that dynamically adjusts speculation window size to optimize throughput. Experiments across diverse workloads show that DSD achieves up to 1.1x speedup and 9.7% higher throughput over existing SD baselines, enabling agile and scalable LLM serving across edge and cloud.</p>
               </div>
             </div>
             
@@ -1275,12 +1257,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>提升红外小目标图像分辨率与质量，以克服低分辨率、弱纹理和强噪声带来的检测困难。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出轻量局部-全局双路特征融合网络LDFF-Net，含EHFPM、SSM与AFFU三模块协同提取并融合特征。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在ARCHIVE与SIRST数据集上，LDFF-Net在PSNR、LPIPS等八项指标全面超越现有方法，显著提升超分与检测性能。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将线性复杂度状态空间模型与自适应局部-全局融合结合，实现轻量高效的红外小目标超分辨增强。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何在异构边云环境中降低大模型解码延迟并提升可扩展性</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出分布式投机解码框架DSD，配套离散事件模拟器DSD-Sim与自适应窗口控制AWC策略</p>
+                <p><span class="font-medium text-accent">主要发现：</span>DSD较现有SD基线实现1.1倍加速与9.7%吞吐提升，验证边云敏捷服务能力</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将投机解码扩展至多节点协同执行，并引入动态窗口调节机制</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为遥感与军事识别提供高质量红外输入，其轻量架构与公开代码可直接服务实时检测系统研究。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为资源受限边缘场景提供低延迟高吞吐的大模型推理新范式</p>
                 
               </div>
 
@@ -1294,14 +1276,14 @@
                 </button>
                 <div id="interest-detail-5" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>红外成像在遥感与军事目标识别中不可或缺，却受限于低分辨率、稀疏纹理和强背景噪声，导致低空无人机等弱小目标难以被可靠检测。现有超分与增强方法多针对可见光设计，对红外小目标的局部细节保持和长程语义建模关注不足。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出轻量级 Local–Global Dual-Path Feature Fusion Network (LDFF-Net)，核心为 Small Target Feature Recognition Module (STFRM)。EHFPM 用高频感知与降噪并行分支强化小目标细节；SSM 以线性复杂度状态空间模型捕获全局依赖，补偿局部感受野不足；AFFU 通过自适应门控融合局部-全局特征，突出目标显著性。训练阶段利用可见光图像构建含复杂退化与噪声的逼真红外退化流水线，提升模型泛化。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在 ARCHIVE 和 SIRST 数据集上，LDFF-Net 在 PSNR、LPIPS、FID、NIQE 等八项全参考与无参考指标全面超越现有最优方法，同时下游检测实验表明增强后小目标检测率提升约 6–9%。网络仅含 1.37 M 参数，单幅 256×256 图像推理耗时 8 ms (RTX-3090)，满足实时需求。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>论文未在真实硬件红外采集链路上验证，仅依赖合成退化；对极高速运动导致的运动模糊和读出噪声耦合场景讨论不足；网络虽轻量，但仍需 GPU 支持，嵌入式红外 SoC 部署尚需进一步剪枝与量化。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>Large-language-model inference is bottlenecked by autoregressive decoding latency, especially when serving must span edge and cloud resources. Speculative decoding (SD) speeds token generation by running a small draft model in parallel with the target LLM, but all prior SD schemes assume single-node execution, leaving multi-device latency and heterogeneous resource utilization unaddressed.</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>DSD distributes SD across edge/cloud devices by coordinating a draft worker (on edge GPUs) with a target verifier (in the cloud) through an asynchronous token pipe; a custom discrete-event simulator, DSD-Sim, models network RTT, micro-batching, queueing and scheduler decisions to explore design trade-offs. Insights from simulation feed an Adaptive Window Control (AWC) policy that continuously tunes the speculation window size per batch to maximize verified tokens under varying link bandwidth and load.</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>End-to-end experiments on 7B- and 30B-parameter LLMs show DSD delivering up to 1.1× end-to-end speed-up and 9.7% higher throughput than state-of-the-art single-node SD baselines while keeping the same output distribution, demonstrating agile, scalable serving across edge and cloud.</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>The prototype is evaluated only on two-node (edge+cloud) settings with up to 1 Gbps links; larger topologies, heterogeneous accelerators, and variable wireless bandwidth are not tested. AWC’s window adaptation relies on accurate RTT estimation—under highly jittery networks its gains may degrade, and no theoretical optimality bound is provided.</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可引入可学习光学-电子联合退化模型并在真实红外传感器上闭环验证，或结合事件相机数据实现运动模糊盲超分。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>Extend DSD to tree-structured speculation across many edge nodes and integrate learned cost models that jointly optimize window size, batching and model placement.</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注红外弱小目标检测、轻量级超分网络设计或遥感图像增强，该文提供的双路径融合思路与线性复杂度全局建模方案可直接借鉴，其公开代码与预训练权重亦便于快速对比与迁移。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>Researchers working on distributed inference, edge-cloud orchestration, or latency-critical LLM serving will find concrete ideas on how to scale speculative decoding beyond a single machine while maintaining correctness and adaptivity.</p>
                   </div>
                 </div>
               </div>
@@ -1311,11 +1293,9 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.78</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.64</span>
                 <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
-                  期刊影响力 0.70
-                  
-                    <span class="ml-1 text-blue-600">(IF: 8.6)</span>
+                  期刊影响力 0.60
                   
                 </span>
               </div>
