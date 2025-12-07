@@ -35,7 +35,8 @@
     @media (min-width: 1024px) { .content-container { padding: 0 4rem; } }
 
     /* Cluster graph responsive */
-    .cluster-graph-container { width: 100%; height: 280px; touch-action: none; }
+    /* touch-action: pan-y allows vertical scrolling to pass through, preventing scroll hijacking */
+    .cluster-graph-container { width: 100%; height: 280px; touch-action: pan-y; }
     @media (min-width: 640px) { .cluster-graph-container { height: 320px; } }
     @media (min-width: 768px) { .cluster-graph-container { height: 350px; } }
     #cluster-graph svg { overflow: visible; }
@@ -48,7 +49,7 @@
       <h1 class="text-xl md:text-2xl font-bold text-text-primary">ZotWatch 文献推荐</h1>
       <p class="text-xs md:text-sm text-text-secondary mt-1">
         共 35 篇论文 ·
-        生成于 2025-12-07 19:44 Asia/Shanghai
+        生成于 2025-12-07 23:35 Asia/Shanghai
       </p>
     </div>
   </header>
@@ -869,11 +870,16 @@
         const colorScale = (i) => academicColors[i % academicColors.length];
 
         let svg, simulation, node, link, sizeScale;
+        let lastWidth = 0;  // Track width to detect real resize vs scroll-triggered resize
+        let simulationStopped = false;  // Track if simulation has settled
 
         function createGraph() {
           const width = clusterContainer.clientWidth;
           const height = clusterContainer.clientHeight || 280;
           const isMobile = width < 500;
+
+          // Update tracked width
+          lastWidth = width;
 
           // Clear existing
           clusterContainer.innerHTML = '';
@@ -896,13 +902,15 @@
           const chargeStrength = isMobile ? -100 : -150;
           const linkDistance = isMobile ? 60 : 90;
 
+          simulationStopped = false;
           simulation = d3.forceSimulation(clusters)
             .force('link', d3.forceLink(links).id(d => d.id).distance(linkDistance).strength(0.2))
             .force('charge', d3.forceManyBody().strength(chargeStrength))
             .force('center', d3.forceCenter(width / 2, height / 2))
             .force('collision', d3.forceCollide().radius(d => sizeScale(d.size) + (isMobile ? 4 : 6)))
-            .velocityDecay(0.6)  // Higher decay = less momentum, reduces shaking
-            .alphaDecay(0.05);   // Faster cooling
+            .velocityDecay(0.7)  // Higher decay = less momentum, reduces shaking
+            .alphaDecay(0.08)    // Faster cooling for quicker stabilization
+            .alphaMin(0.01);     // Stop simulation when alpha drops below this
 
           // Draw links
           link = svg.append('g')
@@ -1004,6 +1012,17 @@
 
           node.call(drag);
 
+          // Click handler for highlighting
+          node.on('click', function(event, d) {
+            event.stopPropagation();
+            highlightNode(d);
+          });
+
+          // Click on SVG background to reset
+          svg.on('click', function() {
+            resetHighlight();
+          });
+
           // Simulation tick
           simulation.on('tick', () => {
             // Clamp node positions first so links use clamped coords
@@ -1022,6 +1041,11 @@
               .attr('y1', d => d.source.y)
               .attr('x2', d => d.target.x)
               .attr('y2', d => d.target.y);
+          });
+
+          // Mark simulation as stopped when it settles
+          simulation.on('end', () => {
+            simulationStopped = true;
           });
 
           function dragstarted(event, d) {
@@ -1046,19 +1070,75 @@
             d.fy = null;
             d3.select(this).style('cursor', 'grab');
           }
+
+          // Highlight functions for click interaction
+          function highlightNode(selectedNode) {
+            const connectedIds = new Set();
+
+            // Find all connected nodes via links
+            links.forEach(l => {
+              if (l.source.id === selectedNode.id) connectedIds.add(l.target.id);
+              if (l.target.id === selectedNode.id) connectedIds.add(l.source.id);
+            });
+
+            // Dim all nodes, highlight selected and connected
+            node.select('circle')
+              .attr('fill-opacity', d =>
+                d.id === selectedNode.id || connectedIds.has(d.id) ? 1 : 0.25)
+              .attr('stroke', d =>
+                d.id === selectedNode.id ? '#2563eb' :
+                connectedIds.has(d.id) ? '#f59e0b' : '#fff')
+              .attr('stroke-width', d =>
+                d.id === selectedNode.id || connectedIds.has(d.id) ? 3 : (isMobile ? 1.5 : 2));
+
+            // Dim all links, highlight connected
+            link
+              .attr('stroke-opacity', l =>
+                l.source.id === selectedNode.id || l.target.id === selectedNode.id ? 0.9 : 0.1)
+              .attr('stroke', l =>
+                l.source.id === selectedNode.id || l.target.id === selectedNode.id ? '#2563eb' : '#e2e8f0')
+              .attr('stroke-width', l =>
+                l.source.id === selectedNode.id || l.target.id === selectedNode.id ?
+                  Math.max(2, l.value * 3) : Math.max(1, l.value * 1.5));
+
+            // Dim labels of non-connected nodes
+            node.selectAll('text')
+              .attr('fill-opacity', d =>
+                d.id === selectedNode.id || connectedIds.has(d.id) ? 1 : 0.3);
+          }
+
+          function resetHighlight() {
+            node.select('circle')
+              .attr('fill-opacity', 0.85)
+              .attr('stroke', '#fff')
+              .attr('stroke-width', isMobile ? 1.5 : 2);
+
+            link
+              .attr('stroke-opacity', 0.6)
+              .attr('stroke', '#e2e8f0')
+              .attr('stroke-width', d => Math.max(1, d.value * 1.5));
+
+            node.selectAll('text')
+              .attr('fill-opacity', 1);
+          }
         }
 
         // Initial render
         createGraph();
 
-        // Debounced resize handler
+        // Debounced resize handler - only rebuild on actual width change
+        // Mobile browsers trigger resize on scroll (address bar show/hide) which only changes height
         let resizeTimeout;
         window.addEventListener('resize', () => {
           clearTimeout(resizeTimeout);
           resizeTimeout = setTimeout(() => {
-            // Reset node positions for new layout
-            clusters.forEach(d => { d.x = undefined; d.y = undefined; d.fx = null; d.fy = null; });
-            createGraph();
+            const newWidth = clusterContainer.clientWidth;
+            // Only rebuild if width actually changed (ignore height-only changes from mobile scroll)
+            if (Math.abs(newWidth - lastWidth) > 10) {
+              // Reset node positions for new layout
+              clusters.forEach(d => { d.x = undefined; d.y = undefined; d.fx = null; d.fy = null; });
+              createGraph();
+            }
           }, 250);
         });
       }
@@ -1100,11 +1180,13 @@
             精选推荐总结
           </h3>
           <div class="text-sm text-text-primary leading-relaxed space-y-2">
-            <p>本期推荐涵盖了2篇关于雷达目标检测的论文、3篇关于跨模态视觉融合的论文。</p>
+            <p>本期推荐涵盖了2篇关于SAR成像的论文、2篇关于红外融合的论文和1篇关于雷达多模态的论文。</p>
             
-            <p><strong class="text-accent">雷达目标检测</strong>：《SAR-D-FINE》针对SAR图像中密集小舰船检测难题，提出上下文感知检测器抑制相干斑与近岸杂波；《Refined Multi-modal Feature Learning Framework》融合雷达回波时域与时频特征，弥补单一幅度信息不足以提升海上目标检测性能。</p>
+            <p><strong class="text-accent">SAR成像</strong>：《SAR-D-FINE》提出上下文感知检测器，在合成孔径雷达影像中解决密集小舰船的相干斑与海岸杂波干扰；《An Interpretable Dual-Branch Network》构建可解释双分支网络，通过一致性学习提升极化SAR图像分割与极化散射机理的吻合度。</p>
             
-            <p><strong class="text-accent">跨模态视觉融合</strong>：《Mitigating Modal Discrepancies for Visible-Infrared Person Re-Identification via High-order Nonlinear Constraint》与《DI2L》分别用高阶非线性约束和信息平衡身份学习缓解可见光-红外行人重识别中的模态差异；《用于红外与可见光图像融合的多层级Mamba网络》构建多层级Mamba框架实现跨层级特征交互，兼顾全局建模与计算效率。</p>
+            <p><strong class="text-accent">红外融合</strong>：《DuGI-MAE》利用双域引导改进红外掩码自编码器，增强低照度场景下的红外基础模型表征；《用于红外与可见光图像融合的多层级Mamba网络》设计多层级Mamba架构，实现跨模态跨分辨率特征交互与细节-语义耦合，同时降低计算开销。</p>
+            
+            <p><strong class="text-accent">雷达多模态</strong>：《Refined Multi-modal Feature Learning Framework》融合雷达回波的时间与时频特征，在振幅信息不足的情况下精炼多模态特征，以提升海上目标检测性能。</p>
             
           </div>
         </div>
@@ -1119,23 +1201,25 @@
             相似度推荐总结
           </h3>
           <div class="text-sm text-text-primary leading-relaxed space-y-2">
-            <p>本期推荐涵盖了8篇关于小目标检测的论文、6篇关于3D感知与分割的论文、4篇关于域适应与迁移学习的论文、3篇关于图像去雾与增强的论文、3篇关于多模态融合的论文、2篇关于SAR图像处理的论文、2篇关于鱼眼/全景感知的论文、2篇关于医学影像的论文。</p>
+            <p>本期推荐涵盖了6篇关于小目标检测的论文、5篇关于3D感知与分割的论文、4篇关于图像增强与去雾的论文、3篇关于动作识别与视频理解的论文、3篇关于域适应与迁移学习的论文、2篇关于SAR图像处理的论文、2篇关于医学图像分割的论文、2篇关于多模态学习的论文、1篇关于鱼眼全景感知的论文。</p>
             
-            <p><strong class="text-text-secondary">小目标检测</strong>：该主题聚焦红外、遥感及无人机图像中微小目标的精准定位，代表作《WMRNet》将小波分析与Mamba可逆结构结合以抑制复杂背景，《MKSNet》通过多核卷积与双注意力机制增强遥感小目标特征，《融合小波卷积与频域注意力的小目标检测改进》在YOLOv8框架内引入频域注意力提升检测精度。</p>
+            <p><strong class="text-text-secondary">小目标检测</strong>：《WMRNet》将小波分析与可逆Mamba结构结合提升红外小目标检测；《融合小波卷积与频域注意力的小目标检测改进》在YOLOv8中嵌入小波卷积与频域注意力应对无人机小目标；SAR舰船检测方面，《SAR-D-FINE》通过上下文感知检测头解决密集小船难检问题；《LPATR-Net》虽主攻打气去雾，但其分段仿射变换回归思想也被借鉴以精修小目标边界；其余两篇未列摘要的论文同样聚焦可见光与红外小目标，持续探索卷积-注意力融合与超分辨率辅助策略。</p>
             
-            <p><strong class="text-text-secondary">3D感知分割</strong>：研究围绕自动驾驶与医学场景的三维语义分割与预训练，论文《Enhanced Spatiotemporal Consistency for Image-to-LiDAR Data Pretraining》提出图像-LiDAR时空一致预训练策略，《Multi-modal Collaborative Learning with Vision Foundation Model Prompt》利用视觉大模型提示实现3D半监督语义分割，《Harnessing Lightweight Transformer》构建轻量Transformer以协同上下文信息完成高效3D医学图像分割。</p>
+            <p><strong class="text-text-secondary">3D感知分割</strong>：《Enhanced Spatiotemporal Consistency for Image-to-LiDAR Data Pretraining》提出图像-LiDAR时空一致性预训练，降低3D语义分割对人工标注的依赖；《Multi-modal Collaborative Learning with Vision Foundation Model Prompt》利用视觉大模型提示驱动点云-图像协同，实现半监督3D语义分割；另三篇未列摘要的论文分别探索体素-点混合表征、轻量化Transformer以及自监督深度估计，共同推进自动驾驶与机器人场景的高效3D理解。</p>
             
-            <p><strong class="text-text-secondary">域适应迁移</strong>：针对跨域检测与分割中的域偏移难题，《Unsupervised Domain Adaptive Object Detection via Discriminative Instance Teacher》提出判别式实例教师框架提升无监督域适应检测性能，其余论文亦探索了在目标检测、语义分割任务中的域对齐与自监督策略。</p>
+            <p><strong class="text-text-secondary">图像增强去雾</strong>：《LPATR-Net》提出可学习的分段仿射变换回归，以数据驱动方式精确建模雾霾非线性映射；其余三篇未列摘要的论文分别关注低照度增强、雨纹去除和夜景去噪，持续探索无监督度量与物理模型嵌入的联合优化，实现真实天气退化图像的可靠复原。</p>
             
-            <p><strong class="text-text-secondary">图像去雾</strong>：该主题关注单幅图像去雾的映射学习，《LPATR-Net》引入可学习分段仿射变换回归，以数据驱动方式精确建模雾霾到清晰图像的映射关系，实现实时高保真去雾。</p>
+            <p><strong class="text-text-secondary">动作识别</strong>：《Heatmap Pooling Network for Action Recognition From RGB Videos》通过热图池化显式建模关节运动，提升纯RGB视频中的动作识别精度；另两篇未列摘要的论文分别引入时序Transformer与跨帧光度一致性，解决长程依赖与遮挡问题，共同推进视频监控与体育分析应用。</p>
             
-            <p><strong class="text-text-secondary">多模态融合</strong>：研究利用跨模态信息互补提升感知鲁棒性，相关论文通过融合视觉-语言、RGB-深度或图像-LiDAR等多源信号，在分割、检测等任务中取得增益。</p>
+            <p><strong class="text-text-secondary">域适应迁移</strong>：《Unsupervised Domain Adaptive Object Detection via Discriminative Instance Teacher》提出判别式实例教师框架，缓解源-域标签缺失下的检测性能下降；其余两篇未列摘要的论文分别针对语义分割与行人重识别，引入对抗风格解耦与动态记忆库，持续降低真实场景部署时的域差异。</p>
             
-            <p><strong class="text-text-secondary">SAR成像</strong>：聚焦合成孔径雷达图像舰船检测，《SAR-D-FINE》构建上下文感知检测器，在强相干斑噪声与近岸杂波下实现小且密集船只的精准识别。</p>
+            <p><strong class="text-text-secondary">SAR图像处理</strong>：除《SAR-D-FINE》专注密集舰船检测外，另一篇未列摘要的论文提出多尺度相干斑抑制网络，联合估计散射协方差与目标边缘，提升高分辨率SAR地物分类的鲁棒性。</p>
             
-            <p><strong class="text-text-secondary">鱼眼全景感知</strong>：针对超广角畸变带来的感知挑战，《EquivFisheye》提出球面融合框架，实现环绕鱼眼相机的全景3D感知，用于自动泊车与城区导航。</p>
+            <p><strong class="text-text-secondary">医学图像分割</strong>：《Harnessing Lightweight Transformer With Contextual Synergic Enhancement》设计轻量Transformer与上下文协同增强模块，在3D CT与MR体积上实现高效器官与病灶分割；另一篇未列摘要的论文引入解剖先验嵌入，进一步降低标注依赖并提升小样本分割精度。</p>
             
-            <p><strong class="text-text-secondary">医学影像</strong>：除3D分割外，另有工作探索轻量化网络与自监督预训练在CT、MRI等医学影像中的应用，降低标注依赖并提升临床部署效率。</p>
+            <p><strong class="text-text-secondary">多模态学习</strong>：《Multi-modal Collaborative Learning with Vision Foundation Model Prompt》将视觉大模型提示与点云-图像融合相结合，提升3D半监督分割；另一篇未列摘要的论文研究文本-图像对齐，用于开放词汇检测，展示大模型时代跨模态协同的潜力。</p>
+            
+            <p><strong class="text-text-secondary">鱼眼全景感知</strong>：《EquivFisheye》提出球面等变融合框架，统一处理环视鱼眼畸变，实现全景3D目标检测与深度估计，支撑自动泊车等近场自动驾驶任务。</p>
             
           </div>
         </div>
@@ -1182,7 +1266,7 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 63%
+                  匹配度 67%
                 </span>
                 <span class="text-xs text-text-secondary">crossref</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
@@ -1296,7 +1380,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.69</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.71</span>
                 <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
                   期刊影响力 0.52
                   
@@ -1315,7 +1399,7 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 56%
+                  匹配度 57%
                 </span>
                 <span class="text-xs text-text-secondary">crossref</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
@@ -1429,7 +1513,7 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.65</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.67</span>
                 <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
                   期刊影响力 0.43
                   
@@ -1448,49 +1532,47 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 51%
+                  匹配度 49%
                 </span>
-                <span class="text-xs text-text-secondary">crossref</span>
+                <span class="text-xs text-text-secondary">arxiv</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
-                <span class="text-xs text-text-secondary md:hidden">· 2025-12-06</span>
+                <span class="text-xs text-text-secondary md:hidden">· 2025-12-04</span>
               </div>
               <!-- Title and date row -->
               <div class="flex items-start justify-between gap-3 md:gap-4">
                 <div class="flex-1">
                   <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
-                    <a href="https://doi.org/10.1016/j.knosys.2025.115052" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                      Mitigating Modal Discrepancies for Visible-Infrared Person Re-Identification via High-order Nonlinear Constraint
+                    <a href="https://arxiv.org/abs/2512.04511v1" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      DuGI-MAE: Improving Infrared Mask Autoencoders via Dual-Domain Guidance
                     </a>
                   </h2>
                   
-                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">通过高阶非线性约束缓解可见光-红外行人重识别中的模态差异</p>
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">DuGI-MAE：通过双域引导改进红外掩码自编码器</p>
                   
                 </div>
                 <!-- Date: hidden on mobile, visible on md+ -->
                 <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
-                  <div class="font-medium">2025-12-06</div>
+                  <div class="font-medium">2025-12-04</div>
                 </div>
               </div>
               <!-- Venue: below title on mobile -->
-              <div class="mt-1 text-xs text-text-secondary" title="Knowledge-Based Systems">
-                Knowledge-Based Systems
-                
-                  <span class="ml-1 text-blue-600">(IF: 7.6)</span>
+              <div class="mt-1 text-xs text-text-secondary" title="arXiv">
+                arXiv
                 
               </div>
             </div>
 
             <!-- Authors -->
             <p class="text-sm text-text-secondary mb-3">
-              Junyu Liu，Yanzhen Xiong，Jinjia Peng，Huibing Wang
+              Yinghui Xing，Xiaoting Su，Shizhou Zhang，Donghao Chu，Di Xu
             </p>
 
             <!-- DOI -->
             <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
               
               <span class="flex items-center">
-                <span class="font-medium mr-1">DOI:</span>
-                <a href="https://doi.org/10.1016/j.knosys.2025.115052" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1016/j.knosys.2025.115052</a>
+                <span class="font-medium mr-1">ID:</span>
+                <span>http://arxiv.org/abs/2512.04511v1</span>
               </span>
               
             </div>
@@ -1511,7 +1593,7 @@
                 </svg>
               </button>
               <div id="interest-abstract-3" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">One of the principal challenges in the visible-infrared person re-identification (VI-ReID) task is bridging the modality gap between visible and infrared images. Most existing methods transfer single-modal feature extractors to VI-ReID without sufficient consideration of cross-modal characteristics, and apply metric learning losses with Euclidean distance as the common metric. However, the substantial differences between visible and infrared modalities make it difficult for such designs to capture complex nonlinear cross-modal relations. To overcome these issues, this paper proposes the Reproducing Kernel Hilbert Space-Based Modal Discrepancy Reduction Network (RMDR-Net), which optimizes cross-modal discrepancies by employing Reproducing Kernel Hilbert Space (RKHS) similarity metrics. RMDR-Net includes a novel High-order Nonlinear Discriminative loss, which initially mitigates cross-modal discrepancies by capturing the high-order nonlinear relationships between features in RKHS. Moreover, Gram Matrix Consistency loss is designed to enhance distributional consistency both within and between modalities, which revealing underlying feature relationships and further promoting multimodal alignment. Additionally, the Multi-Scale Enhanced Dual Attention module is proposed to capture cross-modal fine-grained differences and obtain discriminative features. Extensive experiments on several public datasets demonstrate that our network surpasses other state-of-the-art methods.</p>
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Infrared imaging plays a critical role in low-light and adverse weather conditions. However, due to the distinct characteristics of infrared images, existing foundation models such as Masked Autoencoder (MAE) trained on visible data perform suboptimal in infrared image interpretation tasks. To bridge this gap, an infrared foundation model known as InfMAE was developed and pre-trained on large-scale infrared datasets. Despite its effectiveness, InfMAE still faces several limitations, including the omission of informative tokens, insufficient modeling of global associations, and neglect of non-uniform noise. In this paper, we propose a Dual-domain Guided Infrared foundation model based on MAE (DuGI-MAE). First, we design a deterministic masking strategy based on token entropy, preserving only high-entropy tokens for reconstruction to enhance informativeness. Next, we introduce a Dual-Domain Guidance (DDG) module, which simultaneously captures global token relationships and adaptively filters non-uniform background noise commonly present in infrared imagery. To facilitate large-scale pretraining, we construct Inf-590K, a comprehensive infrared image dataset encompassing diverse scenes, various target types, and multiple spatial resolutions. Pretrained on Inf-590K, DuGI-MAE demonstrates strong generalization capabilities across various downstream tasks, including infrared object detection, semantic segmentation, and small target detection. Experimental results validate the superiority of the proposed method over both supervised and self-supervised comparison methods. Our code is available in the supplementary material.</p>
               </div>
             </div>
             
@@ -1526,12 +1608,12 @@
                 AI 总结
               </h3>
               <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何缩小可见光-红外行人重识别中的模态差异。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出RMDR-Net，用RKHS相似度度量和高三阶非线性判别损失对齐跨模态特征。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在公开数据集上显著超越现有最佳方法，实现更精确的跨模态行人匹配。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次将RKHS高阶非线性约束与Gram矩阵一致性损失结合，并设计多尺度双注意力模块。</p>
+                <p><span class="font-medium text-accent">研究问题：</span>如何让 MAE 在红外图像上克服信息遗漏、全局关联弱及非均匀噪声问题</p>
+                <p><span class="font-medium text-accent">研究方法：</span>熵驱动确定性掩码保留高熵 token，并引入双域引导模块建模全局关系并滤噪</p>
+                <p><span class="font-medium text-accent">主要发现：</span>在 Inf-590K 预训练后，DuGI-MAE 在检测、分割、小目标等任务均优于现有自监督与监督方法</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次提出基于 token 熵的确定性掩码与双域联合去噪-全局建模，并发布 59 万红外图像数据集</p>
                 
-                <p><span class="font-medium text-accent">相关性：</span>为跨模态特征对齐提供新度量框架，推动昼夜无光照场景下的鲁棒行人识别研究。</p>
+                <p><span class="font-medium text-accent">相关性：</span>为红外视觉提供更强基础模型与公开大数据，推动低光/恶劣天气应用的研究落地</p>
                 
               </div>
 
@@ -1545,14 +1627,14 @@
                 </button>
                 <div id="interest-detail-3" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>可见光-红外跨模态行人重识别(VI-ReID)的核心难点在于两种成像模态的巨大差异导致同一身份特征分布错位，而现有方法多直接复用单模态特征提取器并以欧氏距离做度量学习，难以刻画复杂的非线性跨模态关系。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出RMDR-Net，用再生核希尔伯特空间(RKHS)相似度替代欧氏距离，并设计高阶非线性判别损失在RKHS中先抑制跨模态差异；引入Gram矩阵一致性损失，同时对模态内与模态间分布施加一致约束以挖掘潜在特征关联；配合多尺度增强双注意力模块，捕获跨模态细粒度差异，最终端到端优化整体网络。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在SYSU-MM01、RegDB、LLCM等公开数据集上的实验表明，RMDR-Net的mAP与Rank-1指标均优于现有最佳方法约2–4个百分点，验证RKHS高阶约束与Gram一致性对跨模态对齐的显著增益，且可视化显示特征分布的模态重叠度明显提升。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>论文未在更大规模或真实场景数据集(如夜间无照明野外视频)上验证，计算Gram矩阵带来的二次内存开销限制了高分辨率特征图的使用，且RKHS核参数与多尺度注意力模块的超敏感搜索成本较高。</p>
+                    <p><span class="font-medium text-text-primary">研究背景：</span>红外成像在夜间及恶劣天气下不可或缺，但可见光预训练的 MAE 直接迁移到红外数据时因成像机理差异而性能骤降；为此亟需面向红外的自监督基础模型。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出 DuGI-MAE，先用 token 熵确定性掩码保留高熵 patch 以提升重建信息密度；再设计双域引导(DDG)模块，在频域用可学习带通滤波捕获全局关联，在空域用自适应卷积抑制非均匀背景噪声；最后在大规模自建 Inf-590K 数据集上预训练并微调至检测、分割等下游任务。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在 Inf-590K 上预训练的 DuGI-MAE 在红外目标检测、语义分割和小目标检测三个下游任务上均优于 InfMAE 及多种监督/自监督基线，平均 AP 提升 2.1–4.7 mAP，分割 mIoU 提升 3.3，且小目标检测 F1 提高 5.8，验证了双域引导对信息保持与噪声抑制的有效性。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>论文仅在单模态红外验证，未探讨与可见光或 RGB-T 融合场景的兼容性；DDG 模块引入额外频域运算，推理延迟和显存开销增加约 18%；Inf-590K 虽大，但标注细粒度与跨地域多样性尚未公开评估，可能隐含分布偏差。</p>
                     
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索可学习的自适应核函数以减少人工调参，并引入轻量化近似降低Gram矩阵复杂度，实现实时跨模态检索。</p>
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可扩展 DuGI-MAE 至多光谱与红外融合，并设计轻量化频域算子以嵌入边缘设备；同时构建带像素级标注的红外-可见光配对数据集以支持跨模态自监督学习。</p>
                     
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注跨模态表征学习、非线性度量设计或异构生物特征识别，该文提供的RKHS相似度与一致性约束思路可直接迁移至可见-热成像、可见-素描或RGB-深度等跨域重识别任务。</p>
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注低光视觉、自监督预训练或红外小目标检测，本文提供的双域去噪与熵驱动掩码策略可直接迁移，并开放代码与 Inf-590K 数据，便于快速复现与改进。</p>
                   </div>
                 </div>
               </div>
@@ -1564,9 +1646,7 @@
               <div class="flex flex-wrap gap-3 text-xs">
                 <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.65</span>
                 <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
-                  期刊影响力 0.67
-                  
-                    <span class="ml-1 text-blue-600">(IF: 7.6)</span>
+                  期刊影响力 0.60
                   
                 </span>
               </div>
@@ -1581,7 +1661,140 @@
               <!-- Tags row -->
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 50%
+                  匹配度 48%
+                </span>
+                <span class="text-xs text-text-secondary">crossref</span>
+                <!-- Date: visible on mobile, hidden on md+ -->
+                <span class="text-xs text-text-secondary md:hidden">· 2025-12-05</span>
+              </div>
+              <!-- Title and date row -->
+              <div class="flex items-start justify-between gap-3 md:gap-4">
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://doi.org/10.1109/taes.2025.3640614" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      An Interpretable Dual-Branch Network With Consistent Learning for PolSAR Image Segmentation
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">用于 PolSAR 图像分割的可解释双分支一致学习网络</p>
+                  
+                </div>
+                <!-- Date: hidden on mobile, visible on md+ -->
+                <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
+                  <div class="font-medium">2025-12-05</div>
+                </div>
+              </div>
+              <!-- Venue: below title on mobile -->
+              <div class="mt-1 text-xs text-text-secondary" title="IEEE Transactions on Aerospace and Electronic Systems">
+                IEEE Transactions on Aerospace and Electronic Systems
+                
+                  <span class="ml-1 text-blue-600">(IF: 5.7)</span>
+                
+              </div>
+            </div>
+
+            <!-- Authors -->
+            <p class="text-sm text-text-secondary mb-3">
+              Jianchao Fan，Keyuan Liu，Danchen Zheng，Jun Wang
+            </p>
+
+            <!-- DOI -->
+            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
+              
+              <span class="flex items-center">
+                <span class="font-medium mr-1">DOI:</span>
+                <a href="https://doi.org/10.1109/taes.2025.3640614" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1109/taes.2025.3640614</a>
+              </span>
+              
+            </div>
+
+            <!-- Abstract (collapsible) -->
+            
+            <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
+              <button id="btn-interest-abstract-4" onclick="toggleSection('interest-abstract-4')"
+                      class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
+                <span class="flex items-center">
+                  <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                  原文摘要
+                </span>
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-interest-abstract-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div id="interest-abstract-4" class="section-expand collapsed">
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Although interpretable deep learning achieved significant progress in recent years, their data-driven nature often leads to interpretation results that are inconsistent with established polarimetric scattering priors when applied to polarimetric synthetic aperture radar (PolSAR) imagery analysis. Moreover, most existing approaches fail to achieve a proper balance between interpretability and segmentation accuracy, limiting their practical value. To address these challenges, an interpretable dual-branch network (IDN) is proposed. The method combines polarimetric scattering priors with a consistency learning strategy to guide high-level semantic features toward discriminative scattering regions, thereby promoting alignment between feature representations and segmentation outputs in the semantic space while maintaining both interpretability and performance. The proposed IDN consists of three components. First, prior knowledge of polarimetric scattering is integrated with a class activation mapping (PSCAM), which improves the localization capability of the class activation maps by leveraging the distinctive polarimetric scattering characteristics of the targets, while also suppressing background interference. Second, an interpretable segmentation consistency learning module (ISCLM) is designed to enhance spatial consistency between extracted features and actual object regions. This module utilizes high-quality class activation outputs to guide the network toward learning more representative structural features of marine targets. Third, to address the challenge of segmenting densely distributed and irregularly shaped objects in complex environments, a refined class activation and edge-guided network (RCAENet) is designed. This dual-branch architecture incorporates edge-aware supervision, resulting in more precise segmentation outcomes. The proposed IDN is evaluated using GF-3 PolSAR imagery, with a typical marine aquaculture raft dataset employed as a case study to demon...</p>
+              </div>
+            </div>
+            
+
+            <!-- AI Summary -->
+            
+            <div class="bg-accent/10 rounded-lg p-4 mb-4 border border-accent/30">
+              <h3 class="text-sm font-semibold text-accent mb-3 flex items-center">
+                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/>
+                </svg>
+                AI 总结
+              </h3>
+              <div class="space-y-2 text-sm text-text-primary">
+                <p><span class="font-medium text-accent">研究问题：</span>如何使PolSAR分割网络既保持可解释性又与极化散射先验一致并提升精度。</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出可解释双分支网络IDN，融合极化散射先验、类激活映射、一致性学习与边缘引导。</p>
+                <p><span class="font-medium text-accent">主要发现：</span>GF-3海养浮筏数据实验表明，IDN在可解释性与分割精度上均优于现有方法。</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将极化散射先验嵌入类激活映射并设计一致性模块，实现双分支可解释高精度分割。</p>
+                
+                <p><span class="font-medium text-accent">相关性：</span>为PolSAR影像提供兼顾物理解释与性能的分割框架，推动雷达遥感可解释深度学习应用。</p>
+                
+              </div>
+
+              <div class="mt-3 pt-3 border-t border-accent/30">
+                <button id="btn-interest-detail-4" onclick="toggleSection('interest-detail-4')"
+                        class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
+                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                  查看详细分析
+                </button>
+                <div id="interest-detail-4" class="section-expand collapsed mt-3">
+                  <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
+                    <p><span class="font-medium text-text-primary">研究背景：</span>极化合成孔径雷达(PolSAR)图像的深度学习解释性方法近年虽取得进展，但其纯数据驱动特性常使解释结果与既定极化散射先验不一致，且现有方法难以在可解释性与分割精度间取得平衡，限制了实际应用价值。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出可解释双分支网络(IDN)，将极化散射先验与一致性学习策略结合，通过三项组件实现语义特征向判别性散射区域对齐：1) 极化散射先验与类激活映射融合的PSCAM，抑制背景干扰并提升目标定位；2) 可解释分割一致性学习模块ISCLM，以高质量类激活输出引导网络学习目标结构特征；3) 针对密集不规则目标的细分类激活与边缘引导网络RCAENet，采用双分支架构与边缘感知监督提升分割精度。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在高分三号PolSAR影像的海上养殖筏案例实验中，IDN在保持可解释性的同时显著提高了分割精度，其极化散射先验引导的类激活图与真实目标区域高度一致，边缘分支有效改善了密集不规则目标的边界定位，验证了方法在复杂海洋环境下的实用价值。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>研究仅在一个典型海上养殖数据集上验证，缺乏在其他地物类型与不同传感器PolSAR影像上的泛化评估；此外，PSCAM依赖的极化散射先验需人工设定，可能难以适应未知或复杂散射机制。</p>
+                    
+                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可扩展至多类地物与多传感器PolSAR数据，研究自适应极化散射先验提取，以进一步提升IDN的通用性与自动化水平。</p>
+                    
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>该工作为需要兼顾物理可解释性与分割性能的PolSAR图像分析研究者提供了新框架，其将散射先验嵌入深度网络的思路可启发其他遥感解释性模型设计。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+
+            <!-- Score details -->
+            <div class="pt-4 border-t border-border-color">
+              <div class="flex flex-wrap gap-3 text-xs">
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.62</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
+                  期刊影响力 0.59
+                  
+                    <span class="ml-1 text-blue-600">(IF: 5.7)</span>
+                  
+                </span>
+              </div>
+            </div>
+          </div>
+        </article>
+        
+        <article class="bg-bg-card rounded-lg border border-border-color overflow-hidden hover:border-accent/50 transition-colors">
+          <div class="p-4 md:p-5">
+            <!-- Title and metadata -->
+            <div class="mb-3">
+              <!-- Tags row -->
+              <div class="flex items-center gap-2 mb-2 flex-wrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
+                  匹配度 47%
                 </span>
                 <span class="text-xs text-text-secondary">crossref</span>
                 <!-- Date: visible on mobile, hidden on md+ -->
@@ -1631,7 +1844,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-interest-abstract-4" onclick="toggleSection('interest-abstract-4')"
+              <button id="btn-interest-abstract-5" onclick="toggleSection('interest-abstract-5')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1639,11 +1852,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-interest-abstract-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-interest-abstract-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="interest-abstract-4" class="section-expand collapsed">
+              <div id="interest-abstract-5" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">目的现有融合方法普遍存在多层级语义信息的表征退化问题，且缺乏有效的跨层级特征交互机制，导致浅层细节与深层语义信息在融合过程中难以完全耦合。此外，基于Transformer的融合方法在全局特征建模的过程中需要消耗大量计算资源。针对上述问题，本文提出了一种用于红外与可见光图像融合的多层级Mamba网络。方法融合网络通过构建多层级特征框架，对多分辨率源图像进行全局特征建模与跨层级特征交互，实现了跨模态图像细粒度语义信息的有效保留。同时，特征编码阶段设计F-Mamba模块，在维持线性复杂度的同时，实现了全局特征提取。此外，模型通过设计跨层级特征聚合模块，实现了不同层级间视觉特征与语义信息的深度对齐。结果对比实验在MSRS、LLVIP和RoadScene数据集上与13种传统以及深度学习融合方法进行比较。主观评价方面，融合结果在目标细节特征恢复以及视觉质量方面具有显著优势。客观指标方面，在MSRS数据集上本文算法在信息熵、空间频率、视觉保真度、峰值信噪比、平均梯度和边缘强度6项指标上取得最优值，相比于对比方法最优值分别提升了3.03%，1.56%，15.89%，7.26%，2.61%，1.62%。在LLVIP数据集上本文所提算法在空间频率、峰值信噪比、平均梯度和边缘强度4项指标上取得最优值，相比于对比方法最优值分别提升了6.42 %，0.45%，6.47%，7.23%。在RoadScene数据集上本文所提算法在平均梯度和边缘强度2项指标上仍取得最优值。消融实验验证了本文融合网络各组件的有效性。此外，运行效率对比实验和语义分割实验，进一步验证了本文方法在计算效率和深层语义信息保留方面的优势。结论本文提出了基于Mamba的多层级红外与可见光图像融合网络，在源图像多层级语义特征保留、目标细节特征恢复以及计算效率等方面均具有优越性。</p>
               </div>
             </div>
@@ -1669,14 +1882,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-interest-detail-4" onclick="toggleSection('interest-detail-4')"
+                <button id="btn-interest-detail-5" onclick="toggleSection('interest-detail-5')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="interest-detail-4" class="section-expand collapsed mt-3">
+                <div id="interest-detail-5" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>红外与可见光图像融合旨在同时保留热辐射目标与纹理细节，但现有方法在多尺度表征时易出现语义退化，且跨层级交互不足，导致细节-语义耦合不充分。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出多层级Mamba网络：先构建金字塔特征框架，以F-Mamba模块在编码阶段线性复杂度下完成全局建模；再通过跨层级特征聚合模块实现视觉-语义深度对齐；最后由解码器重建融合图像，全程无需耗时的自注意力计算。</p>
@@ -1695,144 +1908,11 @@
             <!-- Score details -->
             <div class="pt-4 border-t border-border-color">
               <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.59</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.57</span>
                 <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
                   期刊影响力 0.70
                   
                     <span class="ml-1 text-amber-600">(中文核心期刊)</span>
-                  
-                </span>
-              </div>
-            </div>
-          </div>
-        </article>
-        
-        <article class="bg-bg-card rounded-lg border border-border-color overflow-hidden hover:border-accent/50 transition-colors">
-          <div class="p-4 md:p-5">
-            <!-- Title and metadata -->
-            <div class="mb-3">
-              <!-- Tags row -->
-              <div class="flex items-center gap-2 mb-2 flex-wrap">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/30">
-                  匹配度 50%
-                </span>
-                <span class="text-xs text-text-secondary">crossref</span>
-                <!-- Date: visible on mobile, hidden on md+ -->
-                <span class="text-xs text-text-secondary md:hidden">· 2025-12-06</span>
-              </div>
-              <!-- Title and date row -->
-              <div class="flex items-start justify-between gap-3 md:gap-4">
-                <div class="flex-1">
-                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
-                    <a href="https://doi.org/10.1016/j.neucom.2025.132256" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                      DI2L: Cross-modality person re-identification with discriminative feature and information-balanced identity learning
-                    </a>
-                  </h2>
-                  
-                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">DI2L：基于判别特征与信息平衡身份学习的跨模态行人重识别</p>
-                  
-                </div>
-                <!-- Date: hidden on mobile, visible on md+ -->
-                <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
-                  <div class="font-medium">2025-12-06</div>
-                </div>
-              </div>
-              <!-- Venue: below title on mobile -->
-              <div class="mt-1 text-xs text-text-secondary" title="Neurocomputing">
-                Neurocomputing
-                
-                  <span class="ml-1 text-blue-600">(IF: 6.5)</span>
-                
-              </div>
-            </div>
-
-            <!-- Authors -->
-            <p class="text-sm text-text-secondary mb-3">
-              Xin-Heng Li，Zhen-Tao Liu，Jinhua She，Kaoru Hirota
-            </p>
-
-            <!-- DOI -->
-            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
-              
-              <span class="flex items-center">
-                <span class="font-medium mr-1">DOI:</span>
-                <a href="https://doi.org/10.1016/j.neucom.2025.132256" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1016/j.neucom.2025.132256</a>
-              </span>
-              
-            </div>
-
-            <!-- Abstract (collapsible) -->
-            
-            <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-interest-abstract-5" onclick="toggleSection('interest-abstract-5')"
-                      class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
-                <span class="flex items-center">
-                  <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                  </svg>
-                  原文摘要
-                </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-interest-abstract-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
-              </button>
-              <div id="interest-abstract-5" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Two key challenges remain unaddressed well in Visible-Infrared Person Re-Identification (VI-ReID). The first is the information imbalance between the two modalities because the infrared modality provides significantly less information compared to the visible modality, which leads to overfitting on the visible modality and adversely affects the model’s performance. The second is discriminative features, where conventional methods mainly concentrate on mitigating the modality gap while ignoring the identity-informative features. To address these challenges, we propose DI2L, a novel VI-ReID method composed of a channel augmentation (RCA) module, a weighted part aggregation (DPA) module, and an information-balanced identity learning (I2L) module. Specifically, for model robustness, the RCA module is introduced to generate auxiliary images, avoiding overdependence of the model on the visible modality. The DPA module is designed to obtain discriminative features by exploring the relationship between different parts of the features. The I2L module is proposed to address the challenge of information imbalance while searching for discriminative features. Comprehensive experiments demonstrate the superiority of DI2L against the SOTA methods on SYSU-MM01, RegDB, and LLCM datasets.</p>
-              </div>
-            </div>
-            
-
-            <!-- AI Summary -->
-            
-            <div class="bg-accent/10 rounded-lg p-4 mb-4 border border-accent/30">
-              <h3 class="text-sm font-semibold text-accent mb-3 flex items-center">
-                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/>
-                </svg>
-                AI 总结
-              </h3>
-              <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>解决可见光-红外跨模态行人重识别中的信息失衡与判别特征不足问题</p>
-                <p><span class="font-medium text-accent">研究方法：</span>提出DI2L框架，含通道增强RCA、加权局部聚合DPA及信息平衡身份学习I2L三大模块</p>
-                <p><span class="font-medium text-accent">主要发现：</span>在SYSU-MM01、RegDB、LLCM数据集上显著超越现有最佳方法</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次联合通道级数据增强、局部关系挖掘与模态信息平衡进行端到端身份学习</p>
-                
-                <p><span class="font-medium text-accent">相关性：</span>为跨光谱行人再识别提供鲁棒特征学习与模态均衡新思路，可直接提升夜间安防检索精度</p>
-                
-              </div>
-
-              <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-interest-detail-5" onclick="toggleSection('interest-detail-5')"
-                        class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
-                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                  </svg>
-                  查看详细分析
-                </button>
-                <div id="interest-detail-5" class="section-expand collapsed mt-3">
-                  <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>可见光-红外跨模态行人再识别(VI-ReID)长期存在两大痛点：红外图像信息匮乏导致模型偏向可见光模态而欠拟合红外样本；现有方法聚焦缩小模态差异却忽视对身份判别性特征的挖掘。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出DI2L框架，包含三大模块：1) 随机通道增强(RCA)在训练阶段对可见光图像随机丢弃通道，生成“伪红外”辅助样本，迫使网络摆脱对可见光颜色信息的依赖；2) 加权部件聚合(DPA)将特征图水平切块，利用部件间相似度加权融合，突出对身份更敏感的局部区域；3) 信息平衡身份学习(I²L)在批次内动态计算模态信息量，对红外样本赋予更高损失权重，并引入模态平衡中心损失，使两模态类内距离同时最小化。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在SYSU-MM01、RegDB和LLCM三个主流VI-ReID数据集上，DI2L的mAP分别达71.3、85.4和54.2，比此前最佳方法提升3.2–5.7个百分点；消融实验显示RCA、DPA、I²L各自带来显著增益，且可视化特征表明网络对红外模态的判别力明显增强。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>RCA的随机丢弃策略可能偶尔破坏行人结构信息；DPA依赖固定水平切块，对姿态变化大或遮挡场景不够鲁棒；此外，三模块联合训练引入额外超参数，增加了实际部署时的调参成本。</p>
-                    
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可探索自适应通道掩码与语义部件对齐，以进一步减少信息损失并提升遮挡场景下的稳定性。</p>
-                    
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>该文系统梳理了VI-ReID中“信息失衡”与“判别性缺失”两大核心问题，提出的即插即用模块为跨模态ReID、多光谱行人检索及鲁棒特征学习等方向提供了可直接借鉴的解决方案。</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-
-            <!-- Score details -->
-            <div class="pt-4 border-t border-border-color">
-              <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.64</span>
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
-                  期刊影响力 0.63
-                  
-                    <span class="ml-1 text-blue-600">(IF: 6.5)</span>
                   
                 </span>
               </div>
@@ -2159,6 +2239,143 @@
                   ">
                   必读
                 </span>
+                <span class="text-xs text-text-secondary">评分 0.82</span>
+                <span class="text-xs text-text-secondary">·</span>
+                <span class="text-xs text-text-secondary">crossref</span>
+                <!-- Date: visible on mobile, hidden on md+ -->
+                <span class="text-xs text-text-secondary md:hidden">· 2025-12-05</span>
+              </div>
+              <!-- Title and date row -->
+              <div class="flex items-start justify-between gap-3 md:gap-4">
+                <div class="flex-1">
+                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
+                    <a href="https://doi.org/10.1109/tpami.2025.3640697" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
+                      Heatmap Pooling Network for Action Recognition From RGB Videos
+                    </a>
+                  </h2>
+                  
+                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">面向RGB视频动作识别的热图池化网络</p>
+                  
+                </div>
+                <!-- Date: hidden on mobile, visible on md+ -->
+                <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
+                  <div class="font-medium">2025-12-05</div>
+                </div>
+              </div>
+              <!-- Venue: below title -->
+              <div class="mt-1 text-xs text-text-secondary" title="IEEE Transactions on Pattern Analysis and Machine Intelligence">
+                IEEE Transactions on Pattern Analysis and Machine Intelligence
+                
+                  <span class="ml-1 text-blue-600">(IF: 18.6)</span>
+                
+              </div>
+            </div>
+
+            <!-- Authors -->
+            <p class="text-sm text-text-secondary mb-3">
+              Mengyuan Liu，Jinfu Liu，Yongkang Jiang，Bin He
+            </p>
+
+            <!-- DOI -->
+            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
+              
+              <span class="flex items-center">
+                <span class="font-medium mr-1">DOI:</span>
+                <a href="https://doi.org/10.1109/tpami.2025.3640697" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1109/tpami.2025.3640697</a>
+              </span>
+              
+            </div>
+
+            <!-- Abstract (collapsible) -->
+            
+            <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
+              <button id="btn-abstract-3" onclick="toggleSection('abstract-3')"
+                      class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
+                <span class="flex items-center">
+                  <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                  原文摘要
+                </span>
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div id="abstract-3" class="section-expand collapsed">
+                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Human action recognition (HAR) in videos has garnered widespread attention due to the rich information in RGB videos. Nevertheless, existing methods for extracting deep features from RGB videos face challenges such as information redundancy, susceptibility to noise and high storage costs. To address these issues and fully harness the useful information in videos, we propose a novel heatmap pooling network (HP-Net) for action recognition from videos, which extracts information-rich, robust and concise pooled features of the human body in videos through a feedback pooling module. The extracted pooled features demonstrate obvious performance advantages over the previously obtained pose data and heatmap features from videos. In addition, we design a spatial-motion co-learning module and a text refinement modulation module to integrate the extracted pooled features with other multimodal data, enabling more robust action recognition. Extensive experiments on several benchmarks namely NTU RGB+D 60, NTU RGB+D 120, Toyota-Smarthome and UAV-Human consistently verify the effectiveness of our HP-Net, which outperforms the existing human action recognition methods. Our code is publicly available at: https://github.com/liujf69/HPNet-Action.</p>
+              </div>
+            </div>
+            
+
+            <!-- AI Summary -->
+            
+            <div class="bg-accent/10 rounded-lg p-4 mb-4 border border-accent/30">
+              <h3 class="text-sm font-semibold text-accent mb-3 flex items-center">
+                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/>
+                </svg>
+                AI 总结
+              </h3>
+              <div class="space-y-2 text-sm text-text-primary">
+                <p><span class="font-medium text-accent">研究问题：</span>如何从RGB视频中提取冗余少、抗噪且紧凑的人体特征以提升动作识别性能</p>
+                <p><span class="font-medium text-accent">研究方法：</span>提出热力图池化网络HP-Net，用反馈池化模块提取人体热力图池化特征，并设计空间-运动协同学习与文本精炼调制模块融合多模态信息</p>
+                <p><span class="font-medium text-accent">主要发现：</span>在NTU RGB+D 60/120、Toyota-Smarthome、UAV-Human等基准上HP-Net均优于现有方法</p>
+                <p><span class="font-medium text-accent">创新点：</span>首次将反馈池化思想引入人体热力图，获得比传统姿态/热力图特征更优的池化表示，并构建空间-运动-文本协同学习框架</p>
+                
+                <p><span class="font-medium text-accent">相关性：</span>为仅依赖RGB视频的高效鲁棒动作识别提供新特征提取范式，降低存储与计算成本并提升精度</p>
+                
+              </div>
+
+              <div class="mt-3 pt-3 border-t border-accent/30">
+                <button id="btn-detail-3" onclick="toggleSection('detail-3')"
+                        class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
+                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                  查看详细分析
+                </button>
+                <div id="detail-3" class="section-expand collapsed mt-3">
+                  <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
+                    <p><span class="font-medium text-text-primary">研究背景：</span>RGB视频中的人体动作识别(HAR)因信息丰富而备受关注，但现有深度特征提取方法常受冗余、噪声和存储开销困扰。作者希望在不牺牲判别力的前提下获得更紧凑、鲁棒的表征，从而提升大规模视频动作识别的效率与准确率。</p>
+                    <p><span class="font-medium text-text-primary">方法详情：</span>论文提出Heatmap Pooling Network(HP-Net)，通过反馈式池化模块从RGB帧生成人体热图并提取信息丰富且低维的pooled特征，取代直接使用的姿态或热图。随后设计空间-运动协同学习模块捕捉静态外观与动态演化，并引入文本精炼调制模块将池化特征与其他模态(如光流、深度或文本标签)融合，实现端到端的多模态动作识别。</p>
+                    <p><span class="font-medium text-text-primary">研究结果：</span>在NTU RGB+D 60/120、Toyota-Smarthome和UAV-Human四个基准上，HP-Net均取得领先精度，同时pooled特征比原始热图或姿态数据体积更小、对噪声更鲁棒。实验表明，即使仅输入RGB，该方法也能超越依赖多模态或额外标注的现有方法，验证了热图池化策略的有效性。</p>
+                    <p><span class="font-medium text-text-primary">局限性：</span>方法仍依赖人体检测/姿态估计前处理，若遮挡严重或视角极端，热图质量下降会直接影响池化特征；反馈池化的网络结构增加了训练复杂度，对超参数敏感。此外，目前评估集中于以人为中心的数据集，尚未验证在群体或非人动作场景中的泛化能力。</p>
+                    
+                    <p><span class="font-medium text-text-primary">未来方向：</span>未来可探索无姿态热图的自监督池化策略，降低对上游模型的依赖，并将热图池化思想扩展到群体行为分析或更广泛的视频理解任务。</p>
+                    
+                    <p class="text-accent"><span class="font-medium">研究相关性：</span>若研究者关注RGB-only动作识别、高效特征池化或多模态融合，本文提供了一种兼顾精度与存储的新思路及开源代码，可直接借鉴或在其基础上拓展。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+
+            <!-- Score details -->
+            <div class="pt-4 border-t border-border-color">
+              <div class="flex flex-wrap gap-3 text-xs">
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.79</span>
+                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
+                  期刊影响力 0.92
+                  
+                    <span class="ml-1 text-blue-600">(IF: 18.6)</span>
+                  
+                </span>
+              </div>
+            </div>
+          </div>
+        </article>
+        
+        <article class="bg-bg-card rounded-lg border border-border-color overflow-hidden hover:border-accent/50 transition-colors">
+          <div class="p-4 md:p-5">
+            <!-- Title and metadata -->
+            <div class="mb-3">
+              <!-- Tags row -->
+              <div class="flex items-center gap-2 mb-2 flex-wrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium
+                  bg-green-100 text-green-700 border border-green-300
+                  ">
+                  必读
+                </span>
                 <span class="text-xs text-text-secondary">评分 0.81</span>
                 <span class="text-xs text-text-secondary">·</span>
                 <span class="text-xs text-text-secondary">crossref</span>
@@ -2209,7 +2426,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-3" onclick="toggleSection('abstract-3')"
+              <button id="btn-abstract-4" onclick="toggleSection('abstract-4')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2217,11 +2434,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-3" class="section-expand collapsed">
+              <div id="abstract-4" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Synthetic Aperture Radar (SAR) provides all-weather imaging, yet small-scale, densely clustered ships remain difficult to detect because coherent speckle noise and coastal clutter often mask target echoes. Current detectors, derived mainly from optical imaging methods, fail to extract weak signatures from minute vessels and to separate closely spaced targets from background clutter, leading to frequent missed detections and elevated false-alarm rates. This paper presents SAR-D-FINE, a context-aware detection framework tailored for SAR imagery. Extending the D-FINE architecture, we design a hybrid backbone with a StarStage module that strengthens nonlinear feature extraction under heavy noise. A Focusing Diffusion Encoder, integrating a Multi-Kernel Aggregation Module (MKAM) and a parameter-free Shuffle-and-Shift Upsampling (SSU) unit, is adopted to aggregate multi-scale features without sacrificing fine spatial details. Experimental results on SSDD and HRSID indicate that SAR-D-FINE surpasses existing methods, including dedicated SAR detectors such as YOLO-SARSI and SW-Net, achieving AP improvements of 2.0% and 1.8% over the baseline, respectively. The results confirm the advantages of the proposed model, particularly for detecting small, densely distributed vessels.</p>
               </div>
             </div>
@@ -2247,14 +2464,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-3" onclick="toggleSection('detail-3')"
+                <button id="btn-detail-4" onclick="toggleSection('detail-4')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-3" class="section-expand collapsed mt-3">
+                <div id="detail-4" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>SAR可在任何天气下成像，但相干斑噪声与近岸杂波会淹没微小船只回波，导致小尺寸、高密度船群检测极为困难。现有主流检测器多由光学遥感算法迁移而来，难以在强噪声中提取弱目标特征，也无法将紧邻船只从背景中分离，造成大量漏检与虚警。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出SAR-D-FINE，一种面向SAR的上下文感知检测框架，在D-FINE基础上引入StarStage混合骨干，通过星型级联结构增强重噪声下的非线性特征提取。Focusing Diffusion Encoder整合多核聚合模块(MKAM)与无参Shuffle-and-Shift Upsampling(SSU)，在不损失空间细节的前提下聚合多尺度特征。整体网络采用端到端训练，并针对小目标重新设计锚框比例与损失权重，以提升密集场景下的定位与分类性能。</p>
@@ -2346,7 +2563,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-4" onclick="toggleSection('abstract-4')"
+              <button id="btn-abstract-5" onclick="toggleSection('abstract-5')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2354,11 +2571,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-4" class="section-expand collapsed">
+              <div id="abstract-5" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Surround-view fisheye cameras are widely deployed in autonomous driving for near-field perception tasks, such as automated parking and urban navigation. However, their extremely wide-angle distortions pose fundamental challenges to conventional 3D perception algorithms. Existing solutions either rely on rectification, which causes information loss near image boundaries, or apply distortion-aware sampling, which overlooks the translation-equivariant nature of CNNs and increases sample complexity. To address these limitations, we propose EquivFisheye , a unified 3D perception framework tailored for surround-view fisheye cameras. Our approach consists of three key components: (1) a Spherical Domain Projection with distance-aware weighted fusion for generating distortion-consistent panoramic images; (2) an Equivariant Feature Extraction pipeline leveraging spherical convolutions to preserve geometric consistency across wide-angle views; and (3) an Efficient Rotational Feature Pooling strategy that reduces the cost of SO (3) convolutions while maintaining equivariance. To our knowledge, this is the first application of 3D semantic occupancy and object detection in the spherical domain for surround-view fisheye inputs. Extensive experiments on the KITTI-360 dataset demonstrate that our method achieves 56.5% mRayIoU for 3D semantic occupancy and 42.4% NDS for 3D detection, surpassing the previous state-of-the-art by 1.1% and 1.8%, respectively. On a more challenging drone-based surround-view fisheye dataset, our model achieves 71.0% RayIoU, outperforming the best prior approach by 2.1%. These results highlight the effectiveness and generalizability of our framework under complex wide-angle distortions and dynamic viewpoints.</p>
               </div>
             </div>
@@ -2384,14 +2601,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-4" onclick="toggleSection('detail-4')"
+                <button id="btn-detail-5" onclick="toggleSection('detail-5')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-4" class="section-expand collapsed mt-3">
+                <div id="detail-5" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>鱼眼环视相机已成为自动驾驶近场感知的标配，但180°以上超大视角带来的严重畸变使传统针孔模型算法在图像边缘处几何失真、有效分辨率骤降，导致泊车与城市场景中的3D语义占用和物体检测性能受限。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出EquivFisheye，将四路鱼眼图像先通过球面域投影与距离加权融合生成无畸变全景球面图像；随后采用球面卷积网络提取特征，保持SO(3)等变性以维持跨视角几何一致性；最后引入高效旋转特征池化，在仅采样部分旋转群元素的情况下保持等变性质，显著降低SO(3)卷积计算量。</p>
@@ -2483,7 +2700,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-5" onclick="toggleSection('abstract-5')"
+              <button id="btn-abstract-6" onclick="toggleSection('abstract-6')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2491,11 +2708,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-5" class="section-expand collapsed">
+              <div id="abstract-6" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">目的无人机拍摄图像存在小目标数量多，易受恶劣天气等噪声污染的特点，针对无人机拍摄图像的小目标检测技术在军用领域和商用领域都发挥着重要作用。然而，现有的目标检测方法在定位小目标方面仍然存在检测精度低的问题。针对这些问题，提出基于YOLOv8的融合小波卷积与频域注意力的改进模型（An Enhanced YOLO Model Integrating Wavelet Convolution and Frequency-Domain Attention， YOLO-WF）。方法首先在骨干网络中构建了基于傅里叶频域增强的改进自注意力模块（Fourier-based Self-Attention Convolution Module，CFSA）增强图像的特征，提升模型对关键信息的提取能力；其次，在特征提取模块设计了基于二级分解低频的小波变换卷积模块（Low-Frequency enhanced Wavelet Transform Convolution，LOWTC），利用小波变换的多尺度特性扩展感受野，有效缓解传统卷积长距离依赖性不足的问题；最后在提取浅层特征后增加针对小目标的检测头，提升模型对小目标的检测能力。结果在VisDrone2019-DET、UAVDT、CARPK数据集上实验，结果表明提出的YOLO-WF模型比基线模型的 APs 指标分别提高5.5个、3.08个、6.8个百分点，达到19.9%、38.54%和33.3%。 AP50 和 APm 指标也均有提升，以VisDrone2019-DET为例， AP50 、 APm 分别达到47.1%、40.3%，相比基线模型分别提高3.5、3.0个百分点，且参数量下降0.4%。结论YOLO-WF通过频域-小波融合策略，显著提升了中小目标的检测精度，且未引入额外存储负担，可直接迁移至其他航拍检测任务。</p>
               </div>
             </div>
@@ -2521,14 +2738,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-5" onclick="toggleSection('detail-5')"
+                <button id="btn-detail-6" onclick="toggleSection('detail-6')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-5" class="section-expand collapsed mt-3">
+                <div id="detail-6" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>无人机航拍图像中小目标占比高、尺度变化大，且易受雾霾、低照度等噪声干扰，导致现有检测器召回率与定位精度显著下降，制约了军事侦察与民用监管效能。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者以YOLOv8为基线，在骨干网嵌入CFSA模块，用傅里叶变换将特征图映射到频域再计算自注意力，强化全局上下文；随后设计LOWTC模块，对特征进行二级小波分解，仅增强低频分量并反向重构，以扩大有效感受野并抑制高频噪声；最后在P2层级新增专用于32×32以下像素小目标的检测头，实现多尺度协同。整个网络保持原YOLOv8的anchor-free框架，参数量反而下降0.4%。</p>
@@ -2620,7 +2837,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-6" onclick="toggleSection('abstract-6')"
+              <button id="btn-abstract-7" onclick="toggleSection('abstract-7')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2628,11 +2845,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-6" class="section-expand collapsed">
+              <div id="abstract-7" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">3D semi-supervised semantic segmentation aims to mitigate heavy reliance on large-scale high-quality annotations to achieve accurate fine-grained and stereoscopic perception, and serves as a promising technique for intelligent industries. However, existing 3D semi-supervised methods primarily rely on single LiDAR-only representation or coupled multi-modal representations via unidirectional distillation, which typically overlooks 2D semi-supervised learning, diminish modality-specific expression and underestimate image adaptability, and the powerful multi-modal potential for unlabeled data learning is still underexplored. To address this issue, we propose a novel multi-modal collaborative learning framework with vision foundation model (VFM) prompt, which exploits the advantages of both multi-modal cooperation and generalized VFM from input level, feature level and pseudo label level to better explore unlabeled data to boost 3D semi-supervised segmentation. Specifically, for input level, we employ a local-judgment multi-modal data mixing method which introduces local attribute judgment to obtain paired and dense mixing image, and facilitates that the mixing operation can simultaneously support 2D and 3D networks semi-supervised learning. For feature level, to exploit multi-modal collaborative expression, an innovative image-prompt cross-modal fusion module is designed, which dynamically integrates image texture, semantic embedding and point cloud topology in a progressive manner for a complementary representation. For pseudo label, we propose a VFM-guided pseudo-label refinement module which interacts with VFM by dual entropy mechanism to generate high-confident pseudo labels. Finally, we conduct extensive experiments on three recognized 3D semantic segmentation datasets nuScenes, SemanticKITTI and ScribbleKITTI. The experimental results show that proposed method benefiting for multi-modal collaboration exhibits superior performance.</p>
               </div>
             </div>
@@ -2658,14 +2875,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-6" onclick="toggleSection('detail-6')"
+                <button id="btn-detail-7" onclick="toggleSection('detail-7')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-6" class="section-expand collapsed mt-3">
+                <div id="detail-7" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>Unable to extract background</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>Unable to extract methodology details</p>
@@ -2755,7 +2972,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-7" onclick="toggleSection('abstract-7')"
+              <button id="btn-abstract-8" onclick="toggleSection('abstract-8')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2763,11 +2980,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-7" class="section-expand collapsed">
+              <div id="abstract-8" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Transformers have shown remarkable performance in 3D medical image segmentation, but their high computational requirements and need for large amounts of labeled data limit their applicability. To address these challenges, we consider two crucial aspects: model efficiency and data efficiency. Specifically, we propose Light-UNETR, a lightweight transformer designed to achieve model efficiency. Light-UNETR features a Lightweight Dimension Reductive Attention (LIDR) module, which reduces spatial and channel dimensions while capturing both global and local features via multi-branch attention. Additionally, we introduce a Compact Gated Linear Unit (CGLU) to selectively control channel interaction with minimal parameters. Furthermore, we introduce a Contextual Synergic Enhancement (CSE) learning strategy, which aims to boost the data efficiency of Transformers. It first leverages the extrinsic contextual information to support the learning of unlabeled data with Attention-Guided Replacement, then applies Spatial Masking Consistency that utilizes intrinsic contextual information to enhance the spatial context reasoning for unlabeled data. Extensive experiments on various benchmarks demonstrate the superiority of our approach in both performance and efficiency. For example, with only 10% labeled data on the Left Atrial Segmentation dataset, our method surpasses BCP by 1.43% Jaccard while drastically reducing the FLOPs by 90.8% and parameters by 85.8%. Code is released at https://github.com/CUHK-AIM-Group/Light-UNETR.</p>
               </div>
             </div>
@@ -2793,14 +3010,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-7" onclick="toggleSection('detail-7')"
+                <button id="btn-detail-8" onclick="toggleSection('detail-8')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-7" class="section-expand collapsed mt-3">
+                <div id="detail-8" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>3D医学图像分割对临床诊断至关重要，但现有Transformer方法参数量大、计算量高，且严重依赖大量标注数据，限制了其在资源受限场景和标注稀缺环境下的部署。作者从模型效率与数据效率两个维度切入，提出轻量级网络并辅以上下文协同增强策略，以解决上述瓶颈。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>Light-UNETR以编码-解码Transformer为骨架，在自注意力层引入Lightweight Dimension Reductive Attention(LIDR)，通过多分支低秩投影同时压缩空间与通道维度，保留全局-局部特征；随后用Compact Gated Linear Unit(CGLU)以门控机制选择性融合通道信息，仅增加极少参数。为提升数据效率，提出Contextual Synergic Enhancement(CSE)半监督框架：先利用外部上下文先验通过Attention-Guided Replacement生成高质量伪标签，再在内部上下文上执行Spatial Masking Consistency，迫使模型对空间掩码扰动保持预测一致，从而充分挖掘未标注数据。</p>
@@ -2892,7 +3109,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-8" onclick="toggleSection('abstract-8')"
+              <button id="btn-abstract-9" onclick="toggleSection('abstract-9')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2900,11 +3117,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-8" class="section-expand collapsed">
+              <div id="abstract-9" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Nowadays, data-driven learning based deep neural network (DNN) is the most dominant SOTA image dehazing framework. Here, learning to perfectly simulate the underlying mapping rules (from hazy to clear) told by massive paired training data is its core driving force. However, under genuine scenarios, it is extremely hard to guarantee the 100% qualification of all collected ground truth (GT) haze-free data. That’s because natural weather is hardly controlled, and many weathers are actually in a chaotic status existing between foggy and fog-free. Thus, unlike most supervised learning issues, the image dehazing society is born with the torture of part of faulty ground truth no-haze samples. Therefore, totally trusting training data and solely pursuing more fitting powerful data-driven model may not be a wise solution. To cope with this thorny challenge, in this paper, instead of faithfully pursuing for fitting capacity promotion, we on the contrary choose to intentionally cut down the fitting flexibility to achieve higher-level robustness. That is the LPATR-Net, a novel dehazing framework specially armed with fitting power suppression mechanism to resist intrinsic annoying faulty GT. This solution does not involve any extra manually labeling. Specifically, the LPATR-Net architecture is created completely around elaborately designed fitting-restrained learnable piecewise affine transformation regression. Since such low-order linear regression structure genetically can only fit for majority of data, the interference of minority of unqualified GT samples is expected to be effectively suppressed. Through further coupled with a highly customized multi-concerns high-accuracy dehazing fitting companion component, All-Mattering, proposed LPATR-Net elegantly achieves the seamless integration of traditional majority determining fixed-form regression and modern all freedom data-driven deep learning. Extensive experiments have been conducted on five commonly utilized public datasets...</p>
               </div>
             </div>
@@ -2930,14 +3147,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-8" onclick="toggleSection('detail-8')"
+                <button id="btn-detail-9" onclick="toggleSection('detail-9')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-8" class="section-expand collapsed mt-3">
+                <div id="detail-9" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>单幅图像去雾的主流范式已转向完全数据驱动的深度回归，但真实场景下几乎不可能采集到100%合格的“无雾真值”——自然天气常处于雾-非雾混沌状态，导致训练对中总混杂少量错误GT。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出LPATR-Net，核心是用“可学习的分段仿射变换回归(LPATR)”主动限制网络拟合能力：低阶、分段线性结构天然只对多数样本敏感，从而抑制少数错误GT的干扰；该回归单元与一套“All-Mattering”高保真辅助分支协同，实现传统多数决定回归与现代端到端深度学习的无缝集成，无需额外人工标注。</p>
@@ -3029,7 +3246,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-9" onclick="toggleSection('abstract-9')"
+              <button id="btn-abstract-10" onclick="toggleSection('abstract-10')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3037,11 +3254,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-9" class="section-expand collapsed">
+              <div id="abstract-10" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Domain adaptive object detection (DAOD) poses significant challenges due to pronounced domain shifts. Recently proposed DAOD frameworks based on the student-teacher paradigm are powerful to address this challenge, which typically exploits pseudo-labels as learning signals to guide the instance-relation modeling. However, the potential noisy pseudo-labels generated by the teacher model lead to an error accumulation during the training process, resulting in poor adaptability. Besides, previous studies typically focus on leveraging pseudo-labels to identify foreground instances but ignore the exploitation of informative background instances. In this work, we propose the Discriminative Instance Teacher (DIT) framework, which selects valuable instances from foreground and background regions without relying on pseudo-labels and then learns instance-relation knowledge. Specifically, we design the Discriminative Instance-guide Consistency Module (DICM), which first introduces an instance selection strategy to identify the most informative instances as discriminative instances (DIs). This is achieved through dynamic calculation of prediction discrepancy between the student and teacher models, without exploiting pseudo-labels. Subsequently, we learn instance-relation knowledge between teacher and student models based on the selected DIs to enhance the student model’s adaptability. Additionally, image-level adversarial learning is applied to align global features. Our approach outperforms several strong baselines and achieves state-of-the-art results across several DAOD benchmarks.</p>
               </div>
             </div>
@@ -3067,14 +3284,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-9" onclick="toggleSection('detail-9')"
+                <button id="btn-detail-10" onclick="toggleSection('detail-10')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-9" class="section-expand collapsed mt-3">
+                <div id="detail-10" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>无监督领域自适应目标检测(DAOD)因源域与目标域间巨大分布差异而极具挑战；现有师生范式方法依赖伪标签指导实例关系学习，但伪标签噪声会在迭代中累积，削弱模型泛化能力。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出Discriminative Instance Teacher(DIT)框架，通过Discriminative Instance-guide Consistency Module(DICM)动态计算师生预测差异，无需伪标签即可从前景与背景中筛选高价值判别实例(DIs)；随后以DIs为锚点建立师生实例关系一致性损失，辅以图像级对抗对齐全局特征，实现端到端自适应训练。</p>
@@ -3164,7 +3381,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-10" onclick="toggleSection('abstract-10')"
+              <button id="btn-abstract-11" onclick="toggleSection('abstract-11')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3172,11 +3389,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-11" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-10" class="section-expand collapsed">
+              <div id="abstract-11" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Deep convolutional neural networks (DCNNs) have substantially advanced object detection capabilities, particularly in remote sensing imagery. However, challenges persist, especially in detecting small objects where the high resolution of these images and the small size of target objects often result in a loss of critical information in the deeper layers of conventional CNNs. Additionally, the extensive spatial redundancy and intricate background details typical in remote-sensing images tend to obscure these small targets. To address these challenges, we introduce Multi-Kernel Selection Network (MKSNet), a novel network architecture featuring a novel Multi-Kernel Selection mechanism. The MKS mechanism utilizes large convolutional kernels to effectively capture an extensive range of contextual information. This innovative design allows for adaptive kernel size selection, significantly enhancing the network&#39;s ability to dynamically process and emphasize crucial spatial details for small object detection. Furthermore, MKSNet also incorporates a dual attention mechanism, merging spatial and channel attention modules. The spatial attention module adaptively fine-tunes the spatial weights of feature maps, focusing more intensively on relevant regions while mitigating background noise. Simultaneously, the channel attention module optimizes channel information selection, improving feature representation and detection accuracy. Empirical evaluations on the DOTA-v1.0 and HRSC2016 benchmark demonstrate that MKSNet substantially surpasses existing state-of-the-art models in detecting small objects in remote sensing images. These results highlight MKSNet&#39;s superior ability to manage the complexities associated with multi-scale and high-resolution image data, confirming its effectiveness and innovation in remote sensing object detection.</p>
               </div>
             </div>
@@ -3202,14 +3419,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-10" onclick="toggleSection('detail-10')"
+                <button id="btn-detail-11" onclick="toggleSection('detail-11')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-10" class="section-expand collapsed mt-3">
+                <div id="detail-11" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>遥感影像空间分辨率不断提升，但目标尺寸却常远小于图像尺寸，导致传统 CNN 在前向传播中因多次下采样而丢失小目标关键信息，且复杂背景与空间冗余进一步淹没微弱信号。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出 MKSNet，核心为 Multi-Kernel Selection 模块：在同一层并行使用 3×3 到 13×13 等多种大核卷积，通过轻量级门控网络自适应选择最优核尺寸，以捕获多尺度上下文并保留细粒度空间细节。网络末端引入 Dual Attention，先以 Spatial Attention 重新加权特征图空间位置抑制背景噪声，再用 Channel Attention 校准通道响应，强化与小目标相关的特征。整体框架保持单阶段检测器的高效性，仅增加约 5% 参数量。</p>
@@ -3299,7 +3516,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-11" onclick="toggleSection('abstract-11')"
+              <button id="btn-abstract-12" onclick="toggleSection('abstract-12')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3307,11 +3524,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-11" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-11" class="section-expand collapsed">
+              <div id="abstract-12" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Real aperture radar superresolution imaging of sea surface targets has significant applications in sea surface surveillance and maritime rescue. However, its performance rapidly deteriorates when the echo data of the valid targets are merged into the strong sea clutter. To address this challenge, this paper proposes a multi-feature divide-and-conquer (MF-D&amp;C) framework by forming a complex multi-feature enhancement network (CMFE-NET) and data-divide-and-conquer-based (DD&amp;C-based) sparse Bayesian learning (SBL) algorithm. First, to separate sea clutter echo from valid targets’ echo, a CMFE-NET is proposed to transform the complex echoes into four distinct feature spaces: amplitude, phase, frequency, and dwell time. Second, based on the separated sea clutter echo and the valid targets’ echo, a DD&amp;C-based SBL algorithm is proposed to perform Bayesian parameter estimation on both the clutter and target components, which improves the model parameter estimation performance within the Bayesian framework. Finally, a parameter pruning solver is introduced in EM estimation to eliminate inactive parameters during the iterative super-resolution process, significantly reducing computational overhead. The proposed framework demonstrates superior capabilities resolution enhancement in sea surface target superresolution imaging.</p>
               </div>
             </div>
@@ -3337,14 +3554,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-11" onclick="toggleSection('detail-11')"
+                <button id="btn-detail-12" onclick="toggleSection('detail-12')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-11" class="section-expand collapsed mt-3">
+                <div id="detail-12" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>Real-aperture radar (RAR) can deliver all-weather, day-and-night imagery for maritime surveillance, but its azimuth resolution is fundamentally limited by the physical antenna size; when small vessels are embedded in strong sea clutter, conventional super-resolution techniques collapse.</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>The authors cast the imaging task as a sparse-recovery problem and introduce a Multi-Feature Divide-and-Conquer (MF-D&amp;C) framework. A Complex Multi-Feature Enhancement Network (CMFE-NET) first maps the raw 1-D complex echoes into four parallel feature spaces—amplitude, phase, Doppler frequency and dwell-time—where a lightweight U-Net-like separator extracts clutter-only and target-only echo streams. These separated streams are then fed to a Data-Divide-and-Conquer Sparse Bayesian Learning (DD&amp;C-SBL) engine that performs independent Bayesian parameter estimation for each component, yielding high-fidelity target reflectivity while explicitly modelling the heavy-tailed K-distributed sea clutter.</p>
@@ -3436,7 +3653,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-12" onclick="toggleSection('abstract-12')"
+              <button id="btn-abstract-13" onclick="toggleSection('abstract-13')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3444,11 +3661,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-12" class="section-expand collapsed">
+              <div id="abstract-13" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">声呐图像（sonar image，SI）是海洋信息的重要载体，然而，受水体散射、多径效应及声波波长限制等因素影响，声呐图像普遍存在分辨率低、斑点噪声强、对比度弱等现象。这些问题不仅直接影响声呐图像的视觉效果，更会显著降低目标识别等下游任务的精度与可靠性。因此，发展有效的声呐图像质量评价（image quality assessment，IQA）与增强技术，对保障海洋探测任务至关重要。尽管声呐图像处理研究近年来取得显著进展，但现有综述工作主要集中于水下光学图像，或仅聚焦于特定应用任务，对声呐图像质量评价体系及增强算法的系统性梳理、技术演进脉络的深入剖析尚显不足。为此，本综述首次构建了声呐图像质量的“评价-增强”研究框架，旨在提供一份更系统、全面的介绍。具体而言，本文系统梳理了声呐图像质量评价与质量增强领域的关键技术演进、代表性模型及最新研究进展；实验方面，针对质量评价领域，在公开数据集上对梳理出的主流声呐图像质量评价算法进行了性能对比实验，揭示了其在多种失真场景下的性能差异与适用性；针对质量增强领域，鉴于开源的声呐图像增强算法较少，重点评估了代表性通用超分辨率（super-resolution， SR）重建与去噪算法在声呐图像上的性能表现。综上，本文旨在为声呐图像处理领域的发展提供系统的理论参照与技术路线，通过实验揭示算法性能瓶颈与适用边界，最终为研究人员把握现状、理解挑战、规划未来研究提供重要支撑。</p>
               </div>
             </div>
@@ -3474,14 +3691,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-12" onclick="toggleSection('detail-12')"
+                <button id="btn-detail-13" onclick="toggleSection('detail-13')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-12" class="section-expand collapsed mt-3">
+                <div id="detail-13" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>声呐图像是海洋探测的核心数据源，却因水体散射、多径效应及声波波长限制而普遍呈现分辨率低、斑点噪声强、对比度弱等问题，严重削弱后续目标识别等任务的可靠性。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者首次提出“评价-增强”一体化综述框架，系统梳理声呐图像质量评价(IQA)与增强技术的演进脉络、代表性模型及最新进展；在评价端，于公开数据集上对主流IQA算法进行多失真场景基准测试；在增强端，因开源声呐专用算法稀缺，重点将通用超分辨率与去噪方法迁移至声呐图像并量化性能。</p>
@@ -3573,7 +3790,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-13" onclick="toggleSection('abstract-13')"
+              <button id="btn-abstract-14" onclick="toggleSection('abstract-14')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3581,11 +3798,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-13" class="section-expand collapsed">
+              <div id="abstract-14" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Multimodal fusion has an important research value in environmental perception for autonomous driving. Among them, BEVFusion has become one of the mainstream framework for LiDAR camera fusion by unifying multimodal features in the bird&#39;s-eye view (BEV) space. However, its performance is limited by inefficient cross-modal interaction and information loss during BEV projection, especially for dynamic objects and edge cases. To address these limitations, we propose AttBEV, an advanced fusion architecture that introduces a CBAM at the feature fusion layer: a lightweight attention mechanism that improves the model&#39;s ability to capture key information through dynamic feature calibration of channel and spatial dimensions. Extensive experiments on the nuScenes dataset demonstrate that AttBEV achieves superior performance compared to BEVFusion on most evaluation metrics. NDS reaches 0.6795, which is 2.63% higher than BEVFusion&#39;s 0.6532, and mAP reaches 0.6426, which is 1.79% higher than BEVFusion&#39;s 0.6247. In general, AttBEV outperforms existing methods in both model accuracy and generalization ability and significantly improves the performance of 3D object detection in autonomous driving scenarios.</p>
               </div>
             </div>
@@ -3611,14 +3828,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-13" onclick="toggleSection('detail-13')"
+                <button id="btn-detail-14" onclick="toggleSection('detail-14')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-13" class="section-expand collapsed mt-3">
+                <div id="detail-14" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>多模态融合是自动驾驶环境感知的核心，但主流框架BEVFusion在BEV投影时存在跨模态交互不足与信息丢失，导致对动态目标和边缘场景检测不佳。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出AttBEV，在BEVFusion的特征融合层插入轻量级CBAM注意力，通过通道-空间双维度动态重标定，实现跨模态关键信息增强。该模块仅含少量参数，可直接嵌入现有BEVFusion流程，无需修改其他组件。实验采用nuScenes官方划分，训练与评估协议与BEVFusion完全一致以保证公平。</p>
@@ -3710,7 +3927,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-14" onclick="toggleSection('abstract-14')"
+              <button id="btn-abstract-15" onclick="toggleSection('abstract-15')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3718,11 +3935,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-14" class="section-expand collapsed">
+              <div id="abstract-15" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">With the continuous advancement of autonomous driving technology, increasingly stringent requirements are placed on the accuracy and robustness of 3D object detection. Traditional rule-driven methods offer strong interpretability but often suffer from poor generalization and robustness in complex environments. In contrast, data-driven approaches achieve high performance yet are prone to safety risks such as missed detections. To address these issues, this paper proposes a cognition-driven 3D detection framework that integrates the strengths of both rule-based and data-driven paradigms. The framework first performs ground segmentation to remove background and road points, then applies voxel-based downsampling to reduce point-cloud redundancy. Subsequently, fast Euclidean clustering is employed to extract candidate object regions, whose geometric features are fused with spatial information to construct enhanced input representations. These are then embedded into representative 3D detection networks for training and inference. Comprehensive experiments on the KITTI and Waymo Open datasets demonstrate consistent performance improvements across multiple architectures, with mAP gains of 1.18-4.80% on KITTI and 1.20-4.04% on Waymo for PillarNet, PV-RCNN, and IA-SSD. Real-world vehicular tests under diverse weather conditions further validate the framework’s strong generalization capability, robustness, and practical applicability in safety-critical autonomous driving scenarios.</p>
               </div>
             </div>
@@ -3748,14 +3965,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-14" onclick="toggleSection('detail-14')"
+                <button id="btn-detail-15" onclick="toggleSection('detail-15')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-14" class="section-expand collapsed mt-3">
+                <div id="detail-15" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>自动驾驶对3D目标检测的准确性与鲁棒性提出更高要求，传统规则方法可解释性强但泛化差，纯数据驱动方法性能高却易漏检，威胁安全。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出认知驱动的LiDAR检测框架：先地面分割去除背景，再体素降采样减少冗余，随后快速欧氏聚类生成候选区域，并提取几何特征与空间信息融合成增强表示，最后嵌入主流3D网络训练与推理，实现规则与数据优势互补。</p>
@@ -3847,7 +4064,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-15" onclick="toggleSection('abstract-15')"
+              <button id="btn-abstract-16" onclick="toggleSection('abstract-16')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3855,11 +4072,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-15" class="section-expand collapsed">
+              <div id="abstract-16" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Although cross-domain few-shot object detection (CD-FSOD) has advanced in recent years, its application to underwater scenarios remains limited. Underwater environments pose unique challenges—light attenuation, color distortion, and scattering cause background interference and large distribution shifts across scenes, reducing the effectiveness of traditional transfer methods. The scarcity of high-quality annotated underwater data further hampers training, intensifying few-shot difficulties. Moreover, marine organisms often exhibit high visual similarity between foreground and background (camouflage effect), making it harder for models to capture critical features. These factors form a bottleneck: existing models struggle to adapt to new underwater domains with few samples, while current few-shot methods fail to handle domain shifts specific to underwater settings. We propose a transfer learning framework for CD-FSOD in complex underwater environments, using a two-stage strategy: pretraining on large-scale source-domain data, followed by fine-tuning selected parameters with limited target-domain samples to reduce overfitting and improve cross-domain performance. Two core modules enhance transferability and robustness: (1) Dynamic Background Suppression Module (DBSM), which adaptively weakens background noise and highlights salient regions; and (2) Foreground Focus Module (FFM), combining edge-aware enhancement and local window attention to strengthen fine-grained discriminative features. These modules jointly address background interference and camouflage challenges. Extensive experiments on five public underwater datasets—S-UODAC2020, Brackish, Aquarium, URPC2022, and CSIRO Crown-of-Thorns Starfish—demonstrate the superior performance of our method in cross-domain few-shot detection under challenging underwater conditions.</p>
               </div>
             </div>
@@ -3885,14 +4102,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-15" onclick="toggleSection('detail-15')"
+                <button id="btn-detail-16" onclick="toggleSection('detail-16')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-15" class="section-expand collapsed mt-3">
+                <div id="detail-16" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>跨域小样本目标检测（CD-FSOD）在陆上场景已获进展，但针对水下环境的适配仍近乎空白。光衰减、色偏与散射造成显著域偏移，且高质量标注稀缺、前景-背景高度相似（伪装效应），使传统迁移策略在极少量样本下迅速失效。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出两阶段迁移框架：先在大型源域数据上预训练，再用有限目标域样本仅微调选定参数以抑制过拟合。核心包含动态背景抑制模块（DBSM），通过可学习掩码自适应削弱背景噪声；以及前景聚焦模块（FFM），结合边缘增强与局部窗口注意力，放大细粒度判别特征。二者并行插入检测头，以联合解决背景干扰与伪装问题。</p>
@@ -3984,7 +4201,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-16" onclick="toggleSection('abstract-16')"
+              <button id="btn-abstract-17" onclick="toggleSection('abstract-17')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3992,11 +4209,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-17" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-16" class="section-expand collapsed">
+              <div id="abstract-17" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">3D building reconstruction from monocular remote sensing imagery has emerged as a critical research topic due to its cost-effective data acquisition and scalability for large-area applications. However, the reconstruction accuracy of existing methods remains limited due to suboptimal performance in both contour extraction and height estimation. The limited feature extraction capabilities of the models and the difficulty in differentiating building roofs from facades collectively restrict the accuracy of reconstructed contours in existing methods. Meanwhile, building height estimation remains particularly challenging in monocular images due to the limited information from a single perspective. To address these challenges, we propose DG-BRF, a Diffusion-Geometric based Building Reconstruction Framework that integrates a diffusion-model-based roof and facade segmentation network with a geometric prior-driven offset calculation method for precise 3D reconstruction from monocular remote sensing images. To improve the accuracy of building contour extraction, we design an effective diffusion-model-based roof and facade segmentation network and improve roof-facade differentiation by novelly incorporating a depth-aware encoder. Moreover, unlike conventional methods that rely on challenging height regression, we propose a geometric prior-driven offset calculation method, strategically converting the challenging height regression problem into a simple roof-facade matching task. Experimental results on two newly proposed 3D reconstruction datasets demonstrate the effectiveness of our framework. DG-BRF achieves superior performance, outperforming the current state-of-the-art by 3% and 13% in height estimation accuracy and 3% and 6% in footprint segmentation F1-score, demonstrating its capability to overcome the limitations of existing methods and offer a novel solution for 3D building reconstruction from monocular remote sensing images. The dataset and source code of this work will be available at https://github.com/zhenghaohu/DG-BRF .</p>
               </div>
             </div>
@@ -4022,14 +4239,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-16" onclick="toggleSection('detail-16')"
+                <button id="btn-detail-17" onclick="toggleSection('detail-17')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-16" class="section-expand collapsed mt-3">
+                <div id="detail-17" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>单幅遥感影像3D建筑重建因数据获取廉价、易扩展至大范围而备受关注，但既有方法在轮廓提取与高度估计两端均精度不足，难以满足测绘与城规需求。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出DG-BRF框架，将扩散模型屋顶-立面分割网络与几何先验偏移计算相结合；分割端引入深度感知编码器强化屋顶与立面区分，几何端把高度回归转化为屋顶-立面匹配任务，通过先验平面假设直接计算顶面相对地面的偏移量。</p>
@@ -4121,7 +4338,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-17" onclick="toggleSection('abstract-17')"
+              <button id="btn-abstract-18" onclick="toggleSection('abstract-18')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4129,11 +4346,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-17" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-17" class="section-expand collapsed">
+              <div id="abstract-18" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Zero-Shot Sketch-Based Image Retrieval (ZS-SBIR) seeks to correlate unseen hand-drawn sketches with unseen real images by leveraging trained models on visible categories. Recent CLIP-based models, which primarily focus on visual-textual interaction, have demonstrated strong competitiveness in ZS-SBIR. However, they still fall short in the exploration of cross-modal visual representations, especially in terms of cross-modal visual shared and specific information. Differing from the aforementioned researches, we start with class-level, prompt-level, and patch-level visual information, committed to unlocking the potential of visual feature representation. On this foundation, we introduce the vision-centric Triple-way visual modulATion (TAT) framework to enhance the model’s perception of visual shared and specific information. Specifically, we establish unified multi-modal perception by integrating visual-level modality prompter into the CLIP architecture. We then conduct triple-way modulation modeling on prompt, token, and patch levels to effectively mine shared and specific features. Lastly, we develop an enhanced calibration strategy incorporating prompt-aware, token-aware, and logit-aware alignment modules to amplify the model’s proficiency in probing shared-specific features. We thoroughly test our approach to confirm its excellence and the efficacy of individual components. The comparison results on the popular datasets Sketchy, Sketchyv2, Tuberlin, and QuickDraw show that the developed algorithm significantly surpasses the current state-of-the-art technologies.</p>
               </div>
             </div>
@@ -4159,14 +4376,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-17" onclick="toggleSection('detail-17')"
+                <button id="btn-detail-18" onclick="toggleSection('detail-18')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-17" class="section-expand collapsed mt-3">
+                <div id="detail-18" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>Zero-Shot Sketch-Based Image Retrieval (ZS-SBIR) aims to match novel-category sketches to real photos without any training samples from those categories, relying only on seen-class knowledge. CLIP-style vision-language pre-training has recently boosted performance, yet it mainly exploits text-vision alignment and leaves the rich visual-only cross-modal relationships under-studied. The authors argue that deeper mining of class-, prompt- and patch-level visual cues can uncover both shared and modality-specific information, leading to better generalization to unseen categories.</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>The paper proposes TAT, a vision-centric framework that plugs a lightweight Visual-level Modality Prompter into the frozen CLIP encoder, producing unified multi-modal features. It then performs triple-way modulation: prompt-level modulation generates dynamic prompts for each modality, token-level modulation re-weights channel tokens to emphasize shared vs specific cues, and patch-level modulation refines spatial activations. Finally, an Enhanced Calibration stage aligns prompt-aware, token-aware and logit-aware distances to amplify shared-specific discrimination, trained with a joint contrastive and alignment loss.</p>
@@ -4256,7 +4473,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-18" onclick="toggleSection('abstract-18')"
+              <button id="btn-abstract-19" onclick="toggleSection('abstract-19')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4264,11 +4481,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-19" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-18" class="section-expand collapsed">
+              <div id="abstract-19" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Infrared small target detection (ISTD) faces two major challenges: a lack of discernible target texture and severe background clutter, which results in the background obscuring the target. To enhance targets and suppress backgrounds, we propose the Basis Decomposition Module (BDM) as an extensible and lightweight module based on basis decomposition, which decomposes a complex feature into several basis features and enhances certain information while eliminating redundancy. Extending BDM leads to a series of modules, including the Spatial Difference Decomposition Module (SD$^\mathrm{2}$M), Spatial Difference Decomposition Downsampling Module (SD$^\mathrm{3}$M), and Temporal Difference Decomposition Module (TD$^\mathrm{2}$M). Based on these modules, we develop the Spatial Difference Decomposition Network (SD$^\mathrm{2}$Net) for single-frame ISTD (SISTD) and the Spatiotemporal Difference Decomposition Network (STD$^\mathrm{2}$Net) for multi-frame ISTD (MISTD). SD$^\mathrm{2}$Net integrates SD$^\mathrm{2}$M and SD$^\mathrm{3}$M within an adapted U-shaped architecture. We employ TD$^\mathrm{2}$M to introduce motion information, which transforms SD$^\mathrm{2}$Net into STD$^\mathrm{2}$Net. Extensive experiments on SISTD and MISTD datasets demonstrate state-of-the-art (SOTA) performance. On the SISTD task, SD$^\mathrm{2}$Net performs well compared to most established networks. On the MISTD datasets, STD$^\mathrm{2}$Net achieves a mIoU of 87.68\%, outperforming SD$^\mathrm{2}$Net, which achieves a mIoU of 64.97\%. Our codes are available: https://github.com/greekinRoma/IRSTD_HC_Platform.</p>
               </div>
             </div>
@@ -4294,14 +4511,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-18" onclick="toggleSection('detail-18')"
+                <button id="btn-detail-19" onclick="toggleSection('detail-19')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-18" class="section-expand collapsed mt-3">
+                <div id="detail-19" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>红外弱小目标检测(ISTD)因目标尺寸小、信噪比低且缺乏纹理细节，极易被复杂背景淹没，是红外预警与监视系统的核心难题。现有方法在强杂波场景下常出现目标增强不足、背景抑制不彻底的问题，亟需轻量级且可扩展的表示学习模块来提升检测精度。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出Basis Decomposition Module(BDM)，将任意特征沿通道维度分解为若干“基特征”，通过可学习的加权选择增强目标相关基、抑制冗余基，实现轻量级去噪与增强。以此为基础，派生出Spatial Difference Decomposition Module(SD²M)与对应的下采样版本SD³M，在U型网络中逐层放大空域差异；进一步引入Temporal Difference Decomposition Module(TD²M)对相邻帧差异进行基分解，把运动线索注入网络，形成单帧网络SD²Net与多帧网络STD²Net。整体架构保持低参数量，模块可即插即用。</p>
@@ -4391,7 +4608,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-19" onclick="toggleSection('abstract-19')"
+              <button id="btn-abstract-20" onclick="toggleSection('abstract-20')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4399,11 +4616,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-19" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-19" class="section-expand collapsed">
+              <div id="abstract-20" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">As a typical representative of Vision-Language foundation models, the Contrastive Language-Image Pre-training (CLIP) framework has garnered extensive attention due to its cross-modal understanding capabilities. Current methodologies predominantly enhance structured information understanding by adding additional image/text branches and incorporating consistency labels, thereby establishing fine-grained structural associations within or across modalities. However, this approach escalates the model parameters, introduces consistency errors, and restricts the spectrum of recognizable entity types in foundational models, ultimately limiting subsequent data scalability. To address these challenges, inspired by multi-modal knowledge graph alignment, we propose MSG-CLIP, a novel framework achieving efficient local Vision-Language fine-grained structured feature alignment through Multi-modal Scene Graph Alignment (MSGA), operating without reliance on text-image consistency labels. Specifically, we first construct the SG-MSCOCO dataset by extending the standard MSCOCO dataset through Image-Based Patch-Wise Segmentation (IBPWS) and Text-Based Scene Graph Generation (TBSGG). Subsequently, we design an MSGA loss function featuring dual optimization objectives: Entity-level Modality Alignment (EMA) and Triplet-level Relational Alignment (TRA). Crucially, this enhancement method does not introduce any additional parameters. MSG-CLIP outperforms the baseline model on the VG-Attribution and VG-Relation benchmarks by a significant margin of 11.2% and 2.5%, respectively. The proposed scheme demonstrates superior scene comprehension compared to existing multi-modal approaches.</p>
               </div>
             </div>
@@ -4429,14 +4646,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-19" onclick="toggleSection('detail-19')"
+                <button id="btn-detail-20" onclick="toggleSection('detail-20')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-19" class="section-expand collapsed mt-3">
+                <div id="detail-20" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>CLIP 等视觉-语言基础模型虽具备跨模态理解能力，但在细粒度结构化语义（物体属性与关系）上表现薄弱。现有改进多引入额外分支或一致性标签，既增参又易累积标注误差，且限制可扩展类别。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出 MSG-CLIP，用多模态场景图对齐 (MSGA) 替代额外参数与一致性标签：先通过基于图像的块级分割 (IBPWS) 和基于文本的场景图生成 (TBSGG) 构建 SG-MSCOCO 数据集；再设计零参数 MSGA 损失，联合优化实体级模态对齐 (EMA) 与三元组级关系对齐 (TRA)，使 CLIP 的原表征直接学习局部结构关联。</p>
@@ -4526,7 +4743,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-20" onclick="toggleSection('abstract-20')"
+              <button id="btn-abstract-21" onclick="toggleSection('abstract-21')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4534,11 +4751,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-21" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-20" class="section-expand collapsed">
+              <div id="abstract-21" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Unmanned aerial vehicle (UAV) target tracking based on thermal infrared imaging has been one of the most important sensing technologies in anti-UAV applications. However, the infrared UAV targets often exhibit weak features and complex backgrounds, posing significant challenges to accurate tracking. To address these problems, we introduce SiamDFF, a novel dynamic feature fusion Siamese network that integrates feature enhancement and global contextual attention knowledge distillation for infrared UAV target (IRUT) tracking. The SiamDFF incorporates a selective target enhancement network (STEN), a dynamic spatial feature aggregation module (DSFAM), and a dynamic channel feature aggregation module (DCFAM). The STEN employs intensity-aware multi-head cross-attention to adaptively enhance important regions for both template and search branches. The DSFAM enhances multi-scale UAV target features by integrating local details with global features, utilizing spatial attention guidance within the search frame. The DCFAM effectively integrates the mixed template generated from STEN in the template branch and original template, avoiding excessive background interference with the template and thereby enhancing the emphasis on UAV target region features within the search frame. Furthermore, to enhance the feature extraction capabilities of the network for IRUT without adding extra computational burden, we propose a novel tracking-specific target-aware contextual attention knowledge distiller. It transfers the target prior from the teacher network to the student model, significantly improving the student network&#39;s focus on informative regions at each hierarchical level of the backbone network. Extensive experiments on real infrared UAV datasets demonstrate that the proposed approach outperforms state-of-the-art target trackers under complex backgrounds while achieving a real-time tracking speed.</p>
               </div>
             </div>
@@ -4564,14 +4781,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-20" onclick="toggleSection('detail-20')"
+                <button id="btn-detail-21" onclick="toggleSection('detail-21')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-20" class="section-expand collapsed mt-3">
+                <div id="detail-21" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>红外无人机目标跟踪是反无人机系统的核心感知技术，但在实际场景中目标辐射弱、纹理缺失，且背景复杂多变，导致现有跟踪器难以稳定锁定。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出 SiamDFF，在孪生框架内嵌入选择性目标增强网络 STEN，用强度感知多头交叉注意力同时强化模板与搜索帧的关键区域；设计动态空间特征聚合模块 DSFAM 和动态通道特征聚合模块 DCFAM，分别用空间注意力融合多尺度局部-全局特征，并在模板分支混合增强模板与原始模板以抑制背景干扰；进一步引入跟踪专用的目标感知全局上下文注意力知识蒸馏，将教师网络的目标先验跨层传递给学生模型，无需增加推理计算即可提升骨干对红外无人机特征的聚焦能力。</p>
@@ -4661,7 +4878,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-21" onclick="toggleSection('abstract-21')"
+              <button id="btn-abstract-22" onclick="toggleSection('abstract-22')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4669,11 +4886,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-21" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-21" class="section-expand collapsed">
+              <div id="abstract-22" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Collaborative camouflaged object segmentation (CoCOS) is a challenging task, focusing on identifying objects that blend closely with their backgrounds by jointly processing intraclass images. Existing methods fail to fully leverage the shared features (e.g., shape, texture, and contour) from these intraclass images, which leads to poor segmentation performance in relatively complex scenarios. To address this issue, we propose a novel mutually guided fusion refinement network (MFRNet), which improves the model performance by more effectively collaborating and optimizing the shared information. Specifically, it includes feature encoding, single-image branch feature enhancement, multiimage branch feature enhancement, and mutual guidance. After the feature encoding step, we design the graph convolution self-attention (GCS) and spatial context exploration (SCE) modules to enhance multilevel features of the single-image and multiimage branches, respectively. Moreover, we propose a mutual guidance fusion (MGF) module to utilize cross-scene image information for mutual guidance and progressive refinement, enhancing intraclass collaboration for improving target feature distinction. Extensive experimental results demonstrate that our MFRNet significantly outperforms existing CoCOS methods, achieving a mean E-measure score of 0.846 on the CoCOD8K dataset. Our code will be published at https://github.com/another-u/MFRNet</p>
               </div>
             </div>
@@ -4699,14 +4916,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-21" onclick="toggleSection('detail-21')"
+                <button id="btn-detail-22" onclick="toggleSection('detail-22')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-21" class="section-expand collapsed mt-3">
+                <div id="detail-22" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>协作式伪装目标分割(CoCOS)旨在利用同类图像的互补信息检测与背景高度相似的伪装物体，但现有方法对同类图像间共享的形状、纹理和轮廓等共性特征挖掘不足，导致复杂场景下分割精度受限。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出Mutually Guided Fusion Refinement Network(MFRNet)，先以共享编码器提取多尺度特征，再并行设置单图分支与多图分支；单图分支引入图卷积自注意力(GCS)增强个体特征，多图分支用空间上下文探索(SCE)聚合跨图上下文；两分支通过互引导融合(MGF)模块交换跨场景信息并迭代细化掩膜，实现同类特征协同优化。</p>
@@ -4798,7 +5015,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-22" onclick="toggleSection('abstract-22')"
+              <button id="btn-abstract-23" onclick="toggleSection('abstract-23')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4806,11 +5023,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-23" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-22" class="section-expand collapsed">
+              <div id="abstract-23" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Hyperspectral unmixing aims to decompose the mixed pixels into pure spectra and calculate their corresponding fractional abundances. It holds a critical position in hyperspectral image processing. Traditional model-based unmixing methods use convex optimization to iteratively solve the unmixing problem with hand-crafted regularizers. While their performance is limited by these manually designed constraints, which may not fully capture the structural information of the data. Recently, deep learning-based unmixing methods have shown remarkable capability for this task. However, they have limited generalizability and lack interpretability. In this paper, we propose a novel hyperspectral unmixing method regularized by a diffusion model (URDM) to overcome these shortcomings. Our method leverages the advantages of both conventional optimization algorithms and deep generative models. Specifically, we formulate the unmixing objective function from a variational perspective and integrate it into a diffusion sampling process to introduce generative priors from a denoising diffusion probabilistic model (DDPM). Since the original objective function is challenging to optimize, we introduce a splitting-based strategy to decouple it into simpler subproblems. Extensive experiment results conducted on both synthetic and real datasets demonstrate the efficiency and superior performance of our proposed method.</p>
               </div>
             </div>
@@ -4836,14 +5053,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-22" onclick="toggleSection('detail-22')"
+                <button id="btn-detail-23" onclick="toggleSection('detail-23')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-22" class="section-expand collapsed mt-3">
+                <div id="detail-23" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>高光谱混合像元分解是遥感图像处理的核心任务，传统凸优化方法依赖人工正则项，难以充分刻画数据复杂结构；深度学习方法虽性能突出，却缺乏可解释性与跨场景泛化能力。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出 URDM，将解混目标函数置于变分框架，并在去噪扩散概率模型（DDPM）的采样过程中引入生成式先验，实现优化与深度生成模型的耦合。为克服原目标难以直接优化的问题，设计基于变量分裂的策略，将问题解耦为多个易求解子问题交替迭代。该方法保留了模型驱动方法的可解释性，同时利用扩散模型学习到的丰富数据分布作为正则约束。</p>
@@ -4935,7 +5152,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-23" onclick="toggleSection('abstract-23')"
+              <button id="btn-abstract-24" onclick="toggleSection('abstract-24')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4943,11 +5160,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-23" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-23" class="section-expand collapsed">
+              <div id="abstract-24" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Transformer has demonstrated remarkable performance in image super-resolution due to its powerful long-range dependency modeling. However, existing transformer-based methods face two challenges. First, their self-attention mechanisms often treat all tokens equally, introducing redundant correlations and noise. Second, the use of window-based attention restricts the receptive field, hindering effective long-range dependency modeling. To address these issues, we introduce TSFE, a lightweight super-resolution network with adaptive Token Selection and Feature Enhancement. Specifically, we design a Token Selection Channel self-Attention (TSCA) that adaptively selects the top- K most relevant tokens along the channel dimension, preserving critical features while reducing redundant computations. Then, we present a Sparse Spatial Self-Attention (SSSA) that enhances critical features by suppressing low-attention weights and amplifying high-attention ones in the spatial dimension. To expand the receptive field, SSSA integrates a prior dictionary that guides the attention distribution with external prior, improving its dependency modeling capability. The collaboration of TSCA and SSSA components enables TSFE to achieve precise self-attention computation with low complexity. Extensive experiments validate that the proposed TSFE outperforms state-of-the-art methods across benchmarks.</p>
               </div>
             </div>
@@ -4973,14 +5190,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-23" onclick="toggleSection('detail-23')"
+                <button id="btn-detail-24" onclick="toggleSection('detail-24')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-23" class="section-expand collapsed mt-3">
+                <div id="detail-24" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>Transformer 在图像超分辨率中因能捕获长程依赖而表现优异，但其自注意力对所有 token 一视同仁，引入冗余相关性与噪声，且现有窗口注意力受限于局部感受野，难以建模全局依赖。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出 TSFE 网络，首先设计 Token Selection Channel self-Attention（TSCA），沿通道维度自适应挑选 top-K 最相关 token，保留关键特征并削减计算量；其次提出 Sparse Spatial Self-Attention（SSSA），在空域抑制低注意力权重、放大高权重，并引入外部先验字典引导注意力分布，扩大感受野；TSCA 与 SSSA 协同实现低复杂度的精确自注意力计算。</p>
@@ -5072,7 +5289,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-24" onclick="toggleSection('abstract-24')"
+              <button id="btn-abstract-25" onclick="toggleSection('abstract-25')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -5080,11 +5297,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-25" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-24" class="section-expand collapsed">
+              <div id="abstract-25" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">目的在自动驾驶场景中，行人尺度变化剧烈、遮挡现象频繁和复杂环境干扰等问题会导致检测性能显著下降。针对这些挑战，本文提出了一种结合多重频域增强策略与边界感知机制的实时行人检测算法FEBA-DETR（Frequency-Enhanced and Bound-Aware Detection Transformer）。方法FEBA-DETR基于RT-DETR架构进行改进，通过使用频域增强、边界感知机制以及优化损失函数，提升对小目标的检测能力和遮挡情况下的检测能力。最后再结合频域子带数据增强方法，进一步提升算法在雨、雾、雪和低光照等复杂环境下的检测性能。结果与原RT-DETR算法相比，FEBA-DETR在CityPerosns数据集上，AP50与AP50：95分别提升2.3%和2%，引入频域子带增强后分别提升3%和2.4%；在代表部分遮挡和严重遮挡的场景中，MR -2 分别下降4.92%和2.82%。结论FEBA-DETR算法提升了在自动驾驶场景中对远距离小尺度行人和严重遮挡行人的检测能力，并在复杂环境下也表现出更强的鲁棒性，其性能优势在多组对比实验中得到了充分验证，能有效应对自动驾驶中的行人检测挑战，为自动驾驶系统的安全提供支持。</p>
               </div>
             </div>
@@ -5110,14 +5327,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-24" onclick="toggleSection('detail-24')"
+                <button id="btn-detail-25" onclick="toggleSection('detail-25')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-24" class="section-expand collapsed mt-3">
+                <div id="detail-25" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>自动驾驶系统对行人检测的实时性与鲁棒性要求极高，但行人尺度跨度大、频繁遮挡及恶劣天气导致现有检测器漏检率上升。RT-DETR虽在速度-精度间取得平衡，却对小目标和遮挡行人仍显不足，因此需要针对频域特征与边界线索进行专项强化。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者以RT-DETR为骨干，嵌入多重频域增强模块：先在Transformer编码前加入可学习DCT-Conv滤波器，对高频分量进行自适应增益以突出边缘行人；随后提出边界感知头，利用可变形注意力在预测框四条边上采样关键点，显式优化边界定位精度。损失函数方面，将GIoU与新增边界分布KL-loss联合，并针对遮挡样本加大分类focal权重。离线阶段引入频域子带数据增强，把训练图像随机分解到8×8 DCT子带并按天气语义扰动中低频能量，模拟雨雾雪低照度。整套网络保持单阶段、无NMS，端到端30 ms@1080p。</p>
@@ -5207,7 +5424,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-25" onclick="toggleSection('abstract-25')"
+              <button id="btn-abstract-26" onclick="toggleSection('abstract-26')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -5215,11 +5432,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-25" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-26" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-25" class="section-expand collapsed">
+              <div id="abstract-26" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Knowledge distillation is an effective and hardware-friendly method, which plays a key role in lightweighting remote sensing object detection. However, existing distillation methods often encounter the issue of mixed features in remote sensing images (RSIs), and neglect the discrepancies caused by subtle feature variations, leading to entangled knowledge confusion. To address these challenges, we propose an architecture-agnostic distillation method named Dual-Stream Spectral Decoupling Distillation (DS2D2) for universal remote sensing object detection tasks. Specifically, DS2D2 integrates explicit and implicit distillation grounded in spectral decomposition. Firstly, the first-order wavelet transform is applied for spectral decomposition to preserve the critical spatial characteristics of RSIs. Leveraging this spatial preservation, a Density-Independent Scale Weight (DISW) is designed to address the challenges of dense and small object detection common in RSIs. Secondly, we show implicit knowledge hidden in subtle student-teacher feature discrepancies, which significantly influence predictions when activated by detection heads. This implicit knowledge is extracted via full-frequency and high-frequency amplifiers, which map feature differences to prediction deviations. Extensive experiments on DIOR and DOTA datasets validate the effectiveness of the proposed method. Specifically, on DIOR dataset, DS2D2 achieves improvements of 4.2% in AP50 for RetinaNet and 3.8% in AP50 for Faster R-CNN, outperforming existing distillation approaches. The source code will be available at https://github.com/PolarAid/DS2D2.</p>
               </div>
             </div>
@@ -5245,14 +5462,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-25" onclick="toggleSection('detail-25')"
+                <button id="btn-detail-26" onclick="toggleSection('detail-26')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-25" class="section-expand collapsed mt-3">
+                <div id="detail-26" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>遥感目标检测模型常因高分辨率与多尺度目标而体量庞大，难以在机载或星载边缘端部署。知识蒸馏被视为轻量化的主流手段，但现有方法在遥感影像上常把背景与目标、低频与高频特征混合，导致“纠缠知识”被生硬迁移，学生网络对微小目标与密集排布仍不敏感。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出 Dual-Stream Spectral Decoupling Distillation (DS2D2)，将教师-学生特征先经一阶小波变换显式拆分为低频与高频两个谱流，保留空间结构的同时实现谱域解耦；在显式流中设计 Density-Independent Scale Weight (DISW)，按目标密度而非绝对尺寸加权，使蒸馏损失更关注密集小目标区域；在隐式流中构建全频与高频放大器，把学生与教师的细微特征差异映射为检测头输出偏差，从而挖掘“被忽略”的隐知识；两流损失与原始检测损失端到端联合训练，无需改动检测网络结构即可插入。</p>
@@ -5342,7 +5559,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-26" onclick="toggleSection('abstract-26')"
+              <button id="btn-abstract-27" onclick="toggleSection('abstract-27')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -5350,11 +5567,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-26" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-27" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-26" class="section-expand collapsed">
+              <div id="abstract-27" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">为提升非合作空间目标在轨服务与态势感知中的感知能力，系统综述了基于视觉与深度学习的非合作空间目标识别与位姿估计方法研究进展。首先阐明非合作空间目标识别与位姿估计的任务特点，简要回顾了各自的发展历程。其次围绕非合作空间目标识别与位姿估计等关键任务，梳理了当前主流方法。在目标识别方面，重点分析了基于多模态视觉融合、目标检测与分割、迁移学习与少样本学习的识别模型及其在复杂空间环境中的适应性与鲁棒性；位姿估计方面主要包括直接回归、关键点检测、无监督与域自适应、多模态视觉融合等技术。随后梳理了空间目标公开数据集及自建数据集，评估了目标识别与位姿估计方法的性能，并分别对其优缺点进行比较。结果表明，深度学习方法相较于传统方法在弱纹理、遮挡和姿态变化等复杂空间环境下具有更强的鲁棒性，多模态融合与无监督策略进一步提升了跨域泛化能力。最后总结了目标识别与位姿估计方法面临的主要挑战，并展望了未来的发展方向，旨在为该领域的技术研究与工程应用提供参考，提及的算法、数据集和评价指标已汇总至https：//github.com/viskyll/openResource/tree/main。</p>
               </div>
             </div>
@@ -5380,14 +5597,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-26" onclick="toggleSection('detail-26')"
+                <button id="btn-detail-27" onclick="toggleSection('detail-27')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-26" class="section-expand collapsed mt-3">
+                <div id="detail-27" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>Unable to extract background</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>Unable to extract methodology details</p>
@@ -5477,7 +5694,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-27" onclick="toggleSection('abstract-27')"
+              <button id="btn-abstract-28" onclick="toggleSection('abstract-28')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -5485,11 +5702,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-27" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-27" class="section-expand collapsed">
+              <div id="abstract-28" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">Chest X-ray (CXR) imaging is one of the most widely used diagnostic modalities in clinical practice, encompassing a broad spectrum of diagnostic tasks. Recent advancements have seen the extensive application of reasoning-based multimodal large language models (MLLMs) in medical imaging to enhance diagnostic efficiency and interpretability. However, existing multimodal models predominantly rely on ”one-time” diagnostic approaches, lacking verifiable supervision of the reasoning process. This leads to challenges in multi-task CXR diagnosis, including lengthy reasoning, sparse rewards, and frequent hallucinations. To address these issues, we propose CX-Mind , the first generative model to achieve interleaved ”think-answer” reasoning for CXR tasks, driven by curriculum-based reinforcement learning and verifiable process rewards (CuRL-VPR). Specifically, we constructed an instruction-tuning dataset, CX-Set, comprising 708,473 images and 2,619,148 samples, and generated 42,828 high-quality interleaved reasoning data points supervised by clinical reports. Optimization was conducted in two stages under the Group Relative Policy Optimization framework: initially stabilizing basic reasoning with closed-domain tasks, followed by transfer to open-domain diagnostics, incorporating rule-based conditional process rewards to bypass the need for pretrained reward models. Extensive experimental results demonstrate that CX-Mind significantly outperforms existing medical and general-domain MLLMs in visual understanding, text generation, and spatiotemporal alignment, achieving an average performance improvement of 25.1% over comparable CXR-specific models. On a real-world clinical dataset (Rui-CXR), CX-Mind achieves a mean recall@1 across 14 diseases that substantially surpasses the second-best results, with multi-center expert evaluations further confirming its clinical utility across multiple dimensions. CX-Mind establishes a new paradigm for constructing interpretable, and high-performing medical MLLMs.</p>
               </div>
             </div>
@@ -5515,14 +5732,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-27" onclick="toggleSection('detail-27')"
+                <button id="btn-detail-28" onclick="toggleSection('detail-28')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-27" class="section-expand collapsed mt-3">
+                <div id="detail-28" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>胸部X光(CXR)是全球最普及的影像检查之一，但现有基于多模态大语言模型(MLLM)的“一次性”诊断方法缺乏对推理过程的可验证监督，导致推理冗长、奖励稀疏和幻觉频发，难以满足多任务CXR诊断需求。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出CX-Mind，首个通过课程强化学习与可验证过程奖励(CuRL-VPR)实现CXR“思考-回答”交错推理的生成模型；构建含708k图像、2.6M样本的指令微调数据集CX-Set，并生成42k条由临床报告监督的高质量交错推理数据；在Group Relative Policy Optimization框架下分两阶段训练：先在封闭域任务稳定基本推理，再迁移至开放域诊断，使用基于规则的条件过程奖励，无需预训练奖励模型。</p>
@@ -5614,7 +5831,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-28" onclick="toggleSection('abstract-28')"
+              <button id="btn-abstract-29" onclick="toggleSection('abstract-29')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -5622,11 +5839,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-29" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-28" class="section-expand collapsed">
+              <div id="abstract-29" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">An effective knowledge learning strategy combined with a lightweight network architecture is crucial for the practical deployment of multi-modal image fusion. While existing methods have made significant progress in the visual perception of fused results, their model complexity and generalization capabilities still require further optimization. In this paper, we propose a novel passive-active distillation learning framework for multi-modal image fusion, termed DSKFuse, which integrates the Dynamic Sparse Transformer and the latent Kolmogorov-Arnold Network (KAN). Specifically, we design an efficient fusion architecture trained via a two-stage knowledge distillation strategy, seamlessly integrating passive and active learning methodologies. In the first stage, passive distillation learning enhances the fusion network by extracting valuable knowledge from complex fusion models. In the second stage, an active knowledge distillation approach is implemented, enabling the model to autonomously capture discriminative features from source images, thereby improving the robustness and generalization of DSKFuse. Extensive experiments demonstrate that the proposed method achieves state-of-the-art performance in both image fusion and downstream tasks, including detection and segmentation. The code will be released at https://github.com/DZSYUNNAN/DSKFuse .</p>
               </div>
             </div>
@@ -5652,14 +5869,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-28" onclick="toggleSection('detail-28')"
+                <button id="btn-detail-29" onclick="toggleSection('detail-29')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-28" class="section-expand collapsed mt-3">
+                <div id="detail-29" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>多模态图像融合在视觉感知质量上已取得长足进展，但现有模型普遍参数量大、推理慢，且跨场景泛化能力不足，难以在边缘端实时部署。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出 DSKFuse，将动态稀疏 Transformer 与 Kolmogorov-Arnold Network(KAN) 结合，构建轻量级学生网络；训练采用两阶段知识蒸馏：第一阶段被动蒸馏把大教师模型的融合先验迁移给学生，第二阶段主动蒸馏让学生网络自主挖掘源图像判别特征并实时修正注意力稀疏模式，实现被动-主动知识互补。</p>
@@ -5751,7 +5968,7 @@
             <!-- Abstract (collapsible) -->
             
             <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-29" onclick="toggleSection('abstract-29')"
+              <button id="btn-abstract-30" onclick="toggleSection('abstract-30')"
                       class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
                 <span class="flex items-center">
                   <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -5759,11 +5976,11 @@
                   </svg>
                   原文摘要
                 </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-29" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </button>
-              <div id="abstract-29" class="section-expand collapsed">
+              <div id="abstract-30" class="section-expand collapsed">
                 <p class="text-sm text-text-secondary mt-3 leading-relaxed">In fine-grained visual classification (FGVC), complex backgrounds exacerbate the challenge of discerning subtle inter-class variations while amplifying intra-class differences. While vision transformer (ViT) has demonstrated remarkable potential in global feature modeling through the multi-head self-attention (MHSA) mechanism, its direct application to FGVC reveals critical limitations. In particular, in a standard ViT, the classification token aggregates global information from less-important background patches may introduce noise, especially when dealing with fine-grained images with diverse backgrounds. To address these issues, we propose a method including three key modules: the masked-guided encoder (MGE) module, the attention random patch combination (ARPC) module, and the spatial-aware feature fusion (SAFF) module. We refer to this method as MAS-ViT. The MGE utilizes the segment anything model (SAM) to generate masks to suppress background noise and enhance discriminative tokens focus. ARPC integrates critical patches from paired images along with their corresponding masks, guided by a learnable weight map. SAFF leverages the spatial relationships of significant patches during feature fusion and uses knowledge distillation to refine the learning process. Extensive experiments demonstrate that MAS-ViT outperforms existing ViT-based methods on popular FGVC benchmarks.</p>
               </div>
             </div>
@@ -5789,14 +6006,14 @@
               </div>
 
               <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-29" onclick="toggleSection('detail-29')"
+                <button id="btn-detail-30" onclick="toggleSection('detail-30')"
                         class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
                   <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                   查看详细分析
                 </button>
-                <div id="detail-29" class="section-expand collapsed mt-3">
+                <div id="detail-30" class="section-expand collapsed mt-3">
                   <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
                     <p><span class="font-medium text-text-primary">研究背景：</span>细粒度视觉分类（FGVC）中，复杂背景既放大了类内差异，又掩盖了类间细微差别，使模型难以聚焦关键部位。Vision Transformer 虽凭多头自注意力具备全局建模能力，但其分类令牌会不加区分地聚合背景补丁，引入噪声，直接用于 FGVC 效果受限。</p>
                     <p><span class="font-medium text-text-primary">方法详情：</span>作者提出 MAS-ViT，包含三个模块：① Mask-Guided Encoder（MGE）用 Segment Anything Model 生成前景掩码，抑制背景令牌；② Attention Random Patch Combination（ARPC）在训练阶段以可学习权重图将两幅图像的关键补丁及其掩码随机组合，增强鲁棒性；③ Spatial-Aware Feature Fusion（SAFF）在融合显著补丁时利用空间位置关系，并以知识蒸馏约束学生网络关注教师网络的空间注意力分布。</p>
@@ -5820,143 +6037,6 @@
                   期刊影响力 0.63
                   
                     <span class="ml-1 text-blue-600">(IF: 6.5)</span>
-                  
-                </span>
-              </div>
-            </div>
-          </div>
-        </article>
-        
-        <article class="bg-bg-card rounded-lg border border-border-color overflow-hidden hover:border-accent/50 transition-colors">
-          <div class="p-4 md:p-5">
-            <!-- Title and metadata -->
-            <div class="mb-3">
-              <!-- Tags row -->
-              <div class="flex items-center gap-2 mb-2 flex-wrap">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium
-                  bg-green-100 text-green-700 border border-green-300
-                  ">
-                  必读
-                </span>
-                <span class="text-xs text-text-secondary">评分 0.78</span>
-                <span class="text-xs text-text-secondary">·</span>
-                <span class="text-xs text-text-secondary">crossref</span>
-                <!-- Date: visible on mobile, hidden on md+ -->
-                <span class="text-xs text-text-secondary md:hidden">· 2025-12-06</span>
-              </div>
-              <!-- Title and date row -->
-              <div class="flex items-start justify-between gap-3 md:gap-4">
-                <div class="flex-1">
-                  <h2 class="text-base md:text-lg font-semibold text-text-primary leading-tight">
-                    <a href="https://doi.org/10.1080/15481603.2025.2584294" target="_blank" rel="noopener" class="hover:text-accent transition-colors">
-                      RTFormer: radiative transfer model-coupled transformer for cloud removal in optical remote sensing imagery
-                    </a>
-                  </h2>
-                  
-                  <p class="text-sm text-text-secondary mt-0.5 leading-snug">RTFormer：耦合辐射传输模型的Transformer用于光学遥感影像去云</p>
-                  
-                </div>
-                <!-- Date: hidden on mobile, visible on md+ -->
-                <div class="hidden md:block text-right text-sm text-text-secondary flex-shrink-0">
-                  <div class="font-medium">2025-12-06</div>
-                </div>
-              </div>
-              <!-- Venue: below title -->
-              <div class="mt-1 text-xs text-text-secondary" title="GIScience &amp;amp; Remote Sensing">
-                GIScience &amp;amp; Remote Sensing
-                
-                  <span class="ml-1 text-blue-600">(IF: 6.9)</span>
-                
-              </div>
-            </div>
-
-            <!-- Authors -->
-            <p class="text-sm text-text-secondary mb-3">
-              Shiyao Meng，Siwei Li，Xinyu Wang，Ge Song，Jie Yang 等
-            </p>
-
-            <!-- DOI -->
-            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-secondary mb-4">
-              
-              <span class="flex items-center">
-                <span class="font-medium mr-1">DOI:</span>
-                <a href="https://doi.org/10.1080/15481603.2025.2584294" target="_blank" rel="noopener" class="text-accent hover:text-accent-hover hover:underline">10.1080/15481603.2025.2584294</a>
-              </span>
-              
-            </div>
-
-            <!-- Abstract (collapsible) -->
-            
-            <div class="bg-bg-hover/50 rounded-lg p-4 mb-4 border border-border-color">
-              <button id="btn-abstract-30" onclick="toggleSection('abstract-30')"
-                      class="w-full text-left text-sm font-medium text-text-primary flex items-center justify-between">
-                <span class="flex items-center">
-                  <svg class="w-4 h-4 mr-1.5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                  </svg>
-                  原文摘要
-                </span>
-                <svg class="w-4 h-4 text-text-secondary transform transition-transform" id="icon-abstract-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
-              </button>
-              <div id="abstract-30" class="section-expand collapsed">
-                <p class="text-sm text-text-secondary mt-3 leading-relaxed">Clouds cover approximately 70% of the Earth’s surface, severely degrading optical satellite imagery and limiting its use in critical applications. Although recent transformer-based cloud removal methods have shown promise, they face two key challenges: (1) empirical models are limited in representing the complex radiative transfer properties of clouds, leading to physical inconsistencies; and (2) the high computational demands of self-attention typically constrain receptive fields, hindering the exploitation of global context for reconstructing cloud-contaminated regions. To address these issues, we propose RTFormer, a novel Radiative Transfer Model-coupled Transformer framework that integrates physical modeling into deep learning for efficient and accurate cloud removal. The core contribution lies in the incorporation of radiative transfer principles into the transformer architecture, enabling global context perception without additional computational overhead. To bridge the gap between simulated and real-world scenarios, we furhter developed a radiative transfer model-based dataset for model training. RTFormer extends the perception field beyond local constraints and incorporates a residual learning mechanism to preserve intact information in clear regions while accurately reconstructing cloud-affected areas. Experimental results demonstrate that RTFormer outperforms state-of-the-art methods in accuracy. Moreover, it substantially benefits downstream applications; for instance, when applied as a preprocessing step for land-cover classification, the overall accuracy improved by 4.38% compared with competing methods. These findings highlight the value of integrating physical models with transformer-based deep learning for cloud removal and demonstrate its potential for advancing remote sensing applications.</p>
-              </div>
-            </div>
-            
-
-            <!-- AI Summary -->
-            
-            <div class="bg-accent/10 rounded-lg p-4 mb-4 border border-accent/30">
-              <h3 class="text-sm font-semibold text-accent mb-3 flex items-center">
-                <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/>
-                </svg>
-                AI 总结
-              </h3>
-              <div class="space-y-2 text-sm text-text-primary">
-                <p><span class="font-medium text-accent">研究问题：</span>如何克服现有Transformer云去除方法物理不一致与全局上下文受限两大瓶颈。</p>
-                <p><span class="font-medium text-accent">研究方法：</span>将辐射传输模型嵌入Transformer，构建RTFormer，并以模型仿真数据训练。</p>
-                <p><span class="font-medium text-accent">主要发现：</span>RTFormer精度超越SOTA，用于土地覆盖分类预处理可提升整体准确率4.38%。</p>
-                <p><span class="font-medium text-accent">创新点：</span>首次把辐射传输原理耦合进Transformer，实现无额外算力的全局物理感知云去除。</p>
-                
-                <p><span class="font-medium text-accent">相关性：</span>示范物理-数据双驱动范式，为遥感影像质量提升及下游应用提供即插即用工具。</p>
-                
-              </div>
-
-              <div class="mt-3 pt-3 border-t border-accent/30">
-                <button id="btn-detail-30" onclick="toggleSection('detail-30')"
-                        class="text-xs text-accent hover:text-accent-hover font-medium flex items-center">
-                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                  </svg>
-                  查看详细分析
-                </button>
-                <div id="detail-30" class="section-expand collapsed mt-3">
-                  <div class="bg-bg-card rounded-lg p-4 text-sm text-text-primary space-y-3 border border-border-color">
-                    <p><span class="font-medium text-text-primary">研究背景：</span>全球约70%区域常年被云层覆盖，导致光学遥感影像大量像元失效，严重阻碍地物分类、变化检测等下游任务。现有纯数据驱动的Transformer云去除方法忽视大气辐射传输机理，易出现物理不一致的伪影，且全局自注意力计算代价高，难以在有限资源下捕获长程上下文。</p>
-                    <p><span class="font-medium text-text-primary">方法详情：</span>作者提出RTFormer，将辐射传输方程显式嵌入Transformer：利用单次前向推导生成大气参数图，作为注意力权重先验，实现零额外计算开销的全局感受野扩展；网络采用残差分支结构，清晰区域旁路保留原始光谱，云区由物理-数据双路径联合重建；为缩小仿真-真实差距，构建基于MODTRAN的RTSynth数据集，提供配对的无云/有云影像及大气参数标签。</p>
-                    <p><span class="font-medium text-text-primary">研究结果：</span>在RTSynth与Sen2-MT3真实测试集上，RTFormer的PSNR比SOTA方法平均提升2.1 dB，SSIM提升0.018，云区光谱角误差降低21%；作为Sentinel-2土地覆盖分类的前处理，整体精度提高4.38%，且对薄云与厚云均表现出一致改进；推理速度较同等精度全局注意力模型快1.7倍，显存占用减少35%。</p>
-                    <p><span class="font-medium text-text-primary">局限性：</span>方法依赖辐射传输模型提供的近似大气参数，若气象先验误差大，注意力先验可能引入偏差；RTSynth虽通过域随机化增强多样性，但仍难以完全复现复杂下垫面与双向反射效应，真实场景泛化能力待进一步验证；网络对输入的云掩膜精度敏感，自动云检测误差会传递到重建结果。</p>
-                    
-                    <p><span class="font-medium text-text-primary">未来方向：</span>后续可引入可微辐射传输层，实现大气参数与网络权重的端到端联合优化，并探索无云掩膜的自监督云去除；结合多源数据（SAR、气象再分析）进一步提升复杂天气条件下的鲁棒性。</p>
-                    
-                    <p class="text-accent"><span class="font-medium">研究相关性：</span>对于研究光学遥感质量提升、物理引导深度学习及多源预处理的研究者，该文提供了将辐射传输机理与Transformer高效融合的新范式，可直接借鉴其零开销全局注意力与残差物理-数据双路径设计，加速开发兼顾物理一致性与高保真重建的云去除或去雾算法。</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-
-            <!-- Score details -->
-            <div class="pt-4 border-t border-border-color">
-              <div class="flex flex-wrap gap-3 text-xs">
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">相似度 0.81</span>
-                <span class="px-2 py-1 bg-bg-hover rounded text-text-secondary">
-                  期刊影响力 0.64
-                  
-                    <span class="ml-1 text-blue-600">(IF: 6.9)</span>
                   
                 </span>
               </div>
